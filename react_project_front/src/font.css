@@ -1,0 +1,26 @@
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/font/Roboto-VariableFont_wdth,wght.ttf")
+    format("truetype-variations");
+  font-weight: 100 900;
+  font-style: normal; /* 100부터 900까지 모든 두께 지원 */
+  font-display: swap; /* 폰트 로딩 중에도 텍스트가 보이도록 설정 */
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/font/Roboto-Italic-VariableFont_wdth,wght.ttf")
+    format("truetype");
+  font-weight: 100 900;
+  font-style: italic; /* 이 폰트 파일이 이탤릭체임을 명시 */
+  font-display: swap;
+}
+
+@font-face {
+  font-family: jua;
+  src: url("./assets/font/Jua-Regular.ttf");
+  /* 주아체는 400(Regular) 고정입니다 */
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
