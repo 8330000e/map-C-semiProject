@@ -1,0 +1,43 @@
+/* Header.jsx */
+header > h1 {
+  font-size: 30px;
+  font-weight: 900;
+  color: #333;
+}
+header > .profile_bar_wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.profile_bar_wrap {
+  display: flex;
+  gap: 10px;
+}
+.profile_item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 15px;
+  font-weight: 600;
+  margin-right: 5px;
+}
+.login {
+  display: none;
+}
+
+/* Footer.jsx */
+.footer {
+  margin-top: 10px;
+  font-size: 15px;
+}
+.footer_guide > ul {
+  display: flex;
+  list-style-type: none;
+  gap: 30px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.footer_info {
+  color: gray;
+}

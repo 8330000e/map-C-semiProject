@@ -8,7 +8,7 @@ import Main from "./pages/Main";
 
 function App() {
   return (
-    <div className="wrap">
+    <div className="carbonconnect wrap">
       <Header />
       <main className="main">
         <Routes>
