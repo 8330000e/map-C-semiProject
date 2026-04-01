@@ -152,9 +152,9 @@ const Store = () => {
 						</button>
 					</div>
 
-					<button type="button" className={styles.sell_button}>
+					<Link to="/store/register" className={styles.sell_button}>
 						판매글 등록
-					</button>
+					</Link>
 				</div>
 
 				<div className={styles.grid_box}>
