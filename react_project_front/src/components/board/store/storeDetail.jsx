@@ -160,7 +160,7 @@ const StoreDetail = () => {
 	};
 
 	const handleGoToPayment = () => {
-		navigate("/payment/test", {
+		navigate("/payment/order", {
 			state: {
 				itemId,
 				orderName: item.title,

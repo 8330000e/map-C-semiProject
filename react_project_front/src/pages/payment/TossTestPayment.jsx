@@ -28,6 +28,14 @@ const TossTestPayment = () => {
 
 	const orderName = location.state?.orderName || "테스트 상품";
 	const amount = Number(location.state?.amount || 0);
+	const orderInfo = location.state?.orderInfo;
+	const itemId = location.state?.itemId;
+
+	useEffect(() => {
+		if (!location.state?.orderName || !location.state?.amount) {
+			navigate("/store");
+		}
+	}, [location.state, navigate]);
 
 	useEffect(() => {
 		let isCancelled = false;
@@ -121,8 +129,9 @@ const TossTestPayment = () => {
 			await widgets.requestPayment({
 				orderId: `ORDER-${Date.now()}`,
 				orderName,
-				customerName: "테스트구매자",
-				successUrl: `${window.location.origin}/payment/success`,
+				customerName: orderInfo?.receiverName || "테스트구매자",
+				customerMobilePhone: orderInfo?.phone,
+				successUrl: `${window.location.origin}/payment/success?itemId=${itemId}`,
 				failUrl: `${window.location.origin}/payment/fail`,
 			});
 		} catch (error) {
@@ -138,10 +147,18 @@ const TossTestPayment = () => {
 
 	return (
 		<section className={styles.payment_wrap}>
-			<h1>테스트 결제 페이지</h1>
+			<h1>결제 페이지</h1>
 			<div className={styles.info_box}>
 				<p>상품명 : {orderName}</p>
 				<p>결제금액 : {amount.toLocaleString("ko-KR")}원</p>
+				{orderInfo?.receiverName && <p>수령인 : {orderInfo.receiverName}</p>}
+				{orderInfo?.phone && <p>연락처 : {orderInfo.phone}</p>}
+				{orderInfo?.address && (
+					<p>
+						배송지 : {orderInfo.address}
+						{orderInfo.addressDetail ? ` ${orderInfo.addressDetail}` : ""}
+					</p>
+				)}
 			</div>
 			<div className={styles.widget_box}>
 				<div id="payment-method" className={styles.widget_container} />
