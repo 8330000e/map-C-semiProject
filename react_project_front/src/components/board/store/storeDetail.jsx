@@ -1,7 +1,7 @@
 // 중고장터 상품 상세 페이지 컴포넌트입니다.
 // 상품 정보, 판매 상태 변경, 댓글 작성/수정/삭제 기능을 제공합니다.
 import React, { useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { storeDummyData } from "../../mock/dummyData";
 import Swal from "sweetalert2";
 import styles from "./storeDetail.module.css";
@@ -30,8 +30,11 @@ const setSaleStatusById = (id, status) => {
 };
 
 const StoreDetail = () => {
+	const navigate = useNavigate();
 	const { id } = useParams();
 	const itemId = Number(id);
+
+	const parsePriceToNumber = (value) => Number(String(value || "").replace(/[^0-9]/g, "")) || 0;
 
 	// URL id에 해당하는 상품 1개 조회
 	const item = useMemo(
@@ -156,6 +159,16 @@ const StoreDetail = () => {
 		});
 	};
 
+	const handleGoToPayment = () => {
+		navigate("/payment/test", {
+			state: {
+				itemId,
+				orderName: item.title,
+				amount: parsePriceToNumber(item.price),
+			},
+		});
+	};
+
 	return (
 		<section className={styles.detail_wrap}>
 			<div className={styles.detail_header}>
@@ -195,7 +208,7 @@ const StoreDetail = () => {
 							판매완료
 						</button>
 					</div>
-					<button type="button" className={styles.buy_button}>
+					<button type="button" className={styles.buy_button} onClick={handleGoToPayment}>
 						구매하기
 					</button>
 				</div>

@@ -10,6 +10,9 @@ import Main from "./pages/Main";
 import Store from "./components/board/store/store";
 import StoreDetail from "./components/board/store/storeDetail";
 import ProductRegistration from "./components/board/store/productRegistration";
+import TossTestPayment from "./pages/payment/TossTestPayment";
+import PaymentSuccess from "./pages/payment/PaymentSuccess";
+import PaymentFail from "./pages/payment/PaymentFail";
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
           <Route path="/store" element={<Store />} />
           <Route path="/store/register" element={<ProductRegistration />} />
           <Route path="/store/:id" element={<StoreDetail />} />
+          <Route path="/payment/test" element={<TossTestPayment />} />
+          <Route path="/payment/success" element={<PaymentSuccess />} />
+          <Route path="/payment/fail" element={<PaymentFail />} />
           <Route path="/Store" element={<Navigate to="/store" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

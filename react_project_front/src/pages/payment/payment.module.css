@@ -1,0 +1,74 @@
+/* 토스 테스트 결제 관련 페이지 공통 스타일입니다. */
+.payment_wrap {
+	border: 1.8px solid #464d3e;
+	border-radius: 10px;
+	background: #f7fbf2;
+	padding: 22px;
+	margin-top: 18px;
+}
+
+.payment_wrap h1 {
+	margin: 0 0 14px;
+	color: #464d3e;
+}
+
+.info_box {
+	border: 1px solid #c8d0bf;
+	border-radius: 8px;
+	padding: 14px;
+	background: #fff;
+	margin-bottom: 12px;
+}
+
+.info_box p {
+	margin: 0 0 8px;
+	color: #2f3529;
+}
+
+.info_box p:last-child {
+	margin-bottom: 0;
+}
+
+.widget_box {
+	border: 1px solid #c8d0bf;
+	border-radius: 8px;
+	background: #fff;
+	padding: 10px;
+	margin-bottom: 12px;
+}
+
+.widget_container {
+	min-height: 88px;
+}
+
+.button_row {
+	display: flex;
+	gap: 10px;
+}
+
+.pay_btn,
+.back_btn,
+.link_btn {
+	height: 40px;
+	padding: 0 14px;
+	border: none;
+	border-radius: 8px;
+	background: #464d3e;
+	color: #fff;
+	font-weight: 600;
+	cursor: pointer;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.back_btn {
+	background: #8c9482;
+}
+
+.pay_btn:hover,
+.back_btn:hover,
+.link_btn:hover {
+	opacity: 0.9;
+}
