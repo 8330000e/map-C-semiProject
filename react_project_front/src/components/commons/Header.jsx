@@ -1,4 +1,5 @@
 import styles from "./commons.module.css";
+import { Link } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MailIcon from "@mui/icons-material/Mail";
@@ -8,7 +9,9 @@ const Header = () => {
   return (
     <>
       <header>
-        <h1>탄소커넥트</h1>
+        <h1>
+          <Link to="/">탄소커넥트</Link>
+        </h1>
         <div className={styles.header_wrap}>
           {/*로그인전*/}
           <div className={styles.login}>

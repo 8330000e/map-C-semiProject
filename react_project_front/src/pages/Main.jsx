@@ -3,6 +3,19 @@ import { Link } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
 import { dummyData, storeDummyData } from "../components/mock/dummyData";
 
+const STORE_STATUS_KEY = "storeSaleStatusMap";
+
+const getSaleStatusMap = () => {
+  try {
+    const raw = localStorage.getItem(STORE_STATUS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+};
+
+const getSaleStatusById = (id, map) => map[id] || "판매중";
+
 const Main = () => {
   // 중고거래 리스트 가로 스크롤 영역 DOM에 접근하기 위한 ref
   const usedListRef = useRef(null);
@@ -10,14 +23,31 @@ const Main = () => {
   const realtimeViewportRef = useRef(null);
   // 실시간 댓글 "실제 텍스트" DOM
   const realtimeTextRef = useRef(null);
+  const [saleStatusMap, setSaleStatusMap] = useState(() => getSaleStatusMap());
+
+  useEffect(() => {
+    const syncSaleStatus = () => setSaleStatusMap(getSaleStatusMap());
+    window.addEventListener("storage", syncSaleStatus);
+    window.addEventListener("store-status-updated", syncSaleStatus);
+
+    return () => {
+      window.removeEventListener("storage", syncSaleStatus);
+      window.removeEventListener("store-status-updated", syncSaleStatus);
+    };
+  }, []);
 
   // 중고거래 리스트(조회수 기준 상위 10개)
   // useMemo: 렌더링마다 정렬/슬라이스를 반복하지 않도록 결과를 메모이징
   const usedGoods = useMemo(() => {
     return [...storeDummyData]
+      .map((item) => ({
+        ...item,
+        saleStatus: getSaleStatusById(item.id, saleStatusMap),
+      }))
+      .filter((item) => item.saleStatus === "판매중")
       .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
       .slice(0, 10);
-  }, []);
+  }, [saleStatusMap]);
 
   // 게시글의 댓글들을 "실시간 댓글용" 형태로 평탄화
   // 예) { user, text, region } 형태로 변환
@@ -129,17 +159,29 @@ const Main = () => {
             <span>메뉴</span>
           </div>
           <ul>
-            <li>맵 커뮤니티</li>
-            <li>회원끼리 캠페인</li>
-            <li>중고거래</li>
-            <li>미션</li>
-            <li>나무 키우기</li>
+            <li>
+              <a href="#">맵 커뮤니티</a>
+            </li>
+            <li>
+              <a href="#">회원끼리 캠페인</a>
+            </li>
+            <li>
+              <Link to="/store">중고거래</Link>
+            </li>
+            <li>
+              <a href="#">미션</a>
+            </li>
+            <li>
+              <a href="#">나무 키우기</a>
+            </li>
             <li>
               <span>
                 <hr />
               </span>
             </li>
-            <li>공지사항</li>
+            <li>
+              <a href="#">공지사항</a>
+            </li>
           </ul>
           <div className="main_quest_wrap">
             <span>
@@ -209,10 +251,16 @@ const Main = () => {
                   <Link to={`/store/${item.id}`}>
                     <div className="used_item_image" aria-hidden="true" />
                     <div className="used_item_info">
-                      <strong>{item.title}</strong>
-                      <p>{item.author}</p>
-                      <p>{item.price}</p>
-                      <span>👀 {item.viewCount || 0}</span>
+                      <strong>[{item.saleStatus}] {item.title}</strong>
+                      <p className="used_item_price">{item.price}</p>
+                      <div className="used_item_meta">
+                        <span>{item.author}</span>
+                        <span>|</span>
+                        <span>💬 {item.comments || 0}</span>
+                        <span>|</span>
+                        <span>{item.date}</span>
+                      </div>
+                      <span className="used_item_view">👀 {item.viewCount || 0}</span>
                     </div>
                   </Link>
                 </li>
