@@ -1,3 +1,5 @@
+// 중고장터 상품 등록 페이지 컴포넌트입니다.
+// 제목/거래방법/상품상태/가격/설명을 입력받아 등록 화면을 구성합니다.
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./productRegistration.module.css";

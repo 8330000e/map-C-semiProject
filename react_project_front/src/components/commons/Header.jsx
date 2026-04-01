@@ -1,3 +1,5 @@
+// 상단 헤더 UI 컴포넌트입니다.
+// 로고, 로그인 영역, 사용자 아이콘 메뉴를 렌더링합니다.
 import styles from "./commons.module.css";
 import { Link } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";

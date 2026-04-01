@@ -1,3 +1,7 @@
+/*
+	상품 등록 페이지 전용 CSS Module입니다.
+	입력폼(제목/옵션/가격/설명)과 버튼, 반응형 레이아웃을 정의합니다.
+*/
 .register_wrap {
 	border: 1.8px solid #464d3e;
 	border-radius: 10px;

@@ -1,3 +1,5 @@
+// 앱의 최상위 컴포넌트입니다.
+// 공통 헤더/푸터를 렌더링하고, URL 경로에 따라 페이지를 라우팅합니다.
 import { useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";

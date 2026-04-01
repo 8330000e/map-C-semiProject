@@ -1,6 +1,5 @@
-// Store.jsx
-// - 중고장터 화면 컴포넌트
-// - storeDummyData(최대 75개)를 불러와 검색 + 페이징 처리
+// 중고장터 목록 페이지 컴포넌트입니다.
+// 목데이터를 불러와 검색/페이징하고, 상품 카드를 리스트로 보여줍니다.
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";

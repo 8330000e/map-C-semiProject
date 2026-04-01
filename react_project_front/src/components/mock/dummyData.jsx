@@ -1,4 +1,5 @@
-// 설명: src/components/mock/dummyData.jsx 컴포넌트/모듈 파일입니다. 필요한 로직 주석을 추가하세요.
+// 화면 테스트용 목(mock) 데이터 파일입니다.
+// 게시글 데이터(dummyData)와 중고장터 데이터(storeDummyData)를 생성/내보냅니다.
 const dummyData = Array.from({ length: 30 }, (_, i) => {
   const activities = [
     "자전거 출근 인증",

@@ -1,3 +1,5 @@
+// 서비스 메인 화면 컴포넌트입니다.
+// 실시간 댓글, 메뉴, 중고거래 요약 리스트 등 메인 대시보드 UI를 렌더링합니다.
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";

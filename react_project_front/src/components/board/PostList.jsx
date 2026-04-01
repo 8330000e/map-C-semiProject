@@ -1,3 +1,5 @@
+// 게시글 목록을 출력하는 재사용 컴포넌트입니다.
+// limit, 펼침 상태(expandedPostId)를 받아 목록 UI를 렌더링합니다.
 import React from "react";
 import { dummyData } from "../mock/dummyData";
 

@@ -1,3 +1,5 @@
+// 중고장터 상품 상세 페이지 컴포넌트입니다.
+// 상품 정보, 판매 상태 변경, 댓글 작성/수정/삭제 기능을 제공합니다.
 import React, { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { storeDummyData } from "../../mock/dummyData";

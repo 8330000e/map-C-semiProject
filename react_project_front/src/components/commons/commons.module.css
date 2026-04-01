@@ -1,3 +1,7 @@
+/*
+  Header.jsx / Footer.jsx 전용 CSS Module 파일입니다.
+  공통 컴포넌트의 레이아웃, 폰트 크기, 정렬을 정의합니다.
+*/
 /* Header.jsx */
 header > h1 {
   font-size: 30px;

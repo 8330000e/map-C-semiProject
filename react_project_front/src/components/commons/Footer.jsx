@@ -1,3 +1,5 @@
+// 하단 푸터 UI 컴포넌트입니다.
+// 약관 링크와 서비스 정보 문구를 표시합니다.
 import styles from "./commons.module.css";
 
 const Footer = () => {

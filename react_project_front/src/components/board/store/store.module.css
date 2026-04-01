@@ -1,3 +1,7 @@
+/*
+	중고장터 목록(store.jsx) 전용 CSS Module입니다.
+	좌측 메뉴, 검색 영역, 상품 카드 그리드, 페이지네이션 스타일을 담당합니다.
+*/
 .store_layout {
 	display: flex;
 	align-items: flex-start;
