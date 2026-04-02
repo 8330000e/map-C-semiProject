@@ -1,13 +1,18 @@
 // 중고장터 목록 페이지 컴포넌트입니다.
-// 목데이터를 불러와 검색/페이징하고, 상품 카드를 리스트로 보여줍니다.
+// - 목데이터를 불러와서 리스트 형태로 출력
+// - 검색/페이징 기능이 포함되어 있음
+// - 판매 상태(판매중/예약중/판매완료) 저장/동기화용 로컬스토리지 사용
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
 import styles from "./store.module.css";
 import { storeDummyData } from "../../mock/dummyData";
 
+// 로컬스토리지 저장 키
 const STORE_STATUS_KEY = "storeSaleStatusMap";
 
+// 로컬스토리지에서 상태 맵 읽어오기
+// 예외 발생 시 빈 객체 반환
 const getSaleStatusMap = () => {
 	try {
 		const raw = localStorage.getItem(STORE_STATUS_KEY);
@@ -88,7 +93,9 @@ const Store = () => {
 
 	return (
 		<div className={`${styles.store_layout} common_wrap`}>
+			{/* 레이아웃: 왼쪽 메뉴 + 오른쪽 중고장터 컨텐츠 */}
 			<aside className={styles.menu_panel}>
+				{/* 메뉴 섹션 */}
 				<div className={styles.menu_title}>메뉴</div>
 				<ul className={styles.menu_list}>
 					<li>
@@ -129,7 +136,9 @@ const Store = () => {
 				</div>
 			</aside>
 
+			{/* 메인 상점 컨텐츠 섹션 */}
 			<section className={styles.store_wrap}>
+				{/* 상단: 제목 + 검색 바 + 등록 버튼 */}
 				<div className={styles.header_box}>
 					<h1>중고장터</h1>
 
@@ -156,10 +165,12 @@ const Store = () => {
 					</Link>
 				</div>
 
+				{/* 상품 카드 목록 섹션 */}
 				<div className={styles.grid_box}>
 					{visibleGoods.map((item) => (
 						<Link key={item.id} to={`/store/${item.id}`} className={styles.cardLink}>
 							<article className={styles.card}>
+								{/* 상품 썸네일 영역 */}
 								<div className={styles.image}>이미지</div>
 								<h3>{item.displayTitle}</h3>
 								<p className={styles.price}>{item.price}</p>

@@ -30,13 +30,16 @@ const setSaleStatusById = (id, status) => {
 };
 
 const StoreDetail = () => {
+	// React Router hook: 페이지 이동 함수
 	const navigate = useNavigate();
+	// URL 파라미터에서 상품 ID를 가져옴
 	const { id } = useParams();
 	const itemId = Number(id);
 
+	// 가격(문자열)에서 숫자만 추출하는 헬퍼 함수
 	const parsePriceToNumber = (value) => Number(String(value || "").replace(/[^0-9]/g, "")) || 0;
 
-	// URL id에 해당하는 상품 1개 조회
+	// URL ID에 해당하는 상품 데이터를 더미에서 찾음
 	const item = useMemo(
 		() => storeDummyData.find((product) => product.id === itemId),
 		[itemId],
@@ -180,6 +183,7 @@ const StoreDetail = () => {
 
 	return (
 		<section className={styles.detail_wrap}>
+			{/* 상단 헤더 섹션: 상품 타이틀 + 뒤로가기 */}
 			<div className={styles.detail_header}>
 				<h1>{displayTitle}</h1>
 				<Link to="/store" className={styles.back_link}>
@@ -254,6 +258,7 @@ const StoreDetail = () => {
 			</div>
 
 			<div className={styles.section_box}>
+				{/* 상품 상세 정보 섹션 */}
 				<h3>상품정보</h3>
 				<p>
 					{item.title} 상품 상세 안내입니다. 현재는 목데이터 기반 화면이며, 추후 실데이터 연동 시 상세 설명이
@@ -282,6 +287,7 @@ const StoreDetail = () => {
 			</div>
 
 			<div className={styles.comment_section}>
+				{/* 댓글 섹션 */}
 				<h3>댓글</h3>
 
 				<div className={styles.comment_list}>

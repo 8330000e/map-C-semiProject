@@ -5,14 +5,15 @@ import { useNavigate } from "react-router-dom";
 import styles from "./productRegistration.module.css";
 
 const ProductRegistration = () => {
+	// React Router 페이지 이동 훅
 	const navigate = useNavigate();
 
-	// 상품 정보 상태 관리
+	// 상품 정보 상태 관리 (입력 폼 내용)
 	const [title, setTitle] = useState(""); // 상품 제목
 	const [tradeMethod, setTradeMethod] = useState(""); // 거래방법 (직거래/택배)
 	const [productState, setProductState] = useState(""); // 상품 상태 (S/A/B/C/D)
-	const [price, setPrice] = useState(""); // 가격 (숫자만)
-	const [displayPrice, setDisplayPrice] = useState(""); // 가격 표시용 (콤마 포함)
+	const [price, setPrice] = useState(""); // 가격 (숫자만 저장)
+	const [displayPrice, setDisplayPrice] = useState(""); // 화면 표시용 가격 (콤마 포함)
 	const [description, setDescription] = useState(""); // 상품 설명
 	const [imageName, setImageName] = useState(""); // 업로드된 이미지 파일명
 	const [region, setRegion] = useState(""); // 거래 가능 지역
@@ -70,6 +71,7 @@ const ProductRegistration = () => {
 
 	return (
 		<section className={styles.register_wrap}>
+			{/* 페이지 제목 영역 */}
 			<h1>중고장터</h1>
 
 			<form className={styles.register_form} onSubmit={handleSubmit}>

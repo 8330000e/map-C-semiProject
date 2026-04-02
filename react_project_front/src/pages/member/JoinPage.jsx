@@ -4,7 +4,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Join = () => {
+  // 페이지 이동 함수 가져오기 (React Router)
   const navigate = useNavigate();
+
+  // 입력값 상태 저장 (회원가입 폼)
   const [member, setMember] = useState({
     memberId: "",
     memberPw: "",
@@ -13,13 +16,14 @@ const Join = () => {
     memberEmail: "",
   });
 
+  // 폼 입력 값이 바뀔 때 상태 업데이트
   const inputMember = (e) => {
     const { name, value } = e.target;
     setMember({
       ...member,
       [name]: value,
     });
-    console.log(name, value);
+    console.log(name, value); // 개발용 디버그 로그
   };
 
   const JoinMember = (e) => {
@@ -34,11 +38,12 @@ const Join = () => {
       return;
     }
 
+    // 회원가입 요청을 서버로 전달하는 부분
     axios
       .post(`${BACKSERVER}/members`, member)
       .then((res) => {
-        console.log(res.data);
-        navigate("/members/login");
+        console.log("회원가입 응답:", res.data);
+        navigate("/members/login"); // 회원가입 후 로그인 페이지로 이동
       })
       .catch((err) => {
         console.error("회원가입 에러:", err);

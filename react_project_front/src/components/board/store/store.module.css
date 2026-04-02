@@ -2,6 +2,7 @@
 	중고장터 목록(store.jsx) 전용 CSS Module입니다.
 	좌측 메뉴, 검색 영역, 상품 카드 그리드, 페이지네이션 스타일을 담당합니다.
 */
+/* 페이지 전체 레이아웃 (왼쪽 사이드바 + 오른쪽 콘텐츠) */
 .store_layout {
 	display: flex;
 	align-items: flex-start;
@@ -10,11 +11,13 @@
 	margin: 20px auto 0;
 }
 
+/* 좌측 메뉴 패널 */
 .menu_panel {
 	width: 200px;
 	min-width: 200px;
 }
 
+/* 좌측 메뉴 타이틀 영역 */
 .menu_title {
 	background-color: #464d3e;
 	border-top-right-radius: 30px;
@@ -105,6 +108,7 @@
 	color: #464d3e;
 }
 
+/* 오른쪽 메인 콘텐츠 박스 (중고장터 목록) */
 .store_wrap {
 	flex: 1;
 	border: 1.8px solid #464d3e;
@@ -187,6 +191,7 @@
 	transform: translateY(1px);
 }
 
+/* 상품 카드 그리드 영역 */
 .grid_box {
 	display: grid;
 	grid-template-columns: repeat(4, minmax(0, 1fr));

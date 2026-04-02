@@ -16,17 +16,22 @@ const PostList = ({
   };
 
   return (
+    // 게시글 목록 전체 컨테이너
     <ul>
       {posts.map((post) => {
         const isExpanded = expandedPostId === post.id;
 
         return (
+          // 개별 게시글 항목
           <li
             key={post.id}
             onClick={() => handleToggle(post.id)}
             style={{ cursor: onExpandedIdChange ? "pointer" : "default" }}
           >
+            {/* 제목 섹션 */}
             <p>{post.title}</p>
+
+            {/* 확장 시 상세 정보 노출 섹션 */}
             {isExpanded && (
               <div>
                 <small>
