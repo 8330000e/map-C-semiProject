@@ -99,6 +99,12 @@
 	font-weight: 500;
 }
 
+.customer_link:visited,
+.customer_link:hover,
+.customer_link:active {
+	color: #464d3e;
+}
+
 .store_wrap {
 	flex: 1;
 	border: 1.8px solid #464d3e;
