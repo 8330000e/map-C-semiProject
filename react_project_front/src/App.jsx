@@ -14,8 +14,15 @@ import OrderPage from "./pages/payment/OrderPage";
 import TossTestPayment from "./pages/payment/TossTestPayment";
 import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import PaymentFail from "./pages/payment/PaymentFail";
+import JoinPage from "./pages/member/JoinPage";
+import LoginPage from "./pages/member/LoginPage";
+import TestHeader from "./components/commons/TestHeader";
 
 function App() {
+  {
+    /*1. 로그인로직 
+    2. 로그인 후 null이 아닌 memeber state를 useAthsore에 저장*/
+  }
   return (
     <div className="carbonconnect wrap">
       <Header />
@@ -31,6 +38,9 @@ function App() {
           <Route path="/payment/fail" element={<PaymentFail />} />
           <Route path="/Store" element={<Navigate to="/store" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/join" element={<JoinPage />}></Route>
+          <Route path="/members/login" element={<LoginPage />}></Route>
+          <Route path="/test-header" element={<TestHeader />} />
         </Routes>
       </main>
       <Footer />

@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
 import { dummyData, storeDummyData } from "../components/mock/dummyData";
+import useAuthStore from "../store/useAuthStore";
 
 const STORE_STATUS_KEY = "storeSaleStatusMap";
 
@@ -68,7 +69,9 @@ const Main = () => {
   // 초기값은 댓글 목록에서 랜덤으로 선택
   const [visibleRealtimeComment, setVisibleRealtimeComment] = useState(() => {
     if (!realtimeComments.length) return null;
-    return realtimeComments[Math.floor(Math.random() * realtimeComments.length)];
+    return realtimeComments[
+      Math.floor(Math.random() * realtimeComments.length)
+    ];
   });
 
   // 텍스트를 왼쪽으로 이동시키기 위한 x축 값(px)
@@ -130,18 +133,27 @@ const Main = () => {
       timers.push(moveTimer);
 
       // (2) 끝까지 이동 후 3초 대기한 뒤 처음 위치로 복귀
-      const resetTimer = setTimeout(() => {
-        setRealtimeTransition(`transform ${resetDuration / 1000}s ease`);
-        setRealtimeOffset(0);
-      }, moveDelay + moveDuration * 1000 + holdDuration);
+      const resetTimer = setTimeout(
+        () => {
+          setRealtimeTransition(`transform ${resetDuration / 1000}s ease`);
+          setRealtimeOffset(0);
+        },
+        moveDelay + moveDuration * 1000 + holdDuration,
+      );
       timers.push(resetTimer);
 
       // (3) 복귀 후 약간 쉬고 다시 같은 사이클 반복
-      const nextCycleTimer = setTimeout(() => {
-        setRealtimeTransition("none");
-        startCycle();
-      },
-      moveDelay + moveDuration * 1000 + holdDuration + resetDuration + restartDelay);
+      const nextCycleTimer = setTimeout(
+        () => {
+          setRealtimeTransition("none");
+          startCycle();
+        },
+        moveDelay +
+          moveDuration * 1000 +
+          holdDuration +
+          resetDuration +
+          restartDelay,
+      );
       timers.push(nextCycleTimer);
     };
 
@@ -221,7 +233,10 @@ const Main = () => {
           </div>
 
           <div className="realtime_comment roundBorder">
-            <div className="realtime_comment_viewport" ref={realtimeViewportRef}>
+            <div
+              className="realtime_comment_viewport"
+              ref={realtimeViewportRef}
+            >
               <p
                 className="realtime_comment_line"
                 ref={realtimeTextRef}
@@ -253,7 +268,9 @@ const Main = () => {
                   <Link to={`/store/${item.id}`}>
                     <div className="used_item_image" aria-hidden="true" />
                     <div className="used_item_info">
-                      <strong>[{item.saleStatus}] {item.title}</strong>
+                      <strong>
+                        [{item.saleStatus}] {item.title}
+                      </strong>
                       <p className="used_item_price">{item.price}</p>
                       <div className="used_item_meta">
                         <span>{item.author}</span>
@@ -262,7 +279,9 @@ const Main = () => {
                         <span>|</span>
                         <span>{item.date}</span>
                       </div>
-                      <span className="used_item_view">👀 {item.viewCount || 0}</span>
+                      <span className="used_item_view">
+                        👀 {item.viewCount || 0}
+                      </span>
                     </div>
                   </Link>
                 </li>
