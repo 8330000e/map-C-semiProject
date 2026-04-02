@@ -27,14 +27,22 @@ const Join = () => {
 
     console.log("가입 요청 전 상태:", member); // ← 회원가입 버튼 눌렀을 때 상태 확인
 
+    const BACKSERVER = import.meta.env.VITE_BACKSERVER;
+    if (!BACKSERVER) {
+      console.error("VITE_BACKSERVER 환경변수가 설정되지 않았습니다.");
+      alert("서버 요청 실패: VITE_BACKSERVER를 .env에 설정해주세요.");
+      return;
+    }
+
     axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/members`, member)
+      .post(`${BACKSERVER}/members`, member)
       .then((res) => {
         console.log(res.data);
         navigate("/members/login");
       })
       .catch((err) => {
-        console.log(err);
+        console.error("회원가입 에러:", err);
+        alert("회원가입 실패: " + (err.response?.data?.message || err.message));
       });
   };
 
