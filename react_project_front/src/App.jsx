@@ -21,6 +21,7 @@ import TestHeader from "./components/commons/TestHeader";
 
 import MapCommunity from "./pages/MapCommunityPage/MapCommunityPage";
 import TreeGrowMainPage from "./pages/TreeGrowMainPage/TreeGrowMainPage";
+import MissionListPage from "./pages/MissionListPage/MissionListPage";
 
 function App() {
   {
@@ -49,6 +50,7 @@ function App() {
 
           <Route path="/map-community" element={<MapCommunity />} />
           <Route path="/tree-grow" element={<TreeGrowMainPage />} />
+          <Route path="/mission" element={<MissionListPage />} />
         </Routes>
       </main>
       <Footer />

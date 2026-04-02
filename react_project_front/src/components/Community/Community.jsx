@@ -2,8 +2,12 @@ import { useEffect, useState } from "react";
 import styles from "./Community.module.css";
 import axios from "axios";
 import TextEditor from "./TextEditor";
+import useAuthStore from "../../store/useAuthStore";
 
 const Community = () => {
+  const { memberId } = useAuthStore();
+  const isLogin = !!memberId;
+
   const [mode, setMode] = useState("list");
   const [boardList, setBoardList] = useState([]);
 
@@ -182,20 +186,26 @@ const Community = () => {
                 </form>
 
                 <div className={styles.mapCommunityAction}>
-                  <button
-                    type="button"
-                    className={styles.mapCommunityBtn}
-                    onClick={() => setMode("write")}
-                  >
-                    게시글 작성
-                  </button>
+                  {isLogin && (
+                    <button
+                      type="button"
+                      className={styles.mapCommunityBtn}
+                      onClick={() => setMode("write")}
+                    >
+                      게시글 작성
+                    </button>
+                  )}
                 </div>
               </div>
 
               <div className={styles.boardListBox}>
                 {boardList.length > 0 ? (
                   boardList.map((board) => (
-                    <div className={styles.boardItem} key={board.boardNo}>
+                    <div
+                      className={styles.boardItem}
+                      key={board.boardNo}
+                      /* onClick={() => moveToDetail(board.boardNo)} //상세보기 기능 */
+                    >
                       <div className={styles.boardItemTop}>
                         <div className={styles.boardWriter}>
                           <span className={styles.writerIcon}>👤</span>

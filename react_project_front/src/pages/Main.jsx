@@ -183,7 +183,7 @@ const Main = () => {
               <Link to="/store">중고거래</Link>
             </li>
             <li>
-              <a href="#">미션</a>
+              <Link to="/mission">미션(출석체크)</Link>
             </li>
             <li>
               <Link to="/tree-grow" className="treeGrow">

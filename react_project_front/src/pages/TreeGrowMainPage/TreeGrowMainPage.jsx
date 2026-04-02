@@ -1,4 +1,4 @@
-import TreeGrowMain from "../../components/commons/TreeGrowMain/TreeGrowMain";
+import TreeGrowMain from "../../components/TreeGrowMain/TreeGrowMain";
 import styles from "./TreeGrowMainPage.module.css";
 
 const TreeGrowMainPage = () => {

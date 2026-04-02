@@ -1,24 +1,24 @@
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
 import styles from "./TreeGrowMain.module.css";
-import stage1Img from "../../../assets/img/stage1.png";
-import stage2Img from "../../../assets/img/stage2.png";
-import stage3Img from "../../../assets/img/stage3.png";
-import stage4Img from "../../../assets/img/stage4.png";
-import stage5Img from "../../../assets/img/stage5.png";
+import stage1Img from "../../assets/img/stage1.png";
+import stage2Img from "../../assets/img/stage2.png";
+import stage3Img from "../../assets/img/stage3.png";
+import stage4Img from "../../assets/img/stage4.png";
+import stage5Img from "../../assets/img/stage5.png";
 
 const TreeGrowMain = () => {
   const selectedRegion = {
     name: "서울",
     water: 250,
     multiplier: [
-      { name: "서울", value: "x1.0" },
+      { name: "서울", value: "x1.2" },
       { name: "경기", value: "x1.0" },
-      { name: "인천", value: "x1.0" },
-      { name: "충청권", value: "x1.2" },
-      { name: "전라권", value: "x1.2" },
-      { name: "경상권", value: "x1.2" },
-      { name: "강원권", value: "x1.5" },
-      { name: "제주권", value: "x1.7" },
+      { name: "인천", value: "x2.1" },
+      { name: "충청권", value: "x1.6" },
+      { name: "전라권", value: "x1.7" },
+      { name: "경상권", value: "x1.1" },
+      { name: "강원권", value: "x3.0" },
+      { name: "제주권", value: "x3.0" },
     ],
   };
 
@@ -62,9 +62,9 @@ const TreeGrowMain = () => {
 
   // 누적 경험치 기준
   const getStageByWater = (water) => {
-    if (water >= 5000) return 5;
-    if (water >= 3000) return 4;
-    if (water >= 2000) return 3;
+    if (water >= 10000) return 5;
+    if (water >= 5000) return 4;
+    if (water >= 3000) return 3;
     if (water >= 1000) return 2;
     return 1;
   };
