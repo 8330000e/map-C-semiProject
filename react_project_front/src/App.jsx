@@ -7,6 +7,7 @@ import "./font.css";
 import Footer from "./components/commons/Footer";
 import Header from "./components/commons/Header";
 import Main from "./pages/Main";
+
 import Store from "./components/board/store/store";
 import StoreDetail from "./components/board/store/storeDetail";
 import ProductRegistration from "./components/board/store/productRegistration";
@@ -17,6 +18,9 @@ import PaymentFail from "./pages/payment/PaymentFail";
 import JoinPage from "./pages/member/JoinPage";
 import LoginPage from "./pages/member/LoginPage";
 import TestHeader from "./components/commons/TestHeader";
+
+import MapCommunity from "./pages/MapCommunityPage/MapCommunityPage";
+import TreeGrowMainPage from "./pages/TreeGrowMainPage/TreeGrowMainPage";
 
 function App() {
   {
@@ -29,6 +33,7 @@ function App() {
       <main className="main">
         <Routes>
           <Route path="/" element={<Main />} />
+
           <Route path="/store" element={<Store />} />
           <Route path="/store/register" element={<ProductRegistration />} />
           <Route path="/store/:id" element={<StoreDetail />} />
@@ -41,6 +46,9 @@ function App() {
           <Route path="/join" element={<JoinPage />}></Route>
           <Route path="/members/login" element={<LoginPage />}></Route>
           <Route path="/test-header" element={<TestHeader />} />
+
+          <Route path="/map-community" element={<MapCommunity />} />
+          <Route path="/tree-grow" element={<TreeGrowMainPage />} />
         </Routes>
       </main>
       <Footer />

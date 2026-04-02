@@ -1,0 +1,183 @@
+.textEditorWrap {
+  width: 100%;
+}
+
+.editorToolbar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid #8f8f8f;
+  border-bottom: none;
+  background-color: #f8f8f8;
+  box-sizing: border-box;
+}
+
+.editorToolbar button {
+  border: none;
+  background: transparent;
+  color: #222;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+}
+
+.toolbarIconBtn,
+.toolbarBtn,
+.alignTrigger,
+.colorPickerBtn {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.toolbarBtn,
+.alignTrigger {
+  width: 42px;
+  gap: 0;
+}
+
+.toolbarIconBtn:hover,
+.toolbarBtn:hover,
+.alignTrigger:hover,
+.colorPickerBtn:hover {
+  background-color: #f1f1f1;
+}
+.toolbarIconBtn {
+  color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toolbarIconBtn svg {
+  color: inherit;
+}
+
+.disabledBtn {
+  color: #999;
+  opacity: 0.5;
+  cursor: default;
+}
+
+.toolbarDivider {
+  width: 1px;
+  height: 20px;
+  background-color: #d3d3d3;
+  margin: 0 10px;
+  flex-shrink: 0;
+}
+
+.fontDropdown,
+.alignDropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.fontMenu,
+.alignMenu {
+  position: absolute;
+  top: 34px;
+  left: 0;
+  background: #fff;
+  border: 1px solid #cfcfcf;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  z-index: 30;
+}
+
+.fontMenu {
+  min-width: 80px;
+}
+
+.fontMenu button {
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border: none;
+  background: #fff;
+  text-align: left;
+  font-size: 13px;
+}
+
+.fontMenu button:hover,
+.iconOnlyMenu button:hover {
+  background: #f3f3f3;
+}
+
+.iconOnlyMenu {
+  width: 42px;
+}
+
+.iconOnlyMenu button {
+  width: 42px;
+  height: 34px;
+  border: none;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.colorPickerBtn {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+  vertical-align: middle;
+  bottom: 6px;
+}
+
+.colorPickerBtn svg {
+  display: block;
+  position: relative;
+  top: 6px;
+  left: 4px;
+}
+
+.colorPickerBtn input[type="color"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.boardWriteEditor {
+  width: 100%;
+  min-height: 260px;
+  border: 1px solid #8f8f8f;
+  background-color: #fff;
+  padding: 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #111;
+  box-sizing: border-box;
+  outline: none;
+  overflow-y: auto;
+}
+
+.boardWriteEditor img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 8px 0;
+}
+
+.boardWriteEditor u {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}

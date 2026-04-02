@@ -1,0 +1,402 @@
+.mapCommunityWrap {
+  width: 100%;
+}
+
+.mapCommunityInner {
+  width: 100%;
+}
+
+.mapCommunityRight {
+  width: 100%;
+  height: 700px;
+  background-color: #ffffff;
+  border: 1px solid #dcdcdc;
+  border-radius: 20px;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 상단 필터 */
+.mapCommunityFilterRow {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.mapCommunitySelect {
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.mapCommunitySelect:focus {
+  border-color: #8fbf5a;
+}
+
+/* 검색 + 버튼 */
+.mapCommunityTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #ececec;
+}
+
+.mapCommunitySearchWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.searchTypeSelect {
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.mapCommunityInput {
+  flex: 1;
+  min-width: 0;
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+.mapCommunityInput:focus {
+  border-color: #8fbf5a;
+}
+
+.mapCommunityInput::placeholder {
+  color: #999;
+}
+
+.mapCommunityAction {
+  flex-shrink: 0;
+}
+
+.mapCommunityBtn {
+  height: 42px;
+  padding: 0 16px;
+  border: 1px solid #bfc7b2;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.mapCommunityBtn:hover {
+  background-color: #f3f8ea;
+  border-color: #8fbf5a;
+}
+
+/* 게시글 리스트 */
+.boardListBox {
+  max-height: 550px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.boardListBox::-webkit-scrollbar {
+  width: 8px;
+}
+
+.boardListBox::-webkit-scrollbar-thumb {
+  background-color: #cfcfcf;
+  border-radius: 8px;
+}
+
+.boardListBox::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.boardItem {
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  background-color: #fff;
+  padding: 14px 14px 12px;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.boardItem:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.boardItemTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.boardWriter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #444;
+}
+
+.writerIcon {
+  font-size: 14px;
+}
+
+.boardDate {
+  font-size: 12px;
+  color: #888;
+}
+
+.boardTitle {
+  font-size: 20px;
+  line-height: 1.5;
+  color: #2f3a2f;
+  margin-bottom: 12px;
+  word-break: keep-all;
+}
+
+.boardThumbnailBox {
+  margin-bottom: 12px;
+}
+
+.boardThumbnail {
+  width: 180px;
+  height: 120px;
+  border: 1px solid #d8d8d8;
+  border-radius: 8px;
+  background-color: #f3f3f3;
+  color: #888;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+}
+
+.boardItemBottom {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  font-size: 13px;
+  color: #666;
+}
+
+.emptyBoard {
+  border: 1px dashed #d8d8d8;
+  border-radius: 12px;
+  background-color: #fafafa;
+  color: #888;
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 14px;
+}
+
+/* 글쓰기 */
+.boardWriteWrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.boardWriteHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #ececec;
+  flex-shrink: 0;
+}
+.boardWriteHeader h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #2f3a2f;
+}
+
+.boardBackBtn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #d4d4d4;
+  border-radius: 8px;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.boardWriteScroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.boardWriteGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.boardWriteGroup label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #222;
+}
+
+.boardWriteInput {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.boardWriteInput:focus {
+  border-color: #8fbf5a;
+}
+.carbonBox,
+.writeMapBox {
+  width: 100%;
+  height: 200px;
+  border: none;
+  border-radius: 6px;
+  background-color: #b8d676;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #111;
+  font-size: 22px;
+  font-weight: 700;
+  box-sizing: border-box;
+}
+.boardWriteNotice {
+  padding: 10px 8px;
+  background-color: #fff;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #444;
+}
+
+.boardWriteNotice p {
+  margin: 0 0 6px 0;
+}
+
+.boardWriteNotice ul {
+  margin: 6px 0 0;
+  padding-left: 16px;
+}
+
+.boardWriteNotice li {
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.boardWriteNotice strong {
+  font-weight: 700;
+  color: #222;
+}
+
+.boardWriteNotice p {
+  margin: 0;
+}
+
+.boardSubmitBtn {
+  width: 100%;
+  height: 42px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  border-radius: 6px;
+  background-color: #a8cb59;
+  color: #111;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.boardSubmitBtn:hover {
+  background-color: #99bd4b;
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+  .mapCommunityTop {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mapCommunitySearchWrap {
+    width: 100%;
+  }
+
+  .mapCommunityAction {
+    width: 100%;
+  }
+
+  .mapCommunityAction .mapCommunityBtn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .mapCommunityFilterRow {
+    flex-direction: column;
+  }
+
+  .mapCommunitySearchWrap {
+    flex-wrap: wrap;
+  }
+
+  .searchTypeSelect {
+    width: 100%;
+  }
+
+  .mapCommunityInput {
+    width: 100%;
+    flex: unset;
+  }
+
+  .mapCommunityBtn {
+    width: 100%;
+  }
+
+  .boardThumbnail {
+    width: 100%;
+    height: 180px;
+  }
+}
