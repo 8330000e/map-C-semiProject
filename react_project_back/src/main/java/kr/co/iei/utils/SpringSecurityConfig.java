@@ -19,7 +19,22 @@ public class SpringSecurityConfig {
         .csrf(csrf -> csrf.disable()) // 필요 시 비활성화
         .authorizeHttpRequests(auth -> auth
         		//"/members/login", "/members"-> 직접 회원가입, 로그인 요청의 post 경로를 설정
-        		.requestMatchers("/members/login", "/members").permitAll() // permitAll-> 로그인 경로 허용(임시) 
+        		
+        		
+        		
+        		
+        		
+        		.requestMatchers("/members/login", "/members").permitAll() // permitAll-> 로그인 경로 허용(임시)
+        		//login 혹은 members일때만 받도록 설정하고 있어서 요청이 불발
+        		
+        		
+        		
+        		
+        		
+        		
+        		.requestMatchers("/members/**").permitAll()
+//        		 .anyRequest().permitAll() // 모든 요청 허용
+        		//members요청 전부 가능
         		//이 URL은 로그인 안 해도 들어와도 된다”
         		//현재 토큰이 없는 관계로 이 방식을 통해 리엑트와 연결 
                 .anyRequest().authenticated() // 나머지는 인증 필요

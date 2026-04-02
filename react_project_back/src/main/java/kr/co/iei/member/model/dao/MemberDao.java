@@ -15,4 +15,8 @@ public interface MemberDao {
 
 	Member getOneMemberInfo(String memberId);
 
+	Member memberPw(String memberId);
+
+	int updatePw(Member m);
+
 }

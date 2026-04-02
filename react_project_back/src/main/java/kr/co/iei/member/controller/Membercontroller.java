@@ -53,5 +53,15 @@ public class Membercontroller {
 		Member member = memberService.getOneMemberInfo(memberId);
 		return ResponseEntity.ok(member);
 	}
+	@PostMapping(value="/checkauth")
+	private ResponseEntity<?> changePw(@RequestBody Member member ){
+		boolean result = memberService.checkPw(member);
+		return ResponseEntity.ok(result);
+	}
+	@PatchMapping(value="/newpw")
+	public ResponseEntity<?> updatePw(@RequestBody Member m){
+		int result = memberService.updatePw(m);
+		return ResponseEntity.ok(result);
+	}
 
 }
