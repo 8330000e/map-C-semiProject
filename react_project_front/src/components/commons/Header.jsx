@@ -28,24 +28,47 @@ const Header = () => {
           {!memberId ? (
             <div className={styles.login}>
               <Link to="/members/login">
-                <button type="button">로그인</button>
+                <button
+                  type="button"
+                  className={`${styles.btn} ${styles.inline} ${styles.login_btn}`}
+                >
+                  로그인
+                </button>
               </Link>
               <Link to="/join">
-                <button type="button">회원가입</button>
+                <button
+                  type="button"
+                  className={`${styles.btn} ${styles.outline}`}
+                >
+                  회원가입
+                </button>
               </Link>
             </div>
           ) : (
             <div className={styles.profile_bar_wrap}>
               <div className={styles.profile_item}>
-                <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
+                <AccountCircleIcon
+                  sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.3 }}
+                />
                 <span>{memberNickname}</span>
               </div>
 
-              <NotificationsIcon sx={{ fontSize: 30, color: "#464d3e" }} />
-              <MailIcon sx={{ fontSize: 30, color: "#464d3e" }} />
-              <SettingsIcon sx={{ fontSize: 30, color: "#464d3e" }} />
+              <NotificationsIcon
+                sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }}
+              />
+              <MailIcon
+                sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }}
+              />
+              <SettingsIcon
+                sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }}
+              />
 
-              <button onClick={handleLogout}>로그아웃</button>
+              <button
+                onClick={handleLogout}
+                className={`${styles.btn} ${styles.outline}`}
+              >
+                로그아웃
+              </button>
             </div>
           )}
         </div>
