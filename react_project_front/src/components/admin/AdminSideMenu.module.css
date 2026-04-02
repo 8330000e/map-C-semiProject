@@ -1,5 +1,5 @@
 .side_menu_wrap {
-  padding: 28px 16px;
+  padding: 0px 16px;
 }
 
 .admin_profile {
@@ -43,4 +43,12 @@
   color: #ffffff;
   font-weight: 700;
   box-shadow: 0 6px 12px #111827;
+}
+.menu_item > span {
+    display: block;
+    width: 150px;
+}
+.menu_item {
+    display: flex;
+    align-items: center;
 }

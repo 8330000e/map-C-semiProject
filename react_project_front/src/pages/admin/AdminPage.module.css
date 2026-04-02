@@ -1,6 +1,6 @@
 .admin_outer {
   width: 100%;
-  min-height: 100vh;
+  
   background-color: #0b0f1a;
   display: flex;
   justify-content: center;
@@ -12,8 +12,8 @@
   width: 100%;
   margin: 0 auto;
   gap: 24px;
-  padding: 40px 24px 56px;
-  min-height: 100vh;
+  padding: 12px 24px 12px;
+  height: 100vh;
 }
 
 .admin_page_aside,
@@ -22,6 +22,7 @@
   border: 1px solid #334c69;
   border-radius: 18px;
   box-shadow: 0 12px 24px #0a0a0a;
+  height: 600px;
 }
 
 .admin_page_aside {
