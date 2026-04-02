@@ -17,6 +17,7 @@ import PaymentFail from "./pages/payment/PaymentFail";
 import JoinPage from "./pages/member/JoinPage";
 import LoginPage from "./pages/member/LoginPage";
 import TestHeader from "./components/commons/TestHeader";
+import AdminPage from "./pages/admin/AdminPage";
 
 function App() {
   {
@@ -41,6 +42,7 @@ function App() {
           <Route path="/join" element={<JoinPage />}></Route>
           <Route path="/members/login" element={<LoginPage />}></Route>
           <Route path="/test-header" element={<TestHeader />} />
+          <Route path="/admin/*" element={<AdminPage />} />
         </Routes>
       </main>
       <Footer />
