@@ -53,3 +53,27 @@
     filter: invert(1) brightness(2);
   }
 } */
+
+
+
+
+
+:root {
+  --admin-bg: #0b0f1a;
+  --admin-bg-2: #0a1224;
+  --admin-panel: #121826;
+  --admin-panel-2: #161f33;
+  --admin-stroke: #334c69;
+  --admin-stroke-strong: #5f7694;
+  --admin-text: #e6edf7;
+  --admin-muted: #9aa7bd;
+  --admin-accent: #5b8cff;
+  --admin-accent-soft: #1f2f53;
+  --admin-highlight: #2d456f;
+  --admin-success: #22c55e;
+  --admin-success-soft: #173726;
+  --admin-warning: #f6c356;
+  --admin-input-bg: #0f1624;
+  --admin-shadow: #0a0a0a;
+  --admin-card-shadow: #111827;
+}

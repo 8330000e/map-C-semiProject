@@ -5,7 +5,8 @@ import styles from "./AdminPage.module.css";
 import { useEffect } from "react";
 import AdminHeader from "../../components/admin/AdminHeader";
 import AdminFooter from "../../components/admin/AdminFooter";
-import AdminDashBoard from "../../components/admin/AdminDashBoard";
+import AdminDashBoard from "./AdminDashBoard";
+import AdminMember from "./AdminMember";
 
 const AdminPage = () => {
   useEffect(() => {
@@ -39,8 +40,8 @@ const AdminPage = () => {
             <Routes>
               <Route path="" element={<Navigate to="/admin/dashboard" />} />
               <Route path="dashboard" element={<AdminDashBoard />} />
-              {/*<Route path="members" element={<AdminMembers />} />
-            <Route path="support/*" element={<AdminSupport />} />*/}
+              <Route path="members" element={<AdminMember />} />
+              {/*<Route path="support/*" element={<AdminSupport />} />*/}
             </Routes>
           </div>
         </section>

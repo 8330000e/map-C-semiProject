@@ -1,5 +1,7 @@
 package kr.co.iei.member.model.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -54,4 +56,10 @@ public class MemberService {
 			}
 			return null;
 }
+
+
+		public List<Member> selectMemberList() {
+			List<Member> memberList = memberDao.selectMemberList();
+			return memberList;
+		}
 }
