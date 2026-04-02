@@ -33,10 +33,6 @@ header > .profile_bar_wrap {
   font-weight: 600;
   margin-right: 5px;
 }
-.login {
-  display: none;
-}
-
 /* Footer.jsx */
 .footer {
   margin-top: 10px;
