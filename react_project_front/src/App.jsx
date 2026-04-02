@@ -41,6 +41,7 @@ function App() {
           <Route path="/join" element={<JoinPage />}></Route>
           <Route path="/members/login" element={<LoginPage />}></Route>
           <Route path="/test-header" element={<TestHeader />} />
+          <Route path="/members/updatemyinfo" />
         </Routes>
       </main>
       <Footer />
