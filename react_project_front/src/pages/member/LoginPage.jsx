@@ -38,6 +38,11 @@ const Login = () => {
         console.log("응답 성공:", res);
         console.log("응답 데이터:", res.data);
 
+        if (res.data.token) {
+          axios.defaults.headers.common["Authorization"] =
+            `Bearer ${res.data.token}`;
+        }
+
         useAuthStore.getState().login(res.data);
         navigate("/");
       })
