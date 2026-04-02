@@ -1,0 +1,36 @@
+.admin_outer {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #0b0f1a;
+  display: flex;
+  justify-content: center;
+}
+
+.admin_wrap {
+  display: flex;
+  max-width: 1320px;
+  width: 100%;
+  margin: 0 auto;
+  gap: 24px;
+  padding: 40px 24px 56px;
+  min-height: 100vh;
+}
+
+.admin_page_aside,
+.admin_page_content {
+  background-color: #121826;
+  border: 1px solid #334c69;
+  border-radius: 18px;
+  box-shadow: 0 12px 24px #0a0a0a;
+}
+
+.admin_page_aside {
+  padding: 14px 8px;
+  flex: 0 0 260px;
+  max-width: 260px;
+}
+
+.admin_page_content {
+  padding: 12px 12px 20px;
+  flex: 1 1 auto;
+}
