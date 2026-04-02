@@ -269,3 +269,4 @@ const OrderPage = () => {
 };
 
 export default OrderPage;
+// 결제 전 주문정보(수령인/연락처/주소)를 입력받는 페이지입니다.

@@ -29,6 +29,13 @@ const Login = () => {
     //서버에 요청보내기전 member 값 제대로 들어있는지,서버 주소 undefined 아닌지 체크
     console.log("보내는 데이터:", member);
     console.log("서버 주소:", import.meta.env.VITE_BACKSERVER);
+
+    if (!import.meta.env.VITE_BACKSERVER) {
+      console.error("VITE_BACKSERVER 환경변수가 설정되지 않았습니다.");
+      alert("서버 요청 실패: .env에 VITE_BACKSERVER 설정이 필요합니다.");
+      return;
+    }
+
     //로그인에서는 setMember가 then에 들어가지 않는다.
     //왜냐하면 로그인이 되는지 안되는지만 판단하고, 수정 목적이 아니기 떄문
 
