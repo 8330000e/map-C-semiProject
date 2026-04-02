@@ -35,10 +35,13 @@ const OrderPage = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 
-	// storeDetail에서 전달받은 상품 정보 (itemId, 상품명, 가격)
+	// storeDetail에서 전달받은 상품 정보
 	const orderName = location.state?.orderName || "테스트 상품";
 	const amount = Number(location.state?.amount || 0);
+	const baseAmount = Number(location.state?.baseAmount || amount);
+	const deliveryFee = Number(location.state?.deliveryFee || 0);
 	const itemId = location.state?.itemId;
+	const deliveryMethod = location.state?.deliveryMethod || "delivery";
 
 	// 주문 정보 입력 필드 상태
 	const [receiverName, setReceiverName] = useState(""); // 수령인 이름
@@ -62,14 +65,15 @@ const OrderPage = () => {
 	/**
 	 * 폼 유효성 검사 함수
 	 * 필수 필드가 모두 입력되었는지 확인하고 에러 상태 업데이트
+	 * 직거래는 주소 정보 불필요
 	 * @returns {boolean} 모든 필드가 유효하면 true, 아니면 false
 	 */
 	const validateForm = () => {
 		const newErrors = {
 			receiverName: !receiverName.trim(),
 			phone: !phone.trim(),
-			zipCode: !zipCode.trim(),
-			address: !address.trim(),
+			zipCode: deliveryMethod === "delivery" ? !zipCode.trim() : false,
+			address: deliveryMethod === "delivery" ? !address.trim() : false,
 		};
 		setErrors(newErrors);
 		// 에러가 하나도 없으면 true 반환
@@ -142,7 +146,11 @@ const OrderPage = () => {
 			{/* 상품 정보 표시 영역 */}
 			<div className={styles.info_box}>
 				<p>상품명 : {orderName}</p>
-				<p>결제금액 : {amount.toLocaleString("ko-KR")}원</p>
+				<p>상품가격 : {baseAmount.toLocaleString("ko-KR")}원</p>
+				{deliveryFee > 0 && <p>배송비 : {deliveryFee.toLocaleString("ko-KR")}원</p>}
+				<p style={{ fontWeight: 700, borderTop: "1px solid #bcc6b2", paddingTop: "8px", marginTop: "8px" }}>
+					결제금액 : {amount.toLocaleString("ko-KR")}원
+				</p>
 			</div>
 
 			{/* 주문 정보 입력 폼 */}
@@ -184,7 +192,10 @@ const OrderPage = () => {
 					{errors.phone && <span className={styles.error_text}>연락처를 입력해주세요</span>}
 				</label>
 
-				{/* 우편번호 및 주소검색 버튼 */}
+			{/* 배송 방법이 택배인 경우만 주소 정보 표시 */}
+			{deliveryMethod === "delivery" && (
+				<>
+					{/* 우편번호 및 주소검색 버튼 */}
 				<div className={styles.address_search_row}>
 					<label>
 						우편번호 <span className={styles.required}>*</span>
@@ -231,6 +242,15 @@ const OrderPage = () => {
 					배송메모
 					<input value={deliveryMemo} onChange={(e) => setDeliveryMemo(e.target.value)} />
 				</label>
+				</>
+			)}
+
+			{/* 직거래의 경우 주의 메시지 */}
+			{deliveryMethod === "direct" && (
+				<div className={styles.info_message}>
+					📍 직거래 상품입니다. 판매자와 거래 시간 및 장소를 사전협의후 진행바랍니다.
+				</div>
+			)}
 			</div>
 
 			{/* 액션 버튼 영역 */}

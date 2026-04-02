@@ -248,6 +248,17 @@
 	color: #111;
 }
 
+.region_badge {
+	display: inline-block;
+	background: #464d3e;
+	color: #fff;
+	font-size: 12px;
+	padding: 4px 8px;
+	border-radius: 6px;
+	margin-bottom: 8px;
+	font-weight: 600;
+}
+
 .metaRow {
 	display: flex;
 	align-items: center;

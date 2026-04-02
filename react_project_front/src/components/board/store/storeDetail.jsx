@@ -66,6 +66,9 @@ const StoreDetail = () => {
 	const [editingText, setEditingText] = useState("");
 	// 상품 판매 상태 (기본값: 판매중)
 	const [saleStatus, setSaleStatus] = useState(() => getSaleStatusById(itemId));
+	// 배송 방법 선택 (기본값: 직거래)
+	const [deliveryMethod, setDeliveryMethod] = useState("direct");
+	const DELIVERY_FEE = 5000;
 
 	const handleAddComment = () => {
 		const text = newComment.trim();
@@ -160,11 +163,17 @@ const StoreDetail = () => {
 	};
 
 	const handleGoToPayment = () => {
+		const baseAmount = parsePriceToNumber(item.price);
+		const finalAmount = deliveryMethod === "delivery" ? baseAmount + DELIVERY_FEE : baseAmount;
+		
 		navigate("/payment/order", {
 			state: {
 				itemId,
 				orderName: item.title,
-				amount: parsePriceToNumber(item.price),
+				amount: finalAmount,
+				deliveryMethod,
+				baseAmount,
+				deliveryFee: deliveryMethod === "delivery" ? DELIVERY_FEE : 0,
 			},
 		});
 	};
@@ -185,11 +194,36 @@ const StoreDetail = () => {
 
 				<div className={styles.detail_summary}>
 					<p className={styles.price}>{item.price}</p>
+					<div className={styles.region_badge}>{item.region || "미등록"}</div>
 					<p>작성자 : {item.author}</p>
 					<p>조회수 : {item.viewCount}</p>
 					<p>댓글 : {item.comments}</p>
 
-					<div className={styles.info_box}>배송비 : 5,000원 / 거래방법 : 직거래 · 택배</div>
+					<div className={styles.delivery_box}>
+						<p>거래방법 선택 :</p>
+						<div className={styles.delivery_options}>
+							<label className={styles.delivery_option}>
+								<input
+									type="radio"
+									name="deliveryMethod"
+									value="direct"
+									checked={deliveryMethod === "direct"}
+									onChange={() => setDeliveryMethod("direct")}
+								/>
+								직거래 (배송비 무료)
+							</label>
+							<label className={styles.delivery_option}>
+								<input
+									type="radio"
+									name="deliveryMethod"
+									value="delivery"
+									checked={deliveryMethod === "delivery"}
+									onChange={() => setDeliveryMethod("delivery")}
+								/>
+								택배배송 (배송비 {DELIVERY_FEE.toLocaleString("ko-KR")}원)
+							</label>
+						</div>
+					</div>
 					<div className={styles.info_box}>상품 상태 : 중고, 구성품 없음</div>
 
 					<div className={styles.action_row}>
@@ -208,9 +242,14 @@ const StoreDetail = () => {
 							판매완료
 						</button>
 					</div>
-					<button type="button" className={styles.buy_button} onClick={handleGoToPayment}>
-						구매하기
-					</button>
+					<div className={styles.button_group}>
+						<button type="button" className={styles.cart_button}>
+							🛒 장바구니
+						</button>
+						<button type="button" className={styles.buy_button} onClick={handleGoToPayment}>
+							구매하기
+						</button>
+					</div>
 				</div>
 			</div>
 

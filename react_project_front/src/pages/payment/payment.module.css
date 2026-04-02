@@ -173,3 +173,14 @@
 .link_btn:active {
 	transform: scale(0.98);
 }
+
+.info_message {
+	background: #f0f4eb;
+	border: 1px solid #bcc6b2;
+	border-radius: 8px;
+	padding: 12px 14px;
+	color: #464d3e;
+	font-size: 14px;
+	margin: 16px 0;
+	font-weight: 500;
+}

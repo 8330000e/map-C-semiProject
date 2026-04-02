@@ -65,6 +65,17 @@
 	margin: 0 0 10px;
 }
 
+.region_badge {
+	display: inline-block;
+	background: #464d3e;
+	color: #fff;
+	font-size: 13px;
+	padding: 6px 12px;
+	border-radius: 6px;
+	margin-bottom: 12px;
+	font-weight: 600;
+}
+
 .detail_summary p {
 	margin: 0 0 6px;
 }
@@ -75,6 +86,42 @@
 	padding: 8px;
 	margin-top: 8px;
 	background: #f5f8f1;
+}
+
+.delivery_box {
+	border: 1px solid #c8d0bf;
+	border-radius: 8px;
+	padding: 12px;
+	margin-top: 8px;
+	background: #f5f8f1;
+}
+
+.delivery_box p {
+	margin: 0 0 8px;
+	font-weight: 600;
+	color: #464d3e;
+}
+
+.delivery_options {
+	display: flex;
+	gap: 16px;
+	flex-wrap: wrap;
+}
+
+.delivery_option {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+	font-size: 14px;
+	color: #464d3e;
+}
+
+.delivery_option input[type="radio"] {
+	cursor: pointer;
+	accent-color: #464d3e;
+	width: 16px;
+	height: 16px;
 }
 
 .action_row {
@@ -100,7 +147,6 @@
 }
 
 .action_row button,
-.buy_button,
 .comment_actions button,
 .comment_form button,
 .comment_edit_wrap button {
@@ -112,13 +158,44 @@
 	cursor: pointer;
 }
 
-.buy_button {
-	width: 100%;
+.button_group {
+	display: flex;
+	gap: 10px;
 	margin-top: 8px;
+}
+
+.cart_button {
+	flex: 1;
+	background: #fff;
+	color: #464d3e;
+	border: 1px solid #bcc6b2;
+	border-radius: 6px;
+	padding: 10px 12px;
+	cursor: pointer;
+	font-weight: 700;
+	transition: all 0.2s ease;
+}
+
+.cart_button:hover {
+	background: #f5f8f1;
+	border-color: #464d3e;
+}
+
+.buy_button {
+	flex: 1;
+	margin-top: 0;
 	background: #464d3e;
 	color: #fff;
 	border: none;
+	border-radius: 6px;
+	padding: 10px 12px;
 	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.buy_button:hover {
+	background: #3f4638;
 }
 
 .section_box {

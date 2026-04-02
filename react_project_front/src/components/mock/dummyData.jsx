@@ -102,11 +102,27 @@ const storeDummyData = (() => {
     const title = productTemplate[i % productTemplate.length];
 
     const priceValue = Math.floor(Math.random() * 80 + 5) * 1000;
+    
+    // 거래 가능 지역
+    const regions = [
+      "서울 강남구",
+      "서울 마포구",
+      "서울 송파구",
+      "서울 영등포구",
+      "서울 성동구",
+      "서울 용산구",
+      "서울 서초구",
+      "서울 동작구",
+      "서울 은평구",
+      "서울 강동구",
+    ];
+    
     return {
       id: 1001 + i,
       title,
-      price: `${priceValue.toLocaleString()}원`, // 1000 단위 콤마 추가
+      price: `${priceValue.toLocaleString()}원`,
       author: `에코상인${(i % 30) + 1}`,
+      region: regions[i % regions.length],
       date: `2026.03.${String((i % 28) + 1).padStart(2, "0")}`,
       comments: Math.floor(Math.random() * 12),
       viewCount: Math.floor(Math.random() * 2000) + 100,

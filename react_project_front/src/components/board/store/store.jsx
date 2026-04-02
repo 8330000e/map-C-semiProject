@@ -163,6 +163,7 @@ const Store = () => {
 								<div className={styles.image}>이미지</div>
 								<h3>{item.displayTitle}</h3>
 								<p className={styles.price}>{item.price}</p>
+								<div className={styles.region_badge}>{item.region}</div>
 								<div className={styles.metaRow}>
 									<span className={styles.author}>{item.author}</span>
 									<span className={styles.metaDivider}>|</span>
