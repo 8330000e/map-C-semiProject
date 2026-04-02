@@ -1,0 +1,14 @@
+.mypage_wrap {
+  width: 1200px;
+  margin: 30px auto;
+}
+.mypage_wrap > h1 {
+  text-align: center;
+  padding: 20px 0px;
+  margin: 20px 0px;
+}
+
+.mypage_content_wrap {
+  display: flex;
+  gap: 150px;
+}

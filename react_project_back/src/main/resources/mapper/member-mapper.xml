@@ -20,4 +20,11 @@
 
 		
 	</select>
+	<update id="updateMemberInfo">
+		update member_tbl set member_name=#{memberName}, member_nickname=#{memberNickname}, member_email=#{memberEmail}
+		where member_id=#{memberId}
+	</update>
+	<select id="getOneMemberInfo">
+		select member_name,member_email,enroll_date,member_status from member_tbl1 where member_id = #{memberId} 
+	</select>
 </mapper>

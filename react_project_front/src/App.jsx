@@ -17,6 +17,7 @@ import PaymentFail from "./pages/payment/PaymentFail";
 import JoinPage from "./pages/member/JoinPage";
 import LoginPage from "./pages/member/LoginPage";
 import TestHeader from "./components/commons/TestHeader";
+import Mypage from "./pages/member/MyPage";
 
 function App() {
   {
@@ -41,7 +42,7 @@ function App() {
           <Route path="/join" element={<JoinPage />}></Route>
           <Route path="/members/login" element={<LoginPage />}></Route>
           <Route path="/test-header" element={<TestHeader />} />
-          <Route path="/members/updatemyinfo" />
+          <Route path="/mypage/*" element={<Mypage />} />
         </Routes>
       </main>
       <Footer />

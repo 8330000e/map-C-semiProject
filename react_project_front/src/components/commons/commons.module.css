@@ -51,7 +51,7 @@ header > .profile_bar_wrap {
 .drawer_wrap {
   width: 100vw;
   min-height: 100vh;
-  position: absolute;
+  position: fixed;
   display: flex;
   right: 0;
   top: 0;

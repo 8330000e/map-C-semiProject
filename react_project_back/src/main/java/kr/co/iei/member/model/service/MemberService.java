@@ -54,4 +54,15 @@ public class MemberService {
 			}
 			return null;
 }
+		@Transactional
+		public int updateMemberInfo(Member form) {
+			int result = memberDao.updateMemberInfo(form);
+			return result;
+		}
+
+
+		public Member getOneMemberInfo(String memberId) {
+			Member member = memberDao.getOneMemberInfo(memberId);
+			return null;
+		}
 }
