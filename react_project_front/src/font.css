@@ -1,3 +1,7 @@
+/*
+  웹폰트를 등록하는 파일입니다.
+  @font-face로 Roboto, Jua 폰트를 프로젝트에서 사용할 수 있게 만듭니다.
+*/
 @font-face {
   font-family: "Roboto";
   src: url("./assets/font/Roboto-VariableFont_wdth,wght.ttf")
