@@ -85,6 +85,7 @@ public class MemberService {
 			m.setMemberPw(encodedNewMemberPw);
 			int result = memberDao.updatePw(m);
 			return result;
+		}
 
 
 		public List<Member> selectMemberList() {

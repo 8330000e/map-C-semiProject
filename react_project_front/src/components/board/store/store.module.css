@@ -353,3 +353,19 @@
 		grid-template-columns: 1fr;
 	}
 }
+.search_box select,
+.search_box input {
+  color: #333 !important;
+  background-color: #fff !important;
+  border: 1px solid #c2c2c2;
+  border-radius: 6px;
+}
+
+.search_box select option {
+  color: #333;
+  background-color: #fff;
+}
+
+.search_box input::placeholder {
+  color: #999;
+}
