@@ -10,7 +10,7 @@ import useAuthStore from "../../store/useAuthStore";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { memberId, memberNickname, logout } = useAuthStore();
+  const { memberId, memberNickname, logout, memberGrade } = useAuthStore();
 
   //로그아웃버튼을 누르면 로그인 , 회원가입 버튼이 나오면서 메인화면으로 리턴
   const handleLogout = () => {
@@ -46,12 +46,22 @@ const Header = () => {
             </div>
           ) : (
             <div className={styles.profile_bar_wrap}>
-              <div className={styles.profile_item}>
-                <AccountCircleIcon
-                  sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.3 }}
-                />
-                <span>{memberNickname}</span>
-              </div>
+              {memberGrade === 1 ? (
+                <div
+                  className={styles.profile_item}
+                  onClick={() => {
+                    navigate("/admin");
+                  }}
+                >
+                  <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
+                  <span>{memberNickname}</span>
+                </div>
+              ) : (
+                <div className={styles.profile_item}>
+                  <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
+                  <span>{memberNickname}</span>
+                </div>
+              )}
 
               <NotificationsIcon
                 sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }}
@@ -62,7 +72,6 @@ const Header = () => {
               <SettingsIcon
                 sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }}
               />
-
               <button
                 onClick={handleLogout}
                 className={`${styles.btn} ${styles.outline}`}
