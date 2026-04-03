@@ -2,6 +2,7 @@
 // 공통 헤더/푸터를 렌더링하고, URL 경로에 따라 페이지를 라우팅합니다.
 import { useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import "./index.css";
 import "./App.css";
 import "./font.css";
 import Footer from "./components/commons/Footer";
@@ -29,7 +30,7 @@ function App() {
     2. 로그인 후 null이 아닌 memeber state를 useAthsore에 저장*/
   }
   return (
-    <div className="carbonconnect wrap">
+    <div className="carbonconnect">
       <Header />
       <main className="main">
         <Routes>

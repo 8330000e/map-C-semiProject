@@ -30,7 +30,7 @@ const Header = () => {
               <Link to="/members/login">
                 <button
                   type="button"
-                  className={`${styles.btn} ${styles.inline} ${styles.login_btn}`}
+                  className={`btn ${styles.btn} ${styles.inline} ${styles.login_btn}`}
                 >
                   로그인
                 </button>
@@ -38,7 +38,7 @@ const Header = () => {
               <Link to="/join">
                 <button
                   type="button"
-                  className={`${styles.btn} ${styles.outline}`}
+                  className={`btn ${styles.btn} ${styles.outline}`}
                 >
                   회원가입
                 </button>
