@@ -14,3 +14,115 @@
   min-height: 550px;
   gap: 150px;
 }
+
+.profilePane {
+  width: 280px;
+  background: #d2efb1;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 8px rgba(70, 77, 62, 0.16);
+}
+
+.profileAvatar {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  background: #dbe8c8;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: #49621e;
+}
+
+.profileInfo {
+  color: #2f4b08;
+  line-height: 1.6;
+}
+
+.carbonBox {
+  border: 1px solid #9ebd77;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 14px;
+  background: #f3f9e3;
+  font-weight: bold;
+  text-align: center;
+}
+
+.historyPane {
+  flex: 1;
+  background: #f8faf2;
+  border: 1px solid #c8d0bf;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 8px rgba(70, 77, 62, 0.16);
+}
+
+.tabRow {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.tabButton {
+  border: 1px solid #abc27f;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  background: #fff;
+  color: #3f502d;
+  font-weight: 600;
+}
+
+.activeTab {
+  background: #3f502d;
+  color: #fff;
+}
+
+.histList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.histListWrap {
+  min-height: 220px;
+}
+
+.histCard {
+  background: #fff;
+  border: 1px solid #c8d0bf;
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 1px 5px rgba(70, 77, 62, 0.12);
+}
+
+.histTitle {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.histMeta {
+  color: #4f4f4f;
+  font-size: 0.88rem;
+  margin-bottom: 8px;
+}
+
+.histPrice {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.histTradeType {
+  color: #5a6f4a;
+  font-weight: 600;
+}
+
+.emptyText {
+  padding: 40px;
+  text-align: center;
+  color: #6f7965;
+}

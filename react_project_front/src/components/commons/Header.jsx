@@ -141,8 +141,22 @@ const Header = () => {
                       내 포인트
                     </NavLink>
                     {/**구매내역 및 판매 내역부분(변창님 참고) */}
-                    <NavLink>구매내역</NavLink>
-                    <NavLink>판매내역</NavLink>
+                    <NavLink
+                      to="/mypage/history/purchase"
+                      onClick={() => {
+                        setDrawer(false);
+                      }}
+                    >
+                      구매내역
+                    </NavLink>
+                    <NavLink
+                      to="/mypage/history/sale"
+                      onClick={() => {
+                        setDrawer(false);
+                      }}
+                    >
+                      판매내역
+                    </NavLink>
                   </div>
                 </div>
               </div>
