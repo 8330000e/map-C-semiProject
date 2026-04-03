@@ -30,7 +30,7 @@ const AdminSideMenu = ({ memberNickname }) => {
         to="/admin/members"
       >
         <div className={styles.menu_item}>
-          <span>회원통합관리</span>
+          <span>회원관리</span>
           <PeopleAltIcon sx={{ fontSize: 30, color: "#0068EF" }} />
         </div>
       </NavLink>
@@ -47,7 +47,7 @@ const AdminSideMenu = ({ memberNickname }) => {
 
       <NavLink
         className={({ isActive }) => (isActive ? styles.active_menu : "")}
-        to="/admin/support"
+        to="/admin/report"
       >
         <div className={styles.menu_item}>
           <span>신고센터</span>
@@ -57,7 +57,7 @@ const AdminSideMenu = ({ memberNickname }) => {
 
       <NavLink
         className={({ isActive }) => (isActive ? styles.active_menu : "")}
-        to="/admin/report"
+        to="/admin/support"
       >
         <div className={styles.menu_item}>
           <span>고객센터</span>
@@ -67,7 +67,7 @@ const AdminSideMenu = ({ memberNickname }) => {
 
       <NavLink
         className={({ isActive }) => (isActive ? styles.active_menu : "")}
-        to="/admin/report"
+        to="/admin/log"
       >
         <div className={styles.menu_item}>
           <span>시스템로그</span>

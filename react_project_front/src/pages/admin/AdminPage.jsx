@@ -7,6 +7,7 @@ import AdminHeader from "../../components/admin/AdminHeader";
 import AdminFooter from "../../components/admin/AdminFooter";
 import AdminDashBoard from "./AdminDashBoard";
 import AdminMember from "./AdminMember";
+import AdminSupport from "./AdminSupport";
 
 const AdminPage = () => {
   useEffect(() => {
@@ -41,7 +42,7 @@ const AdminPage = () => {
               <Route path="" element={<Navigate to="/admin/dashboard" />} />
               <Route path="dashboard" element={<AdminDashBoard />} />
               <Route path="members" element={<AdminMember />} />
-              {/*<Route path="support/*" element={<AdminSupport />} />*/}
+              <Route path="support/*" element={<AdminSupport />} />
             </Routes>
           </div>
         </section>
