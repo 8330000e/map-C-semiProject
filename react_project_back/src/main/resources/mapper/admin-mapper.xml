@@ -1,6 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.co.iei.admin.model.dao.AdminDao">
+	<insert id="insertNotice">
+		insert into notice_tbl values (
+			notice_seq.nextval,
+			#{noticeTitle},
+			#{noticeContent},
+			sysdate,
+			0,
+			#{noticePublic},
+			#{noticeFixed}
+		)
+	</insert>
 	
+	<select id="selectNoticeList" resultType="notice">
+		select
+			notice_no,
+			notice_fixed,
+			notice_title,
+			notice_content,
+			notice_date
+		from notice_tbl
+		order by notice_fixed desc, notice_date desc
+	</select>
+	
+	<update id="editNotice">
+		update notice_tbl set 
+			notice_title = #{noticeTitle},
+			notice_content = #{noticeContent},
+			notice_public = #{noticePublic},
+			notice_fixed = #{noticeFixed}
+		where notice_no = #{noticeNo}
+	</update>
 
 </mapper>
