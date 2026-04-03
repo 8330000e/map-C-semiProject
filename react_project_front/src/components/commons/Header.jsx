@@ -1,17 +1,15 @@
 // 상단 헤더 UI 컴포넌트입니다.
 // 로고, 로그인 영역, 사용자 아이콘 메뉴를 렌더링합니다.
 import styles from "./commons.module.css";
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MailIcon from "@mui/icons-material/Mail";
 import SettingsIcon from "@mui/icons-material/Settings";
 import useAuthStore from "../../store/useAuthStore";
-import { useState } from "react";
 
 const Header = () => {
   const navigate = useNavigate();
-  const [drawer, setDrawer] = useState(false);
   const { memberId, memberNickname, logout, memberGrade } = useAuthStore();
 
   //로그아웃버튼을 누르면 로그인 , 회원가입 버튼이 나오면서 메인화면으로 리턴
@@ -55,97 +53,31 @@ const Header = () => {
                     navigate("/admin");
                   }}
                 >
-                  <AccountCircleIcon sx={{ fontSize: 30, color: "#464D3E" }} />
+                  <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
                   <span>{memberNickname}</span>
                 </div>
               ) : (
-                <div
-                  className={styles.profile_item}
-                  onClick={() => {
-                    setDrawer(true);
-                  }}
-                >
+                <div className={styles.profile_item}>
                   <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
                   <span>{memberNickname}</span>
                 </div>
               )}
 
-              <NotificationsIcon sx={{ fontSize: 30, color: "#464d3e" }} />
-              <MailIcon sx={{ fontSize: 30, color: "#464d3e" }} />
-              <SettingsIcon sx={{ fontSize: 30, color: "#464d3e" }} />
-
-              <button onClick={handleLogout}>로그아웃</button>
-              <div
-                className={`${styles.drawer_wrap} ${drawer ? styles.drawer_open : styles.drawer_close}`}
-                onClick={() => {
-                  setDrawer(false);
-                }}
+              <NotificationsIcon
+                sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }}
+              />
+              <MailIcon
+                sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }}
+              />
+              <SettingsIcon
+                sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }}
+              />
+              <button
+                onClick={handleLogout}
+                className={`${styles.btn} ${styles.outline}`}
               >
-                <div className={`${styles.drawer_helper}`}></div>
-                <div className={`${styles.header_drawer}`}>
-                  <div className={styles.drawer_menue}>
-                    <NavLink
-                      to="/mypage/updateMyInfo"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      내 정보
-                    </NavLink>
-                    <NavLink
-                      to="/mypage/changePw"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      비밀번호 변경
-                    </NavLink>
-                    <NavLink
-                      to="/mypage/myBoard"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      내 게시판
-                    </NavLink>
-                    <NavLink
-                      to="/mypage/myLikeBoard"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      좋아요누른 게시판
-                    </NavLink>
-                    <NavLink
-                      to="/mypage/tipScrap"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      팁 스크랩
-                    </NavLink>
-                    <NavLink
-                      to="/mypage/leaveMember"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      회원 탈퇴
-                    </NavLink>
-                    <NavLink
-                      to="/mypage/myPoint"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      내 포인트
-                    </NavLink>
-                    {/**구매내역 및 판매 내역부분(변창님 참고) */}
-                    <NavLink>구매내역</NavLink>
-                    <NavLink>판매내역</NavLink>
-                  </div>
-                </div>
-              </div>
+                로그아웃
+              </button>
             </div>
           )}
         </div>
