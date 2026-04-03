@@ -1,6 +1,6 @@
 .updatemyinfo_main_content_wrap {
   width: 700px;
-  background-color: #efefef;
+  background-color: var(--gray7);
   border-radius: 10px;
 }
 .updatemyinfo_title_wrap {

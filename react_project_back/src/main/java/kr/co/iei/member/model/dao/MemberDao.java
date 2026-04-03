@@ -22,4 +22,6 @@ public interface MemberDao {
 	int updatePw(Member m);
 	List<Member> selectMemberList();
 
+	int updateMemberThumb(Member mem);
+
 }

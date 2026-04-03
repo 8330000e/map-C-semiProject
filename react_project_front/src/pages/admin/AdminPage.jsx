@@ -1,6 +1,6 @@
 import { Navigate, Routes, Route } from "react-router-dom";
 import AdminSideMenu from "../../components/admin/AdminSideMenu";
-import useAuthStore from "../../store/useAuthStore";
+import useAuthStore from "../../store/useAuthStore.js";
 import styles from "./AdminPage.module.css";
 import { useEffect } from "react";
 import AdminHeader from "../../components/admin/AdminHeader";

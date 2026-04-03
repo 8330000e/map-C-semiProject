@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import styles from "./UpdateMyInfo.module.css";
 import axios from "axios";
 import MyInformation from "./MyInformation";
-import useAuthStore from "../../store/useAuthStore";
+import useAuthStore from "../../store/useAuthStore.js";
+import { Input } from "../ui/Form";
+// import { Button } from "../ui/Button";
 
 const UpdateMyInfo = () => {
   const { memberId } = useAuthStore();
@@ -49,9 +51,9 @@ const UpdateMyInfo = () => {
             }}
           >
             <label htmlFor="updateId">아이디</label>
-            <input id="updateId" readOnly value={memberId} />
+            <Input id="updateId" readOnly value={memberId} />
             <label htmlFor="updateName">실명</label>
-            <input
+            <Input
               id="updateName"
               name="memberName"
               value={updateNameSt}
@@ -62,7 +64,7 @@ const UpdateMyInfo = () => {
               }}
             />
             <label htmlFor="updateNickname">별명</label>
-            <input
+            <Input
               id="updateNickname"
               name="memberNickname"
               value={updateNicknameSt}
@@ -72,7 +74,7 @@ const UpdateMyInfo = () => {
               }}
             />
             <label htmlFor="updateEmail">이메일</label>
-            <input
+            <Input
               id="updateEmail"
               name="memberEmail"
               value={updateEmailSt}

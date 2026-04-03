@@ -86,9 +86,15 @@ public class MemberService {
 			int result = memberDao.updatePw(m);
 			return result;
 
-
+		}
 		public List<Member> selectMemberList() {
 			List<Member> memberList = memberDao.selectMemberList();
 			return memberList;
+		}
+
+		@Transactional
+		public int updateMemberThumb(Member mem) {
+			int result = memberDao.updateMemberThumb(mem);
+			return result;
 		}
 }

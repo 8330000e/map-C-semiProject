@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
 import { dummyData, storeDummyData } from "../components/mock/dummyData";
-import useAuthStore from "../store/useAuthStore";
+import useAuthStore from "../store/useAuthStore.js";
 
 const STORE_STATUS_KEY = "storeSaleStatusMap";
 

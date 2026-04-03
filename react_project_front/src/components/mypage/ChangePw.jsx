@@ -1,9 +1,11 @@
 import { useState } from "react";
 import styles from "./ChangePw.module.css";
-import useAuthStore from "../../store/useAuthStore";
+import useAuthStore from "../../store/useAuthStore.js";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { Input } from "../ui/Form";
+// import { Button } from "../ui/Button";
 
 const ChangePw = () => {
   const navigate = useNavigate();
@@ -69,7 +71,7 @@ const ChangePw = () => {
               <label htmlFor="checkMemberPw">
                 현재 사용하고 있는 비밀번호 입력
               </label>
-              <input
+              <Input
                 type="password"
                 id="checkMemberPw"
                 name="memberPw"
@@ -80,15 +82,13 @@ const ChangePw = () => {
                   });
                 }}
               />
-              <button type="button" onClick={checkPw}>
-                인증
-              </button>
+              <button onClick={checkPw}>인증</button>
             </div>
           )}
           {isAuth ? (
             <div>
               <label htmlFor="newMemberPw">새 비밀번호 입력</label>
-              <input
+              <Input
                 type="password"
                 id="newMemberPw"
                 value={newPw}
@@ -97,7 +97,7 @@ const ChangePw = () => {
                 }}
               />
               <label htmlFor="newPwIsTrue">새비밀번호 확인</label>
-              <input
+              <Input
                 type="password"
                 id="newPwIsTrue"
                 value={checkNewPw}
@@ -106,9 +106,7 @@ const ChangePw = () => {
                 }}
               />
               {newPw === checkNewPw && newPw !== "" && (
-                <button type="button" onClick={updateNewPw}>
-                  변경
-                </button>
+                <button onClick={updateNewPw}>변경</button>
               )}
             </div>
           ) : (
