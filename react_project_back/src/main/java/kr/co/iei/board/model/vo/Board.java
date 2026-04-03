@@ -19,4 +19,25 @@ public class Board {
 	private String boardThumb;
 	private String memberNickname;
 	private Integer boardStatus;
+
+	// Explicit setter for IDE/compiler compatibility
+	public void setBoardStatus(int boardStatus) {
+		this.boardStatus = boardStatus;
+	}
+
+	public void setWriterId(String writerId) {
+		this.writerId = writerId;
+	}
+
+	public void setBoardTitle(String boardTitle) {
+		this.boardTitle = boardTitle;
+	}
+
+	public void setBoardContent(String boardContent) {
+		this.boardContent = boardContent;
+	}
+
+	public void setBoardThumb(String boardThumb) {
+		this.boardThumb = boardThumb;
+	}
 }

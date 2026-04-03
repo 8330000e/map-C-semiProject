@@ -3,16 +3,18 @@ package kr.co.iei.store.controller;
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.store.model.service.StoreBoardService;
 import kr.co.iei.store.model.vo.StoreBoard;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/store")
-@RequiredArgsConstructor
 public class StoreBoardController {
 
     private final StoreBoardService storeBoardService;
+
+    public StoreBoardController(StoreBoardService storeBoardService) {
+        this.storeBoardService = storeBoardService;
+    }
 
     @PostMapping("/boards")
     public ResponseEntity<Long> createStoreBoard(@RequestBody StoreBoard storeBoard) {
