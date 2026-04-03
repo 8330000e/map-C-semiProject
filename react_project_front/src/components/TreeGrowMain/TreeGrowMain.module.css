@@ -30,13 +30,13 @@
 }
 
 .regionName {
-  font-size: 18px;
+  font-size: 25px;
   font-weight: 700;
   color: #111;
 }
 
 .stageText {
-  font-size: 15px;
+  font-size: 25px;
   font-weight: 700;
   color: #111;
 }
@@ -67,7 +67,7 @@
 
 .multiplierTitle {
   margin: 0 0 6px;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 700;
   color: #111;
 }
@@ -81,7 +81,7 @@
 .multiplierList li {
   display: flex;
   gap: 8px;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.3;
   color: #111;
   font-weight: 600;
@@ -104,70 +104,112 @@
 }
 
 .treeBox {
-  width: 100%;
-  height: 190px;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 70px;
-  overflow: hidden;
+  overflow: visible;
 }
 
-.treeImageWrap {
-  width: 100%;
-  height: 100%;
+.treeFloatWrap {
+  width: 320px;
+  height: 260px;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
+  animation: treeFloat 3.2s ease-in-out infinite;
+}
+
+.treeScaleWrap {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  transform-origin: bottom center;
+  transition: transform 0.45s ease;
+  animation: growPop 0.7s ease;
 }
 
 .treeImage {
-  width: 300px;
-  max-width: 300px;
-  max-height: 300px;
-  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
-  display: block;
+  object-position: bottom center;
+  filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.15));
+}
+
+@keyframes growPop {
+  0% {
+    opacity: 0.65;
+    transform: scale(0.82) translateY(16px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08) translateY(-6px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes treeFloat {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 /* 하단 왼쪽 물방울 */
 .waterActionRow {
-  grid-column: 1 / 4;
-  grid-row: 3;
-  display: grid;
-  grid-template-columns: 220px 1fr 220px;
-  align-items: end;
-  width: 100%;
-  padding-bottom: 8px;
-  z-index: 2;
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 16px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 }
 
-.waterDropWrap {
-  grid-column: 1;
+.waterInfoBox {
   display: flex;
   align-items: flex-end;
   gap: 10px;
 }
 
-.waterDrop {
+.waterGauge {
   position: relative;
-  width: 58px;
+  width: 74px;
+  height: 110px;
+  flex-shrink: 0;
+}
+
+.waterGaugeInner {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  width: 45px;
   height: 82px;
-  border: 2px solid #222;
-  background: #fff;
   overflow: hidden;
+  z-index: 1;
   clip-path: polygon(
     50% 0%,
-    84% 30%,
-    96% 52%,
-    90% 78%,
-    68% 100%,
-    32% 100%,
-    10% 78%,
-    4% 52%,
-    16% 30%
+    83% 27%,
+    95% 48%,
+    91% 72%,
+    73% 94%,
+    50% 100%,
+    27% 94%,
+    9% 72%,
+    5% 48%,
+    17% 27%
   );
-  flex-shrink: 0;
 }
 
 .waterFill {
@@ -175,21 +217,29 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: #2f80ed;
+  background: linear-gradient(180deg, #5ca9ff 0%, #2f80ed 100%);
+  transition: height 0.5s ease;
+}
+
+.waterDropImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 2;
 }
 
 .waterText {
-  font-size: 12px;
+  font-size: 15px;
   color: #111;
   white-space: nowrap;
-  margin-bottom: 6px;
   font-weight: 600;
+  margin-bottom: 6px;
 }
 
-/* 하단 오른쪽 버튼 */
 .waterButton {
-  grid-column: 3;
-  justify-self: end;
   border: 1px solid #8ea54a;
   background: #b8d564;
   color: #111;
@@ -200,9 +250,8 @@
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
-  pointer-events: auto;
+  margin-bottom: 6px;
 }
-
 /* 하단 카드 */
 .chartCard {
   height: 250px;
@@ -334,4 +383,318 @@
     grid-column: 1;
     grid-row: auto;
   }
+}
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  backdrop-filter: blur(4px);
+}
+
+.modalBox {
+  width: 620px;
+  padding: 32px;
+  border-radius: 16px;
+  background: #fff;
+  text-align: center;
+  position: relative;
+}
+
+.modalWater {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.modalGauge {
+  position: relative;
+  width: 92px;
+  height: 120px;
+}
+
+.modalGaugeInner {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  width: 52px;
+  height: 82px;
+  overflow: hidden;
+  z-index: 1;
+
+  clip-path: polygon(
+    50% 2%,
+    77% 20%,
+    90% 40%,
+    88% 67%,
+    72% 88%,
+    50% 98%,
+    28% 88%,
+    12% 67%,
+    10% 40%,
+    23% 20%
+  );
+}
+
+.modalFill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(116, 191, 255, 0.95) 0%,
+    rgba(61, 148, 241, 0.95) 55%,
+    rgba(33, 116, 214, 1) 100%
+  );
+  transition: height 0.45s ease;
+  overflow: hidden;
+}
+
+.modalWave {
+  position: absolute;
+  top: -8px;
+  left: -10%;
+  width: 120%;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  filter: blur(0.4px);
+}
+
+.modalWaterDrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 2;
+  pointer-events: none;
+}
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.modalCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.currentText {
+  font-size: 15px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+.pointText {
+  margin-top: 6px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+}
+
+/* 버튼 줄 */
+.amountButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.amountButtons button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* 빨간 버튼 */
+.amountButtons button:nth-child(-n + 3) {
+  background: #ff6b6b;
+  color: white;
+}
+
+/* 초록 버튼 */
+.amountButtons button:nth-child(n + 4) {
+  background: #9acd32;
+  color: black;
+}
+
+/* 하단 큰 버튼 */
+.confirmFullBtn {
+  width: 100%;
+  padding: 14px;
+  background: #9acd32;
+  border: none;
+  border-radius: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 아이콘 크기 */
+.closeBtn svg {
+  font-size: 28px;
+  color: #333;
+}
+
+/* hover 효과 */
+.closeBtn:hover svg {
+  color: #000;
+  transform: scale(1.1);
+}
+.completeModalBox {
+  width: 440px;
+  background: #f3f3f3;
+  border: 1px solid #777;
+  padding: 28px 24px;
+}
+
+.completeInner {
+  border: 1px solid #777;
+  border-radius: 6px;
+  background: #f8f8f8;
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.completeTitle {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+
+.completeWaterWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.completeGauge {
+  position: relative;
+  width: 120px;
+  height: 150px;
+}
+
+.completeGaugeInner {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 105px;
+  overflow: hidden;
+  z-index: 1;
+  clip-path: polygon(
+    50% 0%,
+    82% 24%,
+    94% 45%,
+    90% 72%,
+    73% 93%,
+    50% 100%,
+    27% 93%,
+    10% 72%,
+    6% 45%,
+    18% 24%
+  );
+}
+
+.completeFill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, #56a8ff 0%, #2f80ed 100%);
+  transition: height 0.5s ease;
+  overflow: hidden;
+}
+
+.completeWave {
+  position: absolute;
+  top: -8px;
+  left: -10%;
+  width: 120%;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+}
+
+.completeWaterDrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 2;
+}
+
+.completeAmountText {
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.remainPointText {
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.completeBtn {
+  margin-top: 16px;
+  width: 220px;
+  height: 42px;
+  border: none;
+  border-radius: 8px;
+  background: #a8c94d;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.infoRow {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+}
+
+/* 왼쪽 */
+.leftText {
+  text-align: left;
+}
+
+/* 가운데 */
+.centerText {
+  text-align: center;
+  flex: 1;
+}
+
+/* 오른쪽 */
+.rightText {
+  text-align: right;
 }
