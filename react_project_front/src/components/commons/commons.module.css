@@ -32,6 +32,8 @@ header > h1 a:active {
   align-items: center;
   cursor: pointer;
 }
+.btn:hover {
+}
 .outline {
   border: 2.5px solid #464d3e;
   background-color: #464d3e;

@@ -17,7 +17,16 @@
 	<select id="selectOneMember" resultType="member">
 		select * from member_tbl1
 		where member_id =#{memberId}
-
-		
+	</select>
+	
+	<select id="selectMemberList" resultType="member">
+		select
+			member_id,
+			member_name,
+			member_email,
+			enroll_date,
+			member_grade,
+			member_status
+		from member_tbl1
 	</select>
 </mapper>
