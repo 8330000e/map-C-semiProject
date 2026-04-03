@@ -1,37 +1,96 @@
-/*
-  프로젝트 기본 스타일 실험/초기 설정 파일입니다.
-  현재는 대부분 주석 처리된 샘플 스타일이 들어 있습니다.
-*/
-/* :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+:root {
+  font-family: Roboto, system-ui, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #464d3e;
 
-  --sans: system-ui, "Segoe UI", Roboto, sans-serif;
-  --heading: system-ui, "Segoe UI", Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  --color1: #464d3e;
+  --color2: #fbfff5;
+  --color3: #ffffff;
+
+  --gray1: #222222;
+  --gray2: #555555;
+  --gray3: #717171;
+  --gray4: #8f8f8f;
+  --gray5: #b7b7b7;
+  --gray6: #d6d6d6;
+  --gray7: #efefef;
+  --gray8: #ffffff;
+
+  --text1: #464d3e;
+  --text2: #929292;
+
+  --bg: #464d3e;
+
+  --danger: #ff593c;
+  --border: 1.8px solid #464d3e;
+  --shadow: --sans: system-ui, "Roboto", sans-serif;
+  --headline: system-ui, "Jua", sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+}
+a {
+  font-weight: 500;
+  color: #464d3e;
+  text-decoration: none;
+}
+a:hover {
+  color: #464d3e;
+}
+.btn {
+  cursor: pointer;
+  font-size: 14px;
+  padding: 9px 20px;
+  border: none;
+  border-radius: 10px;
+  padding-top: 12px;
+  transition-duration: 0.3;
+}
+/*btn용*/
+.outline {
+  border: 2.5px solid #464d3e;
+  background-color: #464d3e;
+  color: #fff;
+}
+/*btn용*/
+.inline {
+  border: 2.5px solid #464d3e;
+  background-color: transparent;
+  color: #464d3e;
+}
+.btn:hover {
+  transform: scale(1.1);
+}
+/*
+.wrap {
+  border: 1.8px solid var(--color1);
+  padding: 20px 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+  */
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.title {
+  font-size: 1.5em;
+  font-weight: 600;
+}
+.info {
+  font-size: 0.8em;
+  color: var(--text2);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -52,4 +111,23 @@
   #social .button-icon {
     filter: invert(1) brightness(2);
   }
-} */
+}
+:root {
+  --admin-bg: #0b0f1a;
+  --admin-bg-2: #0a1224;
+  --admin-panel: #121826;
+  --admin-panel-2: #161f33;
+  --admin-stroke: #334c69;
+  --admin-stroke-strong: #5f7694;
+  --admin-text: #e6edf7;
+  --admin-muted: #9aa7bd;
+  --admin-accent: #5b8cff;
+  --admin-accent-soft: #1f2f53;
+  --admin-highlight: #2d456f;
+  --admin-success: #22c55e;
+  --admin-success-soft: #173726;
+  --admin-warning: #f6c356;
+  --admin-input-bg: #0f1624;
+  --admin-shadow: #0a0a0a;
+  --admin-card-shadow: #111827;
+}

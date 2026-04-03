@@ -21,8 +21,8 @@ public class Member {
     private String memberEmail;
     private String memberThumb;
     private Date enrollDate;                // SYSDATE 사용 예정
-    private Integer memberStatus = 1;      // 기본값 1
-    private Integer mannerScore = 0;       // 기본값 0
+    private Integer memberStatus = 1;      // 기본값 1 // 기본값 0임 
+    private Integer mannerScore = 0;       // 기본값 0 // 기본값 36.5임 
     private Integer tradeCount = 0;        // 기본값 0
 
     public String getMemberId() {

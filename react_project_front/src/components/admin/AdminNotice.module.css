@@ -1,0 +1,95 @@
+.notice_write_wrap {
+  padding: 32px;
+  background-color: #202c47;
+  border-radius: 18px;
+  margin: 14px 12px;
+}
+.notice_write_title {
+  display: flex;
+  flex-direction: column;
+}
+.notice_write_content {
+  display: flex;
+  flex-direction: column;
+}
+.notice_write_content > input {
+  min-height: 140px;
+}
+.notice_write_wrap > form {
+  display: flex;
+  align-items: stretch;
+  gap: 24px;
+}
+.notice_input_wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.notice_option_wrap {
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: space-between;
+  height: 100%;
+}
+.notice_option_wrap > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.notice_option_wrap > button {
+  padding: 12px 8px;
+  border-radius: 12px;
+  margin-top: 36px;
+}
+.select {
+  padding: 4px;
+  border-radius: 12px;
+}
+.notice_write_title > input {
+  padding: 4px;
+  border-radius: 12px;
+}
+.notice_write_content > input {
+  padding: 4px;
+  border-radius: 12px;
+}
+
+.notice_table {
+  width: 100%;
+}
+.notice_table th,
+.notice_table td {
+  padding: 14px 12px;
+  text-align: left;
+}
+.col_fixed {
+  width: 60px;
+}
+.col_title {
+  width: auto;
+}
+.col_date {
+  width: 240px;
+}
+.col_edit {
+  width: 70px;
+}
+.col_delete {
+  width: 70px;
+}
+
+input {
+  background-color: #0a1224;
+  border: none;
+  border: 3px solid #334c69;
+  color: #ffffff;
+}
+select {
+  background-color: #0a1224;
+  border: none;
+  border: 3px solid #334c69;
+  color: #ffffff;
+}
