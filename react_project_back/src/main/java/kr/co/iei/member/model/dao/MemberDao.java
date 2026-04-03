@@ -1,5 +1,7 @@
 package kr.co.iei.member.model.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.iei.member.model.vo.Member;
@@ -18,5 +20,6 @@ public interface MemberDao {
 	Member memberPw(String memberId);
 
 	int updatePw(Member m);
+	List<Member> selectMemberList();
 
 }
