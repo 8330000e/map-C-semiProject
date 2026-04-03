@@ -4,6 +4,7 @@
   display: flex;
   justify-content: center;
   color: #fff;
+  margin: 40px 0px;
 }
 
 .admin_wrap {
@@ -13,7 +14,7 @@
   margin: 0 auto;
   gap: 24px;
   padding: 12px 24px 12px;
-  height: 100vh;
+  height: 650px;
 }
 
 .admin_page_aside,
@@ -22,7 +23,7 @@
   border: 1px solid #334c69;
   border-radius: 18px;
   box-shadow: 0 12px 24px #0a0a0a;
-  height: 600px;
+  height: 100%;
 }
 
 .admin_page_aside {
