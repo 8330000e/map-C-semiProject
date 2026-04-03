@@ -20,8 +20,20 @@ import useAuthStore from "../../store/useAuthStore.js";
 const Mypage = () => {
   const { memberId } = useAuthStore();
 
+  if (!memberId) {
+    return (
+      <section className={styles.mypage_wrap}>
+        <h1>마이페이지</h1>
+        <div className={styles.mypage_content_wrap}>
+          <p className={styles.emptyText}>
+            로그인 후 이용하실 수 있습니다. <Link to="/members/login">로그인 페이지</Link>로 이동해주세요.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    memberId && (
       <section className={styles.mypage_wrap}>
         <h1>마이페이지</h1>
         <div className={styles.mypage_content_wrap}>
@@ -51,7 +63,6 @@ const Mypage = () => {
           </div>
         </div>
       </section>
-    )
   );
 };
 
