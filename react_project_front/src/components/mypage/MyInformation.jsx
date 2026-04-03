@@ -8,6 +8,7 @@ import useAuthStore from "../../store/useAuthStore";
 const MyInformation = () => {
   const { memberId, memberGrade, memberNickname } = useAuthStore();
   const [member, setMember] = useState();
+  const reference = useRef(null);
 
   useEffect(() => {
     axios
@@ -22,14 +23,60 @@ const MyInformation = () => {
       });
   }, []);
 
-  //   const memberNickname = "민지원";
+  const changeThumb = () => {
+    const thumbFile = reference.current.files && reference.current.files[0]; //1번째 조건 불충족시 undefined,충족하면 그중에 [0], 즉 첫번째 파일
+    if (!thumbFile) {
+      return;
+    }
+    const data = new FormData();
+    data.append("file", thumbFile);
+    axios
+      .patch(
+        `${import.meta.env.VITE_BACKSERVER}/members/${memberId}/thumb`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      )
+      .then((res) => {
+        console.log(res.data);
+        useAuthStore.getState().setThumb(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return (
     member && (
       <div className={styles.myinformation_main_wrap}>
         <div className={styles.myinformation_img_wrap}>
-          <img src={userImg} />
-          <div className={styles.dag}>변경</div>
+          <img
+            src={
+              memberThumb !== null
+                ? `${import.meta.env.VITE_BACKSERVER}/member/thumb/${memberThumb}`
+                : userImg
+            }
+          />
+          <div
+            className={styles.dag}
+            onClick={() => {
+              reference.current.click();
+            }}
+          >
+            변경
+          </div>
+          {/* accept="image"->이미지만 선택 가능하게 막아놓음 */}
         </div>
+        <input
+          type="file"
+          accept="image/*"
+          ref={reference}
+          style={{ display: "none" }}
+          onChange={changeThumb}
+        />
+
         <div className={styles.myinformation_content_wrap}>
           <ul>
             <li>멤버 아이디{memberId}</li>
