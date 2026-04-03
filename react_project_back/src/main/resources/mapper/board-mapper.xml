@@ -1,4 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.co.iei.board.model.dao.BoardDao">
+<select id="selectBoardList" parameterType="map" resultType="board">
+    SELECT
+        BOARD_NO,
+        WRITER_ID,
+        BOARD_TITLE,
+        BOARD_CONTENT,
+        BOARD_THUMB,
+        TO_CHAR(BOARD_DATE, 'YYYY-MM-DD') AS BOARD_DATE,
+        MEMBER_NICKNAME,
+        BOARD_STATUS,
+        BOARD_LAT,
+        BOARD_LNG,
+        READ_COUNT,
+
+        MEMBER_NICKNAME AS WRITER_NICKNAME,
+        TO_CHAR(BOARD_DATE, 'YYYY-MM-DD') AS CREATE_DATE,
+        BOARD_THUMB AS THUMBNAIL_URL,
+        0 AS LIKE_COUNT,
+        0 AS COMMENT_COUNT
+    FROM BOARD_TBL
+    WHERE BOARD_STATUS = #{status}
+
+    <if test="searchKeyword != null and searchKeyword != ''">
+        <choose>
+            <when test="searchType == 1">
+                AND BOARD_TITLE LIKE '%' || #{searchKeyword} || '%'
+            </when>
+            <when test="searchType == 2">
+                AND MEMBER_NICKNAME LIKE '%' || #{searchKeyword} || '%'
+            </when>
+        </choose>
+    </if>
+
+    ORDER BY BOARD_NO DESC
+</select>
+<insert id="insertBoard" parameterType="board">
+    <selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
+        SELECT ISEQ$$_80822.NEXTVAL FROM DUAL
+    </selectKey>
+
+    INSERT INTO BOARD_TBL (
+        BOARD_NO,
+        WRITER_ID,
+        BOARD_TITLE,
+        BOARD_CONTENT,
+        BOARD_THUMB,
+        MEMBER_NICKNAME,
+        BOARD_STATUS,
+        BOARD_LAT,
+        BOARD_LNG
+    ) VALUES (
+        #{boardNo},
+        #{writerId},
+        #{boardTitle},
+        #{boardContent},
+        #{boardThumb},
+        #{memberNickname},
+        #{boardStatus},
+        #{boardLat},
+        #{boardLng}
+    )
+</insert>
+
+
+<update id="updateBoard" parameterType="board">
+    UPDATE BOARD_TBL
+    SET
+        BOARD_TITLE = #{boardTitle},
+        BOARD_CONTENT = #{boardContent},
+        BOARD_THUMB = #{boardThumb}
+    WHERE BOARD_NO = #{boardNo}
+</update>
+
+<update id="deleteBoard" parameterType="int">
+    UPDATE BOARD_TBL
+    SET BOARD_STATUS = 1
+    WHERE BOARD_NO = #{boardNo}
+</update>
+
 </mapper>

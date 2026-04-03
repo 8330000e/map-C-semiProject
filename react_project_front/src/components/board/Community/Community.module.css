@@ -182,22 +182,16 @@
   margin-bottom: 12px;
   word-break: keep-all;
 }
-
 .boardThumbnailBox {
-  margin-bottom: 12px;
+  margin-top: 12px;
+  max-width: 320px;
 }
 
 .boardThumbnail {
-  width: 180px;
-  height: 120px;
-  border: 1px solid #d8d8d8;
-  border-radius: 8px;
-  background-color: #f3f3f3;
-  color: #888;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 14px;
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
 }
 
 .boardItemBottom {
@@ -416,4 +410,42 @@
 .iconItem svg {
   font-size: 18px;
   color: #ff4d4f;
+}
+
+.editor-file-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 12px 14px;
+  margin: 10px 0;
+  border: 1px solid #dfe6d1;
+  border-radius: 12px;
+  background: #f8fbf2;
+}
+
+.editor-file-left {
+  font-size: 20px;
+}
+
+.editor-file-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-file-right a {
+  color: #25311b;
+  text-decoration: none;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.editor-file-right a:hover {
+  text-decoration: underline;
+}
+
+.editor-file-right small {
+  color: #7a8668;
+  margin-top: 2px;
 }

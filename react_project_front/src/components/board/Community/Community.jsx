@@ -5,6 +5,8 @@ import TextEditor from "./TextEditor";
 import useAuthStore from "../../../store/useAuthStore";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ChatIcon from "@mui/icons-material/Chat";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import Swal from "sweetalert2";
 
 const Community = () => {
   const { memberId } = useAuthStore();
@@ -25,11 +27,13 @@ const Community = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
+  const [selectedBoard, setSelectedBoard] = useState(null);
+
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/boards`, {
         params: {
-          status: 1,
+          status: 0,
           searchType,
           searchKeyword,
           sido,
@@ -37,67 +41,12 @@ const Community = () => {
         },
       })
       .then((res) => {
+        console.log("게시글 목록 응답:", res.data);
         setBoardList(res.data.items || []);
       })
       .catch((err) => {
-        console.log(err);
-
-        setBoardList([
-          {
-            boardNo: 1,
-            boardTitle: "오늘 플로깅 하면서 본 풍경 공유합니다",
-            writerNickname: "유저 닉네임",
-            createDate: "작성일",
-            thumbnailUrl: "",
-            likeCount: 20,
-            commentCount: 6,
-          },
-          {
-            boardNo: 2,
-            boardTitle: "탄소 절감 챌린지 참여 후기",
-            writerNickname: "유저 닉네임",
-            createDate: "작성일",
-            thumbnailUrl: "",
-            likeCount: 20,
-            commentCount: 5,
-          },
-          {
-            boardNo: 3,
-            boardTitle: "분리배출 꿀팁 모음",
-            writerNickname: "유저 닉네임",
-            createDate: "작성일",
-            thumbnailUrl: "",
-            likeCount: 20,
-            commentCount: 2,
-          },
-          {
-            boardNo: 4,
-            boardTitle: "우리 동네 친환경 매장 추천",
-            writerNickname: "유저 닉네임",
-            createDate: "작성일",
-            thumbnailUrl: "sample",
-            likeCount: 20,
-            commentCount: 5,
-          },
-          {
-            boardNo: 5,
-            boardTitle: "출석 체크 이벤트 같이 해요",
-            writerNickname: "유저 닉네임",
-            createDate: "작성일",
-            thumbnailUrl: "",
-            likeCount: 20,
-            commentCount: 10,
-          },
-          {
-            boardNo: 6,
-            boardTitle: "탄소중립 실천 인증합니다",
-            writerNickname: "유저 닉네임",
-            createDate: "작성일",
-            thumbnailUrl: "",
-            likeCount: 11,
-            commentCount: 4,
-          },
-        ]);
+        console.error("게시글 조회 실패:", err);
+        setBoardList([]);
       });
   }, [searchType, searchKeyword, sido, sigungu]);
 
@@ -106,17 +55,230 @@ const Community = () => {
     setSearchType(type);
     setSearchKeyword(keyword);
   };
+  const extractFirstImageSrc = (html) => {
+    if (!html) return null;
 
-  const submitWrite = () => {
-    console.log({
-      title,
-      content,
-      sido,
-      sigungu,
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+    const firstImg = doc.querySelector("img");
+
+    return firstImg ? firstImg.getAttribute("src") : null;
+  };
+
+  const submitWrite = async () => {
+    if (!title.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "제목을 입력하세요",
+      });
+      return;
+    }
+
+    if (!content.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "내용을 입력하세요",
+      });
+      return;
+    }
+
+    try {
+      const thumbnailUrl = extractFirstImageSrc(content);
+      const requestData = {
+        writerId: memberId,
+        memberNickname: memberId,
+        boardTitle: title,
+        boardContent: content,
+        boardThumb: thumbnailUrl,
+        boardStatus: 0,
+        boardLat: null,
+        boardLng: null,
+      };
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKSERVER}/boards`,
+        requestData,
+      );
+
+      if (res.data > 0) {
+        await Swal.fire({
+          icon: "success",
+          title: "게시글이 등록되었습니다!",
+          text: "작성한 게시글이 정상적으로 등록되었습니다.",
+          confirmButtonText: "확인",
+        });
+
+        // 초기화
+        setTitle("");
+        setContent("");
+
+        // 리스트로 이동
+        setMode("list");
+
+        // 목록 다시 불러오기
+        const listRes = await axios.get(
+          `${import.meta.env.VITE_BACKSERVER}/boards`,
+          {
+            params: {
+              status: 0,
+              searchType,
+              searchKeyword,
+              sido,
+              sigungu,
+            },
+          },
+        );
+
+        setBoardList(listRes.data.items || []);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "등록 실패",
+          text: "게시글 등록에 실패했습니다.",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+
+      Swal.fire({
+        icon: "error",
+        title: "서버 오류",
+        text: "게시글 등록 중 오류가 발생했습니다.",
+      });
+    }
+  };
+  const startEdit = (board) => {
+    setSelectedBoard(board);
+    setTitle(board.boardTitle || "");
+    setContent(board.boardContent || "");
+    setMode("edit");
+  };
+  const submitEdit = async () => {
+    if (!title.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "제목을 입력하세요",
+      });
+      return;
+    }
+
+    if (!content.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "내용을 입력하세요",
+      });
+      return;
+    }
+
+    try {
+      const thumbnailUrl = extractFirstImageSrc(content);
+
+      const requestData = {
+        boardTitle: title,
+        boardContent: content,
+        boardThumb: thumbnailUrl,
+      };
+
+      const res = await axios.patch(
+        `${import.meta.env.VITE_BACKSERVER}/boards/${selectedBoard.boardNo}`,
+        requestData,
+      );
+
+      if (res.data > 0) {
+        await Swal.fire({
+          icon: "success",
+          title: "게시글이 수정되었습니다!",
+          confirmButtonText: "확인",
+        });
+
+        setSelectedBoard(null);
+        setTitle("");
+        setContent("");
+        setMode("list");
+
+        const listRes = await axios.get(
+          `${import.meta.env.VITE_BACKSERVER}/boards`,
+          {
+            params: {
+              status: 0,
+              searchType,
+              searchKeyword,
+              sido,
+              sigungu,
+            },
+          },
+        );
+
+        setBoardList(listRes.data.items || []);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "수정 실패",
+          text: "게시글 수정에 실패했습니다.",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+
+      Swal.fire({
+        icon: "error",
+        title: "서버 오류",
+        text: "게시글 수정 중 오류가 발생했습니다.",
+      });
+    }
+  };
+  const deleteBoard = async (boardNo) => {
+    const confirm = await Swal.fire({
+      icon: "warning",
+      title: "삭제하시겠습니까?",
+      text: "삭제된 게시글은 복구할 수 없습니다.",
+      showCancelButton: true,
+      confirmButtonText: "삭제",
+      cancelButtonText: "취소",
     });
 
-    alert("작성 완료 처리 위치입니다. 나중에 API 연결하면 됩니다.");
-    setMode("list");
+    if (!confirm.isConfirmed) return;
+
+    try {
+      const res = await axios.delete(
+        `${import.meta.env.VITE_BACKSERVER}/boards/${boardNo}`,
+      );
+
+      if (res.data > 0) {
+        await Swal.fire({
+          icon: "success",
+          title: "삭제 완료",
+          text: "게시글이 삭제되었습니다.",
+        });
+
+        // 목록 다시 불러오기
+        const listRes = await axios.get(
+          `${import.meta.env.VITE_BACKSERVER}/boards`,
+          {
+            params: {
+              status: 0,
+              searchType,
+              searchKeyword,
+              sido,
+              sigungu,
+            },
+          },
+        );
+
+        setBoardList(listRes.data.items || []);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "삭제 실패",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire({
+        icon: "error",
+        title: "서버 오류",
+      });
+    }
   };
 
   return (
@@ -222,13 +384,47 @@ const Community = () => {
                         {board.boardTitle}
                       </div>
 
+                      {memberId === board.writerId && (
+                        <div className={styles.boardActionBox}>
+                          <button
+                            type="button"
+                            className={styles.mapCommunityBtn}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              startEdit(board);
+                            }}
+                          >
+                            수정
+                          </button>
+
+                          <button
+                            type="button"
+                            className={styles.deleteBtn}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteBoard(board.boardNo);
+                            }}
+                          >
+                            삭제
+                          </button>
+                        </div>
+                      )}
+
                       {board.thumbnailUrl && (
                         <div className={styles.boardThumbnailBox}>
-                          <div className={styles.boardThumbnail}>썸네일</div>
+                          <img
+                            src={board.thumbnailUrl}
+                            alt="썸네일"
+                            className={styles.boardThumbnail}
+                          />
                         </div>
                       )}
 
                       <div className={styles.boardItemBottom}>
+                        <span className={styles.iconItem}>
+                          <VisibilityIcon fontSize="small" />
+                          <span>{board.readCount ?? 0}</span>
+                        </span>
                         <span className={styles.iconItem}>
                           <FavoriteBorderIcon fontSize="small" />
                           <span>{board.likeCount ?? 0}</span>
@@ -254,11 +450,16 @@ const Community = () => {
                 <button
                   type="button"
                   className={styles.boardBackBtn}
-                  onClick={() => setMode("list")}
+                  onClick={() => {
+                    setMode("list");
+                    setSelectedBoard(null);
+                    setTitle("");
+                    setContent("");
+                  }}
                 >
                   ‹
                 </button>
-                <h3>게시글 작성</h3>
+                <h3>{mode === "edit" ? "게시글 수정" : "게시글 작성"}</h3>
               </div>
 
               <div className={styles.boardWriteScroll}>
@@ -279,11 +480,13 @@ const Community = () => {
 
                 <div className={styles.boardWriteGroup}>
                   <label>오늘의 내 탄소배출량은?</label>
+                  {/* 탄소계산 기능 들어갈 자리*/}
                   <div className={styles.carbonBox}>탄소계산 ⊞</div>
                 </div>
 
                 <div className={styles.boardWriteGroup}>
                   <label>장소</label>
+                  {/* 장소 기능 들어갈 자리*/}
                   <div className={styles.writeMapBox}>MAP</div>
                 </div>
 
@@ -299,7 +502,7 @@ const Community = () => {
                   </p>
 
                   <p>
-                    아래는 핵심 요약 사항이며, 게시물 작성 전 반드시
+                    submitWrite 아래는 핵심 요약 사항이며, 게시물 작성 전 반드시
                     확인해주세요.
                   </p>
 
@@ -334,9 +537,9 @@ const Community = () => {
                 <button
                   type="button"
                   className={styles.boardSubmitBtn}
-                  onClick={submitWrite}
+                  onClick={mode === "edit" ? submitEdit : submitWrite}
                 >
-                  작성 완료
+                  {mode === "edit" ? "수정 완료" : "작성 완료"}
                 </button>
               </div>
             </div>

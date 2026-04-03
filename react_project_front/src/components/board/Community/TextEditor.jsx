@@ -8,17 +8,16 @@ import FormatBoldIcon from "@mui/icons-material/FormatBold";
 import FormatItalicIcon from "@mui/icons-material/FormatItalic";
 import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
 import ColorLensIcon from "@mui/icons-material/ColorLens";
-import LinkIcon from "@mui/icons-material/Link";
 import ImageIcon from "@mui/icons-material/Image";
 import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
 import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
 import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import axios from "axios";
 
 const TextEditor = ({ data, setData }) => {
   const editorRef = useRef(null);
   const imageInputRef = useRef(null);
-  const fileInputRef = useRef(null);
 
   const [alignOpen, setAlignOpen] = useState(false);
   const [fontSizeOpen, setFontSizeOpen] = useState(false);
@@ -34,7 +33,6 @@ const TextEditor = ({ data, setData }) => {
     if (!editorRef.current) return;
 
     const safeData = data ?? "";
-
     if (editorRef.current.innerHTML !== safeData) {
       editorRef.current.innerHTML = safeData;
     }
@@ -129,42 +127,32 @@ const TextEditor = ({ data, setData }) => {
     exec("foreColor", e.target.value);
   };
 
-  const handleFileButtonClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const fileUrl = URL.createObjectURL(file);
-    const linkHtml = `<a href="${fileUrl}" download="${file.name}" target="_blank">${file.name}</a>&nbsp;`;
-
-    focusEditor();
-    document.execCommand("insertHTML", false, linkHtml);
-
-    setTimeout(() => {
-      if (!editorRef.current) return;
-      const html = editorRef.current.innerHTML;
-      setData(html);
-      saveHistory(html);
-    }, 0);
-
-    e.target.value = "";
-  };
-
   const handleImageButtonClick = () => {
     imageInputRef.current?.click();
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
+    try {
+      const formData = new FormData();
+      formData.append("upfile", file);
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKSERVER}/boards/editor/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+
+      const imageUrl = `${import.meta.env.VITE_BACKSERVER}${res.data}`;
+
       focusEditor();
-      document.execCommand("insertImage", false, reader.result);
+      document.execCommand("insertImage", false, imageUrl);
 
       setTimeout(() => {
         if (!editorRef.current) return;
@@ -172,11 +160,14 @@ const TextEditor = ({ data, setData }) => {
         setData(html);
         saveHistory(html);
       }, 0);
-    };
-    reader.readAsDataURL(file);
-
-    e.target.value = "";
+    } catch (err) {
+      console.error("이미지 업로드 실패:", err);
+      alert("이미지 업로드 중 오류가 발생했습니다.");
+    } finally {
+      e.target.value = "";
+    }
   };
+
   return (
     <div className={styles.textEditorWrap}>
       <div className={styles.editorToolbar}>
@@ -197,6 +188,7 @@ const TextEditor = ({ data, setData }) => {
         >
           <RedoIcon sx={{ fontSize: 20 }} />
         </button>
+
         <div className={styles.toolbarDivider} />
 
         <div className={styles.fontDropdown}>
@@ -306,14 +298,6 @@ const TextEditor = ({ data, setData }) => {
         <button
           className={styles.toolbarIconBtn}
           onMouseDown={keepSelection}
-          onClick={handleFileButtonClick}
-        >
-          <LinkIcon />
-        </button>
-
-        <button
-          className={styles.toolbarIconBtn}
-          onMouseDown={keepSelection}
           onClick={handleImageButtonClick}
         >
           <ImageIcon />
@@ -321,12 +305,7 @@ const TextEditor = ({ data, setData }) => {
 
         <input
           type="file"
-          ref={fileInputRef}
-          hidden
-          onChange={handleFileChange}
-        />
-        <input
-          type="file"
+          accept="image/*"
           ref={imageInputRef}
           hidden
           onChange={handleImageChange}
