@@ -206,7 +206,7 @@ const Main = () => {
             </span>
             <p>고객센터 운영시간</p>
             <p>10:00 ~ 18:00</p>
-            <button>문의하기 ▶</button>
+            <button className="btn">문의하기 ▶</button>
           </div>
         </div>
 
