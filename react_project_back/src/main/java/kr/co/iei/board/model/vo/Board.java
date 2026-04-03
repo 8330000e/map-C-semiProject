@@ -12,5 +12,11 @@ import lombok.NoArgsConstructor;
 @Data
 @Alias(value="board")
 public class Board {
-	private Integer boardNo;
+	private Long boardNo;
+	private String writerId;
+	private String boardTitle;
+	private String boardContent;
+	private String boardThumb;
+	private String memberNickname;
+	private Integer boardStatus;
 }
