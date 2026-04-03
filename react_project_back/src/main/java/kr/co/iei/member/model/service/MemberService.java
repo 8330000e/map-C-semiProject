@@ -70,8 +70,8 @@ public class MemberService {
 		public boolean checkPw(Member member) {
 			String memberId = member.getMemberId();
 			Member forCheck = memberDao.memberPw(memberId);
-			System.out.println(forCheck.getMemberPw());
-			System.out.println(member.getMemberPw());
+//			System.out.println(forCheck.getMemberPw());
+//			System.out.println(member.getMemberPw());
 			boolean result=bcrypt.matches(member.getMemberPw(), forCheck.getMemberPw());
 			return result;
 		}
