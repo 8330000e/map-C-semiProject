@@ -65,6 +65,7 @@ a:hover {
 .btn:hover {
   transform: scale(1.1);
 }
+/*
 .wrap {
   border: 1.8px solid var(--color1);
   padding: 20px 18px;
@@ -72,6 +73,7 @@ a:hover {
   justify-content: center;
   align-items: center;
 }
+  */
 .content {
   display: flex;
   justify-content: center;
@@ -110,7 +112,7 @@ a:hover {
     filter: invert(1) brightness(2);
   }
 }
-*/ :root {
+:root {
   --admin-bg: #0b0f1a;
   --admin-bg-2: #0a1224;
   --admin-panel: #121826;
