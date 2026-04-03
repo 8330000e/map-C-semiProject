@@ -56,35 +56,6 @@ public class MemberService {
 			}
 			return null;
 }
-		@Transactional
-		public int updateMemberInfo(Member form) {
-			int result = memberDao.updateMemberInfo(form);
-			return result;
-		}
-
-
-		public Member getOneMemberInfo(String memberId) {
-			Member member = memberDao.getOneMemberInfo(memberId);
-			return member;
-		}
-
-
-		public boolean checkPw(Member member) {
-			String memberId = member.getMemberId();
-			Member forCheck = memberDao.memberPw(memberId);
-//			System.out.println(forCheck.getMemberPw());
-//			System.out.println(member.getMemberPw());
-			boolean result=bcrypt.matches(member.getMemberPw(), forCheck.getMemberPw());
-			return result;
-		}
-
-		@Transactional
-		public int updatePw(Member m) {
-			String newMemberPw = m.getMemberPw();
-			String encodedNewMemberPw = bcrypt.encode(newMemberPw);
-			m.setMemberPw(encodedNewMemberPw);
-			int result = memberDao.updatePw(m);
-			return result;
 
 
 		public List<Member> selectMemberList() {
