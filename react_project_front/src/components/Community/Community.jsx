@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import styles from "./Community.module.css";
 import axios from "axios";
 import TextEditor from "./TextEditor";
-import useAuthStore from "../../../store/useAuthStore";
+import useAuthStore from "../../store/useAuthStore";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import ChatIcon from "@mui/icons-material/Chat";
 
 const Community = () => {
   const { memberId } = useAuthStore();
@@ -227,8 +229,15 @@ const Community = () => {
                       )}
 
                       <div className={styles.boardItemBottom}>
-                        <span>♡ {board.likeCount ?? 0}</span>
-                        <span>💬 {board.commentCount ?? 0}</span>
+                        <span className={styles.iconItem}>
+                          <FavoriteBorderIcon fontSize="small" />
+                          <span>{board.likeCount ?? 0}</span>
+                        </span>
+
+                        <span className={styles.iconItem}>
+                          <ChatIcon fontSize="small" />
+                          <span>{board.commentCount ?? 0}</span>
+                        </span>
                       </div>
                     </div>
                   ))

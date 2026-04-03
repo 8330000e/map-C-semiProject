@@ -283,6 +283,8 @@
   font-size: 14px;
   outline: none;
   box-sizing: border-box;
+  background-color: #fff !important;
+  color: #000;
 }
 
 .boardWriteInput:focus {
@@ -401,4 +403,17 @@
     width: 100%;
     height: 180px;
   }
+}
+.iconItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.iconItem svg {
+  font-size: 18px;
+  color: #ff4d4f;
 }

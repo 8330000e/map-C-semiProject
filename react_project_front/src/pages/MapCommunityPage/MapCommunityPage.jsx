@@ -1,4 +1,4 @@
-import Community from "../../components/board/Community/Community";
+import Community from "../../components/Community/Community";
 import styles from "./MapCommunityPage.module.css";
 
 const MapCommunityPage = () => {
