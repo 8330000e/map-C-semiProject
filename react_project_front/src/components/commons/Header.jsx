@@ -77,88 +77,87 @@ const Header = () => {
               <button
                 onClick={handleLogout}
                 className={`${styles.btn} ${styles.outline}`}
-              >로그아웃
+              >
+                로그아웃
               </button>
-                <div className={`${styles.drawer_helper}`}></div>
-                <div className={`${styles.header_drawer}`}>
-                  <div className={styles.drawer_menue}>
-                    <NavLink
-                      to="/mypage/updateMyInfo"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      내 정보
-                    </NavLink>
-                    <NavLink
-                      to="/mypage/changePw"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      비밀번호 변경
-                    </NavLink>
-                    <NavLink
-                      to="/mypage/myBoard"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      내 게시판
-                    </NavLink>
-                    <NavLink
-                      to="/mypage/myLikeBoard"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      좋아요누른 게시판
-                    </NavLink>
-                    <NavLink
-                      to="/mypage/tipScrap"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      팁 스크랩
-                    </NavLink>
-                    <NavLink
-                      to="/mypage/leaveMember"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      회원 탈퇴
-                    </NavLink>
-                    <NavLink
-                      to="/mypage/myPoint"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      내 포인트
-                    </NavLink>
-                    {/**구매내역 및 판매 내역부분(변창님 참고) */}
-                    <NavLink
-                      to="/mypage/history/purchase"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      구매내역
-                    </NavLink>
-                    <NavLink
-                      to="/mypage/history/sale"
-                      onClick={() => {
-                        setDrawer(false);
-                      }}
-                    >
-                      판매내역
-                    </NavLink>
-                  </div>
+              <div className={`${styles.drawer_helper}`}></div>
+              <div className={`${styles.header_drawer}`}>
+                <div className={styles.drawer_menue}>
+                  <NavLink
+                    to="/mypage/updateMyInfo"
+                    onClick={() => {
+                      setDrawer(false);
+                    }}
+                  >
+                    내 정보
+                  </NavLink>
+                  <NavLink
+                    to="/mypage/changePw"
+                    onClick={() => {
+                      setDrawer(false);
+                    }}
+                  >
+                    비밀번호 변경
+                  </NavLink>
+                  <NavLink
+                    to="/mypage/myBoard"
+                    onClick={() => {
+                      setDrawer(false);
+                    }}
+                  >
+                    내 게시판
+                  </NavLink>
+                  <NavLink
+                    to="/mypage/myLikeBoard"
+                    onClick={() => {
+                      setDrawer(false);
+                    }}
+                  >
+                    좋아요누른 게시판
+                  </NavLink>
+                  <NavLink
+                    to="/mypage/tipScrap"
+                    onClick={() => {
+                      setDrawer(false);
+                    }}
+                  >
+                    팁 스크랩
+                  </NavLink>
+                  <NavLink
+                    to="/mypage/leaveMember"
+                    onClick={() => {
+                      setDrawer(false);
+                    }}
+                  >
+                    회원 탈퇴
+                  </NavLink>
+                  <NavLink
+                    to="/mypage/myPoint"
+                    onClick={() => {
+                      setDrawer(false);
+                    }}
+                  >
+                    내 포인트
+                  </NavLink>
+                  {/**구매내역 및 판매 내역부분(변창님 참고) */}
+                  <NavLink
+                    to="/mypage/history/purchase"
+                    onClick={() => {
+                      setDrawer(false);
+                    }}
+                  >
+                    구매내역
+                  </NavLink>
+                  <NavLink
+                    to="/mypage/history/sale"
+                    onClick={() => {
+                      setDrawer(false);
+                    }}
+                  >
+                    판매내역
+                  </NavLink>
                 </div>
               </div>
-                
             </div>
           )}
         </div>
