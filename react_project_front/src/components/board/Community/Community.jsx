@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./Community.module.css";
 import axios from "axios";
 import TextEditor from "./TextEditor";
-import useAuthStore from "../../store/useAuthStore";
+import useAuthStore from "../../../store/useAuthStore";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ChatIcon from "@mui/icons-material/Chat";
 
