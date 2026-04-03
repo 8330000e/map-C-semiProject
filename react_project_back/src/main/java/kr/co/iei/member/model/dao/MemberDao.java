@@ -13,13 +13,8 @@ public interface MemberDao {
 
 	Member selectOneMember(String memberId);
 
-	int updateMemberInfo(Member form);
-
-	Member getOneMemberInfo(String memberId);
-
-	Member memberPw(String memberId);
-
-	int updatePw(Member m);
 	List<Member> selectMemberList();
+
+	int updateMemberThumb(Member mem);
 
 }

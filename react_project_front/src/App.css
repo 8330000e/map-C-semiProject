@@ -123,10 +123,10 @@ header {
   gap: 6px;
   margin-bottom: 50px;
 }
-.main_nav > ul {
+.main_nav > ul > li > a {
   font-weight: 600;
 }
-.main_nav > ul > li {
+.main_nav > ul > li > a {
   width: max-content;
   cursor: pointer;
 }

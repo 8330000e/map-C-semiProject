@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import useAuthStore from "../../store/useAuthStore";
+import useAuthStore from "../../store/useAuthStore.js";
 
 const Login = () => {
   // 페이지 이동 함수 가져오기

@@ -56,8 +56,6 @@ function App() {
           <Route path="/Store" element={<Navigate to="/store" replace />} />
           <Route path="/join" element={<JoinPage />}></Route>
           <Route path="/members/login" element={<LoginPage />}></Route>
-          {/* <Route path="/test-header" element={<TestHeader />} /> */}
-          <Route path="/mypage/*" element={<Mypage />} />
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

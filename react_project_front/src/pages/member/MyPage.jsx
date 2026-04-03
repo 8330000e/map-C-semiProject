@@ -14,7 +14,7 @@ import PurchaseDetail from "../../components/mypage/PurchaseDetail";
 import SaleHistory from "../../components/mypage/SaleHistory";
 import SaleDetail from "../../components/mypage/SaleDetail";
 import styles from "./MyPage.module.css";
-import useAuthStore from "../../store/useAuthStore";
+import useAuthStore from "../../store/useAuthStore.js";
 
 // 현재는 프로필 정보와 내 페이지 서브 라우트들이 함께 표시됩니다.
 const Mypage = () => {
@@ -30,7 +30,11 @@ const Mypage = () => {
             <Routes>
               <Route
                 index
-                element={<p className={styles.emptyText}>보고 싶은 항목을 왼쪽에서 선택하세요.</p>}
+                element={
+                  <p className={styles.emptyText}>
+                    보고 싶은 항목을 왼쪽에서 선택하세요.
+                  </p>
+                }
               />
               <Route path="updateMyInfo" element={<UpdateMyInfo />} />
               <Route path="changePw" element={<ChangePw />} />

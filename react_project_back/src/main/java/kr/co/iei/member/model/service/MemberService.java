@@ -56,10 +56,7 @@ public class MemberService {
 			}
 			return null;
 }
-		@Transactional
-		public int updateMemberInfo(Member form) {
-			int result = memberDao.updateMemberInfo(form);
-			return result;
+
 		}
 
 
@@ -91,5 +88,11 @@ public class MemberService {
 		public List<Member> selectMemberList() {
 			List<Member> memberList = memberDao.selectMemberList();
 			return memberList;
+		}
+
+		@Transactional
+		public int updateMemberThumb(Member mem) {
+			int result = memberDao.updateMemberThumb(mem);
+			return result;
 		}
 }
