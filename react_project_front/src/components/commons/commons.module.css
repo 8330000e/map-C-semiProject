@@ -33,6 +33,7 @@ header > h1 a:active {
   cursor: pointer;
 }
 .btn:hover {
+  display: block;
 }
 .outline {
   border: 2.5px solid #464d3e;
@@ -64,6 +65,7 @@ header > .profile_bar_wrap {
   font-size: 15px;
   font-weight: 600;
   margin-right: 5px;
+  cursor: pointer;
 }
 
 /* Footer.jsx */
@@ -80,4 +82,43 @@ header > .profile_bar_wrap {
 }
 .footer_info {
   color: gray;
+}
+.drawer_wrap {
+  width: 100vw;
+  min-height: 100vh;
+  position: fixed;
+  display: flex;
+  right: 0;
+  top: 0;
+  background-color: transparent;
+  transition-duration: 0.3s;
+}
+.header_drawer {
+  width: 250px;
+  background-color: #efefef;
+  transition-duration: 0.2s;
+}
+.drawer_helper {
+  opacity: 0;
+  flex-grow: 1;
+  background-color: antiquewhite;
+}
+
+.drawer_open {
+  left: 0;
+}
+.drawer_close {
+  left: 100%;
+}
+
+.drawer_menue {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin: 10px;
+  padding: 10px;
+}
+.drawer_menue > a {
+  text-decoration: none;
+  color: black;
 }
