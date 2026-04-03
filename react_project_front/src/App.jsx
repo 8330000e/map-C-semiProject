@@ -19,8 +19,6 @@ import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import PaymentFail from "./pages/payment/PaymentFail";
 import JoinPage from "./pages/member/JoinPage";
 import LoginPage from "./pages/member/LoginPage";
-// import TestHeader from "./components/commons/TestHeader";
-import Mypage from "./pages/member/MyPage";
 
 import AdminPage from "./pages/admin/AdminPage";
 
@@ -48,8 +46,6 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/join" element={<JoinPage />}></Route>
           <Route path="/members/login" element={<LoginPage />}></Route>
-          {/* <Route path="/test-header" element={<TestHeader />} /> */}
-          <Route path="/mypage/*" element={<Mypage />} />
           <Route path="/admin/*" element={<AdminPage />} />
         </Routes>
       </main>
