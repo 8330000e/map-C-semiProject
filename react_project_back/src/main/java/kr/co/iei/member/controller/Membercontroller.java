@@ -64,6 +64,7 @@ public class Membercontroller {
 	public ResponseEntity<?> updatePw(@RequestBody Member m){
 		int result = memberService.updatePw(m);
 		return ResponseEntity.ok(result);
+	}
 	
 	
 	@GetMapping
