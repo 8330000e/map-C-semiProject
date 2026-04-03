@@ -30,10 +30,20 @@ const Header = () => {
           {!memberId ? (
             <div className={styles.login}>
               <Link to="/members/login">
-                <button type="button">로그인</button>
+                <button
+                  type="button"
+                  className={`btn ${styles.btn} ${styles.inline} ${styles.login_btn}`}
+                >
+                  로그인
+                </button>
               </Link>
               <Link to="/join">
-                <button type="button">회원가입</button>
+                <button
+                  type="button"
+                  className={`btn ${styles.btn} ${styles.outline}`}
+                >
+                  회원가입
+                </button>
               </Link>
             </div>
           ) : (
