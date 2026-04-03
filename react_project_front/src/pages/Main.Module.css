@@ -1,0 +1,93 @@
+/*
+	Main.jsx 전용 CSS Module 자리입니다.
+	현재는 비어 있으며, 필요 시 메인 페이지 스타일을 분리해 작성합니다.
+
+	*/
+/* :root {
+font-family: Roboto, system-ui, Helvetica, Arial, sans-serif;
+line-height: 1.5;
+font-weight: 400;
+color: #464d3e;
+font-synthesis: none;
+ text-rendering: optimizeLegibility;
+ -webkit-font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+--color1: #464d3e;
+--color2: #FBFFF5;
+--color3: #ffffff;
+--gray1: #222222;
+--gray2: #555555;
+--gray3: #717171;
+--gray4: #8f8f8f;
+--gray5: #b7b7b7;
+--gray6: #d6d6d6;
+--gray7: #efefef;
+--gray8: #ffffff;
+--text1: #464d3e;
+--text2: #929292;
+--accent: #
+--danger: #FF593C;
+--bg: #464d3e;
+--border: 1.8px solid #464d3e;
+--shadow: 
+--sans: system-ui, "Roboto", sans-serif;
+--headline: system-ui, "Jua", sans-serif;
+--mono: ui-monospace, Consolas, monospace;
+}
+a {
+font-weight: 500;
+color: #464d3e;
+text-decoration: none;
+}
+a:hover {
+color: #464d3e;
+}
+.btn {
+cursor: pointer;
+font-size: 14px;
+padding: 9px 20px;
+border: none;
+border-radius: 10px;
+padding-top: 12px;
+}
+/*btn용*/
+/*
+.outline {
+border: 2.5px solid #464d3e;
+background-color: #464d3e;
+color: #fff;
+}
+/*btn용*/
+/*
+.inline {
+border: 2.5px solid #464d3e;
+background-color: transparent;
+color: #464d3e;
+}
+.btn:hover {
+}
+.wrap {
+border: 1.8px solid var(--color1);
+padding: 20px 18px;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+.content {
+display: flex;
+justify-content: center;
+align-items: center;
+}
+.item {
+display: flex;
+justify-content: center;
+align-items: center;
+}
+.title {
+font-size: 1.5em;
+font-weight: 600;
+}
+.info {
+font-seiz: 0.8em;
+color: var(--gray5);
+} */
