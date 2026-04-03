@@ -82,17 +82,14 @@ public class MemberService {
 			m.setMemberPw(encodedNewMemberPw);
 			int result = memberDao.updatePw(m);
 			return result;
+<<<<<<< HEAD
 		}
+=======
+>>>>>>> parent of 76a10b3 (마이페이지0403)
 
 
 		public List<Member> selectMemberList() {
 			List<Member> memberList = memberDao.selectMemberList();
 			return memberList;
-		}
-
-		@Transactional
-		public int updateMemberThumb(Member mem) {
-			int result = memberDao.updateMemberThumb(mem);
-			return result;
 		}
 }

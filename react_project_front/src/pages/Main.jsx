@@ -5,7 +5,10 @@ import { Link } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
 import { dummyData, storeDummyData } from "../components/mock/dummyData";
 import useAuthStore from "../store/useAuthStore";
+<<<<<<< HEAD
 import Map from "../components/map/Map";
+=======
+>>>>>>> parent of 76a10b3 (마이페이지0403)
 
 const STORE_STATUS_KEY = "storeSaleStatusMap";
 

@@ -14,7 +14,7 @@ import PurchaseDetail from "../../components/mypage/PurchaseDetail";
 import SaleHistory from "../../components/mypage/SaleHistory";
 import SaleDetail from "../../components/mypage/SaleDetail";
 import styles from "./MyPage.module.css";
-import useAuthStore from "../../store/useAuthStore.js";
+import useAuthStore from "../../store/useAuthStore";
 
 // 현재는 프로필 정보와 내 페이지 서브 라우트들이 함께 표시됩니다.
 const Mypage = () => {

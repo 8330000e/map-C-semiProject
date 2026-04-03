@@ -6,7 +6,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MailIcon from "@mui/icons-material/Mail";
 import SettingsIcon from "@mui/icons-material/Settings";
-import useAuthStore from "../../store/useAuthStore.js";
+import useAuthStore from "../../store/useAuthStore";
 import { useState } from "react";
 import useAuthStore from "../../store/useAuthStore";
 

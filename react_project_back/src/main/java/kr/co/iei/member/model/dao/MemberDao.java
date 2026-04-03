@@ -15,6 +15,4 @@ public interface MemberDao {
 
 	List<Member> selectMemberList();
 
-	int updateMemberThumb(Member mem);
-
 }
