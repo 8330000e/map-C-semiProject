@@ -102,7 +102,7 @@ const storeDummyData = (() => {
     const title = productTemplate[i % productTemplate.length];
 
     const priceValue = Math.floor(Math.random() * 80 + 5) * 1000;
-    
+
     // 거래 가능 지역
     const regions = [
       "서울 강남구",
@@ -116,7 +116,12 @@ const storeDummyData = (() => {
       "서울 은평구",
       "서울 강동구",
     ];
-    
+
+    // tradeType 순환: 0=직거래/택배, 1=직거래, 2=택배
+    const tradeType = i % 3;
+    const tradeTypeText =
+      tradeType === 0 ? "직거래/택배" : tradeType === 1 ? "직거래" : "택배";
+
     return {
       id: 1001 + i,
       title,
@@ -126,6 +131,8 @@ const storeDummyData = (() => {
       date: `2026.03.${String((i % 28) + 1).padStart(2, "0")}`,
       comments: Math.floor(Math.random() * 12),
       viewCount: Math.floor(Math.random() * 2000) + 100,
+      tradeType, // 0=직거래/택배, 1=직거래, 2=택배
+      tradeTypeText, // "직거래/택배" | "직거래" | "택배"
     };
   });
 })();

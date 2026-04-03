@@ -126,6 +126,12 @@
 	height: 16px;
 }
 
+/* 비허용 선택 옵션에 취소선 스타일 */
+.disabledOption {
+	color: #8c9482;
+	text-decoration: line-through;
+}
+
 .action_row {
 	margin-top: 10px;
 	display: flex;
