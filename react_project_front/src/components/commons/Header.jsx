@@ -78,6 +78,7 @@ const Header = () => {
               >
                 로그아웃
               </button>
+              {/*
               <div className={`${styles.drawer_helper}`}></div>
               <div className={`${styles.header_drawer}`}>
                 <div className={styles.drawer_menue}>
@@ -137,7 +138,7 @@ const Header = () => {
                   >
                     내 포인트
                   </NavLink>
-                  {/**구매내역 및 판매 내역부분(변창님 참고) */}
+                  
                   <NavLink
                     to="/mypage/history/purchase"
                     onClick={() => {
@@ -156,6 +157,7 @@ const Header = () => {
                   </NavLink>
                 </div>
               </div>
+              */}
             </div>
           )}
         </div>
