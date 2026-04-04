@@ -39,10 +39,27 @@ const Join = () => {
       });
       return;
     }
+
+    if (!member.memberId || !member.memberPw || !member.memberEmail) {
+      Swal.fire({
+        title: "필수 입력 항목을 모두 채워주세요",
+        text: "아이디, 비밀번호, 이메일은 필수입니다",
+        icon: "warning",
+      });
+      return;
+    }
+
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/members`, member)
       .then((res) => {
         console.log(res.data);
+        Swal.fire({
+          title: "회원가입 성공",
+          text: "로그인 페이지로 이동합니다",
+          icon: "success",
+        }).then(() => {
+          navigate("/members/login");
+        });
         navigate("/members/login");
       })
       .catch((err) => {
@@ -95,6 +112,9 @@ const Join = () => {
         </div>
 
         {/*이메일 인증 */}
+        {/*이메일 인증 컴포넌트에서 이메일 인증이 완료되면 
+        setEmailVerified(true)로 상태 변경*/}
+
         <EmailAuth
           //배열 집어넣지 않도록 주의!!
           memberEmail={member.memberEmail}

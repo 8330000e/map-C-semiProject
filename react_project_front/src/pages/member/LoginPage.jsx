@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
 import Swal from "sweetalert2";
+import styles from "./LoginPage.module.css";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -125,6 +127,12 @@ const Login = () => {
         <button onClick={handleLogin} disabled={isLoading}>
           로그인
         </button>
+      </div>
+      {/* 여기에 아이디/비밀번호 찾기 링크 추가 */}
+      <div className={styles.search_wrap}>
+        <Link to="/members/find-id">아이디 찾기</Link>
+        {" || "}
+        <Link to="/members/find-pw">비밀번호 찾기</Link>
       </div>
     </div>
   );

@@ -16,7 +16,9 @@ import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import PaymentFail from "./pages/payment/PaymentFail";
 import JoinPage from "./pages/member/JoinPage";
 import Login from "./pages/member/LoginPage";
-import TestHeader from "./components/commons/TestHeader";
+import FindId from "./pages/member/findId";
+import FindPw from "./pages/member/FindPw";
+
 import useAuthStore from "./store/useAuthStore";
 import { useEffect } from "react";
 import axios from "axios";
@@ -59,7 +61,8 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/join" element={<JoinPage />}></Route>
           <Route path="/members/login" element={<Login />}></Route>
-          <Route path="/test-header" element={<TestHeader />} />
+          <Route path="/members/find-id" element={<FindId />}></Route>
+          <Route path="/members/find-pw" element={<FindPw />}></Route>
         </Routes>
       </main>
       <Footer />
