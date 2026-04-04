@@ -57,9 +57,42 @@ public class MemberService {
 			return null;
 }
 
+		}
+
+
+		public Member getOneMemberInfo(String memberId) {
+			Member member = memberDao.getOneMemberInfo(memberId);
+			return member;
+		}
+
+
+		public boolean checkPw(Member member) {
+			String memberId = member.getMemberId();
+			Member forCheck = memberDao.memberPw(memberId);
+//			System.out.println(forCheck.getMemberPw());
+//			System.out.println(member.getMemberPw());
+			boolean result=bcrypt.matches(member.getMemberPw(), forCheck.getMemberPw());
+			return result;
+		}
+
+		@Transactional
+		public int updatePw(Member m) {
+			String newMemberPw = m.getMemberPw();
+			String encodedNewMemberPw = bcrypt.encode(newMemberPw);
+			m.setMemberPw(encodedNewMemberPw);
+			int result = memberDao.updatePw(m);
+			return result;
+		}
+
 
 		public List<Member> selectMemberList() {
 			List<Member> memberList = memberDao.selectMemberList();
 			return memberList;
+		}
+
+		@Transactional
+		public int updateMemberThumb(Member mem) {
+			int result = memberDao.updateMemberThumb(mem);
+			return result;
 		}
 }
