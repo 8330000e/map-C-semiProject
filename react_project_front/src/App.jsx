@@ -15,7 +15,7 @@ import TossTestPayment from "./pages/payment/TossTestPayment";
 import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import PaymentFail from "./pages/payment/PaymentFail";
 import JoinPage from "./pages/member/JoinPage";
-import LoginPage from "./pages/member/LoginPage";
+import Login from "./pages/member/LoginPage";
 import TestHeader from "./components/commons/TestHeader";
 import useAuthStore from "./store/useAuthStore";
 import { useEffect } from "react";
@@ -58,7 +58,7 @@ function App() {
           <Route path="/Store" element={<Navigate to="/store" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/join" element={<JoinPage />}></Route>
-          <Route path="/members/login" element={<LoginPage />}></Route>
+          <Route path="/members/login" element={<Login />}></Route>
           <Route path="/test-header" element={<TestHeader />} />
         </Routes>
       </main>
