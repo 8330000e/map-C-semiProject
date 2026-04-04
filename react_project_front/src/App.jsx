@@ -19,18 +19,7 @@ import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import PaymentFail from "./pages/payment/PaymentFail";
 import JoinPage from "./pages/member/JoinPage";
 import LoginPage from "./pages/member/LoginPage";
-import UpdateMyInfo from "./components/mypage/UpdateMyInfo";
-import MyBoard from "./components/mypage/MyBoard";
-import MyLikeBoard from "./components/mypage/MyLikeBoard";
-import MemberTip from "./components/mypage/MemberTip";
-import LeaveMember from "./components/mypage/LeaveMember";
-import MyPoint from "./components/mypage/MyPoint";
-import ChangePw from "./components/mypage/ChangePw";
-import Mypage from "./pages/member/MyPage";
-import PurchaseHistory from "./components/mypage/PurchaseHistory";
-import SaleHistory from "./components/mypage/SaleHistory";
-import PurchaseDetail from "./components/mypage/PurchaseDetail";
-import SaleDetail from "./components/mypage/SaleDetail";
+
 import AdminPage from "./pages/admin/AdminPage";
 
 function App() {
