@@ -1,23 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.iei.member.model.dao.MemberDao">
 
-	<insert id="insertMember"
-		parameterType="kr.co.iei.member.model.vo.Member">
-		INSERT INTO member_tbl1
-		(member_id, member_pw, member_name, member_grade, member_nickname, member_email,
-		member_thumb,
-		enroll_date, member_status, manner_score, trade_count)
-		VALUES
-		(#{memberId}, #{memberPw}, #{memberName}, 2, #{memberNickname},
-		#{memberEmail}, #{memberThumb}, SYSDATE, 1,
-		0, 0)
-	</insert>
-	
-	<select id="selectOneMember" resultType="member">
-		select * from member_tbl1
-		where member_id =#{memberId}
+<insert id="insertMember"
+	parameterType="kr.co.iei.member.model.vo.Member">
+	INSERT INTO member_tbl1
+	(member_id, member_pw, member_name, member_grade, member_nickname,
+	member_email,
+	member_thumb,
+	enroll_date, member_status, manner_score, trade_count)
+	VALUES
+	(#{memberId}, #{memberPw}, #{memberName}, 2, #{memberNickname},
+	#{memberEmail}, #{memberThumb}, SYSDATE, 1,
+	0, 0)
+</insert>
 
+<select id="selectOneMember" resultType="member">
+	select * from member_tbl1
+	where member_id =#{memberId}
+
+
+</select>
+
+<select id="findIdByEmail" parameterType="string" resultType="string">
+
+<!--원래라면  
+		select memberId
+		from member_tbl
+		where member_email = ?
+		이 방식이 맞지만 내가 현재 하나의 이메일로 다수의 
+		아이디를 양산한 탓에 리스트를 설정하든가 아니면
+		아래 로직처럼 fetch first 1 row only 설정을 통해 다수의 아이디중
+		하나만 조회하게 했음.
 		
-	</select>
+		-->
+select member_id
+from member_tbl1
+where member_email = #{memberEmail}
+fetch first 1 row only
+
+
+<!--select memberId
+		from member_tbl
+		where member_email = ?
+		팀원들 작업이 다 끝날 때 데이터베이스에 유니크 설정을
+		걸어두고 위에 있는 구문 다시 부활시킬 예정.
+		-->
+
+</select>
+
+
 </mapper>

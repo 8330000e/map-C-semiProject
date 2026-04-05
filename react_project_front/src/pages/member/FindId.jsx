@@ -1,12 +1,35 @@
 import axios from "axios";
 import EmailAuth from "../../components/emailauth/EmailAuth";
 import styles from "./FindId.module.css";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const FindId = () => {
+  const navigate = useNavigate();
   const [memberEmail, setMemberEmail] = useState("");
   const [emailVerified, setEmailVerified] = useState(false);
+
+  // 아이디 찾기 요청이 한 번만 수행되도록 제어하는 ref, 중복 요청 방지용
+  const isRequestedRef = useRef(false);
+
+  // 자동으로 아이디 찾기 요청을 수행하는 함수, 그리고 수동으로 아이디 찾기 버튼을 눌렀을 때도 같은 로직이 수행되도록
+  //이떄 서로 겹쳐서 문제가 생기지 않도록 공통 함수인 fetchFindId를 만들어서 이메일 인증이 완료되었을 때 자동으로 아이디 찾기 요청이 수행되도록 하고
+  // 아이디 찾기 버튼을 눌렀을 때도 같은 fetchFindId 함수를 호출하도록 함
+  const fetchFindId = () => {
+    return axios.post(`${import.meta.env.VITE_BACKSERVER}/members/find-id`, {
+      memberEmail,
+    });
+  };
+  // 이메일 인증이 완료되면 아이디 찾기 로직을 수행하는 useEffect
+  //자동 수행을 하기 위해서는 useEffect를 사용해서
+  // emailVerified 상태가 true로 변경될 때마다 아이디 찾기 로직이 실행되도록 함.
+  useEffect(() => {
+    if (!emailVerified) {
+      isRequestedRef.current = false; // 이메일 인증이 완료되지 않은 상태에서는 아이디 찾기 요청이 수행되지 않도록 초기화
+      return;
+    }
+  }, [emailVerified]);
 
   const handleFindId = () => {
     // 이메일 인증이 완료된 상태에서 아이디 찾기 로직을 수행
@@ -18,16 +41,18 @@ const FindId = () => {
       });
       return;
     }
-    axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/members/find-id`, {
-        memberEmail,
-      })
+    fetchFindId()
       .then((res) => {
         console.log("아이디 찾기 성공:", res.data);
         Swal.fire({
           title: "아이디 찾기 성공",
           text: "아이디가 이메일로 전송되었습니다",
           icon: "success",
+          confirmButtonText: "로그인 페이지로 이동",
+        }).then(() => {
+          console.log("아이디 찾기 성공 후 로그인 페이지로 이동");
+          // 아이디 찾기 성공 후 로그인 페이지로 이동
+          navigate("/members/login");
         });
       })
       .catch((err) => {
@@ -62,6 +87,8 @@ const FindId = () => {
           이메일 인증이 끝난 이후 아이디 찾기 버튼 누르게 하기를 하려고 했으나
           그게 아니라 이메일 인증이 끝나면 자동으로 회원 아이디가 조회되게 하기 
           하나의 새로운 페이지로 이동하게 하거나 혹은 팜업창을 뜨게 할 수도 있음.
+
+          
         */}
         <button type="button" onClick={handleFindId} disabled={!emailVerified}>
           아이디 찾기

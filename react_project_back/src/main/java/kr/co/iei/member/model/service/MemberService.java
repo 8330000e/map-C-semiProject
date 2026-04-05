@@ -63,4 +63,10 @@ public class MemberService {
 			}
 			return null;
 }
+		//이메일 인증을 통한 아이디 찾기 
+
+		public String findIdByEmail(String memberEmail) {
+			String memberId = memberDao.findIdByEmail(memberEmail);
+			return memberId;
+		}
 }

@@ -11,4 +11,14 @@ public interface MemberDao {
 
 	Member selectOneMember(String memberId);
 
+	String findIdByEmail(String memberEmail);
+	/*
+	 * @Mapper 어노테이션의 역할
+	 * 원래라면 
+	 *   return sqlSession.selectOne("member.findIdByEmail", memberEmail);
+	 *   같은 로직을 짜야 하지만 mapper를 실행하면 얘가 알아서
+	 *   실행 기능을 수행하기 떄문에 필요x
+	 * 
+	 * 
+	 * */
 }

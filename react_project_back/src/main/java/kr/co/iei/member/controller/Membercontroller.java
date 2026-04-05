@@ -1,5 +1,6 @@
 package kr.co.iei.member.controller;
 
+import java.util.Map;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,9 @@ import lombok.Getter;
 
 public class Membercontroller {
 
-	
 	@Autowired
 	private MemberService memberService;
-	
+
 	@Autowired
 	private EmailSender emailSender;
 
@@ -36,11 +36,10 @@ public class Membercontroller {
 		int result = memberService.insertMember(member);
 		return ResponseEntity.ok(result);
 	}
-	
-	
+
 	@PostMapping(value = "/email-verification")
-	public ResponseEntity<?> sendMail(@RequestBody Member m){
-		
+	public ResponseEntity<?> sendMail(@RequestBody Member m) {
+
 		// 인증제목 메일 생성
 		String emailTitle = "탄소커넥트 인증 메일입니다.";
 		// 인증메일용 인증 코드 생성(random활용)
@@ -69,23 +68,47 @@ public class Membercontroller {
 		emailSender.sendMail(emailTitle, m.getMemberEmail(), emailContent);
 		return ResponseEntity.ok(authCode);
 	}
-	
-	
+
 	// 로그인 로직
 	@PostMapping(value = "/login")
 	public ResponseEntity<?> loginMember(@RequestBody Member member) {
-		
-		//경로 설정 잘하기 
-		//package kr.co.iei.member.model.vo;
+
+		// 경로 설정 잘하기
+		// package kr.co.iei.member.model.vo;
 		LoginMember loginUser = memberService.login(member);
 
 		if (loginUser != null) {
-			
+
 			return ResponseEntity.ok(loginUser); // 로그인 성공
 		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다."); // 문제가 생기면 에러 404발생
 		}
 
+	}
+
+	// 아이디 찾기 설정
+	@PostMapping(value = "/find-id")
+	public ResponseEntity<?> findId(@RequestBody Member member) {
+		// 아이디 하나로 회원 전체 정보를 가져오는게 아니기떄문에
+		// 여기서는 이메일 인증을 통해 아이디 하나만을 조회하는 것이기 떄문에
+		// String memberId로 처리
+		String memberId = memberService.findIdByEmail(member.getMemberEmail());
+
+		if (memberId != null) {
+			String title = "아이디 찾기 결과";
+			String content = "<h3>회원님의 아이디는 </h3><h2>" + memberId + "</h2>입니다.";
+
+			emailSender.sendMail(title, member.getMemberEmail(), content);
+
+			// 이메일로 아이디를 보냈기 떄문에 굳이 프런트에 아이디를 줄 필요없음
+			// 따라서 리턴할 값을 주지않고 공백처리 해도됨.
+			return ResponseEntity.ok(Map.of("message", "이메일로 아이디를 전송했습니다."
+
+			));
+
+		} else {
+			return ResponseEntity.status(404).body("아이디를 찾을 수 없습니다.");
+		}
 	}
 
 }
