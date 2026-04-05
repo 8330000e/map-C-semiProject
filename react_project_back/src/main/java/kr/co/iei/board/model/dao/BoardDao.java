@@ -1,7 +1,11 @@
 package kr.co.iei.board.model.dao;
 
+
 import java.util.HashMap;
 import java.util.List;
+
+
+import kr.co.iei.board.model.vo.Board;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -17,5 +21,8 @@ public interface BoardDao {
 	int updateBoard(Board board);
 
 	int deleteBoard(int boardNo);
+
+
+    int insertBoard(Board board);
 
 }

@@ -1,9 +1,4 @@
 :root {
-  font-family: Roboto, system-ui, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color: #464d3e;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -29,10 +24,14 @@
 
   --danger: #ff593c;
   --border: 1.8px solid #464d3e;
-  --shadow: --sans: system-ui, "Roboto", sans-serif;
+  --shadow:
+    rgba(70, 77, 62, 0.2) 0px 4px 6px -1px,
+    rgba(70, 77, 62, 0.1) 0px 2px 4px -1px;
+  --sans: system-ui, "Roboto", sans-serif;
   --headline: system-ui, "Jua", sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 }
+
 a {
   font-weight: 500;
   color: #464d3e;
@@ -50,6 +49,7 @@ a:hover {
   padding-top: 12px;
   transition-duration: 0.3;
 }
+
 /*btn용*/
 .outline {
   border: 2.5px solid #464d3e;

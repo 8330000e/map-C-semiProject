@@ -70,3 +70,4 @@ Thumbs.db
 # Optional: yarn / pnpm lock (팀 환경에 맞게 선택)
 # yarn.lock
 # pnpm-lock.yaml
+/.metadata/
