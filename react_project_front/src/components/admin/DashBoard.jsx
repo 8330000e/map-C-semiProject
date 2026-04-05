@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import styles from "./AdminDashBoard.module.css";
+import styles from "../../pages/admin/DashBoardPage.module.css";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -26,7 +25,14 @@ ChartJS.register(
   Filler,
 );
 
-const AdminDashBoard = () => {
+const DashBoard = ({
+  totalMember,
+  todayMember,
+  monthlyGrowthRate,
+  dailyGrowthRate,
+  monthSign,
+  dailySign,
+}) => {
   // 라인 차트 데이터 (회원 증가 - 하드코딩)
   const lineData = {
     labels: ["4주전", "3주전", "2주전", "1주전"],
@@ -78,7 +84,6 @@ const AdminDashBoard = () => {
       },
     },
   };
-
   return (
     <div className={styles.dashboard_wrap}>
       <div className={styles.content_title}>
@@ -89,13 +94,19 @@ const AdminDashBoard = () => {
       <div className={styles.card_wrap}>
         <div className={styles.card}>
           <p>전체 회원 수</p>
-          <h2>812명</h2>
-          <span>+42% 이번달</span>
+          <h2>{totalMember}명</h2>
+          <span>
+            {monthSign}
+            {monthlyGrowthRate.toFixed(1)}% 지난 달 대비
+          </span>
         </div>
         <div className={styles.card}>
           <p>오늘 가입자</p>
-          <h2>13명</h2>
-          <span>7% 어제대비</span>
+          <h2>{todayMember}명</h2>
+          <span>
+            {dailySign}
+            {dailyGrowthRate.toFixed(1)}% 어제 대비
+          </span>
         </div>
         <div className={styles.card}>
           <p>미처리 신고</p>
@@ -129,4 +140,4 @@ const AdminDashBoard = () => {
   );
 };
 
-export default AdminDashBoard;
+export default DashBoard;

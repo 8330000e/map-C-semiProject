@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.iei.admin.model.service.AdminService;
+import kr.co.iei.admin.model.vo.DashData;
 import kr.co.iei.admin.model.vo.Notice;
 
 @RequestMapping(value="admins")
@@ -40,5 +41,12 @@ public class AdminController {
 	public ResponseEntity<?> editNotice(@RequestBody Notice notice) {
 		int result = adminService.editNotice(notice);
 		return ResponseEntity.ok(result);
+	}
+	
+	@GetMapping(value="dashdata")
+	public ResponseEntity<?> getDashData() {
+		DashData dashData = adminService.getDashData();
+		System.out.println(dashData);
+		return ResponseEntity.ok(dashData);
 	}
 }

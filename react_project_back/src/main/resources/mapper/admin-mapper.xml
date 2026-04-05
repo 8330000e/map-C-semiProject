@@ -32,5 +32,15 @@
 			notice_fixed = #{noticeFixed}
 		where notice_no = #{noticeNo}
 	</update>
+	
+	<select id="getDashData">
+		select 
+			count(*) as totalMember,
+			count (case when trunc(enroll_date, 'MM') = trunc(sysdate, 'MM') then 1 end) as thisMonthMember,
+			count (case when trunc(enroll_date, 'MM') = add_months(trunc(sysdate, 'MM'), -1) then 1 end) as lastMonthMember,
+			count (case when trunc(enroll_date) = trunc(sysdate) then 1 end) as todayMember,
+			count (case when trunc(enroll_date) = trunc(sysdate - 1) then 1 end) as yesterdayMember
+		from member_tbl1
+	</select>
 
 </mapper>
