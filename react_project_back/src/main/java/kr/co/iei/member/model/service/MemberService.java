@@ -75,4 +75,10 @@ public class MemberService {
 			Member m = memberDao.selectOneMember(memberId);
 			return m;
 		}
+
+		//boolean이기 떄문에 return도 !형식으로 줘야함.
+		public boolean existsByIdAndEmail(String memberId, String memberEmail) {
+			Integer result = memberDao.existsByIdAndEmail(memberId,memberEmail);
+			return result > 0;
+		}
 }

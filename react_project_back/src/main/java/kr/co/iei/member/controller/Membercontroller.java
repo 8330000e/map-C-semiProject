@@ -3,8 +3,10 @@ package kr.co.iei.member.controller;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,19 +40,17 @@ public class Membercontroller {
 		int result = memberService.insertMember(member);
 		return ResponseEntity.ok(result);
 	}
-	
-	//아이디 중복 체크 설정
-	@GetMapping(value="/exists")
+
+	// 아이디 중복 체크 설정
+	@GetMapping(value = "/exists")
 	public ResponseEntity<?> dupCheckId(@RequestParam String memberId) {
 		Member m = memberService.selectOneMember(memberId);
-		//존재하면 Member 객체 반환, 없으면 null
-		//프런트에서 setCheckId(res.data ? 2 : 1);
-		//-> 이렇게 설정을 해놨기 때문에 비교문을 통해 
-		//->컨트롤러 m == null → true/false 그대로 반환
+		// 존재하면 Member 객체 반환, 없으면 null
+		// 프런트에서 setCheckId(res.data ? 2 : 1);
+		// -> 이렇게 설정을 해놨기 때문에 비교문을 통해
+		// ->컨트롤러 m == null → true/false 그대로 반환
 		return ResponseEntity.ok(m == null);
 	}
-	
-	
 
 	@PostMapping(value = "/email-verification")
 	public ResponseEntity<?> sendMail(@RequestBody Member m) {
@@ -117,6 +117,10 @@ public class Membercontroller {
 
 			// 이메일로 아이디를 보냈기 떄문에 굳이 프런트에 아이디를 줄 필요없음
 			// 따라서 리턴할 값을 주지않고 공백처리 해도됨.
+			// 하지만 json형태로 데이터가 오기 떄문에 객체 형태로 변환하기 위해서는
+			// map형태를 쓰는게 좋음.
+			// 그리고 Map.of()를 쓰면 키-값 쌍으로 여러 데이터를 쉽게 묶어서 반환 가능
+			// 객체 클래스를 만들지 않아도 여러 필드를 한번에 보내기 좋음
 			return ResponseEntity.ok(Map.of("message", "이메일로 아이디를 전송했습니다."
 
 			));
@@ -125,8 +129,43 @@ public class Membercontroller {
 			return ResponseEntity.status(404).body("아이디를 찾을 수 없습니다.");
 		}
 	}
-	
-	
-	
+
+	// 비밀번호 찾기 로직
+	@PostMapping(value = "/find-pw")
+	public ResponseEntity<?> findPw(@RequestBody Member member) {
+		// JSON에서 자동으로 매핑된 memberId와 memberEmail 가져오기
+		// String memberId = memberService.findIdByEmail(member.getMemberEmail());
+		// -> 기존과 같은 방식을 사용할 수는 없음. 조건이 두개 이기 떄문에
+		// 따라서 각자 데이터를 받아온뒤
+		// 데이터베이스 조회 실행.
+		String memberId = member.getMemberId();
+		String memberEmail = member.getMemberEmail();
+
+		// 아이디와 이메일이 서버에 존재하는지에 대한 여부
+		boolean result = memberService.existsByIdAndEmail(memberId, memberEmail);
+
+		// 서버로부터 아이디가 존재 한다는게 확인이 되면 바로 이메일 인증 발송. 아이디가 조회되지 않으면 그렇지
+		// 않다는 메세지를 표시
+		if (result) {
+
+			String title = "비밀번호 재설정 안내";
+
+			// 링크 방식 (프런트 reset 페이지로 이동)
+			String content = "<h3>비밀번호를 재설정하려면 아래 링크를 클릭하세요</h3>"
+					+ "<a href='http://localhost:5173/members/reset-pw?memberId=" + member.getMemberId()
+					+ "'>비밀번호 재설정하기</a>";
+			// 이메일 전송
+
+			emailSender.sendMail(title, member.getMemberEmail(), content);
+
+			return ResponseEntity.ok(Map.of("message", "비밀번호 재설정 링크를 이메일로 전송했습니다."));
+
+		} else {
+			// status(HttpStatus.NOT_FOUND)-> status(404)와 동일한 의미
+
+			return ResponseEntity.status(404).body("아이디와 이메일이 일치하지 않습니다.");
+		}
+
+	}
 
 }

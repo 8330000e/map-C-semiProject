@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 const FindId = () => {
   const navigate = useNavigate();
+
   const [memberEmail, setMemberEmail] = useState("");
   const [emailVerified, setEmailVerified] = useState(false);
 

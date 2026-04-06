@@ -1,6 +1,7 @@
 package kr.co.iei.member.model.dao;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import kr.co.iei.member.model.vo.Member;
 
@@ -13,12 +14,11 @@ public interface MemberDao {
 
 	String findIdByEmail(String memberEmail);
 	/*
-	 * @Mapper 어노테이션의 역할
-	 * 원래라면 
-	 *   return sqlSession.selectOne("member.findIdByEmail", memberEmail);
-	 *   같은 로직을 짜야 하지만 mapper를 실행하면 얘가 알아서
-	 *   실행 기능을 수행하기 떄문에 필요x
+	 * @Mapper 어노테이션의 역할 원래라면 return sqlSession.selectOne("member.findIdByEmail",
+	 * memberEmail); 같은 로직을 짜야 하지만 mapper를 실행하면 얘가 알아서 실행 기능을 수행하기 떄문에 필요x
 	 * 
 	 * 
-	 * */
+	 */
+
+	public Integer existsByIdAndEmail(@Param("memberId") String memberId, @Param("memberEmail") String memberEmail);
 }
