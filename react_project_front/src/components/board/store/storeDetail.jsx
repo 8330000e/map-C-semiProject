@@ -146,6 +146,23 @@ const StoreDetail = () => {
   const displaySame = sameProducts.length > 0 ? sameProducts.slice(0, 6) : storeList.filter((product) => product.marketNo !== item.marketNo).slice(0, 6);
   const displayTitle = `[${saleStatus}] ${item.marketTitle}`;
 
+  const updateProductStatus = async (statusCode) => {
+    try {
+      await axios.patch(`${BACKSERVER}/api/store/boards/${itemId}/status`, null, {
+        params: { status: statusCode },
+      });
+    } catch (error) {
+      console.error("상품 상태 업데이트 실패", error);
+      throw error;
+    }
+  };
+
+  const getStatusCode = (status) => {
+    if (status === "예약중") return 1;
+    if (status === "판매완료") return 2;
+    return 0;
+  };
+
   const handleChangeSaleStatus = async (status) => {
     const isCancelAction = saleStatus === status;
     const nextStatus = isCancelAction ? "판매중" : status;
@@ -166,14 +183,25 @@ const StoreDetail = () => {
 
     if (!result.isConfirmed) return;
 
-    setSaleStatus(nextStatus);
+    try {
+      await updateProductStatus(getStatusCode(nextStatus));
+      setSaleStatus(nextStatus);
+      setItem((prev) => ({ ...prev, productStatus: nextStatus }));
 
-    Swal.fire({
-      icon: "success",
-      title: "변경 완료",
-      text: `[${nextStatus}] 상태로 변경되었습니다.`,
-      confirmButtonColor: "#464d3e",
-    });
+      Swal.fire({
+        icon: "success",
+        title: "변경 완료",
+        text: `[${nextStatus}] 상태로 변경되었습니다.`,
+        confirmButtonColor: "#464d3e",
+      });
+    } catch {
+      Swal.fire({
+        icon: "error",
+        title: "변경 실패",
+        text: "상품 상태를 변경하지 못했습니다.",
+        confirmButtonColor: "#464d3e",
+      });
+    }
   };
 
   const handleGoToPayment = () => {
@@ -257,25 +285,32 @@ const StoreDetail = () => {
               type="button"
               className={`${styles.statusButton} ${saleStatus === "예약중" ? styles.statusButtonActive : ""}`}
               onClick={() => handleChangeSaleStatus("예약중")}
+              disabled={saleStatus === "판매완료"}
             >
               예약중
             </button>
-            <button
-              type="button"
-              className={`${styles.statusButton} ${saleStatus === "판매완료" ? styles.statusButtonActive : ""}`}
-              onClick={() => handleChangeSaleStatus("판매완료")}
-            >
-              판매완료
+            <button type="button" className={styles.edit_button} disabled={saleStatus === "판매완료"}>
+              수정
+            </button>
+            <button type="button" className={styles.delete_button} disabled={saleStatus === "판매완료"}>
+              삭제
             </button>
           </div>
-          <div className={styles.button_group}>
-            <button type="button" className={styles.cart_button}>
-              🛒 장바구니
-            </button>
-            <button type="button" className={styles.buy_button} onClick={handleGoToPayment}>
-              구매하기
-            </button>
-          </div>
+          {saleStatus !== "판매완료" && (
+            <div className={styles.button_group}>
+              <button type="button" className={styles.cart_button}>
+                🛒 장바구니
+              </button>
+              <button type="button" className={styles.buy_button} onClick={handleGoToPayment}>
+                구매하기
+              </button>
+            </div>
+          )}
+          {saleStatus === "판매완료" && (
+            <div className={styles.info_box}>
+              이 상품은 결제 완료 처리되어 더 이상 수정/삭제할 수 없습니다.
+            </div>
+          )}
         </div>
       </div>
 

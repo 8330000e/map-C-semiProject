@@ -20,6 +20,7 @@ const ProductRegistration = () => {
     const [regionLabel, setRegionLabel] = useState("");
     const [region, setRegion] = useState("");
     const [regions, setRegions] = useState([]);
+    const [showRegionList, setShowRegionList] = useState(false);
 
     const handlePriceChange = (e) => {
         const raw = e.target.value.replace(/[^0-9]/g, "");
@@ -67,6 +68,16 @@ const ProductRegistration = () => {
         [regionOptions],
     );
 
+    const filteredRegions = useMemo(() => {
+        const query = regionLabel.trim().toLowerCase();
+        if (!query) return regionOptions;
+        return regionOptions.filter((regionOption) => regionOption.label.toLowerCase().includes(query));
+    }, [regionLabel, regionOptions]);
+
+    const handleRegionBlur = () => {
+        setTimeout(() => setShowRegionList(false), 150);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -108,7 +119,8 @@ const ProductRegistration = () => {
             navigate("/store");
         } catch (error) {
             console.error("상품 등록 실패", error);
-            alert("상품 등록 중 오류가 발생했습니다.");
+            const serverMessage = error?.response?.data || error?.message || "상품 등록 중 오류가 발생했습니다.";
+            alert(`상품 등록 중 오류가 발생했습니다.\n${serverMessage}`);
         }
     };
 
@@ -176,21 +188,39 @@ const ProductRegistration = () => {
                                 <div className={styles.region_select_box}>
                                     <input
                                         type="text"
-                                        list="region-options"
                                         placeholder="시/군 검색"
                                         value={regionLabel}
                                         onChange={(e) => {
                                             const value = e.target.value;
                                             setRegionLabel(value);
                                             setRegion(regionMap.get(value) || "");
+                                            setShowRegionList(true);
                                         }}
+                                        onFocus={() => setShowRegionList(true)}
+                                        onBlur={handleRegionBlur}
                                         className={styles.region_search}
                                     />
-                                    <datalist id="region-options">
-                                        {regionOptions.map((regionOption) => (
-                                            <option key={regionOption.id} value={regionOption.label} />
-                                        ))}
-                                    </datalist>
+                                    {showRegionList && (
+                                        <ul className={styles.region_option_list}>
+                                            {filteredRegions.length > 0 ? (
+                                                filteredRegions.slice(0, 8).map((regionOption) => (
+                                                    <li
+                                                        key={regionOption.id}
+                                                        className={styles.region_option_item}
+                                                        onMouseDown={() => {
+                                                            setRegionLabel(regionOption.label);
+                                                            setRegion(regionOption.id);
+                                                            setShowRegionList(false);
+                                                        }}
+                                                    >
+                                                        {regionOption.label}
+                                                    </li>
+                                                ))
+                                            ) : (
+                                                <li className={styles.noRegions}>검색 결과가 없습니다.</li>
+                                            )}
+                                        </ul>
+                                    )}
                                 </div>
                             </div>
 

@@ -32,6 +32,11 @@ public class StoreBoardController {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             log.error("상품 등록 실패 payload={}", storeBoard, e);
+            Throwable cause = e.getCause();
+            if (cause instanceof java.sql.SQLIntegrityConstraintViolationException
+                    || e instanceof java.sql.SQLIntegrityConstraintViolationException) {
+                return ResponseEntity.badRequest().body("회원 정보가 유효하지 않습니다. 다시 로그인 후 시도해주세요.");
+            }
             return ResponseEntity.internalServerError().body("상품 등록 실패: " + e.getMessage());
         }
     }
