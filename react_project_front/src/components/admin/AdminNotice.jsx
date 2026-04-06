@@ -9,6 +9,7 @@ const AdminNotice = ({
   setIsEdit,
 
   setNotice,
+  deleteNotice,
 }) => {
   return (
     <>
@@ -114,7 +115,14 @@ const AdminNotice = ({
                     </button>
                   </td>
                   <td>
-                    <button className={styles.delete_btn}>삭제</button>
+                    <button
+                      className={styles.delete_btn}
+                      onClick={() => {
+                        deleteNotice(item.noticeNo);
+                      }}
+                    >
+                      삭제
+                    </button>
                   </td>
                 </tr>
               ))

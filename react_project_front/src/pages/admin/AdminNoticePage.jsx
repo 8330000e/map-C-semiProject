@@ -8,6 +8,7 @@ const AdminNoticePage = () => {
   const [isEdit, setIsEdit] = useState(false);
 
   const [notice, setNotice] = useState({
+    noticeNo: 0,
     noticeTitle: "",
     noticeContent: "",
     noticePublic: 0,
@@ -20,7 +21,7 @@ const AdminNoticePage = () => {
     setNotice({ ...notice, [name]: value });
   };
 
-  const deleteNotice = (e) => {
+  const deleteNotice = (noticeNo) => {
     Swal.fire({
       title: "공지사항 삭제",
       text: "공지사항을 삭제하시겠습니까?",
@@ -30,6 +31,23 @@ const AdminNoticePage = () => {
       confirmButtonText: "삭제",
     }).then((result) => {
       if (result.isConfirmed) {
+        axios
+          .delete(
+            `${import.meta.env.VITE_BACKSERVER}/admins/notice/${noticeNo}`,
+          )
+          .then((res) => {
+            console.log(res);
+            if (res.data === 1) {
+              selectNoticeList();
+              Swal.fire({
+                title: "삭제성공",
+                icon: "success",
+              });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
     });
   };
@@ -97,6 +115,7 @@ const AdminNoticePage = () => {
       isEdit={isEdit}
       setIsEdit={setIsEdit}
       setNotice={setNotice}
+      deleteNotice={deleteNotice}
     />
   );
 };

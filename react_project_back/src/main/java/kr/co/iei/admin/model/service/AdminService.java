@@ -38,4 +38,12 @@ public class AdminService {
 		System.out.println(dashData);
 		return dashData;
 	}
+
+	
+
+	@Transactional
+	public int deleteNotice(Integer noticeNo) {
+		int result = adminDao.deleteNotice(noticeNo);
+		return result;
+	}
 }

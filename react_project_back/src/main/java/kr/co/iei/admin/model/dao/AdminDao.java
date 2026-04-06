@@ -18,6 +18,8 @@ public interface AdminDao {
 
 	DashData getDashData();
 
+	int deleteNotice(Integer noticeNo);
+
 
 
 

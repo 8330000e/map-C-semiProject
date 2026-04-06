@@ -55,6 +55,10 @@
 	]]>
 	</select>
 	
+	<delete id="deleteNotice">
+		delete from notice_tbl where notice_no = #{noticeNo}
+	</delete>
+	
 	
 	
 	
