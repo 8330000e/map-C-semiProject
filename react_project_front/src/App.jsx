@@ -25,7 +25,6 @@ import FindId from "./pages/member/findId";
 import FindPw from "./pages/member/FindPw";
 
 import useAuthStore from "./store/useAuthStore";
-import TestHeader from "./components/commons/TestHeader";
 import { useEffect } from "react";
 
 import axios from "axios";
