@@ -70,16 +70,23 @@ public class BoardController {
 	 
 	// 수정
 	 @PatchMapping("/{boardNo}")
-	 public int updateBoard(@PathVariable int boardNo, @RequestBody Board board) {
+	 public ResponseEntity<?> updateBoard(@PathVariable int boardNo, @RequestBody Board board, @RequestParam String memberId) {
+	     if (!boardService.isBoardAuthor(boardNo, memberId)) {
+	         return ResponseEntity.status(403).body("작성자만 수정할 수 있습니다.");
+	     }
 	     board.setBoardNo(boardNo);
-	     return boardService.updateBoard(board);
+	     int result = boardService.updateBoard(board);
+	     return ResponseEntity.ok(result);
 	 }
 
 	 // 삭제
 	 @DeleteMapping("/{boardNo}")
-	 public int deleteBoard(@PathVariable int boardNo) {	     
-	     int result = boardService.deleteBoard(boardNo);	    
-	     return result;
+	 public ResponseEntity<?> deleteBoard(@PathVariable int boardNo, @RequestParam String memberId) {
+	     if (!boardService.isBoardAuthor(boardNo, memberId)) {
+	         return ResponseEntity.status(403).body("작성자만 삭제할 수 있습니다.");
+	     }
+	     int result = boardService.deleteBoard(boardNo);
+	     return ResponseEntity.ok(result);
 	 }
 	 @PostMapping("/{boardNo}/files")
 	 public int uploadBoardFiles(
@@ -98,6 +105,38 @@ public class BoardController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.internalServerError().body("조회수 증가 실패: " + e.getMessage());
+		}
+	}
+
+	@GetMapping("/{boardNo}/likes/{memberId}")
+	public ResponseEntity<Boolean> isLiked(@PathVariable int boardNo, @PathVariable String memberId) {
+		try {
+			return ResponseEntity.ok(boardService.isBoardLiked(boardNo, memberId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().build();
+		}
+	}
+
+	@PostMapping("/{boardNo}/likes")
+	public ResponseEntity<?> likeBoard(@PathVariable int boardNo, @RequestParam String memberId) {
+		try {
+			boardService.addBoardLike(boardNo, memberId);
+			return ResponseEntity.ok().build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().body("좋아요 처리 실패: " + e.getMessage());
+		}
+	}
+
+	@DeleteMapping("/{boardNo}/likes")
+	public ResponseEntity<?> unlikeBoard(@PathVariable int boardNo, @RequestParam String memberId) {
+		try {
+			boardService.removeBoardLike(boardNo, memberId);
+			return ResponseEntity.ok().build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().body("좋아요 취소 실패: " + e.getMessage());
 		}
 	}
 	 

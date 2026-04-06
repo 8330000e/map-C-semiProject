@@ -278,11 +278,12 @@ const StoreDetail = () => {
   );
   const displaySame = sameProducts.length > 0 ? sameProducts.slice(0, 6) : storeList.filter((product) => product.marketNo !== item.marketNo).slice(0, 6);
   const displayTitle = `[${saleStatus}] ${item.marketTitle}`;
+  const isAuthor = memberId && item?.memberId === memberId;
 
   const updateProductStatus = async (statusCode) => {
     try {
       await axios.patch(`${BACKSERVER}/api/store/boards/${itemId}/status`, null, {
-        params: { status: statusCode },
+        params: { status: statusCode, memberId },
       });
     } catch (error) {
       console.error("상품 상태 업데이트 실패", error);
@@ -297,6 +298,11 @@ const StoreDetail = () => {
   };
 
   const handleChangeSaleStatus = async (status) => {
+    if (!isAuthor) {
+      Swal.fire({ icon: "warning", title: "작성자만 상태를 변경할 수 있습니다." });
+      return;
+    }
+
     const isCancelAction = saleStatus === status;
     const nextStatus = isCancelAction ? "판매중" : status;
     const confirmText = isCancelAction
@@ -353,10 +359,18 @@ const StoreDetail = () => {
   };
 
   const handleEdit = () => {
+    if (!isAuthor) {
+      Swal.fire({ icon: "warning", title: "작성자만 수정할 수 있습니다." });
+      return;
+    }
     navigate("/store/register", { state: { editItem: item } });
   };
 
   const handleDelete = async () => {
+    if (!isAuthor) {
+      Swal.fire({ icon: "warning", title: "작성자만 삭제할 수 있습니다." });
+      return;
+    }
     const result = await Swal.fire({
       icon: "warning",
       title: "게시글 삭제",
@@ -371,7 +385,9 @@ const StoreDetail = () => {
     if (!result.isConfirmed) return;
 
     try {
-      await axios.delete(`${BACKSERVER}/api/store/boards/${itemId}`);
+      await axios.delete(`${BACKSERVER}/api/store/boards/${itemId}`, {
+        params: { memberId },
+      });
       await Swal.fire({
         icon: "success",
         title: "삭제 완료",
@@ -451,23 +467,25 @@ const StoreDetail = () => {
 
           <div className={styles.info_box}>상품 상태 : {item.productStatus || "미등록"}</div>
 
-          <div className={styles.action_row}>
-            <button
-              type="button"
-              className={`${styles.statusButton} ${saleStatus === "예약중" ? styles.statusButtonActive : ""}`}
-              onClick={() => handleChangeSaleStatus("예약중")}
-              disabled={saleStatus === "판매완료"}
-            >
-              {saleStatus === "예약중" ? "판매중으로 변경" : "예약중으로 변경"}
-            </button>
-            <button type="button" className={styles.edit_button} onClick={handleEdit} disabled={saleStatus === "판매완료"}>
-              수정
-            </button>
-            <button type="button" className={styles.delete_button} onClick={handleDelete} disabled={saleStatus === "판매완료"}>
-              삭제
-            </button>
-          </div>
-          {saleStatus !== "판매완료" && (
+          {isAuthor ? (
+            <div className={styles.action_row}>
+              <button
+                type="button"
+                className={`${styles.statusButton} ${saleStatus === "예약중" ? styles.statusButtonActive : ""}`}
+                onClick={() => handleChangeSaleStatus("예약중")}
+                disabled={saleStatus === "판매완료"}
+              >
+                {saleStatus === "예약중" ? "판매중으로 변경" : "예약중으로 변경"}
+              </button>
+              <button type="button" className={styles.edit_button} onClick={handleEdit} disabled={saleStatus === "판매완료"}>
+                수정
+              </button>
+              <button type="button" className={styles.delete_button} onClick={handleDelete} disabled={saleStatus === "판매완료"}>
+                삭제
+              </button>
+            </div>
+          ) : null}
+          {saleStatus !== "판매완료" && !isAuthor && (
             <div className={styles.button_group}>
               <button type="button" className={styles.cart_button}>
                 🛒 장바구니

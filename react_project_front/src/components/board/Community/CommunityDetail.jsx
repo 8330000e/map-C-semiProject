@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import axios from "axios";
 import useAuthStore from "../../../store/useAuthStore";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -21,7 +22,7 @@ const formatTime = (rawDate) => {
   return `${day}일 전`;
 };
 
-const CommunityDetail = ({ board, onEdit, onDelete }) => {
+const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
   const { memberId } = useAuthStore();
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -44,9 +45,17 @@ const CommunityDetail = ({ board, onEdit, onDelete }) => {
     setEditText("");
     setEditPrivate(false);
     setLikeCount(board.likeCount ?? 0);
-    setLiked(false);
     setScrapped(localStorage.getItem(`scrap_board_${board.boardNo}`) === "1");
-  }, [board.boardNo, board.likeCount]);
+
+    if (memberId) {
+      axios
+        .get(`${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes/${memberId}`)
+        .then((res) => setLiked(res.data === true))
+        .catch((err) => console.error("좋아요 여부 조회 실패", err));
+    } else {
+      setLiked(false);
+    }
+  }, [board.boardNo, board.likeCount, memberId]);
 
   useEffect(() => {
     commentsEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -81,13 +90,37 @@ const CommunityDetail = ({ board, onEdit, onDelete }) => {
     setReplyTarget(null);
   };
 
-  const toggleLike = () => {
+  const toggleLike = async () => {
     if (!memberId) {
       Swal.fire({ icon: "warning", title: "로그인이 필요합니다." });
       return;
     }
-    setLiked((prev) => !prev);
-    setLikeCount((prev) => prev + (liked ? -1 : 1));
+
+    try {
+      if (!liked) {
+        await axios.post(
+          `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes`,
+          null,
+          { params: { memberId } },
+        );
+        const nextCount = (likeCount ?? 0) + 1;
+        setLiked(true);
+        setLikeCount(nextCount);
+        onLikeChange?.(board.boardNo, nextCount);
+      } else {
+        await axios.delete(
+          `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes`,
+          { params: { memberId } },
+        );
+        const nextCount = (likeCount ?? 0) - 1;
+        setLiked(false);
+        setLikeCount(nextCount);
+        onLikeChange?.(board.boardNo, nextCount);
+      }
+    } catch (err) {
+      console.error("좋아요 처리 실패", err);
+      Swal.fire({ icon: "error", title: "좋아요 처리 실패", text: "다시 시도해주세요." });
+    }
   };
 
   const toggleScrap = () => {

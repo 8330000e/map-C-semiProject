@@ -3,24 +3,24 @@
 <mapper namespace="kr.co.iei.board.model.dao.BoardDao">
 <select id="selectBoardList" parameterType="map" resultType="board">
     SELECT
-        BOARD_NO,
-        WRITER_ID,
-        BOARD_TITLE,
-        BOARD_CONTENT,
-        BOARD_THUMB,
-        TO_CHAR(BOARD_DATE, 'YYYY-MM-DD') AS BOARD_DATE,
-        MEMBER_NICKNAME,
-        BOARD_STATUS,
-        BOARD_LAT,
-        BOARD_LNG,
-        READ_COUNT,
+        b.BOARD_NO AS boardNo,
+        b.WRITER_ID AS writerId,
+        b.BOARD_TITLE AS boardTitle,
+        b.BOARD_CONTENT AS boardContent,
+        b.BOARD_THUMB AS boardThumb,
+        TO_CHAR(b.BOARD_DATE, 'YYYY-MM-DD') AS boardDate,
+        b.MEMBER_NICKNAME AS memberNickname,
+        b.BOARD_STATUS AS boardStatus,
+        b.BOARD_LAT AS boardLat,
+        b.BOARD_LNG AS boardLng,
+        b.READ_COUNT AS readCount,
+        NVL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0) AS likeCount,
 
-        MEMBER_NICKNAME AS WRITER_NICKNAME,
-        TO_CHAR(BOARD_DATE, 'YYYY-MM-DD') AS CREATE_DATE,
-        BOARD_THUMB AS THUMBNAIL_URL,
-        0 AS LIKE_COUNT,
-        0 AS COMMENT_COUNT
-    FROM BOARD_TBL
+        b.MEMBER_NICKNAME AS writerNickname,
+        TO_CHAR(b.BOARD_DATE, 'YYYY-MM-DD') AS createDate,
+        b.BOARD_THUMB AS thumbnailUrl,
+        0 AS commentCount
+    FROM BOARD_TBL b
     WHERE BOARD_STATUS = #{status}
 
     <if test="searchKeyword != null and searchKeyword != ''">
@@ -74,6 +74,13 @@
     WHERE BOARD_NO = #{boardNo}
 </update>
 
+<select id="selectBoardAuthor" parameterType="map" resultType="int">
+    SELECT COUNT(*)
+    FROM BOARD_TBL
+    WHERE BOARD_NO = #{boardNo}
+      AND WRITER_ID = #{writerId}
+</select>
+
 <delete id="deleteBoard" parameterType="int">
     DELETE FROM BOARD_TBL
     WHERE BOARD_NO = #{boardNo}
@@ -83,6 +90,21 @@
     SET READ_COUNT = NVL(READ_COUNT, 0) + 1
     WHERE BOARD_NO = #{boardNo}
 </update>
+<insert id="insertBoardLike" parameterType="map">
+    INSERT INTO BOARD_LIKE_TBL (BOARD_NO, MEMBER_ID)
+    VALUES (#{boardNo}, #{memberId})
+</insert>
+<delete id="deleteBoardLike" parameterType="map">
+    DELETE FROM BOARD_LIKE_TBL
+    WHERE BOARD_NO = #{boardNo}
+      AND MEMBER_ID = #{memberId}
+</delete>
+<select id="selectBoardLikeByMember" parameterType="map" resultType="int">
+    SELECT COUNT(*)
+    FROM BOARD_LIKE_TBL
+    WHERE BOARD_NO = #{boardNo}
+      AND MEMBER_ID = #{memberId}
+</select>
 <insert id="insertBoardFile" parameterType="boardFile">
     <selectKey keyProperty="fileNo" resultType="int" order="BEFORE">
         SELECT BOARD_FILE_SEQ.NEXTVAL FROM DUAL

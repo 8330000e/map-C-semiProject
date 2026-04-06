@@ -94,10 +94,11 @@ const Store = () => {
             {/* 레이아웃: 왼쪽 메뉴 + 오른쪽 중고장터 컨텐츠 */}
             <aside className={styles.menu_panel}>
                 {/* 메뉴 섹션 */}
+
                 <div className={styles.menu_title}>메뉴</div>
                 <ul className={styles.menu_list}>
                     <li>
-                        <a href="#">맵 커뮤니티</a>
+                        <Link to="/map-community">맵 커뮤니티</Link>
                     </li>
                     <li>
                         <a href="#">회원끼리 캠페인</a>
@@ -106,10 +107,10 @@ const Store = () => {
                         <Link to="/store">중고거래</Link>
                     </li>
                     <li>
-                        <a href="#">미션</a>
+                        <Link to="/mission">미션(출석체크)</Link>
                     </li>
                     <li>
-                        <a href="#">나무 키우기</a>
+                        <Link to="/tree-grow" className={styles.treeGrow}>나무 키우기</Link>
                     </li>
                     <li>
                         <span>

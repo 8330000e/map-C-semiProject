@@ -16,7 +16,7 @@ public class StoreBoard {
     private String marketTitle;
     private String marketContent;
     private Integer productPrice;
-    private String productStatus;
+    private String productStatus; // 0, 1, 2로 저장, 반환 시 한글 변환
     private String productThumb;
     private String tradeType;
     private Integer readCount;
@@ -24,11 +24,5 @@ public class StoreBoard {
 
     private Date createdAt;
     private Date updatedAt;
-
-
-
-
-
-
 
 }

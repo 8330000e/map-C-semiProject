@@ -55,6 +55,22 @@ public class BoardService {
 	public int incrementReadCount(int boardNo) {
 		return boardDao.incrementReadCount(boardNo);
 	}
+
+	public int addBoardLike(int boardNo, String memberId) {
+		return boardDao.insertBoardLike(boardNo, memberId);
+	}
+
+	public int removeBoardLike(int boardNo, String memberId) {
+		return boardDao.deleteBoardLike(boardNo, memberId);
+	}
+
+	public boolean isBoardLiked(int boardNo, String memberId) {
+		return boardDao.selectBoardLikeByMember(boardNo, memberId) > 0;
+	}
+
+	public boolean isBoardAuthor(int boardNo, String writerId) {
+		return boardDao.selectBoardAuthor(boardNo, writerId) > 0;
+	}
 	@Transactional
 	public int insertBoardFiles(int boardNo, String memberId, MultipartFile[] files) {
 	    int result = 0;
