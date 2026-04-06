@@ -41,8 +41,8 @@ a:active {
   margin-bottom: 12px;
 }
 
-.login-wrap input[type='text'],
-.login-wrap input[type='password'] {
+.login-wrap input[type="text"],
+.login-wrap input[type="password"] {
   width: 100%;
   font-size: 1rem;
   padding: 10px 12px;
@@ -194,8 +194,12 @@ header {
 }
 .best_list {
   width: 320px;
+  height: 350px;
   flex-direction: column;
   flex-grow: 1;
+  overflow: scroll;
+  background-color: #eef3e8;
+  overflow-y: overlay;
 }
 .tip_list {
   width: 320px;

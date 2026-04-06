@@ -97,4 +97,12 @@
         #{boardFilePath}
     )
 </insert>
+<select id="bestBoardList" resultType="BoardLike">
+select 
+t.board_no, count(t.board_no) as count, b.board_title, b.ctpv, b.sgg
+from board_like_tbl t 
+join board_tbl b on (t.board_no = b.board_no)
+where t.board_no = t.board_no
+group by t.board_no, b.board_title, b.ctpv, b.sgg order by 2 desc
+</select>
 </mapper>

@@ -5,7 +5,8 @@ import { Link } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
 import { dummyData, storeDummyData } from "../components/mock/dummyData";
 import useAuthStore from "../store/useAuthStore";
-import Map from "../components/map/Map";
+import Map from "../components/mainpage/Map";
+import Bestpostlist from "../components/mainpage/Bestpostlist";
 
 const STORE_STATUS_KEY = "storeSaleStatusMap";
 
@@ -221,8 +222,9 @@ const Main = () => {
 
         <div className="main_content_one">
           <div className="best_list roundBorder">
-            <p>인기게시글</p>
+            {/* <p>인기게시글</p> */}
             {/*위치설명*/}
+            <Bestpostlist className="bestpostlist" />
           </div>
           <div className="tip_list roundBorder">
             <p>팁 리스트</p>

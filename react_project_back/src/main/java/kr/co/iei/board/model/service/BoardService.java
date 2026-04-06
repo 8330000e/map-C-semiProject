@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import kr.co.iei.board.model.dao.BoardDao;
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardFile;
+import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.utils.FileUtils;
 
 @Service
@@ -72,6 +73,10 @@ public class BoardService {
 	    }
 
 	    return result;
+	}
+	public List<BoardLike> bestBoardList() {
+		List<BoardLike> list = boardDao.bestBoardList();
+		return list;
 	}
 }
 
