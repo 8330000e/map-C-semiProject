@@ -30,6 +30,8 @@ const Login = () => {
     });
   };
 
+  const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+
   const handleLogin = () => {
     console.log("로그인 버튼 클릭됨"); // 버튼 클릭 테스트용 출력
 
@@ -41,7 +43,7 @@ const Login = () => {
 
     // 2) 디버그 출력 (보내는 데이터, 서버 주소)
     console.log("보내는 데이터:", member);
-    console.log("서버 주소:", import.meta.env.VITE_BACKSERVER);
+    console.log("서버 주소:", BACKSERVER);
 
     //로딩 시작
     //isLoading → 로그인 시 로딩 표시, 버튼 비활성화.
@@ -60,7 +62,7 @@ const Login = () => {
     }, 5000); //5초로 설정
 
     axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/members/login`, member)
+      .post(`${BACKSERVER}/members/login`, member)
       .then((res) => {
         clearTimeout(timer); //로그인 성공하면 타이머 초기화
         console.log(res.data);
