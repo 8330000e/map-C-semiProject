@@ -44,9 +44,9 @@
 /* 핵심 수정 */
 .topContent {
   display: grid;
-  grid-template-columns: 220px 1fr 220px;
+  grid-template-columns: minmax(160px, 220px) 1fr minmax(160px, 220px);
   grid-template-rows: auto 1fr auto;
-  height: calc(100% - 30px);
+  min-height: 380px;
   align-items: start;
 }
 
@@ -674,27 +674,38 @@
 }
 .infoRow {
   width: 100%;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
-  margin: 10px 0 6px;
+  gap: 90px;
   font-size: 15px;
   font-weight: 700;
   color: #111;
 }
 
-/* 왼쪽 */
 .leftText {
   text-align: left;
 }
 
-/* 가운데 */
 .centerText {
   text-align: center;
-  flex: 1;
 }
 
-/* 오른쪽 */
 .rightText {
   text-align: right;
+}
+@media (max-width: 1200px) {
+  .topContent {
+    grid-template-columns: 1fr;
+  }
+
+  .rightTreeArea {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .waterActionRow {
+    grid-column: 1;
+    grid-row: 3;
+  }
 }
