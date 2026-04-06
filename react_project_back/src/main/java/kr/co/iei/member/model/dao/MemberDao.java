@@ -19,17 +19,13 @@ public interface MemberDao {
 
 	int updateMemberInfo(Member member);
 
-
 	Member getOneMemberInfo(String memberId);
 
 	Member memberPw(String memberId);
 
 	int updatePw(Member m);
 
+	int selectMemberPoint(String memberId);
 
-	
-
+	int decreasePoint(String memberId, int point);
 }
-
-
-
