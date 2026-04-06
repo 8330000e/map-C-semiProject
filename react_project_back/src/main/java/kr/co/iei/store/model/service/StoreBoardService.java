@@ -1,11 +1,14 @@
 package kr.co.iei.store.model.service;
 
-import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.store.model.vo.StoreBoard;
+
+import java.util.List;
 
 public interface StoreBoardService {
 
-    Long createStoreBoard(Board board, StoreBoard storeBoard);
+    Long createStoreBoard(StoreBoard storeBoard);
+
+    List<StoreBoard> getStoreBoardList();
 
     StoreBoard getStoreBoard(Long marketNo);
 }

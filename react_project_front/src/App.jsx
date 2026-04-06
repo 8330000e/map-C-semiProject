@@ -1,7 +1,3 @@
-// 앱의 최상위 컴포넌트입니다.
-// 공통 헤더/푸터를 렌더링하고, URL 경로에 따라 페이지를 라우팅합니다.
-import { useState } from "react";
-
 import "./index.css";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
@@ -10,6 +6,7 @@ import "./font.css";
 import Footer from "./components/commons/Footer";
 import Header from "./components/commons/Header";
 import Main from "./pages/Main";
+
 import Store from "./components/board/store/store";
 import StoreDetail from "./components/board/store/storeDetail";
 import ProductRegistration from "./components/board/store/productRegistration";
@@ -19,18 +16,25 @@ import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import PaymentFail from "./pages/payment/PaymentFail";
 import JoinPage from "./pages/member/JoinPage";
 import LoginPage from "./pages/member/LoginPage";
-// import UpdateMyInfo from "./components/mypage/UpdateMyInfo";
-// import MyBoard from "./components/mypage/MyBoard";
-// import MyLikeBoard from "./components/mypage/MyLikeBoard";
-// import MemberTip from "./components/mypage/MemberTip";
-// import LeaveMember from "./components/mypage/LeaveMember";
-// import MyPoint from "./components/mypage/MyPoint";
-// import ChangePw from "./components/mypage/ChangePw";
-// import Mypage from "./pages/member/MyPage";
+
+import MapCommunity from "./pages/MapCommunityPage/MapCommunityPage";
+import TreeGrowMainPage from "./pages/TreeGrowMainPage/TreeGrowMainPage";
+import MissionListPage from "./pages/MissionListPage/MissionListPage";
+
+/*
+import UpdateMyInfo from "./components/mypage/UpdateMyInfo";
+import MyBoard from "./components/mypage/MyBoard";
+import MyLikeBoard from "./components/mypage/MyLikeBoard";
+import MemberTip from "./components/mypage/MemberTip";
+import LeaveMember from "./components/mypage/LeaveMember";
+import MyPoint from "./components/mypage/MyPoint";
+import ChangePw from "./components/mypage/ChangePw";
+import Mypage from "./pages/member/MyPage";
 import PurchaseHistory from "./components/mypage/PurchaseHistory";
 import SaleHistory from "./components/mypage/SaleHistory";
 import PurchaseDetail from "./components/mypage/PurchaseDetail";
 import SaleDetail from "./components/mypage/SaleDetail";
+*/
 import AdminPage from "./pages/admin/AdminPage";
 import ChangePw from "./components/mypage/ChangePw";
 import UpdateMyInfo from "./components/mypage/UpdateMyInfo";
@@ -60,6 +64,11 @@ function App() {
           <Route path="/Store" element={<Navigate to="/store" replace />} />
           <Route path="/join" element={<JoinPage />}></Route>
           <Route path="/members/login" element={<LoginPage />}></Route>
+
+          <Route path="/map-community" element={<MapCommunity />} />
+          <Route path="/tree-grow" element={<TreeGrowMainPage />} />
+          <Route path="/mission" element={<MissionListPage />} />
+
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

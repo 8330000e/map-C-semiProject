@@ -64,6 +64,7 @@ coverage/
 .DS_Store
 Thumbs.db
 .metadata/
+.project
 
 
 # TypeScript
@@ -73,3 +74,4 @@ Thumbs.db
 # yarn.lock
 # pnpm-lock.yaml
 /.metadata/
+.DS_Store

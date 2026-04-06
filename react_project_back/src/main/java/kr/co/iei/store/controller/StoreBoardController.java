@@ -1,10 +1,11 @@
 package kr.co.iei.store.controller;
 
-import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.store.model.service.StoreBoardService;
 import kr.co.iei.store.model.vo.StoreBoard;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/store")
@@ -18,16 +19,13 @@ public class StoreBoardController {
 
     @PostMapping("/boards")
     public ResponseEntity<Long> createStoreBoard(@RequestBody StoreBoard storeBoard) {
-
-        Board board = new Board();
-        board.setWriterId(storeBoard.getMemberId());
-        board.setBoardTitle(storeBoard.getMarketTitle());
-        board.setBoardContent(storeBoard.getMarketContent());
-        board.setBoardThumb(storeBoard.getProductThumb());
-        board.setBoardStatus(0);
-
-        Long marketNo = storeBoardService.createStoreBoard(board, storeBoard);
+        Long marketNo = storeBoardService.createStoreBoard(storeBoard);
         return ResponseEntity.ok(marketNo);
+    }
+
+    @GetMapping("/boards")
+    public ResponseEntity<List<StoreBoard>> getStoreBoardList() {
+        return ResponseEntity.ok(storeBoardService.getStoreBoardList());
     }
 
     @GetMapping("/boards/{marketNo}")

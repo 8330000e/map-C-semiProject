@@ -21,4 +21,10 @@ public class DashData {
 	private Integer hate;
 	private Integer spam;
 	private Integer etc;
+	private Integer pendingReport;
+	private Integer fourWeekAgo;
+	private Integer threeWeekAgo;
+	private Integer twoWeekAgo;
+	private Integer oneWeekAgo;
+	
 }

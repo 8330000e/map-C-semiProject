@@ -1,44 +1,34 @@
-// 중고장터 상품 상세 페이지 컴포넌트입니다.
-// 상품 정보, 판매 상태 변경, 댓글 작성/수정/삭제 기능을 제공합니다.
 import React, { useMemo, useState, useEffect } from "react";
+import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { storeDummyData } from "../../mock/dummyData";
 import Swal from "sweetalert2";
 import styles from "./storeDetail.module.css";
 
-const STORE_STATUS_KEY = "storeSaleStatusMap";
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+const DELIVERY_FEE = 5000;
 
-const getSaleStatusMap = () => {
-  try {
-    const raw = localStorage.getItem(STORE_STATUS_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
+const formatPrice = (value) => `${Number(value || 0).toLocaleString("ko-KR")}원`;
+const parsePriceToNumber = (value) => Number(String(value || "").replace(/[^0-9]/g, "")) || 0;
+const getTradeTypeLabel = (tradeType) => {
+  if (tradeType === 0) return "직거래/택배";
+  if (tradeType === 1) return "직거래";
+  if (tradeType === 2) return "택배";
+  return "미정";
 };
-
-const getSaleStatusById = (id) => {
-  const map = getSaleStatusMap();
-  return map[id] || "판매중";
-};
-
-const setSaleStatusById = (id, status) => {
-  const map = getSaleStatusMap();
-  map[id] = status;
-  localStorage.setItem(STORE_STATUS_KEY, JSON.stringify(map));
-  window.dispatchEvent(new Event("store-status-updated"));
+const getSaleStatusLabel = (productStatus) => {
+  if (productStatus === "예약중") return "예약중";
+  if (productStatus === "판매완료") return "판매완료";
+  return "판매중";
 };
 
 const StoreDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const itemId = Number(id);
-
-  // 목 데이터에서 해당 상품 찾기
-  const item = useMemo(
-    () => storeDummyData.find((product) => product.id === itemId),
-    [itemId],
-  );
+  const [item, setItem] = useState(null);
+  const [storeList, setStoreList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   const [comments, setComments] = useState([
     { id: 1, user: "구매희망자1", text: "직거래로 확인하고 싶습니다.", date: "5분 전", isPrivate: false },
@@ -48,25 +38,49 @@ const StoreDetail = () => {
   const [isPrivate, setIsPrivate] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState("");
-  const [saleStatus, setSaleStatus] = useState(() => getSaleStatusById(itemId));
+  const [saleStatus, setSaleStatus] = useState("판매중");
   const [deliveryMethod, setDeliveryMethod] = useState("direct");
-  const DELIVERY_FEE = 5000;
 
-  // ---------------------------
-  // 새 기능: 판매자 설정 거래방식에 따른 선택 제한
-  // ---------------------------
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const [detailResponse, listResponse] = await Promise.all([
+          axios.get(`${BACKSERVER}/api/store/boards/${itemId}`),
+          axios.get(`${BACKSERVER}/api/store/boards`),
+        ]);
+        setItem(detailResponse.data);
+        setStoreList(Array.isArray(listResponse.data) ? listResponse.data : []);
+        setLoadError("");
+      } catch (error) {
+        console.error("중고장터 상세 조회 실패", error);
+        setLoadError("상품 정보를 불러오지 못했습니다.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (Number.isNaN(itemId)) {
+      setLoadError("잘못된 접근입니다.");
+      setIsLoading(false);
+      return;
+    }
+
+    fetchData();
+  }, [itemId]);
+
+  useEffect(() => {
+    if (!item) return;
+    setSaleStatus(getSaleStatusLabel(item.productStatus));
+  }, [item]);
+
   const itemTradeSetting = useMemo(() => {
     if (!item) return { direct: true, delivery: true };
-    // DB/더미에 저장된 tradeType 사용(0=직거래/택배, 1=직거래, 2=택배)
     if (typeof item.tradeType !== "undefined" && item.tradeType !== null) {
       if (item.tradeType === 0) return { direct: true, delivery: true };
       if (item.tradeType === 1) return { direct: true, delivery: false };
       if (item.tradeType === 2) return { direct: false, delivery: true };
     }
-    // tradeTypeText 보조 처리
-    if (item.tradeTypeText === "직거래/택배") return { direct: true, delivery: true };
-    if (item.tradeTypeText === "직거래") return { direct: true, delivery: false };
-    if (item.tradeTypeText === "택배") return { direct: false, delivery: true };
     return { direct: true, delivery: true };
   }, [item]);
 
@@ -85,9 +99,6 @@ const StoreDetail = () => {
       setDeliveryMethod("direct");
     }
   }, [itemTradeSetting]);
-  // ---------------------------
-
-  const parsePriceToNumber = (value) => Number(String(value || "").replace(/[^0-9]/g, "")) || 0;
 
   const handleAddComment = () => {
     const text = newComment.trim();
@@ -121,7 +132,7 @@ const StoreDetail = () => {
     return (
       <section className={styles.detail_wrap}>
         <h1>중고장터</h1>
-        <p>해당 상품을 찾을 수 없습니다.</p>
+        <p>{isLoading ? "상품 정보를 불러오는 중입니다." : loadError || "해당 상품을 찾을 수 없습니다."}</p>
         <Link to="/store" className={styles.back_link}>
           ← 목록으로 돌아가기
         </Link>
@@ -129,9 +140,11 @@ const StoreDetail = () => {
     );
   }
 
-  const sameProducts = storeDummyData.filter((product) => product.title === item.title && product.id !== item.id);
-  const displaySame = sameProducts.length > 0 ? sameProducts.slice(0, 6) : storeDummyData.slice(0, 6);
-  const displayTitle = `[${saleStatus}] ${item.title}`;
+  const sameProducts = storeList.filter(
+    (product) => product.marketTitle === item.marketTitle && product.marketNo !== item.marketNo,
+  );
+  const displaySame = sameProducts.length > 0 ? sameProducts.slice(0, 6) : storeList.filter((product) => product.marketNo !== item.marketNo).slice(0, 6);
+  const displayTitle = `[${saleStatus}] ${item.marketTitle}`;
 
   const handleChangeSaleStatus = async (status) => {
     const isCancelAction = saleStatus === status;
@@ -154,7 +167,6 @@ const StoreDetail = () => {
     if (!result.isConfirmed) return;
 
     setSaleStatus(nextStatus);
-    setSaleStatusById(itemId, nextStatus);
 
     Swal.fire({
       icon: "success",
@@ -165,12 +177,12 @@ const StoreDetail = () => {
   };
 
   const handleGoToPayment = () => {
-    const baseAmount = parsePriceToNumber(item.price);
+    const baseAmount = parsePriceToNumber(item.productPrice);
     const finalAmount = deliveryMethod === "delivery" ? baseAmount + DELIVERY_FEE : baseAmount;
     navigate("/payment/order", {
       state: {
         itemId,
-        orderName: item.title,
+        orderName: item.marketTitle,
         amount: finalAmount,
         deliveryMethod,
         baseAmount,
@@ -190,20 +202,17 @@ const StoreDetail = () => {
 
       <div className={styles.detail_top}>
         <div className={styles.detail_image_box}>
-          <div className={styles.image}>상품 이미지</div>
+          <div className={styles.image}>{item.productThumb || "상품 이미지"}</div>
         </div>
 
         <div className={styles.detail_summary}>
-          <p className={styles.price}>{item.price}</p>
-          <div className={styles.region_badge}>{item.region || "미등록"}</div>
-          <p>작성자 : {item.author}</p>
-          <p>조회수 : {item.viewCount}</p>
-          <p>댓글 : {item.comments}</p>
+          <p className={styles.price}>{formatPrice(item.productPrice)}</p>
+          <div className={styles.region_badge}>{item.ctpvsggId || "미등록"}</div>
+          <p>작성자 : {item.memberId}</p>
+          <p>조회수 : {item.readCount || 0}</p>
+          <p>댓글 : {comments.length}</p>
 
-          {/* 추가: 판매자가 등록한 거래방법 표시 */}
-          <p>
-            거래방법 : {item.tradeTypeText || (item.tradeType === 0 ? "직거래/택배" : item.tradeType === 1 ? "직거래" : "택배")}
-          </p>
+          <p>거래방법 : {getTradeTypeLabel(item.tradeType)}</p>
 
           <div className={styles.delivery_box}>
             <p>거래방법 선택 :</p>
@@ -219,7 +228,7 @@ const StoreDetail = () => {
                   value="direct"
                   checked={deliveryMethod === "direct"}
                   onChange={() => setDeliveryMethod("direct")}
-                  disabled={!supportDirect} // 판매자 설정에 따라 비활성
+                  disabled={!supportDirect}
                 />
                 직거래 (배송비 무료)
               </label>
@@ -234,14 +243,14 @@ const StoreDetail = () => {
                   value="delivery"
                   checked={deliveryMethod === "delivery"}
                   onChange={() => setDeliveryMethod("delivery")}
-                  disabled={!supportDelivery} // 판매자 설정에 따라 비활성
+                  disabled={!supportDelivery}
                 />
                 택배배송 (배송비 {DELIVERY_FEE.toLocaleString("ko-KR")}원)
               </label>
             </div>
           </div>
 
-          <div className={styles.info_box}>상품 상태 : 중고, 구성품 없음</div>
+          <div className={styles.info_box}>상품 상태 : {item.productStatus || "미등록"}</div>
 
           <div className={styles.action_row}>
             <button
@@ -272,12 +281,12 @@ const StoreDetail = () => {
 
       <div className={styles.section_box}>
         <h3>상품정보</h3>
-        <p>{item.content || `${item.title} 상품 상세 안내 ...`}</p>
+        <p>{item.marketContent || `${item.marketTitle} 상품 상세 안내 ...`}</p>
       </div>
 
       <div className={styles.section_box}>
         <h3>가게 정보</h3>
-        <p>상점명 : {item.author} 상점</p>
+        <p>상점명 : {item.memberNickname || item.memberId} 상점</p>
         <p>신뢰지수 : 624</p>
         <p>거래후기 : 1</p>
       </div>
@@ -286,10 +295,10 @@ const StoreDetail = () => {
         <h3>같은 상품 더보기</h3>
         <div className={styles.same_items_wrapper}>
           {displaySame.map((same) => (
-            <Link key={same.id} to={`/store/${same.id}`} className={styles.same_item}>
-              <div className={styles.image}>이미지</div>
-              <div className={styles.same_item_title}>{same.title}</div>
-              <div className={styles.same_item_price}>{same.price}</div>
+            <Link key={same.marketNo} to={`/store/${same.marketNo}`} className={styles.same_item}>
+              <div className={styles.image}>{same.productThumb || "이미지"}</div>
+              <div className={styles.same_item_title}>{same.marketTitle}</div>
+              <div className={styles.same_item_price}>{formatPrice(same.productPrice)}</div>
             </Link>
           ))}
         </div>
