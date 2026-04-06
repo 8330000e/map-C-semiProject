@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import useAuthStore from "../../../store/useAuthStore";
@@ -17,20 +17,9 @@ const ProductRegistration = () => {
     const [displayPrice, setDisplayPrice] = useState("");
     const [description, setDescription] = useState("");
     const [imageName, setImageName] = useState("");
+    const [regionLabel, setRegionLabel] = useState("");
     const [region, setRegion] = useState("");
-
-    const regions = [
-        "서울 강남구",
-        "서울 마포구",
-        "서울 송파구",
-        "서울 영등포구",
-        "서울 성동구",
-        "서울 용산구",
-        "서울 서초구",
-        "서울 동작구",
-        "서울 은평구",
-        "서울 강동구",
-    ];
+    const [regions, setRegions] = useState([]);
 
     const handlePriceChange = (e) => {
         const raw = e.target.value.replace(/[^0-9]/g, "");
@@ -49,6 +38,34 @@ const ProductRegistration = () => {
         if (!file) return;
         setImageName(file.name);
     };
+
+    useEffect(() => {
+        const fetchRegions = async () => {
+            try {
+                const response = await axios.get(`${BACKSERVER}/api/regions`);
+                setRegions(Array.isArray(response.data) ? response.data : []);
+            } catch (error) {
+                console.error("지역 목록 조회 실패", error);
+                setRegions([]);
+            }
+        };
+
+        fetchRegions();
+    }, []);
+
+    const regionOptions = useMemo(
+        () =>
+            regions.map((regionOption) => ({
+                label: `${regionOption.ctpvNm || ""} ${regionOption.sggNm || ""}`.trim(),
+                id: regionOption.ctpvsggId,
+            })),
+        [regions],
+    );
+
+    const regionMap = useMemo(
+        () => new Map(regionOptions.map((item) => [item.label, item.id])),
+        [regionOptions],
+    );
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -153,19 +170,28 @@ const ProductRegistration = () => {
                                 </select>
                             </div>
 
-                            <div className={styles.meta_item}>
+                            <div className={`${styles.meta_item} ${styles.region_meta_item}`}>
                                 <span className={styles.meta_label}>거래지역</span>
                                 <span className={styles.meta_divider}>:</span>
-                                <select value={region} onChange={(e) => setRegion(e.target.value)}>
-                                    <option value="" disabled>
-                                        선택
-                                    </option>
-                                    {regions.map((r) => (
-                                        <option key={r} value={r}>
-                                            {r}
-                                        </option>
-                                    ))}
-                                </select>
+                                <div className={styles.region_select_box}>
+                                    <input
+                                        type="text"
+                                        list="region-options"
+                                        placeholder="시/군 검색"
+                                        value={regionLabel}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            setRegionLabel(value);
+                                            setRegion(regionMap.get(value) || "");
+                                        }}
+                                        className={styles.region_search}
+                                    />
+                                    <datalist id="region-options">
+                                        {regionOptions.map((regionOption) => (
+                                            <option key={regionOption.id} value={regionOption.label} />
+                                        ))}
+                                    </datalist>
+                                </div>
                             </div>
 
                             <div className={styles.meta_item}>

@@ -14,14 +14,14 @@ const formatDate = (value) => {
     return date.toLocaleDateString("ko-KR");
 };
 const getTradeTypeLabel = (tradeType) => {
-    if (tradeType === 0) return "직거래/택배";
-    if (tradeType === 1) return "직거래";
-    if (tradeType === 2) return "택배";
+    if (tradeType === 0 || tradeType === "0" || tradeType === "직거래/택배") return "직거래/택배";
+    if (tradeType === 1 || tradeType === "1" || tradeType === "직거래") return "직거래";
+    if (tradeType === 2 || tradeType === "2" || tradeType === "택배") return "택배";
     return "미정";
 };
 const getSaleStatusLabel = (productStatus) => {
-    if (productStatus === "예약중") return "예약중";
-    if (productStatus === "판매완료") return "판매완료";
+    if (productStatus === "예약중" || productStatus === 1 || productStatus === "1") return "예약중";
+    if (productStatus === "판매완료" || productStatus === 2 || productStatus === "2") return "판매완료";
     return "판매중";
 };
 
@@ -176,7 +176,7 @@ const Store = () => {
                                     <div className={styles.image}>{item.productThumb || "이미지"}</div>
                                     <h3>{item.displayTitle}</h3>
                                     <p className={styles.price}>{formatPrice(item.productPrice)}</p>
-                                    <div className={styles.region_badge}>{item.ctpvsggId || "지역 미등록"}</div>
+                                    <div className={styles.region_badge}>{item.regionName || item.ctpvsggId || "지역 미등록"}</div>
                                     <p className={styles.tradeType}>거래방법 : {tradeMethodLabel}</p>
 
                                     <div className={styles.metaRow}>

@@ -10,14 +10,14 @@ const DELIVERY_FEE = 5000;
 const formatPrice = (value) => `${Number(value || 0).toLocaleString("ko-KR")}원`;
 const parsePriceToNumber = (value) => Number(String(value || "").replace(/[^0-9]/g, "")) || 0;
 const getTradeTypeLabel = (tradeType) => {
-  if (tradeType === 0) return "직거래/택배";
-  if (tradeType === 1) return "직거래";
-  if (tradeType === 2) return "택배";
+  if (tradeType === 0 || tradeType === "0" || tradeType === "직거래/택배") return "직거래/택배";
+  if (tradeType === 1 || tradeType === "1" || tradeType === "직거래") return "직거래";
+  if (tradeType === 2 || tradeType === "2" || tradeType === "택배") return "택배";
   return "미정";
 };
 const getSaleStatusLabel = (productStatus) => {
-  if (productStatus === "예약중") return "예약중";
-  if (productStatus === "판매완료") return "판매완료";
+  if (productStatus === "예약중" || productStatus === 1 || productStatus === "1") return "예약중";
+  if (productStatus === "판매완료" || productStatus === 2 || productStatus === "2") return "판매완료";
   return "판매중";
 };
 
@@ -77,9 +77,9 @@ const StoreDetail = () => {
   const itemTradeSetting = useMemo(() => {
     if (!item) return { direct: true, delivery: true };
     if (typeof item.tradeType !== "undefined" && item.tradeType !== null) {
-      if (item.tradeType === 0) return { direct: true, delivery: true };
-      if (item.tradeType === 1) return { direct: true, delivery: false };
-      if (item.tradeType === 2) return { direct: false, delivery: true };
+      if (item.tradeType === 0 || item.tradeType === "0") return { direct: true, delivery: true };
+      if (item.tradeType === 1 || item.tradeType === "1") return { direct: true, delivery: false };
+      if (item.tradeType === 2 || item.tradeType === "2") return { direct: false, delivery: true };
     }
     return { direct: true, delivery: true };
   }, [item]);
@@ -207,7 +207,7 @@ const StoreDetail = () => {
 
         <div className={styles.detail_summary}>
           <p className={styles.price}>{formatPrice(item.productPrice)}</p>
-          <div className={styles.region_badge}>{item.ctpvsggId || "미등록"}</div>
+          <div className={styles.region_badge}>{item.regionName || item.ctpvsggId || "미등록"}</div>
           <p>작성자 : {item.memberId}</p>
           <p>조회수 : {item.readCount || 0}</p>
           <p>댓글 : {comments.length}</p>
