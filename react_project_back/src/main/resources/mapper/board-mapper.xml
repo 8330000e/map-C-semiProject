@@ -97,7 +97,7 @@
         #{boardFilePath}
     )
 </insert>
-<select id="bestBoardList" resultType="BoardLike">
+<select id="bestBoardList" resultType="kr.co.iei.board.model.vo.BoardLike">
 select 
 t.board_no, count(t.board_no) as count, b.board_title, b.ctpv, b.sgg
 from board_like_tbl t 
