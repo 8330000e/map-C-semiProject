@@ -9,11 +9,16 @@ const DELIVERY_FEE = 5000;
 
 const formatPrice = (value) => `${Number(value || 0).toLocaleString("ko-KR")}원`;
 const parsePriceToNumber = (value) => Number(String(value || "").replace(/[^0-9]/g, "")) || 0;
+const normalizeTradeType = (tradeType) => {
+  if (tradeType === 0 || tradeType === "0" || tradeType === "직거래/택배" || String(tradeType).trim() === "직거래/택배") return "직거래/택배";
+  if (tradeType === 1 || tradeType === "1" || tradeType === "직거래" || String(tradeType).trim() === "직거래") return "직거래";
+  if (tradeType === 2 || tradeType === "2" || tradeType === "택배" || String(tradeType).trim() === "택배") return "택배";
+  return null;
+};
+
 const getTradeTypeLabel = (tradeType) => {
-  if (tradeType === 0 || tradeType === "0" || tradeType === "직거래/택배") return "직거래/택배";
-  if (tradeType === 1 || tradeType === "1" || tradeType === "직거래") return "직거래";
-  if (tradeType === 2 || tradeType === "2" || tradeType === "택배") return "택배";
-  return "미정";
+  const normalized = normalizeTradeType(tradeType);
+  return normalized || "미정";
 };
 const getSaleStatusLabel = (productStatus) => {
   if (productStatus === "예약중" || productStatus === 1 || productStatus === "1") return "예약중";
@@ -76,11 +81,10 @@ const StoreDetail = () => {
 
   const itemTradeSetting = useMemo(() => {
     if (!item) return { direct: true, delivery: true };
-    if (typeof item.tradeType !== "undefined" && item.tradeType !== null) {
-      if (item.tradeType === 0 || item.tradeType === "0") return { direct: true, delivery: true };
-      if (item.tradeType === 1 || item.tradeType === "1") return { direct: true, delivery: false };
-      if (item.tradeType === 2 || item.tradeType === "2") return { direct: false, delivery: true };
-    }
+    const normalizedTradeType = normalizeTradeType(item.tradeType);
+    if (normalizedTradeType === "직거래/택배") return { direct: true, delivery: true };
+    if (normalizedTradeType === "직거래") return { direct: true, delivery: false };
+    if (normalizedTradeType === "택배") return { direct: false, delivery: true };
     return { direct: true, delivery: true };
   }, [item]);
 
@@ -258,7 +262,7 @@ const StoreDetail = () => {
                   onChange={() => setDeliveryMethod("direct")}
                   disabled={!supportDirect}
                 />
-                직거래 (배송비 무료)
+                직거래
               </label>
               <label
                 className={

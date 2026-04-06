@@ -93,22 +93,26 @@ const ProductRegistration = () => {
         }
 
         let tradeType;
-        if (tradeMethod === "직거래/택배") tradeType = 0;
-        else if (tradeMethod === "직거래") tradeType = 1;
-        else if (tradeMethod === "택배") tradeType = 2;
+        if (tradeMethod === "직거래/택배") tradeType = "직거래/택배";
+        else if (tradeMethod === "직거래") tradeType = "직거래";
+        else if (tradeMethod === "택배") tradeType = "택배";
         else {
             alert("거래방법을 정확히 선택해주세요.");
             return;
         }
+
+        let productStatus = "0";
+        if (productState === "예약중") productStatus = "1";
+        else if (productState === "판매완료") productStatus = "2";
 
         const payload = {
             marketTitle: title,
             marketContent: description,
             ctpvsggId: region,
             productPrice: Number(price),
-            productStatus: productState,
+            productStatus,
             productThumb: imageName || "",
-            tradeType: tradeType,
+            tradeType,
             memberId,
             memberNickname,
         };
