@@ -10,32 +10,39 @@
 
 .sale_list {
   display: grid;
-  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
 }
 
 .sale_card {
-  background: #ffffff;
-  border: 1px solid #d8dfcf;
-  border-radius: 10px;
-  padding: 14px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #f8fbf4;
+  border: 1px solid rgba(79, 109, 53, 0.16);
+  border-radius: 16px;
+  padding: 18px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(79, 109, 53, 0.05);
 }
 
 .sale_card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(79, 109, 53, 0.08);
 }
 
 .sale_card_title {
   font-size: 1rem;
   font-weight: 700;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  color: #34452c;
 }
 
 .sale_card_meta {
   font-size: 0.88rem;
-  color: #6f776a;
-  margin-bottom: 8px;
+  color: #5e6a56;
+  margin-bottom: 10px;
 }
 
 .sale_detail_wrap {
@@ -75,4 +82,57 @@
   font-size: 0.86rem;
   color: #8a8a8a;
   margin-bottom: 8px;
+}
+.pagination {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pagination_button {
+  background: #fafaf7;
+  border: 1px solid #d8dfcf;
+  border-radius: 8px;
+  color: #4f6d35;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.pagination_button:hover:not(:disabled) {
+  background: #eef2e8;
+  transform: translateY(-1px);
+}
+
+.pagination_button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination_buttonActive {
+  background: #4f6d35;
+  color: #ffffff;
+  border-color: #4f6d35;
+}
+
+.page_numbers {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (max-width: 1024px) {
+  .sale_list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .sale_list {
+    grid-template-columns: 1fr;
+  }
 }
