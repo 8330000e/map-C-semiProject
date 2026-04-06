@@ -184,3 +184,17 @@
 	margin: 16px 0;
 	font-weight: 500;
 }
+.order_form input {
+    height: 42px;
+    border: 1px solid #c8d0bf;
+    border-radius: 8px;
+    padding: 0 12px;
+    background: #fff;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    color: #2f3529 !important; /* 추가 */
+}
+
+.order_form input::placeholder {
+    color: #b0b8a8; /* 추가 */
+}

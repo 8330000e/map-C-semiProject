@@ -4,23 +4,38 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
+
 import kr.co.iei.utils.EmailSender;
 import lombok.Getter;
+
+import kr.co.iei.utils.FileUtils;
+
 
 @CrossOrigin(value = "*")
 @RestController
@@ -30,11 +45,21 @@ public class Membercontroller {
 
 	@Autowired
 	private MemberService memberService;
+	
+	
 
 	@Autowired
 	private EmailSender emailSender;
 
 	// 회원가입 로직
+
+	private FileUtils fileUtil;
+
+	@Value("${file.root}")
+	private String root;
+
+	// 회원가입
+
 	@PostMapping
 	public ResponseEntity<?> joinMember(@RequestBody Member member) {
 		int result = memberService.insertMember(member);
@@ -166,6 +191,53 @@ public class Membercontroller {
 			return ResponseEntity.status(404).body("아이디와 이메일이 일치하지 않습니다.");
 		}
 
+
+		
 	}
+
+
+	@PatchMapping(value = "/{memberId}")
+	public ResponseEntity<?> updateMemberInfo(@PathVariable String memberId, @RequestBody Member form) {
+		form.setMemberId(memberId);
+
+		int result = memberService.updateMemberInfo(form);
+		return ResponseEntity.ok(result);
+	}
+
+	@GetMapping(value = "/{memberId}")
+	public ResponseEntity<?> getMemberInfo(@PathVariable String memberId) {
+		Member member = memberService.getOneMemberInfo(memberId);
+		return ResponseEntity.ok(member);
+	}
+
+	@PostMapping(value = "/checkauth")
+	public ResponseEntity<?> changePw(@RequestBody Member member) {
+		boolean result = memberService.checkPw(member);
+		return ResponseEntity.ok(result);
+	}
+
+	@PatchMapping(value = "/newpw")
+	public ResponseEntity<?> updatePw(@RequestBody Member m) {
+		int result = memberService.updatePw(m);
+		return ResponseEntity.ok(result);
+	}
+
+
+	
+	
+
+
+	@GetMapping
+	public ResponseEntity<?> selectMemberList() {
+		List<Member> memberList = memberService.selectMemberList();
+		return ResponseEntity.ok(memberList);
+	}
+
+	
+	
+	
+	
+	
+	
 
 }

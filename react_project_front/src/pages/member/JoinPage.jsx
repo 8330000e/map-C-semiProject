@@ -7,8 +7,11 @@ import EmailAuth from "../../components/emailauth/EmailAuth";
 import { useEffect } from "react";
 
 const Join = () => {
+  // 페이지 이동 함수 가져오기 (React Router)
   const navigate = useNavigate();
+
   const [emailVerified, setEmailVerified] = useState(false); // 이메일 인증 여부 상태
+
   const [member, setMember] = useState({
     memberId: "",
     memberPw: "",
@@ -43,10 +46,10 @@ const Join = () => {
   // 비밀번호 일치 체크
   useEffect(() => {
     if (!memberPwRe) {
-      setCheckPw(0);
+      //setCheckPw(0);
       return;
     }
-    setCheckPw(member.memberPw === memberPwRe ? 1 : 2);
+    //setCheckPw(member.memberPw === memberPwRe ? 1 : 2);
   }, [memberPwRe, member.memberPw]);
 
   const inputMember = (e) => {
@@ -62,7 +65,7 @@ const Join = () => {
       ...member,
       [name]: value,
     });
-    console.log(name, value);
+    console.log(name, value); // 개발용 디버그 로그
   };
 
   const JoinMember = (e) => {
@@ -105,6 +108,14 @@ const Join = () => {
       return;
     }
 
+    const BACKSERVER = import.meta.env.VITE_BACKSERVER;
+    if (!BACKSERVER) {
+      console.error("VITE_BACKSERVER 환경변수가 설정되지 않았습니다.");
+      alert("서버 요청 실패: VITE_BACKSERVER를 .env에 설정해주세요.");
+      return;
+    }
+
+    // 회원가입 요청을 서버로 전달하는 부분
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/members`, member)
       .then((res) => {
@@ -118,7 +129,8 @@ const Join = () => {
         });
       })
       .catch((err) => {
-        console.log(err);
+        console.error("회원가입 에러:", err);
+        alert("회원가입 실패: " + (err.response?.data?.message || err.message));
       });
   };
 
