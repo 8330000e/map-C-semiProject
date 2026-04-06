@@ -87,11 +87,7 @@ public class MemberService {
 		return result;
 	}
 
-	// 전체 회원 조회
-	public List<Member> selectMemberList() {
-		List<Member> memberList = memberDao.selectMemberList();
-		return memberList;
-	}
+	
 
 	// 회원정보 수정
 	@Transactional
