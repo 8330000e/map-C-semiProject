@@ -41,7 +41,11 @@ const OrderPage = () => {
     const baseAmount = Number(location.state?.baseAmount || amount);
     const deliveryFee = Number(location.state?.deliveryFee || 0);
     const itemId = location.state?.itemId;
+    const marketNo = location.state?.marketNo || itemId;
     const deliveryMethod = location.state?.deliveryMethod || "delivery";
+    const sellerId = location.state?.sellerId || null;
+    const sellerNickname = location.state?.sellerNickname || sellerId;
+    const tradeType = location.state?.tradeType ?? null;
 
     // 주문 정보 입력 필드 상태
     const [receiverName, setReceiverName] = useState(""); // 수령인 이름
@@ -132,8 +136,12 @@ const OrderPage = () => {
         navigate("/payment/test", {
             state: {
                 itemId,
+                marketNo,
                 orderName,
                 amount,
+                sellerId,
+                sellerNickname,
+                tradeType,
                 // 입력된 주문 정보를 정리하여 전달
                 orderInfo: {
                     receiverName: receiverName.trim(),
