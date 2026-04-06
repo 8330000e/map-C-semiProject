@@ -21,12 +21,12 @@ const Map = () => {
         <div className={styles.spot_box}>
           <div className={styles.spot_box_top}>
             <p>대한민국</p>
-            <p>
+            <div>
               <div className={styles.spot_box_top_posts}>
                 <DescriptionOutlinedIcon sx={{ fontSize: "20px" }} />
                 <p>125</p>
               </div>
-            </p>
+            </div>
           </div>
           <div>
             <p>

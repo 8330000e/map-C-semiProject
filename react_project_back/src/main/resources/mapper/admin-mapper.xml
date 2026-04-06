@@ -55,6 +55,18 @@
 	]]>
 	</select>
 	
+	<delete id="deleteNotice">
+		delete from notice_tbl where notice_no = #{noticeNo}
+	</delete>
+	
+	<select id="selectFaqList" resultType="faq">
+		select 
+			faq_title,
+			faq_content,
+			faq_category
+		from faq_tbl
+	</select>
+	
 	
 	
 	

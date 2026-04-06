@@ -97,4 +97,40 @@
         #{boardFilePath}
     )
 </insert>
+<select id="bestBoardList" resultType="BoardLike">
+select 
+t.board_no, count(t.board_no) as count, b.board_title, b.ctpv, b.sgg
+from board_like_tbl t 
+join board_tbl b on (t.board_no = b.board_no)
+where t.board_no = t.board_no
+group by t.board_no, b.board_title, b.ctpv, b.sgg order by 2 desc
+</select>
+
+<select id="selectMemberIdBoard" resultType="board">
+	select 
+	board_no,
+	member_nickname,
+	board_title,
+	board_thumb,
+	board_date,
+	read_count 
+	from board_tbl 
+	where writer_id = #{memberId} 
+	
+	<if test="searchBoard != '' and searchBoard != null">
+		and board_title like '%' || #{searchBoard} || '%'
+	</if>
+	<if test="filter==1">
+		order by board_no desc
+	</if>
+	<if test="filter==2">
+		order by board_no asc
+	</if>
+	<if test="filter==3">
+		order by read_count desc
+	</if>
+	<if test="filter==4">
+		order by read_count asc
+	</if>
+</select>
 </mapper>

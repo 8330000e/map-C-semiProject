@@ -1,6 +1,7 @@
 import { Navigate, NavLink, Route, Routes } from "react-router-dom";
 import styles from "./AdminSupport.module.css";
 import AdminNotice from "./AdminNoticePage";
+import AdminFaq from "../../components/admin/AdminFaq";
 
 const AdminSupport = () => {
   return (
@@ -30,6 +31,7 @@ const AdminSupport = () => {
         <Routes>
           <Route path="" element={<Navigate to="notice" />} />
           <Route path="notice" element={<AdminNotice />} />
+          <Route path="faq" element={<AdminFaq />} />
         </Routes>
       </div>
     </section>

@@ -30,13 +30,8 @@ public class MemberService {
 
 	@Transactional
 	public int insertMember(Member member) {
-
-		// 회원가입에서 비밀번호를 입력했을 떄 그 값을 암호화하는 과정
-		// -> 이 과정에는 이미 salt과정이 포함되어 있음.
-
 		String memberPw = member.getMemberPw();
 		String encPw = bcrypt.encode(memberPw);
-		System.out.println("암호화된 비밀번호: " + encPw);
 
 		member.setMemberPw(encPw);
 
@@ -44,6 +39,9 @@ public class MemberService {
 		return result;
 	}
 
+	// 로그인
+	public Member login(Member member) {
+		Member loginUser = memberDao.selectOneMember(member.getMemberId());
 
 	
 	//로그인 로직 
@@ -72,6 +70,19 @@ public class MemberService {
 			return null;
 }
 		//이메일 인증을 통한 아이디 찾기 
+		if (loginUser != null && bcrypt.matches(member.getMemberPw(), loginUser.getMemberPw())) {
+			loginUser.setMemberPw(null);
+			return loginUser;
+		}
+
+		return null;
+	}
+
+	// 회원 1명 조회
+	public Member getOneMemberInfo(String memberId) {
+		Member member = memberDao.getOneMemberInfo(memberId);
+		return member;
+	}
 
 		public String findIdByEmail(String memberEmail) {
 			String memberId = memberDao.findIdByEmail(memberEmail);
@@ -125,4 +136,33 @@ public class MemberService {
 		}
 
 }
+	
+
+	// 회원정보 수정
+	@Transactional
+	public int updateMemberInfo(Member member) {
+		int result = memberDao.updateMemberInfo(member);
+		return result;
+	}
+
+	// 프로필 이미지 수정
+	@Transactional
+	public int updateMemberThumb(Member mem) {
+		int result = memberDao.updateMemberThumb(mem);
+		return result;
+	}
+
+	public int selectMemberPoint(String memberId) {
+		return memberDao.selectMemberPoint(memberId);
+	}
+
+		
+
+
+	
+
+
+	
+		
+
 	
