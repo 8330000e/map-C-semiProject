@@ -40,4 +40,6 @@ public interface MemberDao {
 	int selectMemberPoint(String memberId);
 
 	int decreasePoint(String memberId, int point);
+
+	int leaveMember(String memberId);
 }
