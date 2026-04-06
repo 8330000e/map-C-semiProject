@@ -10,6 +10,7 @@ const DashBoardPage = () => {
   const [yesterdayMember, setYesterdayMember] = useState(null);
   const [thisMonthMember, setThisMonthMember] = useState(null);
   const [lastMonthMember, setLastMonthMember] = useState(null);
+  const [categoryCount, setCategoryCount] = useState([]);
   const monthlyGrowthRate =
     lastMonthMember === 0
       ? 0
@@ -30,6 +31,12 @@ const DashBoardPage = () => {
         setYesterdayMember(res.data.yesterdayMember);
         setThisMonthMember(res.data.thisMonthMember);
         setLastMonthMember(res.data.lastMonthMember);
+        setCategoryCount([
+          res.data.ad,
+          res.data.hate,
+          res.data.spam,
+          res.data.etc,
+        ]);
       })
       .catch((err) => {
         console.log(err);
@@ -44,6 +51,7 @@ const DashBoardPage = () => {
       dailyGrowthRate={dailyGrowthRate}
       monthSign={monthSign}
       dailySign={dailySign}
+      categoryCount={categoryCount}
     />
   );
 };

@@ -32,6 +32,7 @@ const DashBoard = ({
   dailyGrowthRate,
   monthSign,
   dailySign,
+  categoryCount,
 }) => {
   // 라인 차트 데이터 (회원 증가 - 하드코딩)
   const lineData = {

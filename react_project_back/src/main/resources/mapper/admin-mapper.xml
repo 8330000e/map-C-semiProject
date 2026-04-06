@@ -33,14 +33,20 @@
 		where notice_no = #{noticeNo}
 	</update>
 	
-	<select id="getDashData">
-		select 
-			count(*) as totalMember,
-			count (case when trunc(enroll_date, 'MM') = trunc(sysdate, 'MM') then 1 end) as thisMonthMember,
-			count (case when trunc(enroll_date, 'MM') = add_months(trunc(sysdate, 'MM'), -1) then 1 end) as lastMonthMember,
-			count (case when trunc(enroll_date) = trunc(sysdate) then 1 end) as todayMember,
-			count (case when trunc(enroll_date) = trunc(sysdate - 1) then 1 end) as yesterdayMember
-		from member_tbl1
+	<select id="getDashData" resultType="dashdata">
+	select
+		(select count(*) from member_tbl1) as totalMember,
+		(select count (case when trunc(enroll_date, 'MM') = trunc(sysdate, 'MM') then 1 end) from member_tbl1) as thisMonthMember,
+		(select	count (case when trunc(enroll_date, 'MM') = add_months(trunc(sysdate, 'MM'), -1) then 1 end) from member_tbl1) as lastMonthMember,
+		(select count (case when trunc(enroll_date) = trunc(sysdate) then 1 end) from member_tbl1) as todayMember,
+		(select count (case when trunc(enroll_date) = trunc(sysdate - 1) then 1 end) from member_tbl1) as yesterdayMember,
+		(select count(case when report_category = '광고' then 1 end) from board_report_tbl) as ad,
+		(select count(case when report_category = '욕설' then 1 end) from board_report_tbl) as hate,
+		(select count(case when report_category = '스팸' then 1 end) from board_report_tbl) as spam,
+		(select count(case when report_category = '기타' then 1 end) from board_report_tbl) as etc
+	from dual
 	</select>
+	
+	
 
 </mapper>

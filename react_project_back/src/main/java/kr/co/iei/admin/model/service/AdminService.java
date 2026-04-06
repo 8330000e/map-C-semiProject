@@ -36,8 +36,6 @@ public class AdminService {
 	public DashData getDashData() {
 		DashData dashData = adminDao.getDashData();
 		System.out.println(dashData);
-		
-		
 		return dashData;
 	}
 }

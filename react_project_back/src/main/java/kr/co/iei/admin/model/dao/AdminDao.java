@@ -18,6 +18,10 @@ public interface AdminDao {
 
 	DashData getDashData();
 
+
+
+
+
 	
 
 }
