@@ -1,10 +1,4 @@
-import styles from "./LeaveMember.module.css";
-
 const LeaveMember = () => {
-  return (
-    <>
-      <h1>회원 탈퇴</h1>
-    </>
-  );
+  return <div>LeaveMember 페이지 (임시)</div>;
 };
 export default LeaveMember;

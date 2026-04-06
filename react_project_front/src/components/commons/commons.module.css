@@ -3,6 +3,10 @@
   공통 컴포넌트의 레이아웃, 폰트 크기, 정렬을 정의합니다.
 */
 /* Header.jsx */
+.header {
+  position: relative;
+}
+
 header > h1 > a {
   font-size: 30px;
   font-weight: 800;
@@ -33,7 +37,6 @@ header > h1 a:active {
   cursor: pointer;
 }
 .btn:hover {
-  display: block;
 }
 .outline {
   border: 2.5px solid #464d3e;
@@ -55,6 +58,7 @@ header > .profile_bar_wrap {
   width: 100%;
 }
 .profile_bar_wrap {
+  position: relative;
   display: flex;
   gap: 10px;
 }
@@ -72,6 +76,58 @@ header > .profile_bar_wrap {
   display: flex;
   gap: 8px;
   margin-left: 10px;
+.header_drawer {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  min-width: 220px;
+  padding: 10px;
+  border-radius: 16px;
+  background-color: #fff;
+  border: 1px solid rgba(70, 77, 62, 0.14);
+  box-shadow: 0 18px 38px rgba(70, 77, 62, 0.18);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease,
+    visibility 0.22s ease;
+  z-index: 30;
+}
+
+.drawer_open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.drawer_menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.drawer_link,
+.drawer_link_active {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #464d3e;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.drawer_link:hover,
+.drawer_link_active {
+  background-color: #f1f4ed;
+  color: #2f3529;
+}
+
+.drawer_link:hover {
+  transform: translateX(2px);
 }
 
 /* Footer.jsx */
@@ -88,43 +144,4 @@ header > .profile_bar_wrap {
 }
 .footer_info {
   color: gray;
-}
-.drawer_wrap {
-  width: 100vw;
-  min-height: 100vh;
-  position: fixed;
-  display: flex;
-  right: 0;
-  top: 0;
-  background-color: transparent;
-  transition-duration: 0.3s;
-}
-.header_drawer {
-  width: 250px;
-  background-color: #efefef;
-  transition-duration: 0.2s;
-}
-.drawer_helper {
-  opacity: 0;
-  flex-grow: 1;
-  background-color: antiquewhite;
-}
-
-.drawer_open {
-  left: 0;
-}
-.drawer_close {
-  left: 100%;
-}
-
-.drawer_menue {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  margin: 10px;
-  padding: 10px;
-}
-.drawer_menue > a {
-  text-decoration: none;
-  color: black;
 }

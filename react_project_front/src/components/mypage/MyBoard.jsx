@@ -1,10 +1,5 @@
-import styles from "./MyBoard.module.css";
-
 const MyBoard = () => {
-  return (
-    <>
-      <h1>나의 게시물</h1>
-    </>
-  );
+  return <div>MyBoard 페이지 (임시)</div>;
 };
+
 export default MyBoard;
