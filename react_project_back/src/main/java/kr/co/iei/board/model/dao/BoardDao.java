@@ -28,6 +28,8 @@ public interface BoardDao {
 	int insertBoardFile(BoardFile boardFile);
 
 	List<BoardLike> bestBoardList();
+	
+	List<Board> selectMemberIdBoard(HashMap<String, String> map);
     
 
 }
