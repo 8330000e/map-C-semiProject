@@ -5,16 +5,17 @@ import UpdateMyInfo from "../../components/mypage/UpdateMyInfo";
 // import MyBoard from "../../components/mypage/MyBoard";
 // import MyLikeBoard from "../../components/mypage/MyLikeBoard";
 // import MemberTip from "../../components/mypage/MemberTip";
-// import LeaveMember from "../../components/mypage/LeaveMember";
+import LeaveMember from "../../components/mypage/LeaveMember";
 // import MyPoint from "../../components/mypage/MyPoint";
 import ChangePw from "../../components/mypage/ChangePw";
-import MyInformation from "../../components/mypage/MyInformation";
+
 import PurchaseHistory from "../../components/mypage/PurchaseHistory";
 import PurchaseDetail from "../../components/mypage/PurchaseDetail";
 import SaleHistory from "../../components/mypage/SaleHistory";
 import SaleDetail from "../../components/mypage/SaleDetail";
 import styles from "./MyPage.module.css";
 import useAuthStore from "../../store/useAuthStore.js";
+import MyInformation from "../../components/mypage/MyInformation.jsx";
 
 // 현재는 프로필 정보와 내 페이지 서브 라우트들이 함께 표시됩니다.
 const Mypage = () => {
@@ -24,8 +25,8 @@ const Mypage = () => {
     memberId && (
       <section className={styles.mypage_wrap}>
         <h1>마이페이지</h1>
+        <MyInformation />
         <div className={styles.mypage_content_wrap}>
-          <MyInformation />
           <Routes>
             <Route
               index
@@ -40,8 +41,8 @@ const Mypage = () => {
             {/* <Route path="myBoard" element={<MyBoard />} />
             <Route path="myLikeBoard" element={<MyLikeBoard />} />
             <Route path="tipScrap" element={<MemberTip />} />
-            <Route path="leaveMember" element={<LeaveMember />} />
             <Route path="myPoint" element={<MyPoint />} /> */}
+            <Route path="leaveMember" element={<LeaveMember />} />
             <Route path="history/purchase" element={<PurchaseHistory />} />
             <Route path="history/purchase/:id" element={<PurchaseDetail />} />
             <Route path="history/sale" element={<SaleHistory />} />

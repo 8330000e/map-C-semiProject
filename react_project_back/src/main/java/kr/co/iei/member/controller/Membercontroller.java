@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,7 +54,7 @@ public class Membercontroller {
 
 	}
 	
-	/*
+	
 	@PatchMapping(value="/{memberId}")
 	private ResponseEntity<?> updateMemberInfo(@RequestBody Member form){
 		int result = memberService.updateMemberInfo(form);
@@ -88,7 +89,7 @@ public class Membercontroller {
 		int result = memberService.updateMemberThumb(mem);
 		return ResponseEntity.ok(memberThumb);
 	}
-	*/
+	
 	
 	
 	@GetMapping

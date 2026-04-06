@@ -59,7 +59,7 @@ public class MemberService {
 
 		
 
-		/*
+		
 		public Member getOneMemberInfo(String memberId) {
 			Member member = memberDao.getOneMemberInfo(memberId);
 			return member;
@@ -83,7 +83,7 @@ public class MemberService {
 			int result = memberDao.updatePw(m);
 			return result;
 		}
-		*/
+		
 
 
 		public List<Member> selectMemberList() {
@@ -96,4 +96,14 @@ public class MemberService {
 			int result = memberDao.updateMemberThumb(mem);
 			return result;
 		}
+
+
+		public int updateMemberInfo(Member form) {
+			int result = memberDao.updateMemberInfo(form);
+			return result;
+		}
+
+
+	
+		
 }
