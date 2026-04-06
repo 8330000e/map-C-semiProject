@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./MyInformation.module.css";
 import axios from "axios";
 
-import userImg from "../../assets/image/user.png";
+import userImg from "../../assets/admin.png";
 import useAuthStore from "../../store/useAuthStore.js";
 
 const MyInformation = () => {
-  const { memberId, memberGrade, memberNickname, memberThumb } = useAuthStore();
+  const { memberId, memberNickname, memberThumb } = useAuthStore();
   const [member, setMember] = useState();
   const reference = useRef(null);
 

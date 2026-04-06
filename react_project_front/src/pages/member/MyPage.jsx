@@ -1,6 +1,6 @@
 // 마이페이지 컴포넌트 파일입니다.
 
-import { Route, Routes } from "react-router-dom";
+import { Link, Route, Routes } from "react-router-dom";
 import UpdateMyInfo from "../../components/mypage/UpdateMyInfo";
 import MyBoard from "../../components/mypage/MyBoard";
 import MyLikeBoard from "../../components/mypage/MyLikeBoard";
@@ -20,8 +20,20 @@ import useAuthStore from "../../store/useAuthStore.js";
 const Mypage = () => {
   const { memberId } = useAuthStore();
 
+  if (!memberId) {
+    return (
+      <section className={styles.mypage_wrap}>
+        <h1>마이페이지</h1>
+        <div className={styles.mypage_content_wrap}>
+          <p className={styles.emptyText}>
+            로그인 후 이용하실 수 있습니다. <Link to="/members/login">로그인 페이지</Link>로 이동해주세요.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    memberId && (
       <section className={styles.mypage_wrap}>
         <h1>마이페이지</h1>
         <div className={styles.mypage_content_wrap}>
@@ -51,7 +63,6 @@ const Mypage = () => {
           </div>
         </div>
       </section>
-    )
   );
 };
 
