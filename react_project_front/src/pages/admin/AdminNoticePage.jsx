@@ -55,14 +55,32 @@ const AdminNoticePage = () => {
   const insertNotice = (e) => {
     e.preventDefault();
     if (isEdit) {
-      axios
-        .patch(`${import.meta.env.VITE_BACKSERVER}/admins/notice`, notice)
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      Swal.fire({
+        title: "공지사항 수정",
+        text: "공지사항을 수정하시겠습니까?",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonText: "수정",
+        cancelButtonText: "취소",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios
+            .patch(`${import.meta.env.VITE_BACKSERVER}/admins/notice`, notice)
+            .then((res) => {
+              console.log(res);
+              if (res.data === 1) {
+                selectNoticeList();
+                Swal.fire({
+                  title: "수정 성공",
+                  icon: "success",
+                });
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      });
     } else {
       Swal.fire({
         title: "공지사항 등록",
@@ -77,6 +95,7 @@ const AdminNoticePage = () => {
             .post(`${import.meta.env.VITE_BACKSERVER}/admins/notice`, notice)
             .then((res) => {
               console.log(res);
+
               setIsEdit(false);
               if (res.data === 1) {
                 selectNoticeList();
