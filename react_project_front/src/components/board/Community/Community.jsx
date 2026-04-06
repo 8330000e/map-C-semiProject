@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./Community.module.css";
 import axios from "axios";
 import TextEditor from "./TextEditor";
+import CommunityDetail from "./CommunityDetail";
 import useAuthStore from "../../../store/useAuthStore";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ChatIcon from "@mui/icons-material/Chat";
@@ -14,6 +15,7 @@ const Community = () => {
 
   const [mode, setMode] = useState("list");
   const [boardList, setBoardList] = useState([]);
+  const [expandedBoardNo, setExpandedBoardNo] = useState(null);
 
   const [type, setType] = useState(1);
   const [keyword, setKeyword] = useState("");
@@ -383,12 +385,30 @@ const Community = () => {
 
               <div className={styles.boardListBox}>
                 {boardList.length > 0 ? (
-                  boardList.map((board) => (
-                    <div
-                      className={styles.boardItem}
-                      key={board.boardNo}
-                      /* onClick={() => moveToDetail(board.boardNo)} //상세보기 기능 */
-                    >
+                  boardList.map((board) => {
+                    const isExpanded = expandedBoardNo === board.boardNo;
+                    return (
+                      <div
+                        className={styles.boardItem}
+                        key={board.boardNo}
+                        onClick={async () => {
+                          if (!isExpanded) {
+                            try {
+                              await axios.get(`${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/read`);
+                              setBoardList((prev) =>
+                                prev.map((item) =>
+                                  item.boardNo === board.boardNo
+                                    ? { ...item, readCount: (item.readCount ?? 0) + 1 }
+                                    : item,
+                                ),
+                              );
+                            } catch (err) {
+                              console.error("조회수 증가 실패", err);
+                            }
+                          }
+                          setExpandedBoardNo(isExpanded ? null : board.boardNo);
+                        }}
+                      >
                       <div className={styles.boardItemTop}>
                         <div className={styles.boardWriter}>
                           <span className={styles.writerIcon}>👤</span>
@@ -454,8 +474,19 @@ const Community = () => {
                           <span>{board.commentCount ?? 0}</span>
                         </span>
                       </div>
+                      {isExpanded && (
+                        <CommunityDetail
+                          board={board}
+                          onEdit={(boardItem) => {
+                            setSelectedBoard(boardItem);
+                            startEdit(boardItem);
+                          }}
+                          onDelete={(boardNo) => deleteBoard(boardNo)}
+                        />
+                      )}
                     </div>
-                  ))
+                  );
+                })
                 ) : (
                   <div className={styles.emptyBoard}>
                     등록된 게시글이 없습니다.

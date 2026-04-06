@@ -78,6 +78,11 @@
     DELETE FROM BOARD_TBL
     WHERE BOARD_NO = #{boardNo}
 </delete>
+<update id="incrementReadCount" parameterType="int">
+    UPDATE BOARD_TBL
+    SET READ_COUNT = NVL(READ_COUNT, 0) + 1
+    WHERE BOARD_NO = #{boardNo}
+</update>
 <insert id="insertBoardFile" parameterType="boardFile">
     <selectKey keyProperty="fileNo" resultType="int" order="BEFORE">
         SELECT BOARD_FILE_SEQ.NEXTVAL FROM DUAL

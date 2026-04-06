@@ -89,6 +89,17 @@ public class BoardController {
 	 ) {
 	     return boardService.insertBoardFiles(boardNo, memberId, files);
 	 }
+
+	@GetMapping("/{boardNo}/read")
+	public ResponseEntity<?> incrementReadCount(@PathVariable int boardNo) {
+		try {
+			boardService.incrementReadCount(boardNo);
+			return ResponseEntity.ok().build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().body("조회수 증가 실패: " + e.getMessage());
+		}
+	}
 	 
 	// frontend에서 인기 게시글을 조회하기 위해 추가한 엔드포인트입니다.
 	// Bestpostlist.jsx에서 /boards/best로 요청하여 top 게시글 목록을 받아옵니다.
