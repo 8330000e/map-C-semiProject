@@ -73,5 +73,9 @@ public class BoardService {
 
 	    return result;
 	}
+	public Board selectMemberIdBoard(Board board) {
+		Board b = boardDao.selectMemberIdBoard(board);
+		return b;
+	}
 }
 

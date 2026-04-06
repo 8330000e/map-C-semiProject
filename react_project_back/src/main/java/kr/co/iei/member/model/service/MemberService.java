@@ -67,11 +67,11 @@ public class MemberService {
 		return memberList;
 	}
 
-	@Transactional
-	public int updateMemberInfo(Member form) {
-		int result = memberDao.updateMemberInfo(form);
-		return result;
-	}
+//	@Transactional
+//	public int updateMemberInfo(Member form) {
+//		int result = memberDao.updateMemberInfo(form);
+//		return result;
+//	}
 
 	public boolean checkPw(Member member) {
 		String memberId = member.getMemberId();
