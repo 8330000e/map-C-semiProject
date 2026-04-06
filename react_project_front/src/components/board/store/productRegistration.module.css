@@ -155,6 +155,44 @@
 	outline: none;
 }
 
+.region_select_box {
+	position: relative;
+	width: 100%;
+}
+
+.region_option_list {
+	position: absolute;
+	top: calc(100% + 6px);
+	left: 0;
+	right: 0;
+	max-height: 220px;
+	overflow-y: auto;
+	border: 1px solid #c8d0bf;
+	border-radius: 8px;
+	background: #fff;
+	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+	z-index: 20;
+	padding: 4px 0;
+}
+
+.region_option_item {
+	padding: 10px 12px;
+	cursor: pointer;
+	font-size: 15px;
+	font-weight: 500;
+	color: #2f3529;
+}
+
+.region_option_item:hover {
+	background: #f2f5ed;
+}
+
+.noRegions {
+	padding: 10px 12px;
+	color: #8c9482;
+	font-size: 14px;
+}
+
 .region_select_box select {
 	width: 100%;
 	height: 42px;
