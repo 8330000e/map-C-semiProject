@@ -167,11 +167,11 @@ const Store = () => {
                 <div className={styles.grid_box}>
                     {isLoading && <p>목록을 불러오는 중입니다.</p>}
                     {!isLoading && loadError && <p>{loadError}</p>}
-                    {visibleGoods.map((item) => {
+                    {visibleGoods.map((item, index) => {
                         const tradeMethodLabel = getTradeTypeLabel(item.tradeType);
 
                         return (
-                            <Link key={item.marketNo} to={`/store/${item.marketNo}`} className={styles.cardLink}>
+                            <Link key={item.marketNo ?? item.boardNo ?? index} to={`/store/${item.marketNo}`} className={styles.cardLink}>
                                 <article className={styles.card}>
                                     <div className={styles.image}>{item.productThumb || "이미지"}</div>
                                     <h3>{item.displayTitle}</h3>

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import useAuthStore from "../../../store/useAuthStore";
 import styles from "./productRegistration.module.css";
@@ -8,6 +8,8 @@ const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
 const ProductRegistration = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const editItem = location.state?.editItem || null;
     const { memberId, memberNickname } = useAuthStore();
 
     const [title, setTitle] = useState("");
@@ -40,6 +42,13 @@ const ProductRegistration = () => {
         setImageName(file.name);
     };
 
+    const normalizeTradeType = (tradeType) => {
+        if (tradeType === 0 || tradeType === "0" || tradeType === "직거래/택배" || String(tradeType).trim() === "직거래/택배") return "직거래/택배";
+        if (tradeType === 1 || tradeType === "1" || tradeType === "직거래" || String(tradeType).trim() === "직거래") return "직거래";
+        if (tradeType === 2 || tradeType === "2" || tradeType === "택배" || String(tradeType).trim() === "택배") return "택배";
+        return "";
+    };
+
     useEffect(() => {
         const fetchRegions = async () => {
             try {
@@ -53,6 +62,19 @@ const ProductRegistration = () => {
 
         fetchRegions();
     }, []);
+
+    useEffect(() => {
+        if (!editItem) return;
+        setTitle(editItem.marketTitle || "");
+        setTradeMethod(normalizeTradeType(editItem.tradeType) || "");
+        setProductState(editItem.productStatus === "1" ? "예약중" : editItem.productStatus === "2" ? "판매완료" : "");
+        setPrice(editItem.productPrice ? String(editItem.productPrice) : "");
+        setDisplayPrice(editItem.productPrice ? Number(editItem.productPrice).toLocaleString("ko-KR") : "");
+        setDescription(editItem.marketContent || "");
+        setImageName(editItem.productThumb || "");
+        setRegion(editItem.ctpvsggId || "");
+        setRegionLabel(editItem.regionName || editItem.ctpvsggId || "");
+    }, [editItem]);
 
     const regionOptions = useMemo(
         () =>
@@ -87,17 +109,18 @@ const ProductRegistration = () => {
             return;
         }
 
-        if (!title || !tradeMethod || !productState || !price || !region) {
-            alert("필수 항목(제목, 거래방법, 상품상태, 가격, 거래지역)을 모두 입력해주세요.");
-            return;
-        }
-
         let tradeType;
         if (tradeMethod === "직거래/택배") tradeType = "직거래/택배";
         else if (tradeMethod === "직거래") tradeType = "직거래";
         else if (tradeMethod === "택배") tradeType = "택배";
         else {
             alert("거래방법을 정확히 선택해주세요.");
+            return;
+        }
+
+        const requiresRegion = tradeType !== "택배";
+        if (!title || !tradeMethod || !productState || !price || (requiresRegion && !region)) {
+            alert("필수 항목(제목, 거래방법, 상품상태, 가격, 거래지역)을 모두 입력해주세요.");
             return;
         }
 
@@ -108,7 +131,7 @@ const ProductRegistration = () => {
         const payload = {
             marketTitle: title,
             marketContent: description,
-            ctpvsggId: region,
+            ctpvsggId: tradeType === "택배" ? null : region || null,
             productPrice: Number(price),
             productStatus,
             productThumb: imageName || "",
@@ -116,11 +139,22 @@ const ProductRegistration = () => {
             memberId,
             memberNickname,
         };
+        console.log("상품 등록 payload", payload);
 
         try {
-            await axios.post(`${BACKSERVER}/api/store/boards`, payload);
-            alert("등록이 완료되었습니다.");
-            navigate("/store");
+            if (editItem) {
+                await axios.put(`${BACKSERVER}/api/store/boards/${editItem.marketNo}`, {
+                    ...payload,
+                    marketNo: editItem.marketNo,
+                    boardNo: editItem.boardNo,
+                });
+                alert("수정이 완료되었습니다.");
+                navigate(`/store/${editItem.marketNo}`);
+            } else {
+                await axios.post(`${BACKSERVER}/api/store/boards`, payload);
+                alert("등록이 완료되었습니다.");
+                navigate("/store");
+            }
         } catch (error) {
             console.error("상품 등록 실패", error);
             const serverMessage = error?.response?.data || error?.message || "상품 등록 중 오류가 발생했습니다.";
@@ -255,7 +289,7 @@ const ProductRegistration = () => {
 
                 <div className={styles.bottom_actions}>
                     <button type="submit" className={styles.primary_btn}>
-                        등록하기
+                        {editItem ? "수정하기" : "등록하기"}
                     </button>
                     <button type="button" className={styles.primary_btn} onClick={() => navigate(-1)}>
                         뒤로가기
