@@ -7,6 +7,7 @@ import java.util.List;
 
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardFile;
+import kr.co.iei.board.model.vo.BoardLike;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -26,6 +27,8 @@ public interface BoardDao {
 
 	int insertBoardFile(BoardFile boardFile);
 
+	List<BoardLike> bestBoardList();
+	
 	List<Board> selectMemberIdBoard(HashMap<String, String> map);
     
 
