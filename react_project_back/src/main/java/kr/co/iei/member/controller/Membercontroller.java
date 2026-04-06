@@ -105,7 +105,7 @@ public class Membercontroller {
 		List<Member> memberList = memberService.selectMemberList();
 		return ResponseEntity.ok(memberList);
 	}
-
+	
 	
 	
 	
