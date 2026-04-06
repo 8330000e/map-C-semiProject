@@ -60,9 +60,13 @@
 .notice_table {
   width: 100%;
 }
+.notice_list_wrap {
+  max-height: 210px;
+  overflow-y: scroll;
+}
 .notice_table th,
 .notice_table td {
-  padding: 14px 12px;
+  padding: 4px 12px;
   text-align: left;
 }
 .col_fixed {
@@ -81,13 +85,13 @@
   width: 70px;
 }
 
-input {
+.notice_write_wrap input {
   background-color: #0a1224;
   border: none;
   border: 3px solid #334c69;
   color: #ffffff;
 }
-select {
+.notice_write_wrap select {
   background-color: #0a1224;
   border: none;
   border: 3px solid #334c69;

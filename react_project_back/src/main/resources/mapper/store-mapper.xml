@@ -34,6 +34,7 @@
     )
   </insert>
 
+
   <insert id="insertStoreBoard" parameterType="kr.co.iei.store.model.vo.StoreBoard">
     <selectKey keyProperty="marketNo" resultType="long" order="BEFORE">
       SELECT STORE_BOARD_SEQ.NEXTVAL FROM DUAL
@@ -114,6 +115,7 @@
     FROM STORE_BOARD_TBL
     WHERE MARKET_NO = #{marketNo}
       AND IS_DELETED = 0
+
   </select>
 
   <insert id="insertTradeInfo">

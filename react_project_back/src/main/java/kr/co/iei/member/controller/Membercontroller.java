@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.iei.member.model.service.MemberService;
+import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.utils.FileUtils;
 
@@ -28,6 +29,8 @@ public class Membercontroller {
 
 	@Autowired
 	private MemberService memberService;
+	
+	
 
 	@Autowired
 	private FileUtils fileUtil;
@@ -45,13 +48,18 @@ public class Membercontroller {
 	// 로그인
 	@PostMapping(value = "/login")
 	public ResponseEntity<?> loginMember(@RequestBody Member member) {
-		Member loginUser = memberService.login(member);
+
+		
+		
+		//jwt를 담은 loginUser를 반환
+		LoginMember loginUser = memberService.login(member);
 
 		if (loginUser != null) {
-			loginUser.setMemberPw(null);
-			return ResponseEntity.ok(loginUser);
+			
+			return ResponseEntity.ok(loginUser); // 로그인 성공
 		} else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다."); // 문제가 생기면 에러 404발생
+
 		}
 	}
 
@@ -59,6 +67,7 @@ public class Membercontroller {
 	@PatchMapping(value = "/{memberId}")
 	public ResponseEntity<?> updateMemberInfo(@PathVariable String memberId, @RequestBody Member form) {
 		form.setMemberId(memberId);
+
 		int result = memberService.updateMemberInfo(form);
 		return ResponseEntity.ok(result);
 	}

@@ -74,4 +74,4 @@ Thumbs.db
 # yarn.lock
 # pnpm-lock.yaml
 /.metadata/
-
+.DS_Store
