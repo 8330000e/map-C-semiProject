@@ -17,6 +17,7 @@ public class StoreBoard {
     private String marketContent;
     private String productStatus;
     private String productThumb;
+    private Integer readCount;
 
     private Date createdAt;
     private Date updatedAt;

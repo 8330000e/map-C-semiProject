@@ -23,6 +23,9 @@ public class MemberService {
 	@Autowired
 	private BCryptPasswordEncoder bcrypt;
 
+	@Autowired
+	private JwtUtils jwtUtils;
+
 	// 회원가입
 	@Transactional
 	public int insertMember(Member member) {
@@ -36,12 +39,11 @@ public class MemberService {
 	}
 
 	// 로그인
-	public Member login(Member member) {
+	public LoginMember login(Member member) {
 		Member loginUser = memberDao.selectOneMember(member.getMemberId());
 
 		if (loginUser != null && bcrypt.matches(member.getMemberPw(), loginUser.getMemberPw())) {
-			loginUser.setMemberPw(null);
-			return loginUser;
+			return jwtUtils.createToken(loginUser.getMemberId(), loginUser.getMemberGrade(), loginUser.getMemberNickname());
 		}
 
 		return null;

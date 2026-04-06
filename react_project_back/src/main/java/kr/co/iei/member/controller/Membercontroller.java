@@ -49,17 +49,12 @@ public class Membercontroller {
 	@PostMapping(value = "/login")
 	public ResponseEntity<?> loginMember(@RequestBody Member member) {
 
-		
-		
-		//jwt를 담은 loginUser를 반환
 		LoginMember loginUser = memberService.login(member);
 
 		if (loginUser != null) {
-			
-			return ResponseEntity.ok(loginUser); // 로그인 성공
+			return ResponseEntity.ok(loginUser);
 		} else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다."); // 문제가 생기면 에러 404발생
-
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다.");
 		}
 	}
 
