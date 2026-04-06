@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./MyInformation.module.css";
 import axios from "axios";
-
-import userImg from "../../assets/image/user.png";
+import userImg from "../../assets/user.png";
 import useAuthStore from "../../store/useAuthStore.js";
 
 const MyInformation = () => {
