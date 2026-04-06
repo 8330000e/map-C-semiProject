@@ -5,6 +5,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MailIcon from "@mui/icons-material/Mail";
 import SettingsIcon from "@mui/icons-material/Settings";
 import useAuthStore from "../../store/useAuthStore";
+import { useState } from "react";
 
 const Header = () => {
   const navigate = useNavigate();
