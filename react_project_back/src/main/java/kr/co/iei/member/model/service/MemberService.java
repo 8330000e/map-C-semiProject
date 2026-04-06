@@ -36,7 +36,7 @@ public class MemberService {
 		return result;
 	}
 
-	// 로그인 로직
+	// 로그인 로직(김경건)
 	public LoginMember login(Member member) {
 		// 비밀번호가 암호화로 바뀌는 순간 평문 형식의 비교는 할 수가 없음
 		// 왜냐하면 단순히 1111이 아니고 온갖 특수문자가 섞이는 형태로 나오기 떄문.
@@ -79,19 +79,21 @@ public class MemberService {
 		return member;
 	}
 
+	//아이디 찾기 로직 (김경건)
 	public String findIdByEmail(String memberEmail) {
 		String memberId = memberDao.findIdByEmail(memberEmail);
 		return memberId;
 	}
 
-	// 아이디 중복 체크 설정
+	// 아이디 중복 체크 설정(김경건)
 	public Member selectOneMember(String memberId) {
 		Member m = memberDao.selectOneMember(memberId);
 		return m;
 	}
 
+	
 	// boolean이기 떄문에 return도 !형식으로 줘야함.
-	// 비밀번호 찾기를 위한 아이디 검증 및 이메일 인증 신청 로직
+	// 비밀번호 찾기를 위한 아이디 검증 및 이메일 인증 신청 로직(김경건)
 	public boolean existsByIdAndEmail(String memberId, String memberEmail) {
 		Integer result = memberDao.existsByIdAndEmail(memberId, memberEmail);
 		return result > 0;

@@ -48,7 +48,7 @@ import PurchaseDetail from "./components/mypage/PurchaseDetail";
 import SaleDetail from "./components/mypage/SaleDetail";
 */
 import AdminPage from "./pages/admin/AdminPage";
-import ChangePw from "./components/mypage/ChangePw";
+import ChangePw from "./pages/member/ChangePw";
 import UpdateMyInfo from "./components/mypage/UpdateMyInfo";
 import Mypage from "./pages/member/MyPage";
 
@@ -103,6 +103,7 @@ function App() {
           <Route path="/map-community" element={<MapCommunity />} />
           <Route path="/tree-grow" element={<TreeGrowMainPage />} />
           <Route path="/mission" element={<MissionListPage />} />
+          <Route path="/members/change-pw" element={<ChangePw />} />
 
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -205,7 +205,11 @@ const EmailAuth = ({ memberEmail, setMemberEmail, onVerified }) => {
         </div>
 
         {/*버튼 선택:프론트 검증 */}
-        <button type="button" onClick={verifyMailCode}>
+        <button
+          type="button"
+          onClick={verifyMailCode}
+          disabled={mailAuth !== 1} // 인증메일 보내야만 활성화
+        >
           인증하기
         </button>
       </div>

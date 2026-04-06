@@ -37,7 +37,8 @@ public class SpringSecurityConfig {
 
 		return http.build();
 	}
-
+/////////////////////////////////////////////////////////////////////////////////////
+/// 
 	@Bean
 	public BCryptPasswordEncoder bcrypt() {
 		return new BCryptPasswordEncoder();
