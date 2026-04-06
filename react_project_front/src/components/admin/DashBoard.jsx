@@ -33,6 +33,13 @@ const DashBoard = ({
   monthSign,
   dailySign,
   categoryCount,
+  pendingReport,
+  totalReportCount,
+  maxCategory,
+  maxCount,
+  thisMonthMember,
+  thisMonthRatio,
+  weeklyCount,
 }) => {
   // 라인 차트 데이터 (회원 증가 - 하드코딩)
   const lineData = {
@@ -41,7 +48,7 @@ const DashBoard = ({
       {
         tension: 0.4,
         label: "회원 증가",
-        data: [28, 45, 36, 53],
+        data: weeklyCount,
         borderColor: "#5B8CFF",
         backgroundColor: "rgba(91, 140, 255, 0.18)",
         fill: true,
@@ -59,7 +66,7 @@ const DashBoard = ({
     datasets: [
       {
         label: "카테고리별 신고",
-        data: [17, 9, 12, 5],
+        data: categoryCount,
         backgroundColor: ["#5B8CFF", "#4B5B78", "#F0B04B", "#8D6BFF"],
         borderRadius: 8,
         borderWidth: 0,
@@ -111,7 +118,7 @@ const DashBoard = ({
         </div>
         <div className={styles.card}>
           <p>미처리 신고</p>
-          <h2>3건</h2>
+          <h2>{pendingReport}건</h2>
         </div>
       </div>
 
@@ -128,13 +135,15 @@ const DashBoard = ({
       {/* 하단 요약 */}
       <div className={styles.totalInfo}>
         <div>
-          전체 기간 총 신고건 <span className={styles.point}>43건</span> - 최다
-          카테고리 <span className={styles.point}>[광고]</span>{" "}
-          <span className={styles.point}>17건</span>
+          전체 기간 총 신고건{" "}
+          <span className={styles.point}>{totalReportCount}건</span> - 최다
+          카테고리 <span className={styles.point}>[{maxCategory}]</span>{" "}
+          <span className={styles.point}>{maxCount}건</span>
         </div>
         <div>
-          이번 달 신규 회원 총 <span className={styles.point}>173명</span> -
-          전체 회원 중 <span className={styles.point}>24%</span>
+          이번 달 신규 회원 총{" "}
+          <span className={styles.point}>{thisMonthMember}명</span> - 전체 회원
+          중 <span className={styles.point}>{thisMonthRatio.toFixed(1)}%</span>
         </div>
       </div>
     </div>

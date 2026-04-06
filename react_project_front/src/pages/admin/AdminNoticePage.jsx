@@ -20,6 +20,20 @@ const AdminNoticePage = () => {
     setNotice({ ...notice, [name]: value });
   };
 
+  const deleteNotice = (e) => {
+    Swal.fire({
+      title: "공지사항 삭제",
+      text: "공지사항을 삭제하시겠습니까?",
+      icon: "question",
+      showCancelButton: true,
+      cancelButtonText: "취소",
+      confirmButtonText: "삭제",
+    }).then((result) => {
+      if (result.isConfirmed) {
+      }
+    });
+  };
+
   const insertNotice = (e) => {
     e.preventDefault();
     if (isEdit) {
@@ -32,30 +46,30 @@ const AdminNoticePage = () => {
           console.log(err);
         });
     } else {
-      axios
-        .post(`${import.meta.env.VITE_BACKSERVER}/admins/notice`, notice)
-        .then((res) => {
-          console.log(res);
-          setIsEdit(false);
-          if (res.data === 1) {
-            selectNoticeList();
-            Swal.fire({
-              title: "공지사항 등록",
-              text: "공지사항을 등록하시겠습니까?",
-              icon: "info",
-              showCancelButton: true,
-              confirmButtonText: "등록",
-              cancelButtonText: "취소",
-            }).then((result) => {
-              if (result.isConfirmed) {
+      Swal.fire({
+        title: "공지사항 등록",
+        text: "공지사항을 등록하시겠습니까?",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonText: "등록",
+        cancelButtonText: "취소",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios
+            .post(`${import.meta.env.VITE_BACKSERVER}/admins/notice`, notice)
+            .then((res) => {
+              console.log(res);
+              setIsEdit(false);
+              if (res.data === 1) {
+                selectNoticeList();
                 Swal.fire("공지사항이 등록되었습니다.");
               }
+            })
+            .catch((err) => {
+              console.log(err);
             });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        }
+      });
     }
   };
 
