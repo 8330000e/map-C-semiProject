@@ -122,7 +122,7 @@ public class Membercontroller {
 	
 	
 	
-
+/*
 		Member mem = new Member();
 		mem.setMemberId(memberId);
 		mem.setMemberThumb(memberThumb);
@@ -130,6 +130,7 @@ public class Membercontroller {
 		int result = memberService.updateMemberThumb(mem);
 		return ResponseEntity.ok(memberThumb);
 	}
+	*/
 	//포인트 조회
 	@GetMapping(value = "/{memberId}/point")
 	public ResponseEntity<?> selectMemberPoint(@PathVariable String memberId) {
