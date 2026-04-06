@@ -23,6 +23,8 @@ public interface BoardDao {
 
 	int updateBoard(Board board);
 
+	int incrementReadCount(@Param("boardNo") int boardNo);
+
 	int deleteBoard(@Param("boardNo") int boardNo);
 
 	int insertBoardFile(BoardFile boardFile);

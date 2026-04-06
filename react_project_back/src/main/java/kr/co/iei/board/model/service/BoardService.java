@@ -51,6 +51,10 @@ public class BoardService {
 	        throw e;
 	    }
 	}
+
+	public int incrementReadCount(int boardNo) {
+		return boardDao.incrementReadCount(boardNo);
+	}
 	@Transactional
 	public int insertBoardFiles(int boardNo, String memberId, MultipartFile[] files) {
 	    int result = 0;

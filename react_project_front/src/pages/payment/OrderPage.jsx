@@ -37,9 +37,10 @@ const OrderPage = () => {
 
     // storeDetail에서 전달받은 상품 정보
     const orderName = location.state?.orderName || "테스트 상품";
-    const amount = Number(location.state?.amount || 0);
-    const baseAmount = Number(location.state?.baseAmount || amount);
+    const passedAmount = Number(location.state?.amount || 0);
+    const baseAmount = Number(location.state?.baseAmount || passedAmount);
     const deliveryFee = Number(location.state?.deliveryFee || 0);
+    const amount = passedAmount > 0 ? passedAmount : baseAmount + deliveryFee;
     const itemId = location.state?.itemId;
     const marketNo = location.state?.marketNo || itemId;
     const deliveryMethod = location.state?.deliveryMethod || "delivery";
