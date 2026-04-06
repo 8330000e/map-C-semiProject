@@ -45,4 +45,17 @@
 	<update id="updateMemberThumb">
 		update member_tbl1 set member_thumb=#{memberThumb} where member_id = #{memberId}
 	</update>
+	
+	<!-- 포인트 조회 -->
+	<select id="selectMemberPoint" parameterType="string" resultType="int">
+	SELECT TOTAL_POINT
+	FROM MEMBER_POINT_TBL
+	WHERE MEMBER_ID = #{memberId}
+</select>
+
+<update id="decreasePoint">
+    UPDATE MEMBER_POINT_TBL
+    SET TOTAL_POINT = TOTAL_POINT - #{point}
+    WHERE MEMBER_ID = #{memberId}
+</update>
 </mapper>

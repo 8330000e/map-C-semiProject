@@ -25,9 +25,16 @@ public class SpringSecurityConfig {
         .authorizeHttpRequests(auth -> auth
         		//"/members/login", "/members"-> 직접 회원가입, 로그인 요청의 post 경로를 설정
         		.requestMatchers("/members/login", "/members").permitAll() // permitAll-> 로그인 경로 허용(임시) // 수정 필요  
+        		
+        		
         		.requestMatchers("/members/**").permitAll()
+        		
+        		.requestMatchers("/boards/**").permitAll()//게시글
+        		.requestMatchers("/board/editor/**").permitAll()//에디터 사진 저장 경로
+
         		//이 URL은 로그인 안 해도 들어와도 된다”
         		//현재 토큰이 없는 관계로 이 방식을 통해 리엑트와 연결 
+                
 //                .anyRequest().authenticated() // 나머지는 인증 필요
         		.anyRequest().permitAll() // 모든 요청 허용-> jwt를 만들면 해제
         )
@@ -41,7 +48,7 @@ public class SpringSecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:9999", "http://localhost:3000"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT","PATCH" ,"DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
