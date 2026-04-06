@@ -107,6 +107,7 @@
 	read_count 
 	from board_tbl 
 	where writer_id = #{memberId} 
+	
 	<if test="searchBoard != '' and searchBoard != null">
 		and board_title like '%' || #{searchBoard} || '%'
 	</if>
