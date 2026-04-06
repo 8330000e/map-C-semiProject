@@ -32,6 +32,9 @@ import SaleHistory from "./components/mypage/SaleHistory";
 import PurchaseDetail from "./components/mypage/PurchaseDetail";
 import SaleDetail from "./components/mypage/SaleDetail";
 import AdminPage from "./pages/admin/AdminPage";
+import ChangePw from "./components/mypage/ChangePw";
+import UpdateMyInfo from "./components/mypage/UpdateMyInfo";
+import Mypage from "./pages/member/MyPage";
 
 function App() {
   const location = useLocation();
@@ -46,6 +49,7 @@ function App() {
       <main className={isAdmin ? "" : "main"}>
         <Routes>
           <Route path="/" element={<Main />} />
+          <Route path="/mypage/*" element={<Mypage />} />
           <Route path="/store" element={<Store />} />
           <Route path="/store/register" element={<ProductRegistration />} />
           <Route path="/store/:id" element={<StoreDetail />} />
