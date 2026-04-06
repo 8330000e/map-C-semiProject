@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.member.model.vo.Member;
@@ -56,6 +55,7 @@ public class Membercontroller {
 		}
 	}
 
+	// 회원정보 수정
 	@PatchMapping(value = "/{memberId}")
 	public ResponseEntity<?> updateMemberInfo(@PathVariable String memberId, @RequestBody Member form) {
 		form.setMemberId(memberId);
@@ -63,34 +63,35 @@ public class Membercontroller {
 		return ResponseEntity.ok(result);
 	}
 
+	// 회원정보 조회
 	@GetMapping(value = "/{memberId}")
 	public ResponseEntity<?> getMemberInfo(@PathVariable String memberId) {
 		Member member = memberService.getOneMemberInfo(memberId);
 		return ResponseEntity.ok(member);
 	}
 
+	// 현재 비밀번호 확인
 	@PostMapping(value = "/checkauth")
 	public ResponseEntity<?> changePw(@RequestBody Member member) {
 		boolean result = memberService.checkPw(member);
 		return ResponseEntity.ok(result);
 	}
 
+	// 새 비밀번호 변경
 	@PatchMapping(value = "/newpw")
 	public ResponseEntity<?> updatePw(@RequestBody Member m) {
 		int result = memberService.updatePw(m);
 		return ResponseEntity.ok(result);
 	}
 
-
-	
-	
-
+	// 전체 회원 조회
 	@GetMapping
 	public ResponseEntity<?> selectMemberList() {
 		List<Member> memberList = memberService.selectMemberList();
 		return ResponseEntity.ok(memberList);
 	}
 
+	// 프로필 이미지 변경
 	@PatchMapping(value = "/{memberId}/thumb")
 	public ResponseEntity<?> updateThumb(@PathVariable String memberId, @ModelAttribute MultipartFile file) {
 		String savepath = root + "member/";
