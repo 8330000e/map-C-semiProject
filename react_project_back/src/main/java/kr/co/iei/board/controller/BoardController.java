@@ -88,11 +88,14 @@ public class BoardController {
 	 ) {
 	     return boardService.insertBoardFiles(boardNo, memberId, files);
 	 }
-	 @GetMapping(value="memberId")
-	 public ResponseEntity<?> selectMemberIdBoard(@RequestBody Board board){
-//		 HashMap<String, String> map = new HashMap<String,String>();
-		
-		 Board b = boardService.selectMemberIdBoard(board);
-		 return ResponseEntity.ok(b);
+	 @GetMapping(value="{memberId}")
+	 public ResponseEntity<?> selectMemberIdBoard(@PathVariable String memberId,@RequestParam String searchBoard,@RequestParam String filter){
+		 HashMap<String, String> map = new HashMap<String,String>();
+		 System.out.println(searchBoard);
+		map.put("searchBoard", searchBoard);
+		map.put("memberId", memberId);
+		map.put("filter", filter);
+		 List<Board> list = boardService.selectMemberIdBoard(map);
+		 return ResponseEntity.ok(list);
 	 }
 }

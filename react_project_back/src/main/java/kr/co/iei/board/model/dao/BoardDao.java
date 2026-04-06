@@ -26,7 +26,7 @@ public interface BoardDao {
 
 	int insertBoardFile(BoardFile boardFile);
 
-	Board selectMemberIdBoard(Board board);
+	List<Board> selectMemberIdBoard(HashMap<String, String> map);
     
 
 }
