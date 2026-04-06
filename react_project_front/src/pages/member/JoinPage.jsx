@@ -40,7 +40,7 @@ const Join = () => {
 
     // 회원가입 요청을 서버로 전달하는 부분
     axios
-      .post(`${BACKSERVER}/members`, member)
+      .post(`${import.meta.env.VITE_BACKSERVER}/members`, member)
       .then((res) => {
         console.log("회원가입 응답:", res.data);
         navigate("/members/login"); // 회원가입 후 로그인 페이지로 이동

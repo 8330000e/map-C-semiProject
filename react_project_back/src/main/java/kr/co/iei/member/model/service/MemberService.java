@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.iei.member.model.dao.MemberDao;
+import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
+import kr.co.iei.utils.JwtUtils;
 
 @Service
 public class MemberService {
@@ -16,6 +18,8 @@ public class MemberService {
 	@Autowired
 	private MemberDao memberDao;
 
+
+	// 암호화 객체 선언
 	@Autowired
 	private BCryptPasswordEncoder bcrypt;
 

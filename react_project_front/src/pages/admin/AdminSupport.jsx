@@ -1,6 +1,6 @@
 import { Navigate, NavLink, Route, Routes } from "react-router-dom";
 import styles from "./AdminSupport.module.css";
-import AdminNotice from "../../components/admin/AdminNotice";
+import AdminNotice from "./AdminNoticePage";
 
 const AdminSupport = () => {
   return (
