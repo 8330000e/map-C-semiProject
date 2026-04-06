@@ -17,4 +17,12 @@ public interface MemberDao {
 
 	int updateMemberThumb(Member mem);
 
+	int updateMemberInfo(Member member);
+
+	Member getOneMemberInfo(String memberId);
+
+	Member memberPw(String memberId);
+
+	int updatePw(Member m);
+
 }

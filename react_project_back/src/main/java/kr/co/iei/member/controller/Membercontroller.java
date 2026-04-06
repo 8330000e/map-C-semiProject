@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import jakarta.servlet.annotation.MultipartConfig;
 import kr.co.iei.member.model.service.MemberService;
@@ -74,7 +75,6 @@ public class Membercontroller {
 	}
 	
 	
-	}
 	@GetMapping
 	public ResponseEntity<?> selectMemberList() {
 		List<Member> memberList = memberService.selectMemberList();

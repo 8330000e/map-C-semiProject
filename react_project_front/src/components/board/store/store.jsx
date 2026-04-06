@@ -1,64 +1,64 @@
-// 중고장터 목록 페이지 컴포넌트입니다.
-// - 목데이터를 불러와서 리스트 형태로 출력
-// - 검색/페이징 기능이 포함되어 있음
-// - 판매 상태(판매중/예약중/판매완료) 저장/동기화용 로컬스토리지 사용
 import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
 import styles from "./store.module.css";
-import { storeDummyData } from "../../mock/dummyData";
 
-// 로컬스토리지 저장 키
-const STORE_STATUS_KEY = "storeSaleStatusMap";
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-// 로컬스토리지에서 상태 맵 읽어오기
-// 예외 발생 시 빈 객체 반환
-const getSaleStatusMap = () => {
-    try {
-        const raw = localStorage.getItem(STORE_STATUS_KEY);
-        return raw ? JSON.parse(raw) : {};
-    } catch {
-        return {};
-    }
+const formatPrice = (value) => `${Number(value || 0).toLocaleString("ko-KR")}원`;
+const formatDate = (value) => {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleDateString("ko-KR");
+};
+const getTradeTypeLabel = (tradeType) => {
+    if (tradeType === 0) return "직거래/택배";
+    if (tradeType === 1) return "직거래";
+    if (tradeType === 2) return "택배";
+    return "미정";
+};
+const getSaleStatusLabel = (productStatus) => {
+    if (productStatus === "예약중") return "예약중";
+    if (productStatus === "판매완료") return "판매완료";
+    return "판매중";
 };
 
-const getSaleStatusById = (id, map) => map[id] || "판매중";
-
 const Store = () => {
-    // 현재 페이지 / 페이지당 노출 개수
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 16;
-
-    // 검색 조건
     const [searchType, setSearchType] = useState("title");
     const [searchQuery, setSearchQuery] = useState("");
     const [activeSearch, setActiveSearch] = useState("");
-    const [saleStatusMap, setSaleStatusMap] = useState(() => getSaleStatusMap());
+    const [goods, setGoods] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadError, setLoadError] = useState("");
 
     useEffect(() => {
-        const syncSaleStatus = () => setSaleStatusMap(getSaleStatusMap());
-        window.addEventListener("storage", syncSaleStatus);
-        window.addEventListener("store-status-updated", syncSaleStatus);
-
-        return () => {
-            window.removeEventListener("storage", syncSaleStatus);
-            window.removeEventListener("store-status-updated", syncSaleStatus);
+        const fetchStoreBoards = async () => {
+            try {
+                setIsLoading(true);
+                const response = await axios.get(`${BACKSERVER}/api/store/boards`);
+                setGoods(Array.isArray(response.data) ? response.data : []);
+                setLoadError("");
+            } catch (error) {
+                console.error("중고장터 목록 조회 실패", error);
+                setLoadError("중고장터 목록을 불러오지 못했습니다.");
+            } finally {
+                setIsLoading(false);
+            }
         };
+
+        fetchStoreBoards();
     }, []);
 
-    // 데이터 준비 (75개로 제한)
-    const goods = useMemo(() => {
-        const shuffled = [...storeDummyData].sort(() => Math.random() - 0.5);
-        return shuffled.slice(0, 75);
-    }, []);
-
-    // 검색 필터
     const searchedGoods = useMemo(() => {
         const q = activeSearch.trim().toLowerCase();
         if (!q) return goods;
 
         return goods.filter((item) =>
-            String(item[searchType] ?? "")
+            String(searchType === "author" ? item.memberId : item.marketTitle)
                 .toLowerCase()
                 .includes(q),
         );
@@ -67,16 +67,14 @@ const Store = () => {
     const displayGoods = useMemo(
         () =>
             searchedGoods.map((item) => {
-                const status = getSaleStatusById(item.id, saleStatusMap);
                 return {
                     ...item,
-                    displayTitle: `[${status}] ${item.title}`,
+                    displayTitle: `[${getSaleStatusLabel(item.productStatus)}] ${item.marketTitle}`,
                 };
             }),
-        [searchedGoods, saleStatusMap],
+        [searchedGoods],
     );
 
-    // 페이지 계산
     const pageCount = Math.max(1, Math.ceil(displayGoods.length / itemsPerPage));
     const startIndex = (currentPage - 1) * itemsPerPage;
     const visibleGoods = displayGoods.slice(startIndex, startIndex + itemsPerPage);
@@ -167,31 +165,28 @@ const Store = () => {
 
                 {/* 상품 카드 목록 섹션 */}
                 <div className={styles.grid_box}>
+                    {isLoading && <p>목록을 불러오는 중입니다.</p>}
+                    {!isLoading && loadError && <p>{loadError}</p>}
                     {visibleGoods.map((item) => {
-                        const tradeMethodLabel =
-                            item.tradeTypeText ||
-                            (item.tradeType === 0 ? "직거래/택배" : item.tradeType === 1 ? "직거래" : "택배");
+                        const tradeMethodLabel = getTradeTypeLabel(item.tradeType);
 
                         return (
-                            <Link key={item.id} to={`/store/${item.id}`} className={styles.cardLink}>
+                            <Link key={item.marketNo} to={`/store/${item.marketNo}`} className={styles.cardLink}>
                                 <article className={styles.card}>
-                                    {/* 상품 썸네일 영역 */}
-                                    <div className={styles.image}>이미지</div>
+                                    <div className={styles.image}>{item.productThumb || "이미지"}</div>
                                     <h3>{item.displayTitle}</h3>
-                                    <p className={styles.price}>{item.price}</p>
-                                    <div className={styles.region_badge}>{item.region}</div>
-                                    
-                                    {/* 거래방법 표시 위치 조정: 가격/지역 아래로 */}
+                                    <p className={styles.price}>{formatPrice(item.productPrice)}</p>
+                                    <div className={styles.region_badge}>{item.ctpvsggId || "지역 미등록"}</div>
                                     <p className={styles.tradeType}>거래방법 : {tradeMethodLabel}</p>
-                                    
+
                                     <div className={styles.metaRow}>
-                                        <span className={styles.author}>{item.author}</span>
+                                        <span className={styles.author}>{item.memberId}</span>
                                         <span className={styles.metaDivider}>|</span>
-                                        <span className={styles.commentCount}>💬 {item.comments}</span>
+                                        <span className={styles.commentCount}>💬 0</span>
                                         <span className={styles.metaDivider}>|</span>
-                                        <span className={styles.dateLine}>{item.date}</span>
+                                        <span className={styles.dateLine}>{formatDate(item.createdAt)}</span>
                                     </div>
-                                    <p className={styles.viewCount}>👀 조회수 {item.viewCount}</p>
+                                    <p className={styles.viewCount}>👀 조회수 {item.readCount || 0}</p>
                                 </article>
                             </Link>
                         );
