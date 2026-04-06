@@ -21,9 +21,8 @@ const Header = () => {
   return (
     <>
       <header className={styles.header}>
-        <h1>
-          <Link to="/">탄소커넥트</Link>
-        </h1>
+        <h1 onClick={() => navigate("/")}>탄소커넥트</h1>
+
         <div className={styles.header_wrap}>
           {!memberId ? (
             <div className={styles.login}>

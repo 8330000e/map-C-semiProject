@@ -45,6 +45,13 @@ const useAuthStore = create(
         });
       },
 
+      //isReady는 로그인 상태가 초기화되는 것을 방지하기 위한 설정.
+      // 로그인 상태가 유지되는 동안 isReady는 true로 설정되고, 새로고침 시 초기화되어 false로 설정됨.
+      // 이를 통해 로그인 상태가 유지되는 동안 isReady는 true로 설정되고,
+      //  새로고침 시 초기화되어 false로 설정됨.
+      //localStorage에서 데이터를 불러오는데 시간이 살짝 걸림. -> 근데 실제로는 로그인 되어있음
+      //로그인 상태인데도 로그 아웃처럼 보이는 버그 발생.
+      //따라서 isReady를  사용함. -> 즉 버퍼링으로 인한 피해 최소화
       setReady: (ready) => {
         set({ isReady: ready });
       },

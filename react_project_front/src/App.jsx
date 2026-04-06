@@ -19,10 +19,14 @@ import TossTestPayment from "./pages/payment/TossTestPayment";
 import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import PaymentFail from "./pages/payment/PaymentFail";
 import JoinPage from "./pages/member/JoinPage";
-import LoginPage from "./pages/member/LoginPage";
 
-import { useEffect } from "react";
+import LoginPage from "./pages/member/LoginPage";
+import FindId from "./pages/member/findId";
+import FindPw from "./pages/member/FindPw";
+
 import useAuthStore from "./store/useAuthStore";
+import { useEffect } from "react";
+
 import axios from "axios";
 
 import MapCommunity from "./pages/MapCommunityPage/MapCommunityPage";
@@ -56,6 +60,12 @@ function App() {
     2. 로그인 후 null이 아닌 memeber state를 useAthsore에 저장*/
   }
 
+  // useAuthstore로 token가져오기
+  //왜 로그인이 아닌 app에서 로그인 인증 유지과정 로직을 적는가?
+  // 로그인에서는 로그인을 했을 경우에만 해당. 그 외에는 적용이 어려움
+  //app는 새로고침을 해도 모든 창에 기본적으로 영향을 끼침.
+  //따라서 app에서 토큰을 지속적으로 유지하는 로직을 짬.
+
   //app는 새로고침을 해도 모든 창에 기본적으로 영향을 끼침.
   //따라서 app에서 토큰을 지속적으로 유지하는 로직을 짬.
   //다만 아래 로직은 Zustand 메모리 상태에 토큰이 존재할 때만 Axios 헤더를 설정하기 때문에, 새로고침 시 Zustand 상태가 초기화되어 토큰이 사라지는 문제가 있음.
@@ -86,8 +96,10 @@ function App() {
           <Route path="/payment/fail" element={<PaymentFail />} />
           <Route path="/Store" element={<Navigate to="/store" replace />} />
           <Route path="/join" element={<JoinPage />}></Route>
-          <Route path="/members/login" element={<LoginPage />}></Route>
 
+          <Route path="/members/login" element={<LoginPage />}></Route>
+          <Route path="/members/find-id" element={<FindId />}></Route>
+          <Route path="/members/find-pw" element={<FindPw />}></Route>
           <Route path="/map-community" element={<MapCommunity />} />
           <Route path="/tree-grow" element={<TreeGrowMainPage />} />
           <Route path="/mission" element={<MissionListPage />} />
