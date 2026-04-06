@@ -57,9 +57,9 @@ public class MemberService {
 			return null;
 }
 
-		}
+		
 
-
+		/*
 		public Member getOneMemberInfo(String memberId) {
 			Member member = memberDao.getOneMemberInfo(memberId);
 			return member;
@@ -83,6 +83,7 @@ public class MemberService {
 			int result = memberDao.updatePw(m);
 			return result;
 		}
+		*/
 
 
 		public List<Member> selectMemberList() {

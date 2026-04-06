@@ -52,6 +52,8 @@ public class Membercontroller {
 		}
 
 	}
+	
+	/*
 	@PatchMapping(value="/{memberId}")
 	private ResponseEntity<?> updateMemberInfo(@RequestBody Member form){
 		int result = memberService.updateMemberInfo(form);
@@ -74,12 +76,8 @@ public class Membercontroller {
 	}
 	
 	
-	}
-	@GetMapping
-	public ResponseEntity<?> selectMemberList() {
-		List<Member> memberList = memberService.selectMemberList();
-		return ResponseEntity.ok(memberList);
-	}
+	
+
 	@PatchMapping(value="/{memberId}/thumb")
 	public ResponseEntity<?> updateThumb(@PathVariable String memberId,@ModelAttribute MultipartFile file){
 		String savepath = root + "member/";
@@ -90,5 +88,15 @@ public class Membercontroller {
 		int result = memberService.updateMemberThumb(mem);
 		return ResponseEntity.ok(memberThumb);
 	}
+	*/
+	
+	
+	@GetMapping
+	public ResponseEntity<?> selectMemberList() {
+		List<Member> memberList = memberService.selectMemberList();
+		return ResponseEntity.ok(memberList);
+		
+	}
+	
 
 }
