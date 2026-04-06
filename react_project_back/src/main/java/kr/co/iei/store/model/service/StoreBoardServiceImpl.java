@@ -24,10 +24,14 @@ public class StoreBoardServiceImpl implements StoreBoardService {
             return 0L;
         }
         normalizeStoreBoard(storeBoard);
+
+        // 항상 BOARD_TBL에 먼저 저장
         storeBoardDAO.insertBoardForStore(storeBoard);
         if (storeBoard.getBoardNo() == null) {
             return 0L;
         }
+
+        // STORE_BOARD_TBL에 저장
         storeBoardDAO.insertStoreBoard(storeBoard);
         return storeBoard.getMarketNo() != null ? storeBoard.getMarketNo() : 0L;
     }

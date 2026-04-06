@@ -20,8 +20,11 @@
         TO_CHAR(b.BOARD_DATE, 'YYYY-MM-DD') AS createDate,
         b.BOARD_THUMB AS thumbnailUrl,
         0 AS commentCount
-    FROM BOARD_TBL b
-    WHERE BOARD_STATUS = #{status}
+        FROM BOARD_TBL b
+        WHERE BOARD_STATUS = #{status}
+            AND NOT EXISTS (
+                SELECT 1 FROM STORE_BOARD_TBL s WHERE s.BOARD_NO = b.BOARD_NO
+            )
 
     <if test="searchKeyword != null and searchKeyword != ''">
         <choose>
@@ -34,7 +37,7 @@
         </choose>
     </if>
 
-    ORDER BY BOARD_NO DESC
+    ORDER BY (b.READ_COUNT + NVL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0)) DESC
 </select>
 <insert id="insertBoard" parameterType="board">
     <selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
@@ -125,11 +128,13 @@
     )
 </insert>
 <select id="bestBoardList" resultType="kr.co.iei.board.model.vo.BoardLike">
+group by t.board_no, b.board_title, b.ctpv, b.sgg order by 2 desc
 select 
 t.board_no, count(t.board_no) as count, b.board_title, b.ctpv, b.sgg
 from board_like_tbl t 
 join board_tbl b on (t.board_no = b.board_no)
 where t.board_no = t.board_no
+    and not exists (select 1 from store_board_tbl s where s.board_no = b.board_no)
 group by t.board_no, b.board_title, b.ctpv, b.sgg order by 2 desc
 </select>
 
