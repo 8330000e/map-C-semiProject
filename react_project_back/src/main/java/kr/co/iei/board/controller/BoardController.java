@@ -1,9 +1,11 @@
 package kr.co.iei.board.controller;
 
+
 import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -85,5 +87,15 @@ public class BoardController {
 	         @RequestParam("memberId") String memberId
 	 ) {
 	     return boardService.insertBoardFiles(boardNo, memberId, files);
+	 }
+	 @GetMapping(value="{memberId}")
+	 public ResponseEntity<?> selectMemberIdBoard(@PathVariable String memberId,@RequestParam String searchBoard,@RequestParam String filter){
+		 HashMap<String, String> map = new HashMap<String,String>();
+		 System.out.println(searchBoard);
+		map.put("searchBoard", searchBoard);
+		map.put("memberId", memberId);
+		map.put("filter", filter);
+		 List<Board> list = boardService.selectMemberIdBoard(map);
+		 return ResponseEntity.ok(list);
 	 }
 }

@@ -216,7 +216,7 @@ const Main = () => {
         <div className="main_map roundBorder">
           {/* <p>Map</p> */}
           {/*위치설명*/}
-          <Map />
+          {/* <Map /> */}
         </div>
 
         <div className="main_content_one">

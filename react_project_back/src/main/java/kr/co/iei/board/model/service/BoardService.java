@@ -73,5 +73,9 @@ public class BoardService {
 
 	    return result;
 	}
+	public List<Board> selectMemberIdBoard(HashMap<String, String> map) {
+		List<Board> list = boardDao.selectMemberIdBoard(map);
+		return list;
+	}
 }
 

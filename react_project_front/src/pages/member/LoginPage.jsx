@@ -46,12 +46,17 @@ const Login = () => {
     //    - 서버가 실제 로그인 API를 구현했다고 가정
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/members/login`, member)
-      .then((res) => { // 성공 시 실행
+      .then((res) => {
+        // 성공 시 실행
 
         console.log("응답 성공:", res);
         console.log("응답 데이터:", res.data);
 
-        // 로그인 성공 시 전역 상태에 사용자 데이터 저장
+        if (res.data.token) {
+          axios.defaults.headers.common["Authorization"] =
+            `Bearer ${res.data.token}`;
+        }
+
         useAuthStore.getState().login(res.data);
         // 로그인 후 홈으로 이동
         navigate("/");
