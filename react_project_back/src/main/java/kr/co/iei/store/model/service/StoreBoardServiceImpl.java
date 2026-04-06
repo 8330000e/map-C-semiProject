@@ -22,6 +22,7 @@ public class StoreBoardServiceImpl implements StoreBoardService {
         if (storeBoard == null) {
             return 0L;
         }
+        normalizeStoreBoard(storeBoard);
         storeBoardDAO.insertBoardForStore(storeBoard);
         if (storeBoard.getBoardNo() == null) {
             return 0L;
@@ -55,6 +56,7 @@ public class StoreBoardServiceImpl implements StoreBoardService {
         if (storeBoard == null || storeBoard.getMarketNo() == null) {
             return 0L;
         }
+        normalizeStoreBoard(storeBoard);
         storeBoardDAO.updateBoardForStore(storeBoard);
         storeBoardDAO.updateStoreBoard(storeBoard);
         return storeBoard.getMarketNo();
@@ -115,5 +117,33 @@ public class StoreBoardServiceImpl implements StoreBoardService {
     @Override
     public void removeRating(Long reviewNo, String buyerId) {
         storeBoardDAO.deleteRating(reviewNo, buyerId);
+    }
+
+    private void normalizeStoreBoard(StoreBoard storeBoard) {
+        if (storeBoard == null) {
+            return;
+        }
+
+        String tradeType = storeBoard.getTradeType();
+        if (tradeType != null) {
+            if (tradeType.equals("0") || tradeType.equals("직거래/택배")) {
+                storeBoard.setTradeType("직거래/택배");
+            } else if (tradeType.equals("1") || tradeType.equals("직거래")) {
+                storeBoard.setTradeType("직거래");
+            } else if (tradeType.equals("2") || tradeType.equals("택배")) {
+                storeBoard.setTradeType("택배");
+            }
+        }
+
+        String productStatus = storeBoard.getProductStatus();
+        if (productStatus == null) {
+            storeBoard.setProductStatus("0");
+        } else if (productStatus.equals("1") || productStatus.equals("예약중")) {
+            storeBoard.setProductStatus("1");
+        } else if (productStatus.equals("2") || productStatus.equals("판매완료")) {
+            storeBoard.setProductStatus("2");
+        } else {
+            storeBoard.setProductStatus("0");
+        }
     }
 }

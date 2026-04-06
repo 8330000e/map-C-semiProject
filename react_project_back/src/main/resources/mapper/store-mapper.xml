@@ -54,17 +54,17 @@
     (
       #{boardNo},
       #{memberId},
-      #{ctpvsggId},
-      #{marketTitle},
-      #{marketContent},
-      #{productPrice},
-      #{productThumb},
-      #{productStatus},
+      #{ctpvsggId, jdbcType=VARCHAR},
+      #{marketTitle, jdbcType=VARCHAR},
+      #{marketContent, jdbcType=VARCHAR},
+      #{productPrice, jdbcType=NUMERIC},
+      #{productThumb, jdbcType=VARCHAR},
+      #{productStatus, jdbcType=NUMERIC},
       0,
       0,
       SYSDATE,
        NULL,
-      #{tradeType}
+      #{tradeType, jdbcType=VARCHAR}
     )
   </insert>
 
@@ -153,7 +153,7 @@
         MARKET_CONTENT = #{marketContent},
         PRODUCT_PRICE  = #{productPrice},
         PRODUCT_THUMB  = #{productThumb},
-        TRADE_TYPE     = #{tradeType},
+        TRADE_TYPE     = #{tradeType, jdbcType=VARCHAR},
         CTPVSGG_ID     = #{ctpvsggId},
         UPDATED_AT     = SYSDATE
     WHERE MARKET_NO = #{marketNo}
