@@ -12,6 +12,12 @@ const tradeTypeLabel = (type, text) => {
   return "-";
 };
 
+const getSaleStatusLabel = (productStatus) => {
+  if (productStatus === "예약중" || productStatus === 1 || productStatus === "1") return "예약중";
+  if (productStatus === "판매완료" || productStatus === 2 || productStatus === "2") return "판매완료";
+  return "판매중";
+};
+
 const SaleDetail = () => {
   const { id } = useParams();
   const [item, setItem] = useState(null);
@@ -46,7 +52,7 @@ const SaleDetail = () => {
       </div>
     );
   }
-  const saleStatus = item.productStatus === 2 ? "판매완료" : item.productStatus === 1 ? "예약중" : "판매중";
+  const saleStatus = getSaleStatusLabel(item.productStatus);
 
   return (
     <div className={styles.sale_history_wrap}>

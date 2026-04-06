@@ -4,7 +4,11 @@ import { Link } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
 import styles from "./SaleHistory.module.css";
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
-const getSaleStatusLabel = (productStatus) => (productStatus === 2 ? "판매완료" : productStatus === 1 ? "예약중" : "판매중");
+const getSaleStatusLabel = (productStatus) => {
+  if (productStatus === "예약중" || productStatus === 1 || productStatus === "1") return "예약중";
+  if (productStatus === "판매완료" || productStatus === 2 || productStatus === "2") return "판매완료";
+  return "판매중";
+};
 
 const SaleHistory = () => {
   const { memberId } = useAuthStore();
