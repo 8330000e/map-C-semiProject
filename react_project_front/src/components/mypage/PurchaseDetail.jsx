@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import { Link, useParams } from "react-router-dom";
+import useAuthStore from "../../store/useAuthStore";
 import styles from "./PurchaseHistory.module.css";
+import { getCompletedPurchaseById } from "./orderHistoryStorage";
 
-const mockPurchaseHistory = [
-  { id: 1, title: "재생 우드 의자", date: "2026-03-22", amount: 75000, status: "구매완료", tradeType: 0, tradeTypeText: "직거래/택배", seller: "업사이클샵" },
-  { id: 2, title: "중고 노트북", date: "2026-03-18", amount: 430000, status: "배송대기", tradeType: 2, tradeTypeText: "택배", seller: "노트북박사" },
-];
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
 const tradeTypeLabel = (type, text) => {
   if (text) return text;
@@ -15,9 +15,12 @@ const tradeTypeLabel = (type, text) => {
   return "-";
 };
 
+const getStatusPrefix = (status) => (status ? `[${status}] ` : "");
+
 const PurchaseDetail = () => {
   const { id } = useParams();
-  const item = mockPurchaseHistory.find((p) => String(p.id) === String(id));
+  const { memberId: loginMemberId } = useAuthStore();
+  const [item, setItem] = useState(() => getCompletedPurchaseById(id));
 
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
@@ -26,38 +29,69 @@ const PurchaseDetail = () => {
   const [editReviewId, setEditReviewId] = useState(null);
   const [editRating, setEditRating] = useState(5);
   const [editComment, setEditComment] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const myReview = useMemo(
+    () => reviews.find((rev) => rev.buyerId === loginMemberId),
+    [reviews, loginMemberId],
+  );
+
+  useEffect(() => {
+    setItem(getCompletedPurchaseById(id));
+  }, [id]);
+
+  useEffect(() => {
+    if (!item?.marketNo) return;
+    setIsLoading(true);
+    axios
+      .get(`${BACKSERVER}/api/store/markets/${item.marketNo}/ratings`)
+      .then((res) => setReviews(Array.isArray(res.data) ? res.data : []))
+      .catch((error) => {
+        console.error("구매평가 조회 실패", error);
+        setReviews([]);
+      })
+      .finally(() => setIsLoading(false));
+  }, [item?.marketNo]);
 
   const onFileChange = (e) => {
     const file = e.target.files[0];
     if (file) setReviewImage(file);
   };
 
-  const onSubmitReview = () => {
+  const onSubmitReview = async () => {
     if (!comment.trim()) {
       alert("평가 내용을 작성해주세요.");
       return;
     }
-
-    const newReview = {
-      id: Date.now(),
-      rating,
-      comment,
-      imageName: reviewImage ? reviewImage.name : null,
-      createdAt: new Date().toLocaleString(),
-    };
-
-    setReviews((prev) => [newReview, ...prev]);
-
-    alert("평가가 정상적으로 제출되었습니다.");
-    setRating(5);
-    setComment("");
-    setReviewImage(null);
+    if (!loginMemberId) {
+      alert("로그인 후 평가를 작성할 수 있습니다.");
+      return;
+    }
+    try {
+      const res = await axios.post(`${BACKSERVER}/api/store/markets/${item.marketNo}/ratings`, {
+        tradeNo: item.tradeNo ?? null,
+        marketNo: item.marketNo,
+        sellerId: item.sellerId,
+        buyerId: loginMemberId,
+        buyerNickname: item.buyerNickname || loginMemberId,
+        rating,
+        reviewContent: comment,
+        reviewThumb: reviewImage ? reviewImage.name : null,
+      });
+      setReviews((prev) => [res.data, ...prev.filter((rev) => rev.reviewNo !== res.data.reviewNo)]);
+      alert("평가가 정상적으로 제출되었습니다.");
+      setRating(5);
+      setComment("");
+      setReviewImage(null);
+    } catch (error) {
+      alert(error.response?.data || "평가 제출에 실패했습니다.");
+    }
   };
 
   const startEditing = (review) => {
-    setEditReviewId(review.id);
+    setEditReviewId(review.reviewNo);
     setEditRating(review.rating);
-    setEditComment(review.comment);
+    setEditComment(review.reviewContent);
   };
 
   const cancelEditing = () => {
@@ -66,23 +100,41 @@ const PurchaseDetail = () => {
     setEditComment("");
   };
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     if (!editComment.trim()) {
       alert("평가 내용을 작성해주세요.");
       return;
     }
-    setReviews((prev) =>
-      prev.map((rev) =>
-        rev.id === editReviewId ? { ...rev, rating: editRating, comment: editComment } : rev,
-      ),
-    );
-    cancelEditing();
-    alert("평가가 수정되었습니다.");
+    try {
+      await axios.put(`${BACKSERVER}/api/store/markets/${item.marketNo}/ratings/${editReviewId}`, {
+        buyerId: loginMemberId,
+        buyerNickname: item.buyerNickname || loginMemberId,
+        rating: editRating,
+        reviewContent: editComment,
+        reviewThumb: reviewImage ? reviewImage.name : myReview?.reviewThumb || null,
+      });
+      setReviews((prev) =>
+        prev.map((rev) =>
+          rev.reviewNo === editReviewId ? { ...rev, rating: editRating, reviewContent: editComment } : rev,
+        ),
+      );
+      cancelEditing();
+      alert("평가가 수정되었습니다.");
+    } catch (error) {
+      alert(error.response?.data || "평가 수정에 실패했습니다.");
+    }
   };
 
-  const removeReview = (reviewId) => {
+  const removeReview = async (reviewId) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
-    setReviews((prev) => prev.filter((rev) => rev.id !== reviewId));
+    try {
+      await axios.delete(`${BACKSERVER}/api/store/markets/${item.marketNo}/ratings/${reviewId}`, {
+        params: { buyerId: loginMemberId },
+      });
+      setReviews((prev) => prev.filter((rev) => rev.reviewNo !== reviewId));
+    } catch (error) {
+      alert(error.response?.data || "평가 삭제에 실패했습니다.");
+    }
   };
 
   if (!item) {
@@ -98,16 +150,16 @@ const PurchaseDetail = () => {
 
   return (
     <div className={styles.purchase_history_wrap}>
-      <h3 className={styles.purchase_title}>구매 상세 ({item.title})</h3>
+      <h3 className={styles.purchase_title}>구매 상세 ({getStatusPrefix(item.status)}{item.title})</h3>
       <div className={styles.purchase_card}>
-        <div className={styles.purchase_card_title}>{item.title}</div>
+        <div className={styles.purchase_card_title}>{getStatusPrefix(item.status)}{item.title}</div>
         <div className={styles.purchase_card_meta}>{item.date} · {item.status}</div>
         <div>판매자: {item.seller}</div>
         <div>금액: {item.amount.toLocaleString()}원</div>
         <div>거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText)}</div>
       </div>
 
-      {item.status === "구매완료" && (
+      {item.status === "구매완료" && !myReview && (
         <div className={styles.review_area}>
           <h4>구매후기 작성</h4>
           <div className={styles.review_row}>
@@ -141,12 +193,14 @@ const PurchaseDetail = () => {
 
       {reviews.length > 0 && (
         <div className={styles.review_area}>
-          <h4>작성된 후기</h4>
+          <h4>작성된 후기 {isLoading ? "불러오는 중..." : ""}</h4>
           {reviews.map((rev) => (
-            <div key={rev.id} className={styles.purchase_card}>
+            <div key={rev.reviewNo} className={styles.purchase_card}>
               <div className={styles.purchase_card_title}>별점: {rev.rating}점</div>
-              <div className={styles.purchase_card_meta}>{rev.createdAt}</div>
-              {editReviewId === rev.id ? (
+              <div className={styles.purchase_card_meta}>
+                {(rev.createdAt ? new Date(rev.createdAt).toLocaleString("ko-KR") : "-")}
+              </div>
+              {editReviewId === rev.reviewNo ? (
                 <div className={styles.review_edit_wrap}>
                   <div className={styles.review_row}>
                     <label>평가 점수:</label>
@@ -168,11 +222,15 @@ const PurchaseDetail = () => {
                 </div>
               ) : (
                 <>
-                  <p>{rev.comment}</p>
-                  {rev.imageName && <p>첨부: {rev.imageName}</p>}
+                  <p>{rev.reviewContent}</p>
+                  {rev.reviewThumb && <p>첨부: {rev.reviewThumb}</p>}
                   <div className={styles.review_actions}>
-                    <button className="btn" onClick={() => startEditing(rev)}>수정</button>
-                    <button className="btn" onClick={() => removeReview(rev.id)}>삭제</button>
+                    {rev.buyerId === loginMemberId && (
+                      <>
+                        <button className="btn" onClick={() => startEditing(rev)}>수정</button>
+                        <button className="btn" onClick={() => removeReview(rev.reviewNo)}>삭제</button>
+                      </>
+                    )}
                   </div>
                 </>
               )}

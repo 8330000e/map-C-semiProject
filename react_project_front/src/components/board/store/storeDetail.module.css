@@ -1,0 +1,432 @@
+/*
+	상품 상세 페이지(storeDetail.jsx) 전용 CSS Module입니다.
+	상세 상단 영역, 정보 박스, 댓글 영역, 버튼 스타일을 관리합니다.
+*/
+.detail_wrap {
+	border: 1.8px solid #464d3e;
+	border-radius: 10px;
+	background: #f7fbf2;
+	padding: 24px;
+	margin-top: 18px;
+	box-shadow: 0 2px 10px rgba(70, 77, 62, 0.08);
+}
+
+.detail_header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 18px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid #d8dfcf;
+}
+
+.detail_header h1 {
+	margin: 0;
+	color: #464d3e;
+}
+
+.back_link {
+	color: #464d3e;
+	font-weight: 600;
+}
+
+/* 상단 콘텐츠 영역: 이미지 + 요약 정보 */
+.detail_top {
+	display: grid;
+	grid-template-columns: 1fr 1.2fr;
+	gap: 18px;
+	margin-bottom: 16px;
+}
+
+/* 공통 박스 스타일: 상품 이미지, 요약, 정보, 댓글 */
+.detail_image_box,
+.detail_summary,
+.section_box,
+.comment_section {
+	background: #fff;
+	border: 1px solid #c8d0bf;
+	border-radius: 10px;
+	padding: 14px;
+}
+
+.image {
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	border-radius: 8px;
+	background: #d8ded0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #6f7965;
+	font-weight: 700;
+}
+
+.price {
+	font-size: 30px;
+	font-weight: 900;
+	margin: 0 0 10px;
+}
+
+.region_badge {
+	display: inline-block;
+	background: #464d3e;
+	color: #fff;
+	font-size: 13px;
+	padding: 6px 12px;
+	border-radius: 6px;
+	margin-bottom: 12px;
+	font-weight: 600;
+}
+
+.detail_summary p {
+	margin: 0 0 6px;
+}
+
+.info_box {
+	border: 1px solid #c8d0bf;
+	border-radius: 8px;
+	padding: 8px;
+	margin-top: 8px;
+	background: #f5f8f1;
+}
+
+.delivery_box {
+	border: 1px solid #c8d0bf;
+	border-radius: 8px;
+	padding: 12px;
+	margin-top: 8px;
+	background: #f5f8f1;
+}
+
+.delivery_box p {
+	margin: 0 0 8px;
+	font-weight: 600;
+	color: #464d3e;
+}
+
+.delivery_options {
+	display: flex;
+	gap: 16px;
+	flex-wrap: wrap;
+}
+
+.delivery_option {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+	font-size: 14px;
+	color: #464d3e;
+}
+
+.delivery_option input[type="radio"] {
+	cursor: pointer;
+	accent-color: #464d3e;
+	width: 16px;
+	height: 16px;
+}
+
+/* 비허용 선택 옵션에 취소선 스타일 */
+.disabledOption {
+	color: #8c9482;
+	text-decoration: line-through;
+}
+
+.action_row {
+	margin-top: 10px;
+	display: flex;
+	gap: 8px;
+	justify-content: flex-end;
+}
+
+.report_row {
+	margin-top: 10px;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.action_notice {
+	margin-top: 8px;
+	text-align: right;
+	font-size: 13px;
+	color: #8c9482;
+}
+
+.statusButton {
+	border-radius: 6px;
+	padding: 6px 10px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.statusButtonAvailable {
+	background: var(--color2);
+	color: var(--color1);
+	border: 1px solid var(--color1);
+}
+
+.statusButtonReserved {
+	background: var(--color1);
+	color: var(--color3);
+	border: 1px solid var(--color1);
+	box-shadow: var(--shadow);
+}
+
+.statusButtonDisabled {
+	background: var(--gray7);
+	color: var(--gray4);
+	border: 1px solid var(--gray6);
+	box-shadow: none;
+}
+
+.edit_button {
+	border-radius: 6px;
+	padding: 6px 10px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.editButtonEnabled {
+	background: transparent;
+	color: var(--color1);
+	border: 1px solid var(--color1);
+}
+
+.editButtonDisabled {
+	background: var(--gray7);
+	color: var(--gray4);
+	border: 1px solid var(--gray6);
+}
+
+.delete_button {
+	border-radius: 6px;
+	padding: 6px 10px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.report_button {
+	border-radius: 6px;
+	padding: 6px 10px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	background: transparent;
+	color: var(--danger);
+	border: 1px solid var(--danger);
+}
+
+.report_button:hover {
+	background: var(--danger);
+	color: var(--color3);
+}
+
+.deleteButtonOutline {
+	background: transparent;
+	color: var(--danger);
+	border: 1px solid var(--danger);
+}
+
+.delete_button:hover {
+	background: var(--danger);
+	color: var(--color3);
+}
+
+.comment_actions button,
+.comment_form button,
+.comment_edit_wrap button {
+	border: 1px solid #bcc6b2;
+	background: #fff;
+	color: #464d3e;
+	border-radius: 6px;
+	padding: 6px 10px;
+	cursor: pointer;
+}
+
+.statusButton:disabled,
+.edit_button:disabled {
+	background: #f3f5f1;
+	color: #9aa294;
+	border-color: #d7ddd1;
+	cursor: not-allowed;
+}
+
+.button_group {
+	display: flex;
+	gap: 10px;
+	margin-top: 8px;
+}
+
+.cart_button {
+	flex: 1;
+	background: #fff;
+	color: #464d3e;
+	border: 1px solid #bcc6b2;
+	border-radius: 6px;
+	padding: 10px 12px;
+	cursor: pointer;
+	font-weight: 700;
+	transition: all 0.2s ease;
+}
+
+.cart_button:hover {
+	background: #f5f8f1;
+	border-color: #464d3e;
+}
+
+.buy_button {
+	flex: 1;
+	margin-top: 0;
+	background: #464d3e;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	padding: 10px 12px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.buy_button:hover {
+	background: #3f4638;
+}
+
+.section_box {
+	margin-bottom: 14px;
+}
+
+.section_box h3,
+.same_items_section h3,
+.comment_section h3 {
+	margin: 0 0 10px;
+}
+
+.same_items_section {
+	/* 같은 상품 추천 섹션(롤링 리스트) */
+	margin-bottom: 14px;
+}
+
+.same_items_wrapper {
+	display: flex;
+	gap: 10px;
+	overflow-x: auto;
+	padding: 8px 0 8px;
+}
+
+.same_item {
+	min-width: 160px;
+	border: 1px solid #c8d0bf;
+	border-radius: 10px;
+	padding: 8px;
+	background: #fff;
+}
+
+.same_item_title {
+	margin-top: 8px;
+	font-size: 14px;
+	color: #464d3e;
+}
+
+.same_item_price {
+	margin-top: 4px;
+	font-weight: 800;
+}
+
+.comment_list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.comment_item {
+	border: 1px solid #c8d0bf;
+	border-radius: 8px;
+	padding: 8px;
+	background: #fff;
+}
+
+.reply_item {
+	margin-top: 8px;
+	margin-left: 20px;
+	background: #f9fbf6;
+	border-left: 3px solid #bcc6b2;
+}
+
+.comment_meta {
+	font-size: 13px;
+	color: #4f5847;
+	margin: 0 0 6px;
+}
+
+.comment_text {
+	margin: 0 0 8px;
+	background: #f4f6f1;
+	padding: 8px;
+	border-radius: 6px;
+}
+
+.reply_badge {
+	display: inline-block;
+	margin-right: 8px;
+	padding: 2px 6px;
+	border-radius: 999px;
+	background: #e4ebda;
+	color: #46503d;
+	font-size: 12px;
+	font-weight: 700;
+}
+
+.comment_actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 6px;
+}
+
+.comment_form {
+	margin-top: 12px;
+	border: 1px solid #c8d0bf;
+	border-radius: 8px;
+	padding: 8px;
+}
+
+.reply_form {
+	margin-top: 10px;
+	padding: 10px;
+	border-radius: 8px;
+	background: #f5f8f1;
+	border: 1px solid #d7decf;
+}
+
+.reply_list {
+	margin-top: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.comment_form_row,
+.comment_edit_wrap {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+
+.comment_input {
+	flex: 1;
+	height: 36px;
+	border: 1px solid #bcc6b2;
+	border-radius: 6px;
+	padding: 0 10px;
+}
+
+.private_check {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 13px;
+}
+
+@media (max-width: 900px) {
+	.detail_top {
+		grid-template-columns: 1fr;
+	}
+}

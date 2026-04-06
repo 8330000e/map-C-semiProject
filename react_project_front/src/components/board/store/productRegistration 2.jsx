@@ -1,14 +1,20 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import useAuthStore from "../../../store/useAuthStore";
 import styles from "./productRegistration.module.css";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+const isSoldOutStatus = (productStatus) => productStatus === 2 || productStatus === "2" || productStatus === "판매완료";
 
 const ProductRegistration = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { memberId, memberNickname } = useAuthStore();
+
+    const editItem = location.state?.editItem || null;
+    const isEditMode = Boolean(editItem);
+    const isSoldOutEditItem = isSoldOutStatus(editItem?.productStatus);
 
     const [title, setTitle] = useState("");
     const [tradeMethod, setTradeMethod] = useState("");
@@ -18,19 +24,49 @@ const ProductRegistration = () => {
     const [description, setDescription] = useState("");
     const [imageName, setImageName] = useState("");
     const [region, setRegion] = useState("");
+    const [regions, setRegions] = useState([]);
+    const [regionLoading, setRegionLoading] = useState(true);
 
-    const regions = [
-        "서울 강남구",
-        "서울 마포구",
-        "서울 송파구",
-        "서울 영등포구",
-        "서울 성동구",
-        "서울 용산구",
-        "서울 서초구",
-        "서울 동작구",
-        "서울 은평구",
-        "서울 강동구",
-    ];
+    // 수정 모드일 때 기존 데이터 채우기
+    useEffect(() => {
+        if (!editItem) return;
+        if (isSoldOutStatus(editItem.productStatus)) {
+            alert("판매완료된 게시물은 수정할 수 없습니다.");
+            navigate(`/store/${editItem.marketNo}`, { replace: true });
+            return;
+        }
+        setTitle(editItem.marketTitle || "");
+        setTradeMethod(editItem.tradeType || "");
+        setRegion(editItem.ctpvsggId || "");
+        setImageName(editItem.productThumb || "");
+        const raw = Number(editItem.productPrice || 0);
+        setPrice(String(raw));
+        setDisplayPrice(raw ? raw.toLocaleString("ko-KR") : "");
+        const contentStr = editItem.marketContent || "";
+        const stateMatch = contentStr.match(/^\[상품상태:([A-Z])\]/);
+        if (stateMatch) {
+            setProductState(stateMatch[1]);
+            setDescription(contentStr.slice(stateMatch[0].length).replace(/^\n/, ""));
+        } else {
+            setProductState("");
+            setDescription(contentStr);
+        }
+    }, [editItem, navigate]);
+
+    useEffect(() => {
+        axios
+            .get(`${BACKSERVER}/api/regions`)
+            .then((res) => {
+                setRegions(Array.isArray(res.data) ? res.data : []);
+            })
+            .catch((error) => {
+                console.error("지역 목록 조회 실패", error);
+                setRegions([]);
+            })
+            .finally(() => {
+                setRegionLoading(false);
+            });
+    }, []);
 
     const handlePriceChange = (e) => {
         const raw = e.target.value.replace(/[^0-9]/g, "");
@@ -59,39 +95,57 @@ const ProductRegistration = () => {
             return;
         }
 
-        if (!title || !tradeMethod || !productState || !price || !region) {
+        if (isEditMode && isSoldOutEditItem) {
+            alert("판매완료된 게시물은 수정할 수 없습니다.");
+            navigate(`/store/${editItem.marketNo}`);
+            return;
+        }
+
+        const needsRegion = tradeMethod !== "택배";
+
+        if (!title || !tradeMethod || !productState || !price || (needsRegion && !region)) {
             alert("필수 항목(제목, 거래방법, 상품상태, 가격, 거래지역)을 모두 입력해주세요.");
             return;
         }
 
-        let tradeType;
-        if (tradeMethod === "직거래/택배") tradeType = 0;
-        else if (tradeMethod === "직거래") tradeType = 1;
-        else if (tradeMethod === "택배") tradeType = 2;
-        else {
+        if (!["직거래/택배", "직거래", "택배"].includes(tradeMethod)) {
             alert("거래방법을 정확히 선택해주세요.");
             return;
         }
 
         const payload = {
             marketTitle: title,
-            marketContent: description,
-            ctpvsggId: region,
+            marketContent: `[상품상태:${productState}]\n${description}`,
+            ctpvsggId: needsRegion ? region : null,
             productPrice: Number(price),
-            productStatus: productState,
+            productStatus: 0,
             productThumb: imageName || "",
-            tradeType: tradeType,
+            tradeType: tradeMethod,
             memberId,
             memberNickname,
         };
 
         try {
-            await axios.post(`${BACKSERVER}/api/store/boards`, payload);
-            alert("등록이 완료되었습니다.");
-            navigate("/store");
+            if (isEditMode) {
+                await axios.put(`${BACKSERVER}/api/store/boards/${editItem.marketNo}`, {
+                    ...payload,
+                    boardNo: editItem.boardNo,
+                    marketNo: editItem.marketNo,
+                });
+                alert("수정이 완료되었습니다.");
+                navigate(`/store/${editItem.marketNo}`);
+            } else {
+                await axios.post(`${BACKSERVER}/api/store/boards`, payload);
+                alert("등록이 완료되었습니다.");
+                navigate("/store");
+            }
         } catch (error) {
             console.error("상품 등록 실패", error);
-            alert("상품 등록 중 오류가 발생했습니다.");
+            const serverMessage =
+                error?.response?.data && typeof error.response.data === "string"
+                    ? error.response.data
+                    : "상품 등록 중 오류가 발생했습니다.";
+            alert(serverMessage);
         }
     };
 
@@ -158,11 +212,11 @@ const ProductRegistration = () => {
                                 <span className={styles.meta_divider}>:</span>
                                 <select value={region} onChange={(e) => setRegion(e.target.value)}>
                                     <option value="" disabled>
-                                        선택
+                                        {regionLoading ? "불러오는 중" : "선택"}
                                     </option>
                                     {regions.map((r) => (
-                                        <option key={r} value={r}>
-                                            {r}
+                                        <option key={r.ctpvsggId} value={r.ctpvsggId}>
+                                            {`${r.ctpvNm} ${r.sggNm}`}
                                         </option>
                                     ))}
                                 </select>
@@ -195,7 +249,7 @@ const ProductRegistration = () => {
 
                 <div className={styles.bottom_actions}>
                     <button type="submit" className={styles.primary_btn}>
-                        등록하기
+                        {isEditMode ? "수정하기" : "등록하기"}
                     </button>
                     <button type="button" className={styles.primary_btn} onClick={() => navigate(-1)}>
                         뒤로가기
