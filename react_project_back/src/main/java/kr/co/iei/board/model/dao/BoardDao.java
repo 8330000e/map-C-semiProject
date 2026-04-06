@@ -25,6 +25,8 @@ public interface BoardDao {
 	int deleteBoard(@Param("boardNo") int boardNo);
 
 	int insertBoardFile(BoardFile boardFile);
+
+	List<Board> selectMemberIdBoard(HashMap<String, String> map);
     
 
 }
