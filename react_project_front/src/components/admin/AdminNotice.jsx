@@ -1,4 +1,5 @@
 import styles from "../../pages/admin/AdminNoticePage.module.css";
+import Button from "../ui/Button";
 
 const AdminNotice = ({
   notice,
@@ -62,73 +63,79 @@ const AdminNotice = ({
                 <option value={1}>고정</option>
               </select>
             </div>
-            <button type="submit" onClick={insertNotice}>
+            <Button
+              className="btn primary"
+              type="submit"
+              onClick={insertNotice}
+            >
               {isEdit ? "수정하기" : "등록하기"}
-            </button>
+            </Button>
           </section>
         </form>
       </section>
       <section className={styles.notice_list_wrap}>
-        <table className={styles.notice_table}>
-          <thead>
-            <tr>
-              <th className={styles.col_fixed}>고정</th>
-              <th className={styles.col_title}>제목</th>
-              <th className={styles.col_date}>작성일시</th>
-              <th className={styles.col_edit}>수정</th>
-              <th className={styles.col_delete}>삭제</th>
-            </tr>
-          </thead>
-          <tbody>
-            {noticeList.length === 0 ? (
+        <div className={styles.table_wrap}>
+          <table className={styles.notice_table}>
+            <thead>
               <tr>
-                <td>등록된 공지사항이 없습니다.</td>
+                <th className={styles.col_fixed}>고정</th>
+                <th className={styles.col_title}>제목</th>
+                <th className={styles.col_date}>작성일시</th>
+                <th className={styles.col_edit}>수정</th>
+                <th className={styles.col_delete}>삭제</th>
               </tr>
-            ) : (
-              noticeList.map((item) => (
-                <tr key={item.noticeNo}>
-                  <td>
-                    {item.noticeFixed === 1 ? (
-                      <span className={styles.badge_fixed}>고정</span>
-                    ) : (
-                      ""
-                    )}
-                  </td>
-                  <td>{item.noticeTitle}</td>
-                  <td>{item.noticeDate}</td>
-                  <td>
-                    <button
-                      className={styles.edit_btn}
-                      onClick={() => {
-                        setIsEdit(true);
-
-                        setNotice({
-                          noticeNo: item.noticeNo,
-                          noticeTitle: item.noticeTitle,
-                          noticeContent: item.noticeContent,
-                          noticePublic: item.noticePublic,
-                          noticeFixed: item.noticeFixed,
-                        });
-                      }}
-                    >
-                      수정
-                    </button>
-                  </td>
-                  <td>
-                    <button
-                      className={styles.delete_btn}
-                      onClick={() => {
-                        deleteNotice(item.noticeNo);
-                      }}
-                    >
-                      삭제
-                    </button>
-                  </td>
+            </thead>
+            <tbody>
+              {noticeList.length === 0 ? (
+                <tr>
+                  <td>등록된 공지사항이 없습니다.</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                noticeList.map((item) => (
+                  <tr key={item.noticeNo}>
+                    <td>
+                      {item.noticeFixed === 1 ? (
+                        <span className={styles.badge_fixed}>고정</span>
+                      ) : (
+                        ""
+                      )}
+                    </td>
+                    <td>{item.noticeTitle}</td>
+                    <td>{item.noticeDate}</td>
+                    <td>
+                      <Button
+                        className="btn primary outline sm"
+                        onClick={() => {
+                          setIsEdit(true);
+
+                          setNotice({
+                            noticeNo: item.noticeNo,
+                            noticeTitle: item.noticeTitle,
+                            noticeContent: item.noticeContent,
+                            noticePublic: item.noticePublic,
+                            noticeFixed: item.noticeFixed,
+                          });
+                        }}
+                      >
+                        수정
+                      </Button>
+                    </td>
+                    <td>
+                      <Button
+                        className="btn danger sm"
+                        onClick={() => {
+                          deleteNotice(item.noticeNo);
+                        }}
+                      >
+                        삭제
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </section>
     </>
   );

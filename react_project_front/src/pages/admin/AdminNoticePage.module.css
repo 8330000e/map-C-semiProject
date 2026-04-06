@@ -57,18 +57,24 @@
   border-radius: 12px;
 }
 
-.notice_table {
-  width: 100%;
-  border: 1px solid #334c69;
-}
 .notice_list_wrap {
   max-height: 210px;
+  border: 1px solid #334c69;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.table_wrap {
+  max-height: 210px;
   overflow-y: scroll;
+}
+.notice_table {
+  width: 100%;
 }
 .notice_table th,
 .notice_table td {
   padding: 4px 12px;
   text-align: left;
+  vertical-align: middle;
 }
 .col_fixed {
   width: 60px;
