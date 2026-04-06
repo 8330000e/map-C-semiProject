@@ -1,25 +1,24 @@
-// 중고장터 상품 등록 페이지 컴포넌트입니다.
-// 제목/거래방법/상품상태/가격/설명을 입력받아 등록 화면을 구성합니다.
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // 추가
+import axios from "axios";
+import useAuthStore from "../../../store/useAuthStore";
 import styles from "./productRegistration.module.css";
 
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+
 const ProductRegistration = () => {
-    // React Router 페이지 이동 훅
     const navigate = useNavigate();
+    const { memberId, memberNickname } = useAuthStore();
 
-    // 상품 정보 상태 관리 (입력 폼 내용)
-    const [title, setTitle] = useState(""); // 상품 제목
-    const [tradeMethod, setTradeMethod] = useState(""); // 거래방법 (직거래/택배)
-    const [productState, setProductState] = useState(""); // 상품 상태 (S/A/B/C/D)
-    const [price, setPrice] = useState(""); // 가격 (숫자만 저장)
-    const [displayPrice, setDisplayPrice] = useState(""); // 화면 표시용 가격 (콤마 포함)
-    const [description, setDescription] = useState(""); // 상품 설명
-    const [imageName, setImageName] = useState(""); // 업로드된 이미지 파일명
-    const [region, setRegion] = useState(""); // 거래 가능 지역
+    const [title, setTitle] = useState("");
+    const [tradeMethod, setTradeMethod] = useState("");
+    const [productState, setProductState] = useState("");
+    const [price, setPrice] = useState("");
+    const [displayPrice, setDisplayPrice] = useState("");
+    const [description, setDescription] = useState("");
+    const [imageName, setImageName] = useState("");
+    const [region, setRegion] = useState("");
 
-    // 거래 가능 지역 목록
     const regions = [
         "서울 강남구",
         "서울 마포구",
@@ -33,48 +32,38 @@ const ProductRegistration = () => {
         "서울 강동구",
     ];
 
-    /**
-     * 가격 입력 처리 함수
-     * - 숫자만 추출하여 price에 저장
-     * - 한국어 천단위 구분기호(,)를 추가하여 displayPrice에 표시
-     */
     const handlePriceChange = (e) => {
         const raw = e.target.value.replace(/[^0-9]/g, "");
         setPrice(raw);
         setDisplayPrice(raw ? Number(raw).toLocaleString("ko-KR") : "");
     };
 
-    // 상품 설명 입력 필드의 가이드 텍스트
     const descriptionPlaceholder = `- 상품명(브랜드)
 - 구매 시기 (년, 월, 일)
 - 사용 기간
 - 하자 여부
 * 실제 촬영한 사진과 함께 상세 정보를 입력해주세요.`;
 
-    /**
-     * 이미지 업로드 처리 함수
-     * - 선택된 파일의 이름을 imageName에 저장
-     */
     const handleImageUpload = (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
         setImageName(file.name);
     };
 
-    /**
-     * 폼 제출 처리 함수
-     * - 상품 등록 후 중고장터 목록 페이지로 이동
-     * - tradeTypeText + tradeType(0/1/2) 전송
-     */
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!memberId) {
+            alert("로그인 후 판매글을 등록할 수 있습니다.");
+            navigate("/members/login");
+            return;
+        }
 
         if (!title || !tradeMethod || !productState || !price || !region) {
             alert("필수 항목(제목, 거래방법, 상품상태, 가격, 거래지역)을 모두 입력해주세요.");
             return;
         }
 
-        // 요청 value 매핑: 0=직거래/택배, 1=직거래, 2=택배
         let tradeType;
         if (tradeMethod === "직거래/택배") tradeType = 0;
         else if (tradeMethod === "직거래") tradeType = 1;
@@ -91,16 +80,13 @@ const ProductRegistration = () => {
             productPrice: Number(price),
             productStatus: productState,
             productThumb: imageName || "",
-            tradeTypeText: tradeMethod,
             tradeType: tradeType,
-            memberId: "로그인멤버", // 실제 로그인에서 가져온 회원 ID로 교체
+            memberId,
+            memberNickname,
         };
 
         try {
-            await axios.post(
-                `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}/api/store/boards`,
-                payload
-            );
+            await axios.post(`${BACKSERVER}/api/store/boards`, payload);
             alert("등록이 완료되었습니다.");
             navigate("/store");
         } catch (error) {
@@ -111,11 +97,9 @@ const ProductRegistration = () => {
 
     return (
         <section className={styles.register_wrap}>
-            {/* 페이지 제목 영역 */}
             <h1>중고장터</h1>
 
             <form className={styles.register_form} onSubmit={handleSubmit}>
-                {/* 상품 제목 입력 영역 */}
                 <div className={styles.title_row}>
                     <input
                         type="text"
@@ -126,11 +110,8 @@ const ProductRegistration = () => {
                 </div>
 
                 <div className={styles.content_grid}>
-                    {/* 좌측: 이미지 업로드 영역 */}
                     <div className={styles.left_panel}>
-                        {/* 이미지 미리보기 박스 */}
                         <div className={styles.image_box}>{imageName || "이미지"}</div>
-                        {/* 이미지 업로드/수정 버튼 */}
                         <div className={styles.left_actions}>
                             <label className={styles.action_btn}>
                                 업로드
@@ -142,14 +123,11 @@ const ProductRegistration = () => {
                         </div>
                     </div>
 
-                    {/* 우측: 상품 정보 입력 영역 */}
                     <div className={styles.right_panel}>
-                        {/* 거래방법, 상품상태, 거래지역, 가격 정보 입력 */}
                         <div className={styles.meta_row}>
                             <div className={styles.meta_item}>
                                 <span className={styles.meta_label}>거래방법</span>
                                 <span className={styles.meta_divider}>:</span>
-                                {/* 거래방법 선택 (직거래/택배) */}
                                 <select value={tradeMethod} onChange={(e) => setTradeMethod(e.target.value)}>
                                     <option value="" disabled>
                                         선택
@@ -163,7 +141,6 @@ const ProductRegistration = () => {
                             <div className={styles.meta_item}>
                                 <span className={styles.meta_label}>상품상태</span>
                                 <span className={styles.meta_divider}>:</span>
-                                {/* 상품 상태 선택 (S/A/B/C/D) */}
                                 <select value={productState} onChange={(e) => setProductState(e.target.value)}>
                                     <option value="" disabled>
                                         선택
@@ -179,7 +156,6 @@ const ProductRegistration = () => {
                             <div className={styles.meta_item}>
                                 <span className={styles.meta_label}>거래지역</span>
                                 <span className={styles.meta_divider}>:</span>
-                                {/* 거래 가능 지역 선택 */}
                                 <select value={region} onChange={(e) => setRegion(e.target.value)}>
                                     <option value="" disabled>
                                         선택
@@ -195,7 +171,6 @@ const ProductRegistration = () => {
                             <div className={styles.meta_item}>
                                 <span className={styles.meta_label}>가격</span>
                                 <span className={styles.meta_divider}>:</span>
-                                {/* 가격 입력 (천단위 구분기호 포함) */}
                                 <div className={styles.price_wrapper}>
                                     <span className={styles.price_prefix}>₩</span>
                                     <input
@@ -210,7 +185,6 @@ const ProductRegistration = () => {
                             </div>
                         </div>
 
-                        {/* 상품 상세 설명 입력 */}
                         <textarea
                             placeholder={descriptionPlaceholder}
                             value={description}
@@ -219,13 +193,10 @@ const ProductRegistration = () => {
                     </div>
                 </div>
 
-                {/* 하단: 등록 및 뒤로가기 버튼 */}
                 <div className={styles.bottom_actions}>
-                    {/* 상품 등록 버튼 */}
                     <button type="submit" className={styles.primary_btn}>
                         등록하기
                     </button>
-                    {/* 이전 페이지로 돌아가기 버튼 */}
                     <button type="button" className={styles.primary_btn} onClick={() => navigate(-1)}>
                         뒤로가기
                     </button>

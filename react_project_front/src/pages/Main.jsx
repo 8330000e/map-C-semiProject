@@ -175,7 +175,7 @@ const Main = () => {
           </div>
           <ul>
             <li>
-              <a href="#">맵 커뮤니티</a>
+              <Link to="map-community">맵 커뮤니티</Link>
             </li>
             <li>
               <a href="#">회원끼리 캠페인</a>
@@ -184,10 +184,12 @@ const Main = () => {
               <Link to="/store">중고거래</Link>
             </li>
             <li>
-              <a href="#">미션</a>
+              <Link to="/mission">미션(출석체크)</Link>
             </li>
             <li>
-              <a href="#">나무 키우기</a>
+              <Link to="/tree-grow" className="treeGrow">
+                나무 키우기
+              </Link>
             </li>
             <li>
               <span>
