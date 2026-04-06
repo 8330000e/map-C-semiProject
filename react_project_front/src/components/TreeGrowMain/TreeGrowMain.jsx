@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
 import styles from "./TreeGrowMain.module.css";
 import stage1Img from "../../assets/img/stage1.png";
@@ -9,33 +10,29 @@ import stage5Img from "../../assets/img/stage5.png";
 import waterDropImg from "../../assets/img/waterdrop.png";
 import useAuthStore from "../../store/useAuthStore";
 import CloseIcon from "@mui/icons-material/Close";
+import Swal from "sweetalert2";
 
-const TreeGrowMain = () => {
-  const selectedRegion = {
-    name: "서울",
-    water: 0,
-    multiplier: [
-      { name: "서울", value: "x1.2" },
-      { name: "경기", value: "x1.0" },
-      { name: "인천", value: "x2.1" },
-      { name: "충청권", value: "x1.6" },
-      { name: "전라권", value: "x1.7" },
-      { name: "경상권", value: "x1.1" },
-      { name: "강원권", value: "x3.0" },
-      { name: "제주권", value: "x3.0" },
-    ],
+const TreeGrowMain = ({ selectedRegionNo }) => {
+  const defaultMultiplier = [
+    { name: "서울", value: "x1.2" },
+    { name: "경기", value: "x1.0" },
+    { name: "인천", value: "x2.1" },
+    { name: "충청권", value: "x1.6" },
+    { name: "전라권", value: "x1.7" },
+    { name: "경상권", value: "x1.1" },
+    { name: "강원권", value: "x3.0" },
+    { name: "제주권", value: "x3.0" },
+  ];
+  const getRegionMultiplierValue = (regionName) => {
+    const found = defaultMultiplier.find((item) => item.name === regionName);
+    if (!found) return 1.0;
+    return Number(found.value.replace("x", ""));
   };
 
-  const chartData = [
-    { name: "서울", value: 250 },
-    { name: "경기", value: 230 },
-    { name: "인천", value: 150 },
-    { name: "충청권", value: 200 },
-    { name: "전라권", value: 100 },
-    { name: "경상권", value: 125 },
-    { name: "강원권", value: 175 },
-    { name: "제주권", value: 175 },
-  ];
+  const [regionList, setRegionList] = useState([]);
+  const [selectedRegion, setSelectedRegion] = useState(null);
+  const [chartData, setChartData] = useState([]);
+  const [ownedPoint, setOwnedPoint] = useState(0);
 
   const rankedChartData = chartData
     .map((item) => {
@@ -53,7 +50,10 @@ const TreeGrowMain = () => {
       return b.value - a.value;
     });
 
-  const maxValue = Math.max(...rankedChartData.map((item) => item.value));
+  const maxValue =
+    rankedChartData.length > 0
+      ? Math.max(...rankedChartData.map((item) => item.value))
+      : 0;
 
   const getLegendColorClass = (rank) => {
     if (rank === 1) return styles.gold;
@@ -118,12 +118,13 @@ const TreeGrowMain = () => {
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
 
   const [waterAmount, setWaterAmount] = useState(0);
-  const [regionWater, setRegionWater] = useState(selectedRegion.water);
-  const [ownedPoint, setOwnedPoint] = useState(300);
+  const regionWater = selectedRegion?.water ?? 0;
 
   const [resultData, setResultData] = useState({
     regionName: "",
     donatedWater: 0,
+    appliedWater: 0,
+    multiplier: 1.0,
     totalWater: 0,
     targetWater: 0,
     remainPoint: 0,
@@ -137,43 +138,134 @@ const TreeGrowMain = () => {
   const currentStageStartWater = getStageStartWater(regionWater);
   const currentTreeScale = getTreeScale(currentStage);
   const MAX_WATER = 100;
+  const fetchTreeData = async () => {
+    try {
+      Swal.fire({
+        title: "🌱 나무 성장 데이터 로딩 중...",
+        text: "잠시만 기다려주세요",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      const regionsRes = await axios.get("http://localhost:9999/regions");
+      const regions = regionsRes.data;
+
+      setRegionList(regions);
+
+      const mappedChartData = regions.map((item) => ({
+        name: item.regionName,
+        value: item.treeExp,
+        regionNo: item.regionNo,
+      }));
+
+      setChartData(mappedChartData);
+
+      const selected =
+        regions.find((item) => item.regionNo === selectedRegionNo) ||
+        regions[0];
+
+      if (selected) {
+        setSelectedRegion({
+          regionNo: selected.regionNo,
+          name: selected.regionName,
+          water: selected.treeExp,
+          treeLevel: selected.treeLevel,
+          totalPointUsed: selected.totalPointUsed,
+          multiplier: getRegionMultiplierValue(selected.regionName),
+        });
+      }
+
+      if (memberId) {
+        const pointRes = await axios.get(
+          `http://localhost:9999/members/${memberId}/point`,
+        );
+        setOwnedPoint(pointRes.data);
+      }
+    } catch (error) {
+      console.error("데이터 조회 실패:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "오류 발생",
+        text: "데이터를 불러오지 못했습니다.",
+      });
+    } finally {
+      Swal.close();
+    }
+  };
+  useEffect(() => {
+    fetchTreeData();
+  }, [memberId, selectedRegionNo]);
 
   const handleWaterChange = (amount) => {
     setWaterAmount((prev) => Math.max(0, Math.min(prev + amount, MAX_WATER)));
   };
-  const handleConfirmWater = () => {
+  const handleConfirmWater = async () => {
     if (waterAmount <= 0) return;
 
-    const updatedRegionWater = regionWater + waterAmount;
-    const updatedPoint = ownedPoint - waterAmount;
+    try {
+      Swal.fire({
+        title: "물 주는 중...",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
 
-    setRegionWater(updatedRegionWater);
-    setOwnedPoint(updatedPoint);
+      await axios.post("http://localhost:9999/regions/contribute", {
+        memberId: memberId,
+        regionNo: selectedRegion.regionNo,
+        point: waterAmount,
+      });
 
-    setResultData({
-      regionName: selectedRegion.name,
-      donatedWater: waterAmount,
-      totalWater: updatedRegionWater,
-      targetWater: currentStageTarget,
-      remainPoint: updatedPoint,
-    });
+      const appliedWater = Math.round(waterAmount * selectedRegion.multiplier);
+      const updatedRegionWater = regionWater + appliedWater;
+      const updatedPoint = ownedPoint - waterAmount;
+      const updatedTargetWater = getCurrentStageTarget(updatedRegionWater);
 
-    setWaterAmount(0);
-    setIsModalOpen(false);
-    setIsCompleteModalOpen(true);
+      setResultData({
+        regionName: selectedRegion.name,
+        donatedWater: waterAmount,
+        appliedWater: appliedWater,
+        multiplier: selectedRegion.multiplier,
+        totalWater: updatedRegionWater,
+        targetWater: updatedTargetWater,
+        remainPoint: updatedPoint,
+      });
+
+      Swal.close();
+
+      setIsModalOpen(false);
+      setIsCompleteModalOpen(true);
+      setWaterAmount(0);
+
+      await fetchTreeData();
+    } catch (e) {
+      console.error(e);
+      Swal.fire({
+        icon: "error",
+        title: "실패",
+        text: "포인트 부족 또는 오류",
+      });
+    }
   };
+
   const currentStageProgress =
     currentStage === 5
       ? 100
       : ((regionWater - currentStageStartWater) /
           (currentStageTarget - currentStageStartWater)) *
         100;
-
+  if (!selectedRegion) {
+    return null;
+  }
   return (
     <div className={styles.treeGrowMain}>
       <section className={styles.topCard}>
         <div className={styles.topHeader}>
-          <span className={styles.regionName}>{selectedRegion.name}</span>
+          <span className={styles.regionName}>{selectedRegion?.name}</span>
           <span className={styles.stageText}>{currentStageLabel}</span>
         </div>
 
@@ -182,7 +274,7 @@ const TreeGrowMain = () => {
             <div className={styles.multiplierBox}>
               <p className={styles.multiplierTitle}>물 주기 배율안내</p>
               <ul className={styles.multiplierList}>
-                {selectedRegion.multiplier.map((item) => (
+                {defaultMultiplier.map((item) => (
                   <li key={item.name}>
                     <span>{item.name}</span>
                     <span>{item.value}</span>
@@ -290,7 +382,7 @@ const TreeGrowMain = () => {
             >
               <CloseIcon />
             </button>
-            <h3>{selectedRegion.name}에 물을 주시겠어요?</h3>
+            <h3>{selectedRegion?.name}에 물을 주시겠어요?</h3>
 
             <div className={styles.modalContent}>
               <p className={styles.needText}>
@@ -326,7 +418,7 @@ const TreeGrowMain = () => {
                   </span>
 
                   <span className={styles.rightText}>
-                    최대 {MAX_WATER}포인트까지 사용가능
+                    최대 {MAX_WATER}포인트
                   </span>
                 </div>
               </div>
@@ -389,6 +481,11 @@ const TreeGrowMain = () => {
               <p className={styles.completeTitle}>
                 {resultData.regionName}에 {resultData.donatedWater}h2O
                 주었습니다.
+              </p>
+
+              <p>
+                배율 x{resultData.multiplier} 적용 → 실제 반영{" "}
+                {resultData.appliedWater}h2O
               </p>
 
               <div className={styles.completeWaterWrap}>

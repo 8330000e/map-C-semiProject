@@ -92,4 +92,10 @@ public class MemberService {
 		int result = memberDao.updateMemberThumb(mem);
 		return result;
 	}
+
+	public int selectMemberPoint(String memberId) {
+		return memberDao.selectMemberPoint(memberId);
+	}
+
+	
 }

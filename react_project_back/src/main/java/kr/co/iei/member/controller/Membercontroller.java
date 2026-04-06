@@ -104,4 +104,10 @@ public class Membercontroller {
 		int result = memberService.updateMemberThumb(mem);
 		return ResponseEntity.ok(memberThumb);
 	}
+	//포인트 조회
+	@GetMapping(value = "/{memberId}/point")
+	public ResponseEntity<?> selectMemberPoint(@PathVariable String memberId) {
+		int totalPoint = memberService.selectMemberPoint(memberId);
+		return ResponseEntity.ok(totalPoint);
+	}
 }
