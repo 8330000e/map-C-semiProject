@@ -1,6 +1,6 @@
 // 마이페이지 컴포넌트 파일입니다.
 
-import { Route, Routes } from "react-router-dom";
+import { Link, Route, Routes } from "react-router-dom";
 import UpdateMyInfo from "../../components/mypage/UpdateMyInfo";
 import MyBoard from "../../components/mypage/MyBoard";
 import MyLikeBoard from "../../components/mypage/MyLikeBoard";

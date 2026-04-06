@@ -19,7 +19,7 @@ const Header = () => {
 
   return (
     <>
-      <header>
+      <header className={styles.header}>
         <h1><Link to="/">탄소커넥트</Link></h1>
         <div className={styles.header_wrap}>
           {!memberId ? (
@@ -39,7 +39,7 @@ const Header = () => {
                   <span>{memberNickname}</span>
                 </div>
               ) : (
-                <div className={styles.profile_item}>
+                <div className={styles.profile_item} onClick={() => navigate("/mypage")}>
                   <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
                   <span>{memberNickname}</span>
                 </div>
@@ -50,23 +50,31 @@ const Header = () => {
               <SettingsIcon sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }} />
 
               <button onClick={handleLogout} className={`${styles.btn} ${styles.outline}`}>로그아웃</button>
-              <button onClick={() => setDrawer((prev) => !prev)} className={`${styles.btn} ${styles.outline}`}>메뉴 열기</button>
+              <button
+                onClick={() => setDrawer((prev) => !prev)}
+                className={`${styles.btn} ${styles.outline}`}
+                aria-expanded={drawer}
+                aria-controls="header-drawer"
+              >
+                메뉴 열기
+              </button>
 
-              {drawer && (
-                <div className={styles.header_drawer}>
-                  <div className={styles.drawer_menue}>
-                    <NavLink to="/mypage/updateMyInfo" onClick={() => setDrawer(false)}>내 정보</NavLink>
-                    <NavLink to="/mypage/changePw" onClick={() => setDrawer(false)}>비밀번호 변경</NavLink>
-                    <NavLink to="/mypage/myBoard" onClick={() => setDrawer(false)}>내 게시판</NavLink>
-                    <NavLink to="/mypage/myLikeBoard" onClick={() => setDrawer(false)}>좋아요누른 게시판</NavLink>
-                    <NavLink to="/mypage/tipScrap" onClick={() => setDrawer(false)}>팁 스크랩</NavLink>
-                    <NavLink to="/mypage/leaveMember" onClick={() => setDrawer(false)}>회원 탈퇴</NavLink>
-                    <NavLink to="/mypage/myPoint" onClick={() => setDrawer(false)}>내 포인트</NavLink>
-                    <NavLink to="/mypage/history/purchase" onClick={() => setDrawer(false)}>구매내역</NavLink>
-                    <NavLink to="/mypage/history/sale" onClick={() => setDrawer(false)}>판매내역</NavLink>
-                  </div>
+              <div
+                id="header-drawer"
+                className={`${styles.header_drawer} ${drawer ? styles.drawer_open : ""}`}
+              >
+                <div className={styles.drawer_menu}>
+                  <NavLink to="/mypage/updateMyInfo" className={({ isActive }) => isActive ? styles.drawer_link_active : styles.drawer_link} onClick={() => setDrawer(false)}>내 정보</NavLink>
+                  <NavLink to="/mypage/changePw" className={({ isActive }) => isActive ? styles.drawer_link_active : styles.drawer_link} onClick={() => setDrawer(false)}>비밀번호 변경</NavLink>
+                  <NavLink to="/mypage/myBoard" className={({ isActive }) => isActive ? styles.drawer_link_active : styles.drawer_link} onClick={() => setDrawer(false)}>내 게시판</NavLink>
+                  <NavLink to="/mypage/myLikeBoard" className={({ isActive }) => isActive ? styles.drawer_link_active : styles.drawer_link} onClick={() => setDrawer(false)}>좋아요누른 게시판</NavLink>
+                  <NavLink to="/mypage/tipScrap" className={({ isActive }) => isActive ? styles.drawer_link_active : styles.drawer_link} onClick={() => setDrawer(false)}>팁 스크랩</NavLink>
+                  <NavLink to="/mypage/leaveMember" className={({ isActive }) => isActive ? styles.drawer_link_active : styles.drawer_link} onClick={() => setDrawer(false)}>회원 탈퇴</NavLink>
+                  <NavLink to="/mypage/myPoint" className={({ isActive }) => isActive ? styles.drawer_link_active : styles.drawer_link} onClick={() => setDrawer(false)}>내 포인트</NavLink>
+                  <NavLink to="/mypage/history/purchase" className={({ isActive }) => isActive ? styles.drawer_link_active : styles.drawer_link} onClick={() => setDrawer(false)}>구매내역</NavLink>
+                  <NavLink to="/mypage/history/sale" className={({ isActive }) => isActive ? styles.drawer_link_active : styles.drawer_link} onClick={() => setDrawer(false)}>판매내역</NavLink>
                 </div>
-              )}
+              </div>
             </div>
           )}
         </div>
