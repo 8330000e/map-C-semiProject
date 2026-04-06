@@ -67,14 +67,22 @@ const Header = () => {
                 >
                   <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
                   <span>{memberNickname}</span>
+                  <div className={styles.profile_item_icon}>
+                    <NotificationsIcon
+                      sx={{ fontSize: 30, color: "#464d3e" }}
+                    />
+                    <MailIcon sx={{ fontSize: 30, color: "#464d3e" }} />
+                    <SettingsIcon sx={{ fontSize: 30, color: "#464d3e" }} />
+                  </div>
                 </div>
               )}
 
-              <NotificationsIcon sx={{ fontSize: 30, color: "#464d3e" }} />
-              <MailIcon sx={{ fontSize: 30, color: "#464d3e" }} />
-              <SettingsIcon sx={{ fontSize: 30, color: "#464d3e" }} />
-
-              <button onClick={handleLogout}>로그아웃</button>
+              <button
+                onClick={handleLogout}
+                className={`btn ${styles.btn} ${styles.outline}`}
+              >
+                로그아웃
+              </button>
               <div
                 className={`${styles.drawer_wrap} ${drawer ? styles.drawer_open : styles.drawer_close}`}
                 onClick={() => {
