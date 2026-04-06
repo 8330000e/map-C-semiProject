@@ -59,6 +59,7 @@
 
 .notice_table {
   width: 100%;
+  border: 1px solid #334c69;
 }
 .notice_list_wrap {
   max-height: 210px;
