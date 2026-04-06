@@ -1,5 +1,6 @@
 import styles from "../../pages/admin/AdminNoticePage.module.css";
 import Button from "../ui/Button";
+import { Input, TextArea } from "../ui/Form";
 
 const AdminNotice = ({
   notice,
@@ -25,7 +26,7 @@ const AdminNotice = ({
                 name="noticeTitle"
                 value={notice.noticeTitle}
                 onChange={changeNotice}
-              ></input>
+              />
             </div>
             <div className={styles.notice_write_content}>
               <label htmlFor="noticeContent">공지사항 내용</label>
@@ -35,7 +36,7 @@ const AdminNotice = ({
                 name="noticeContent"
                 value={notice.noticeContent}
                 onChange={changeNotice}
-              ></input>
+              />
             </div>
           </section>
           <section className={styles.notice_option_wrap}>
