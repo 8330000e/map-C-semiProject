@@ -2,6 +2,7 @@ package kr.co.iei.store.model.service;
 
 import kr.co.iei.store.model.dao.StoreBoardDAO;
 import kr.co.iei.store.model.vo.StoreBoard;
+// import kr.co.iei.store.model.vo.StoreBoard.ProductStatus;
 import kr.co.iei.store.model.vo.StoreRating;
 import kr.co.iei.store.model.vo.StoreReview;
 import org.springframework.stereotype.Service;
@@ -33,17 +34,31 @@ public class StoreBoardServiceImpl implements StoreBoardService {
 
     @Override
     public List<StoreBoard> getStoreBoardList() {
-        return storeBoardDAO.selectStoreBoardList();
+        List<StoreBoard> list = storeBoardDAO.selectStoreBoardList();
+        for (StoreBoard sb : list) {
+            sb.setProductStatus(convertStatus(sb.getProductStatus()));
+        }
+        return list;
     }
 
     @Override
     public StoreBoard getStoreBoard(Long marketNo) {
-        return storeBoardDAO.selectStoreBoard(marketNo);
+        StoreBoard sb = storeBoardDAO.selectStoreBoard(marketNo);
+        if (sb != null) {
+            sb.setProductStatus(convertStatus(sb.getProductStatus()));
+        }
+        return sb;
     }
 
     @Override
     public void updateProductStatus(Long marketNo, Integer status) {
+        // status: 0, 1, 2
         storeBoardDAO.updateProductStatus(marketNo, status);
+    }
+
+    @Override
+    public boolean isStoreBoardAuthor(Long marketNo, String memberId) {
+        return storeBoardDAO.selectStoreBoardAuthor(marketNo, memberId) > 0;
     }
 
     @Override
@@ -134,16 +149,21 @@ public class StoreBoardServiceImpl implements StoreBoardService {
                 storeBoard.setTradeType("택배");
             }
         }
+        // productStatus는 0,1,2 문자열로 저장
+        String status = storeBoard.getProductStatus();
+        if (status == null || !(status.equals("0") || status.equals("1") || status.equals("2"))) {
+            storeBoard.setProductStatus("0");
+        }
+    }
 
-        String productStatus = storeBoard.getProductStatus();
-        if (productStatus == null) {
-            storeBoard.setProductStatus("0");
-        } else if (productStatus.equals("1") || productStatus.equals("예약중")) {
-            storeBoard.setProductStatus("1");
-        } else if (productStatus.equals("2") || productStatus.equals("판매완료")) {
-            storeBoard.setProductStatus("2");
-        } else {
-            storeBoard.setProductStatus("0");
+    // 0,1,2 -> 한글 변환
+    private String convertStatus(String status) {
+        if (status == null) return "판매중";
+        switch (status) {
+            case "0": return "판매중";
+            case "1": return "예약중";
+            case "2": return "판매완료";
+            default: return "판매중";
         }
     }
 }

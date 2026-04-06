@@ -72,25 +72,25 @@
 
   <select id="selectStoreBoardList" resultType="kr.co.iei.store.model.vo.StoreBoard">
     SELECT
-      S.MARKET_NO,
-      S.BOARD_NO,
-      S.MEMBER_ID,
-      S.CTPVSGG_ID,
-      R.CTPV_NM AS CTPV_NM,
-      R.SGG_NM AS SGG_NM,
+      S.MARKET_NO AS marketNo,
+      S.BOARD_NO AS boardNo,
+      S.MEMBER_ID AS memberId,
+      S.CTPVSGG_ID AS ctpvsggId,
+      R.CTPV_NM AS ctpvNm,
+      R.SGG_NM AS sggNm,
       CASE
         WHEN S.CTPVSGG_ID IS NULL THEN NULL
         ELSE R.CTPV_NM || ' ' || R.SGG_NM
-      END AS REGION_NAME,
-      S.MARKET_TITLE,
-      S.MARKET_CONTENT,
-      S.PRODUCT_PRICE,
-      S.PRODUCT_THUMB,
-      S.PRODUCT_STATUS,
-      S.READ_COUNT,
-      S.IS_DELETED,
-      S.CREATED_AT,
-      S.TRADE_TYPE
+      END AS regionName,
+      S.MARKET_TITLE AS marketTitle,
+      S.MARKET_CONTENT AS marketContent,
+      S.PRODUCT_PRICE AS productPrice,
+      S.PRODUCT_THUMB AS productThumb,
+      S.PRODUCT_STATUS AS productStatus,
+      S.READ_COUNT AS readCount,
+      S.IS_DELETED AS isDeleted,
+      S.CREATED_AT AS createdAt,
+      S.TRADE_TYPE AS tradeType
     FROM STORE_BOARD_TBL S
     LEFT JOIN CTPVSGG_TBL R
       ON S.CTPVSGG_ID = R.CTPVSGG_ID
@@ -100,25 +100,25 @@
 
   <select id="selectStoreBoard" resultType="kr.co.iei.store.model.vo.StoreBoard">
     SELECT
-      S.MARKET_NO,
-      S.BOARD_NO,
-      S.MEMBER_ID,
-      S.CTPVSGG_ID,
-      R.CTPV_NM AS CTPV_NM,
-      R.SGG_NM AS SGG_NM,
+      S.MARKET_NO AS marketNo,
+      S.BOARD_NO AS boardNo,
+      S.MEMBER_ID AS memberId,
+      S.CTPVSGG_ID AS ctpvsggId,
+      R.CTPV_NM AS ctpvNm,
+      R.SGG_NM AS sggNm,
       CASE
         WHEN S.CTPVSGG_ID IS NULL THEN NULL
         ELSE R.CTPV_NM || ' ' || R.SGG_NM
-      END AS REGION_NAME,
-      S.MARKET_TITLE,
-      S.MARKET_CONTENT,
-      S.PRODUCT_PRICE,
-      S.PRODUCT_THUMB,
-      S.PRODUCT_STATUS,
-      S.READ_COUNT,
-      S.IS_DELETED,
-      S.CREATED_AT,
-      S.TRADE_TYPE
+      END AS regionName,
+      S.MARKET_TITLE AS marketTitle,
+      S.MARKET_CONTENT AS marketContent,
+      S.PRODUCT_PRICE AS productPrice,
+      S.PRODUCT_THUMB AS productThumb,
+      S.PRODUCT_STATUS AS productStatus,
+      S.READ_COUNT AS readCount,
+      S.IS_DELETED AS isDeleted,
+      S.CREATED_AT AS createdAt,
+      S.TRADE_TYPE AS tradeType
     FROM STORE_BOARD_TBL S
     LEFT JOIN CTPVSGG_TBL R
       ON S.CTPVSGG_ID = R.CTPVSGG_ID
@@ -133,6 +133,14 @@
         UPDATED_AT     = SYSDATE
     WHERE MARKET_NO = #{marketNo}
   </update>
+
+  <select id="selectStoreBoardAuthor" parameterType="map" resultType="int">
+    SELECT COUNT(*)
+    FROM STORE_BOARD_TBL
+    WHERE MARKET_NO = #{marketNo}
+      AND MEMBER_ID = #{memberId}
+      AND IS_DELETED = 0
+  </select>
 
   <update id="deleteStoreBoard" parameterType="long">
     UPDATE STORE_BOARD_TBL

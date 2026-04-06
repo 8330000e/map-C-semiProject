@@ -52,8 +52,13 @@ public class StoreBoardController {
     }
 
     @PatchMapping("/boards/{marketNo}/status")
-    public ResponseEntity<?> updateStatus(@PathVariable Long marketNo, @RequestParam Integer status) {
+    public ResponseEntity<?> updateStatus(@PathVariable Long marketNo,
+                                          @RequestParam Integer status,
+                                          @RequestParam String memberId) {
         try {
+            if (!storeBoardService.isStoreBoardAuthor(marketNo, memberId)) {
+                return ResponseEntity.status(403).body("작성자만 상태를 변경할 수 있습니다.");
+            }
             storeBoardService.updateProductStatus(marketNo, status);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
@@ -63,8 +68,11 @@ public class StoreBoardController {
     }
 
     @DeleteMapping("/boards/{marketNo}")
-    public ResponseEntity<?> deleteBoard(@PathVariable Long marketNo) {
+    public ResponseEntity<?> deleteBoard(@PathVariable Long marketNo, @RequestParam String memberId) {
         try {
+            if (!storeBoardService.isStoreBoardAuthor(marketNo, memberId)) {
+                return ResponseEntity.status(403).body("작성자만 삭제할 수 있습니다.");
+            }
             storeBoardService.deleteStoreBoard(marketNo);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

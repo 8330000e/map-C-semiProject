@@ -16,6 +16,8 @@ public interface StoreBoardService {
 
     void updateProductStatus(Long marketNo, Integer status);
 
+    boolean isStoreBoardAuthor(Long marketNo, String memberId);
+
     void deleteStoreBoard(Long marketNo);
 
     Long updateStoreBoardItem(StoreBoard storeBoard);

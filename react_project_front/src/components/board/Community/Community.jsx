@@ -208,6 +208,7 @@ const Community = () => {
       const res = await axios.patch(
         `${import.meta.env.VITE_BACKSERVER}/boards/${selectedBoard.boardNo}`,
         requestData,
+        { params: { memberId } },
       );
 
       if (res.data > 0) {
@@ -271,7 +272,10 @@ const Community = () => {
     try {
       const res = await axios.delete(
         `${import.meta.env.VITE_BACKSERVER}/boards/${boardNo}`,
-        { timeout: 5000 },
+        {
+          timeout: 5000,
+          params: { memberId },
+        },
       );
 
       if (res.data > 0) {
@@ -385,12 +389,12 @@ const Community = () => {
 
               <div className={styles.boardListBox}>
                 {boardList.length > 0 ? (
-                  boardList.map((board) => {
+                  boardList.map((board, index) => {
                     const isExpanded = expandedBoardNo === board.boardNo;
                     return (
                       <div
                         className={styles.boardItem}
-                        key={board.boardNo}
+                        key={board.boardNo ?? `${board.boardTitle}-${board.createDate}-${index}`}
                         onClick={async () => {
                           if (!isExpanded) {
                             try {
@@ -482,6 +486,15 @@ const Community = () => {
                             startEdit(boardItem);
                           }}
                           onDelete={(boardNo) => deleteBoard(boardNo)}
+                          onLikeChange={(boardNo, newLikeCount) => {
+                            setBoardList((prev) =>
+                              prev.map((item) =>
+                                item.boardNo === boardNo
+                                  ? { ...item, likeCount: newLikeCount }
+                                  : item,
+                              ),
+                            );
+                          }}
                         />
                       )}
                     </div>

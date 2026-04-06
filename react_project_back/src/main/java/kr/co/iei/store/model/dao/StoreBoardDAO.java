@@ -21,6 +21,8 @@ public interface StoreBoardDAO {
 
     int updateProductStatus(@Param("marketNo") Long marketNo, @Param("status") Integer status);
 
+    int selectStoreBoardAuthor(@Param("marketNo") Long marketNo, @Param("memberId") String memberId);
+
     int deleteStoreBoard(@Param("marketNo") Long marketNo);
 
     int updateBoardForStore(StoreBoard storeBoard);
