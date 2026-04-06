@@ -1,13 +1,14 @@
 package kr.co.iei.store.model.vo;
 
-import lombok.Data;
 import java.util.Date;
+
+import lombok.Data;
 
 @Data
 public class StoreBoard {
 
     private Long marketNo;
-    private Long boardNo;
+    private Integer boardNo;
 
     private String memberId;
     private String ctpvsggId;
@@ -22,21 +23,4 @@ public class StoreBoard {
 
     private Date createdAt;
     private Date updatedAt;
-
-    // Explicit getters for IDE/compiler compatibility (in case Lombok isn't processed)
-    public String getMemberId() {
-        return this.memberId;
-    }
-
-    public String getMarketTitle() {
-        return this.marketTitle;
-    }
-
-    public String getMarketContent() {
-        return this.marketContent;
-    }
-
-    public String getProductThumb() {
-        return this.productThumb;
-    }
 }

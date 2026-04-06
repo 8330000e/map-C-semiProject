@@ -25,6 +25,7 @@ import MapCommunity from "./pages/MapCommunityPage/MapCommunityPage";
 import TreeGrowMainPage from "./pages/TreeGrowMainPage/TreeGrowMainPage";
 import MissionListPage from "./pages/MissionListPage/MissionListPage";
 
+/*
 import UpdateMyInfo from "./components/mypage/UpdateMyInfo";
 import MyBoard from "./components/mypage/MyBoard";
 import MyLikeBoard from "./components/mypage/MyLikeBoard";
@@ -37,7 +38,7 @@ import PurchaseHistory from "./components/mypage/PurchaseHistory";
 import SaleHistory from "./components/mypage/SaleHistory";
 import PurchaseDetail from "./components/mypage/PurchaseDetail";
 import SaleDetail from "./components/mypage/SaleDetail";
-
+*/
 import AdminPage from "./pages/admin/AdminPage";
 
 function App() {

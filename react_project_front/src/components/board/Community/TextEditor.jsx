@@ -13,11 +13,13 @@ import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
 import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
 import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import LinkIcon from "@mui/icons-material/Link";
 import axios from "axios";
 
-const TextEditor = ({ data, setData }) => {
+const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
   const editorRef = useRef(null);
   const imageInputRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const [alignOpen, setAlignOpen] = useState(false);
   const [fontSizeOpen, setFontSizeOpen] = useState(false);
@@ -126,6 +128,41 @@ const TextEditor = ({ data, setData }) => {
   const handleTextColor = (e) => {
     exec("foreColor", e.target.value);
   };
+  const handleFileButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setAttachedFiles((prev) => [...prev, file]);
+
+    const fileUrl = URL.createObjectURL(file);
+
+    const linkHtml = `
+    <div class="editor-file-card" contenteditable="false">
+      <div class="editor-file-left">📄</div>
+      <div class="editor-file-right">
+        <a href="${fileUrl}" download="${file.name}" target="_blank" rel="noreferrer">${file.name}</a>
+        <small>첨부파일</small>
+      </div>
+    </div>
+    <p><br></p>
+  `;
+
+    focusEditor();
+    document.execCommand("insertHTML", false, linkHtml);
+
+    setTimeout(() => {
+      if (!editorRef.current) return;
+      const html = editorRef.current.innerHTML;
+      setData(html);
+      saveHistory(html);
+    }, 0);
+
+    e.target.value = "";
+  };
 
   const handleImageButtonClick = () => {
     imageInputRef.current?.click();
@@ -133,6 +170,7 @@ const TextEditor = ({ data, setData }) => {
 
   const handleImageChange = async (e) => {
     const file = e.target.files?.[0];
+    setAttachedFiles((prev) => [...prev, file]);
     if (!file) return;
 
     try {
@@ -298,11 +336,25 @@ const TextEditor = ({ data, setData }) => {
         <button
           className={styles.toolbarIconBtn}
           onMouseDown={keepSelection}
+          onClick={handleFileButtonClick}
+        >
+          <LinkIcon />
+        </button>
+
+        <button
+          className={styles.toolbarIconBtn}
+          onMouseDown={keepSelection}
           onClick={handleImageButtonClick}
         >
           <ImageIcon />
         </button>
 
+        <input
+          type="file"
+          ref={fileInputRef}
+          hidden
+          onChange={handleFileChange}
+        />
         <input
           type="file"
           accept="image/*"

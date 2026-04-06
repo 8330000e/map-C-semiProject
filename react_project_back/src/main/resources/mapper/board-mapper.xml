@@ -74,10 +74,27 @@
     WHERE BOARD_NO = #{boardNo}
 </update>
 
-<update id="deleteBoard" parameterType="int">
-    UPDATE BOARD_TBL
-    SET BOARD_STATUS = 1
+<delete id="deleteBoard" parameterType="int">
+    DELETE FROM BOARD_TBL
     WHERE BOARD_NO = #{boardNo}
-</update>
+</delete>
+<insert id="insertBoardFile" parameterType="boardFile">
+    <selectKey keyProperty="fileNo" resultType="int" order="BEFORE">
+        SELECT BOARD_FILE_SEQ.NEXTVAL FROM DUAL
+    </selectKey>
 
+    INSERT INTO BOARD_FILE_TBL (
+        FILE_NO,
+        BOARD_NO,
+        MEMBER_ID,
+        BOARD_FILE_NAME,
+        BOARD_FILE_PATH
+    ) VALUES (
+        #{fileNo},
+        #{boardNo},
+        #{memberId},
+        #{boardFileName},
+        #{boardFilePath}
+    )
+</insert>
 </mapper>

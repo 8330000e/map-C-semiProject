@@ -49,10 +49,10 @@ public class BoardController {
     }
 	//게시글 작성
 	@PostMapping
-    public int insertBoard(@RequestBody Board board) {
-        int result = boardService.insertBoard(board);
-        return result; 
-    }
+	public Board insertBoard(@RequestBody Board board) {
+	    boardService.insertBoard(board);
+	    return board;
+	}
 	//이미지 저장
 	 @PostMapping("/editor/upload")
 	    public String uploadEditorImage(@RequestParam("upfile") MultipartFile upfile) {
@@ -74,8 +74,16 @@ public class BoardController {
 
 	 // 삭제
 	 @DeleteMapping("/{boardNo}")
-	 public int deleteBoard(@PathVariable int boardNo) {
-	     return boardService.deleteBoard(boardNo);
+	 public int deleteBoard(@PathVariable int boardNo) {	     
+	     int result = boardService.deleteBoard(boardNo);	    
+	     return result;
 	 }
-    
+	 @PostMapping("/{boardNo}/files")
+	 public int uploadBoardFiles(
+	         @PathVariable int boardNo,
+	         @RequestParam("files") MultipartFile[] files,
+	         @RequestParam("memberId") String memberId
+	 ) {
+	     return boardService.insertBoardFiles(boardNo, memberId, files);
+	 }
 }

@@ -17,6 +17,9 @@ public class WebConfig implements WebMvcConfigurer{//MVC 관련 설정
 		registry
 		.addResourceHandler("/member/thumb/**")		//요청패턴 
 		.addResourceLocations("file:///"+root+"member/");	//실제경로(파일과 직접 연결)
+        // 에디터 이미지
+        registry.addResourceHandler("/board/editor/**")
+                .addResourceLocations("file:///C:/Temp/upload/board/editor/");
 	}
 
 }

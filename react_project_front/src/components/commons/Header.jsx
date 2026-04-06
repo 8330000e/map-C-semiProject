@@ -1,14 +1,13 @@
 // 상단 헤더 UI 컴포넌트입니다.
 // 로고, 로그인 영역, 사용자 아이콘 메뉴를 렌더링합니다.
 import styles from "./commons.module.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MailIcon from "@mui/icons-material/Mail";
 import SettingsIcon from "@mui/icons-material/Settings";
 import useAuthStore from "../../store/useAuthStore.js";
 import { useState } from "react";
-import useAuthStore from "../../store/useAuthStore";
 
 const Header = () => {
   const navigate = useNavigate();

@@ -29,6 +29,8 @@ const Community = () => {
 
   const [selectedBoard, setSelectedBoard] = useState(null);
 
+  const [attachedFiles, setAttachedFiles] = useState([]);
+
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/boards`, {
@@ -100,7 +102,29 @@ const Community = () => {
         requestData,
       );
 
-      if (res.data > 0) {
+      const savedBoard = res.data;
+      const boardNo = savedBoard.boardNo;
+
+      if (boardNo > 0) {
+        if (attachedFiles.length > 0) {
+          const formData = new FormData();
+
+          attachedFiles.forEach((file) => {
+            formData.append("files", file);
+          });
+
+          formData.append("memberId", memberId);
+
+          await axios.post(
+            `${import.meta.env.VITE_BACKSERVER}/boards/${boardNo}/files`,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            },
+          );
+        }
         await Swal.fire({
           icon: "success",
           title: "게시글이 등록되었습니다!",
@@ -111,7 +135,7 @@ const Community = () => {
         // 초기화
         setTitle("");
         setContent("");
-
+        setAttachedFiles([]);
         // 리스트로 이동
         setMode("list");
 
@@ -228,55 +252,50 @@ const Community = () => {
     }
   };
   const deleteBoard = async (boardNo) => {
-    const confirm = await Swal.fire({
+    const result = await Swal.fire({
       icon: "warning",
-      title: "삭제하시겠습니까?",
+      title: "게시글을 삭제하시겠습니까?",
       text: "삭제된 게시글은 복구할 수 없습니다.",
       showCancelButton: true,
       confirmButtonText: "삭제",
       cancelButtonText: "취소",
+      reverseButtons: true,
     });
 
-    if (!confirm.isConfirmed) return;
+    if (!result.isConfirmed) {
+      return;
+    }
 
     try {
       const res = await axios.delete(
         `${import.meta.env.VITE_BACKSERVER}/boards/${boardNo}`,
+        { timeout: 5000 },
       );
 
       if (res.data > 0) {
+        setBoardList((prev) =>
+          prev.filter((board) => board.boardNo !== boardNo),
+        );
+
         await Swal.fire({
           icon: "success",
           title: "삭제 완료",
           text: "게시글이 삭제되었습니다.",
+          confirmButtonText: "확인",
         });
-
-        // 목록 다시 불러오기
-        const listRes = await axios.get(
-          `${import.meta.env.VITE_BACKSERVER}/boards`,
-          {
-            params: {
-              status: 0,
-              searchType,
-              searchKeyword,
-              sido,
-              sigungu,
-            },
-          },
-        );
-
-        setBoardList(listRes.data.items || []);
       } else {
         Swal.fire({
           icon: "error",
           title: "삭제 실패",
+          text: "게시글 삭제에 실패했습니다.",
         });
       }
     } catch (err) {
-      console.error(err);
+      console.error("삭제 에러", err);
       Swal.fire({
         icon: "error",
         title: "서버 오류",
+        text: "삭제 중 오류가 발생했습니다.",
       });
     }
   };
@@ -455,6 +474,7 @@ const Community = () => {
                     setSelectedBoard(null);
                     setTitle("");
                     setContent("");
+                    setAttachedFiles([]);
                   }}
                 >
                   ‹
@@ -475,7 +495,12 @@ const Community = () => {
 
                 <div className={styles.boardWriteGroup}>
                   <label>내용</label>
-                  <TextEditor data={content} setData={setContent} />
+                  <TextEditor
+                    data={content}
+                    setData={setContent}
+                    attachedFiles={attachedFiles}
+                    setAttachedFiles={setAttachedFiles}
+                  />
                 </div>
 
                 <div className={styles.boardWriteGroup}>

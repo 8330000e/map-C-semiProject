@@ -5,15 +5,20 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.iei.board.model.dao.BoardDao;
 import kr.co.iei.board.model.vo.Board;
+import kr.co.iei.board.model.vo.BoardFile;
+import kr.co.iei.utils.FileUtils;
 
 @Service
 public class BoardService {
 	@Autowired
 	private BoardDao boardDao;
-
+	@Autowired
+	private FileUtils fileUtils;
 	//게시글 조회
 	public List<Board> selectBoardList(int status, int searchType, String searchKeyword) {
 		HashMap<String, Object> param = new HashMap<>();
@@ -37,6 +42,36 @@ public class BoardService {
 
 	// 게시글 삭제
 	public int deleteBoard(int boardNo) {
-	    return boardDao.deleteBoard(boardNo);
+	    try {
+	        int result = boardDao.deleteBoard(boardNo);
+	        return result;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw e;
+	    }
+	}
+	@Transactional
+	public int insertBoardFiles(int boardNo, String memberId, MultipartFile[] files) {
+	    int result = 0;
+	    String savePath = "C:/Temp/upload/board/files/";
+
+	    for (MultipartFile file : files) {
+	        if (file == null || file.isEmpty()) {
+	            continue;
+	        }
+
+	        String filePath = fileUtils.upload(savePath, file);
+
+	        BoardFile boardFile = new BoardFile();
+	        boardFile.setBoardNo(boardNo);
+	        boardFile.setMemberId(memberId);
+	        boardFile.setBoardFileName(file.getOriginalFilename());
+	        boardFile.setBoardFilePath(filePath);
+
+	        result += boardDao.insertBoardFile(boardFile);
+	    }
+
+	    return result;
 	}
 }
+

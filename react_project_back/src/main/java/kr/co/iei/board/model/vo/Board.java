@@ -32,35 +32,28 @@ public class Board {
 	    private String thumbnailUrl;
 	    private Integer likeCount;
 	    private Integer commentCount;
+	    
+	    /*
+	    private Long boardNo;
+		private String writerId;
+		private String boardTitle;
+		private String boardContent;
+		private String boardThumb;
+		private String memberNickname;
+		private Integer boardStatus;
+		// Explicit setter for IDE/compiler compatibility
+		public void setBoardStatus(int boardStatus)
+		{ this.boardStatus = boardStatus; }
+		public void setWriterId(String writerId)
+		{ this.writerId = writerId; }
+		public void setBoardTitle(String boardTitle)
+		{ this.boardTitle = boardTitle; } 
+		public void setBoardContent(String boardContent)
+		{ this.boardContent = boardContent; }
+		public void setBoardThumb(String boardThumb)
+		{ this.boardThumb = boardThumb; }
+		*/
 }
 
-	private Long boardNo;
-	private String writerId;
-	private String boardTitle;
-	private String boardContent;
-	private String boardThumb;
-	private String memberNickname;
-	private Integer boardStatus;
-
-	// Explicit setter for IDE/compiler compatibility
-	public void setBoardStatus(int boardStatus) {
-		this.boardStatus = boardStatus;
-	}
-
-	public void setWriterId(String writerId) {
-		this.writerId = writerId;
-	}
-
-	public void setBoardTitle(String boardTitle) {
-		this.boardTitle = boardTitle;
-	}
-
-	public void setBoardContent(String boardContent) {
-		this.boardContent = boardContent;
-	}
-
-	public void setBoardThumb(String boardThumb) {
-		this.boardThumb = boardThumb;
-	}
-
+	
 

@@ -1,15 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="kr.co.iei.store.model.dao.StoreBoardDAO">
+
   <insert id="insertStoreBoard" keyProperty="marketNo" useGeneratedKeys="true">
-    INSERT INTO STORE_BOARD_TBL (MARKET_NO, BOARD_NO, MEMBER_ID, CTPVSGG_ID, MARKET_TITLE, MARKET_CONTENT, PRODUCT_PRICE, PRODUCT_THUMB, PRODUCT_STATUS, READ_COUNT, IS_DELETED, CREATED_AT, UPDATED_AT, TRADE_TYPE)
-    VALUES (STORE_BOARD_SEQ.NEXTVAL, #{boardNo}, #{memberId}, #{ctpvsggId}, #{marketTitle}, #{marketContent}, #{productPrice}, #{productThumb}, #{productStatus}, 0, 0, SYSDATE, NULL, #{tradeType})
+    INSERT INTO STORE_BOARD_TBL
+    (
+      MARKET_NO,
+      BOARD_NO,
+      MEMBER_ID,
+      CTPVSGG_ID,
+      MARKET_TITLE,
+      MARKET_CONTENT,
+      PRODUCT_PRICE,
+      PRODUCT_THUMB,
+      PRODUCT_STATUS,
+      READ_COUNT,
+      IS_DELETED,
+      CREATED_AT,
+      UPDATED_AT,
+      TRADE_TYPE
+    )
+    VALUES
+    (
+      STORE_BOARD_SEQ.NEXTVAL,
+      #{boardNo},
+      #{memberId},
+      #{ctpvsggId},
+      #{marketTitle},
+      #{marketContent},
+      #{productPrice},
+      #{productThumb},
+      #{productStatus},
+      0,
+      0,
+      SYSDATE,
+      NULL,
+      #{tradeType}
+    )
   </insert>
 
-  <select id="selectStoreBoard" resultType="kr.co.iei.store.model.vo.StoreBoardVO">
-    SELECT * FROM STORE_BOARD_TBL WHERE MARKET_NO = #{marketNo} AND IS_DELETED = 0
+  <select id="selectStoreBoard" resultType="kr.co.iei.store.model.vo.StoreBoard">
+    SELECT *
+    FROM STORE_BOARD_TBL
+    WHERE MARKET_NO = #{marketNo}
+      AND IS_DELETED = 0
   </select>
 
   <insert id="insertTradeInfo">
-    INSERT INTO STORE_BOARD_TRADEINFO_TBL (TRADE_NO, MARKET_NO, SELLER_ID, BUYER_ID, CTPVSGG_ID, TRADE_PRICE, TRADE_STATUS, TRADE_TYPE, CREATED_AT, REVIEW_YN)
-    VALUES (STORE_BOARD_TRADE_SEQ.NEXTVAL, #{marketNo}, #{sellerId}, #{buyerId}, #{ctpvsggId}, #{tradePrice}, 0, #{tradeType}, SYSDATE, 'N')
+    INSERT INTO STORE_BOARD_TRADEINFO_TBL
+    (
+      TRADE_NO,
+      MARKET_NO,
+      SELLER_ID,
+      BUYER_ID,
+      CTPVSGG_ID,
+      TRADE_PRICE,
+      TRADE_STATUS,
+      TRADE_TYPE,
+      CREATED_AT,
+      REVIEW_YN
+    )
+    VALUES
+    (
+      STORE_BOARD_TRADE_SEQ.NEXTVAL,
+      #{marketNo},
+      #{sellerId},
+      #{buyerId},
+      #{ctpvsggId},
+      #{tradePrice},
+      0,
+      #{tradeType},
+      SYSDATE,
+      'N'
+    )
   </insert>
+
 </mapper>

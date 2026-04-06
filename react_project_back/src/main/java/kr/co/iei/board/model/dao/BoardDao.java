@@ -6,10 +6,12 @@ import java.util.List;
 
 
 import kr.co.iei.board.model.vo.Board;
+import kr.co.iei.board.model.vo.BoardFile;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
-import kr.co.iei.board.model.vo.Board;
+
 
 @Mapper
 public interface BoardDao {
@@ -20,9 +22,9 @@ public interface BoardDao {
 
 	int updateBoard(Board board);
 
-	int deleteBoard(int boardNo);
+	int deleteBoard(@Param("boardNo") int boardNo);
 
-
-    int insertBoard(Board board);
+	int insertBoardFile(BoardFile boardFile);
+    
 
 }
