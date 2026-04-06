@@ -442,7 +442,7 @@ const Community = () => {
 
                           <button
                             type="button"
-                            className={styles.deleteBtn}
+                            className={`${styles.mapCommunityBtn} ${styles.deleteBtn}`}
                             onClick={(e) => {
                               e.stopPropagation();
                               deleteBoard(board.boardNo);
