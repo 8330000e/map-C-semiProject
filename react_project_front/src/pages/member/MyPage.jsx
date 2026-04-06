@@ -2,11 +2,11 @@
 
 import { Route, Routes } from "react-router-dom";
 import UpdateMyInfo from "../../components/mypage/UpdateMyInfo";
-import MyBoard from "../../components/mypage/MyBoard";
-import MyLikeBoard from "../../components/mypage/MyLikeBoard";
-import MemberTip from "../../components/mypage/MemberTip";
-import LeaveMember from "../../components/mypage/LeaveMember";
-import MyPoint from "../../components/mypage/MyPoint";
+// import MyBoard from "../../components/mypage/MyBoard";
+// import MyLikeBoard from "../../components/mypage/MyLikeBoard";
+// import MemberTip from "../../components/mypage/MemberTip";
+// import LeaveMember from "../../components/mypage/LeaveMember";
+// import MyPoint from "../../components/mypage/MyPoint";
 import ChangePw from "../../components/mypage/ChangePw";
 import MyInformation from "../../components/mypage/MyInformation";
 import PurchaseHistory from "../../components/mypage/PurchaseHistory";
@@ -26,7 +26,6 @@ const Mypage = () => {
         <h1>마이페이지</h1>
         <div className={styles.mypage_content_wrap}>
           <MyInformation />
-
           <Routes>
             <Route
               index
@@ -38,11 +37,11 @@ const Mypage = () => {
             />
             <Route path="updateMyInfo" element={<UpdateMyInfo />} />
             <Route path="changePw" element={<ChangePw />} />
-            <Route path="myBoard" element={<MyBoard />} />
+            {/* <Route path="myBoard" element={<MyBoard />} />
             <Route path="myLikeBoard" element={<MyLikeBoard />} />
             <Route path="tipScrap" element={<MemberTip />} />
             <Route path="leaveMember" element={<LeaveMember />} />
-            <Route path="myPoint" element={<MyPoint />} />
+            <Route path="myPoint" element={<MyPoint />} /> */}
             <Route path="history/purchase" element={<PurchaseHistory />} />
             <Route path="history/purchase/:id" element={<PurchaseDetail />} />
             <Route path="history/sale" element={<SaleHistory />} />
