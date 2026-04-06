@@ -74,11 +74,11 @@ public class BoardService {
 
 	    return result;
 	}
-	/*
+	// 인기 게시글 조회 비즈니스 로직
+	// BoardController.bestBoardList()에서 호출되어 DAO에서 결과를 가져옵니다.
 	public List<BoardLike> bestBoardList() {
-		List<BoardLike> list = boardDao.bestBoardList();
+		return boardDao.bestBoardList();
 	}
-	*/
 	
 	public List<Board> selectMemberIdBoard(HashMap<String, String> map) {
 		List<Board> list = boardDao.selectMemberIdBoard(map);
