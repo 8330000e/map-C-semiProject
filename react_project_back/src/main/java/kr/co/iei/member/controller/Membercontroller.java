@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.iei.member.model.service.MemberService;
@@ -36,6 +38,19 @@ public class Membercontroller {
 		int result = memberService.insertMember(member);
 		return ResponseEntity.ok(result);
 	}
+	
+	//아이디 중복 체크 설정
+	@GetMapping(value="/exists")
+	public ResponseEntity<?> dupCheckId(@RequestParam String memberId) {
+		Member m = memberService.selectOneMember(memberId);
+		//존재하면 Member 객체 반환, 없으면 null
+		//프런트에서 setCheckId(res.data ? 2 : 1);
+		//-> 이렇게 설정을 해놨기 때문에 비교문을 통해 
+		//->컨트롤러 m == null → true/false 그대로 반환
+		return ResponseEntity.ok(m == null);
+	}
+	
+	
 
 	@PostMapping(value = "/email-verification")
 	public ResponseEntity<?> sendMail(@RequestBody Member m) {
@@ -110,5 +125,8 @@ public class Membercontroller {
 			return ResponseEntity.status(404).body("아이디를 찾을 수 없습니다.");
 		}
 	}
+	
+	
+	
 
 }

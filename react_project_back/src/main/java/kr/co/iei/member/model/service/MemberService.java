@@ -69,4 +69,10 @@ public class MemberService {
 			String memberId = memberDao.findIdByEmail(memberEmail);
 			return memberId;
 		}
+
+		// 아이디 충복 체크 설정
+		public Member selectOneMember(String memberId) {
+			Member m = memberDao.selectOneMember(memberId);
+			return m;
+		}
 }
