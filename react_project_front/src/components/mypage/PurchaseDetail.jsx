@@ -3,8 +3,26 @@ import { Link, useParams } from "react-router-dom";
 import styles from "./PurchaseHistory.module.css";
 
 const mockPurchaseHistory = [
-  { id: 1, title: "재생 우드 의자", date: "2026-03-22", amount: 75000, status: "구매완료", tradeType: 0, tradeTypeText: "직거래/택배", seller: "업사이클샵" },
-  { id: 2, title: "중고 노트북", date: "2026-03-18", amount: 430000, status: "배송대기", tradeType: 2, tradeTypeText: "택배", seller: "노트북박사" },
+  {
+    id: 1,
+    title: "재생 우드 의자",
+    date: "2026-03-22",
+    amount: 75000,
+    status: "구매완료",
+    tradeType: 0,
+    tradeTypeText: "직거래/택배",
+    seller: "업사이클샵",
+  },
+  {
+    id: 2,
+    title: "중고 노트북",
+    date: "2026-03-18",
+    amount: 430000,
+    status: "배송대기",
+    tradeType: 2,
+    tradeTypeText: "택배",
+    seller: "노트북박사",
+  },
 ];
 
 const tradeTypeLabel = (type, text) => {
@@ -73,7 +91,9 @@ const PurchaseDetail = () => {
     }
     setReviews((prev) =>
       prev.map((rev) =>
-        rev.id === editReviewId ? { ...rev, rating: editRating, comment: editComment } : rev,
+        rev.id === editReviewId
+          ? { ...rev, rating: editRating, comment: editComment }
+          : rev,
       ),
     );
     cancelEditing();
@@ -89,7 +109,10 @@ const PurchaseDetail = () => {
     return (
       <div className={styles.purchase_history_wrap}>
         <p className={styles.purchase_title}>구매 상세를 찾을 수 없습니다.</p>
-        <Link className={styles.purchase_back_link} to="/mypage/history/purchase">
+        <Link
+          className={styles.purchase_back_link}
+          to="/mypage/history/purchase"
+        >
           구매내역으로 돌아가기
         </Link>
       </div>
@@ -101,10 +124,14 @@ const PurchaseDetail = () => {
       <h3 className={styles.purchase_title}>구매 상세 ({item.title})</h3>
       <div className={styles.purchase_card}>
         <div className={styles.purchase_card_title}>{item.title}</div>
-        <div className={styles.purchase_card_meta}>{item.date} · {item.status}</div>
+        <div className={styles.purchase_card_meta}>
+          {item.date} · {item.status}
+        </div>
         <div>판매자: {item.seller}</div>
         <div>금액: {item.amount.toLocaleString()}원</div>
-        <div>거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText)}</div>
+        <div>
+          거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText)}
+        </div>
       </div>
 
       {item.status === "구매완료" && (
@@ -112,9 +139,14 @@ const PurchaseDetail = () => {
           <h4>구매후기 작성</h4>
           <div className={styles.review_row}>
             <label>평가 점수 (1~5):</label>
-            <select value={rating} onChange={(e) => setRating(Number(e.target.value))}>
+            <select
+              value={rating}
+              onChange={(e) => setRating(Number(e.target.value))}
+            >
               {[1, 2, 3, 4, 5].map((v) => (
-                <option key={v} value={v}>{v}점</option>
+                <option key={v} value={v}>
+                  {v}점
+                </option>
               ))}
             </select>
           </div>
@@ -133,8 +165,12 @@ const PurchaseDetail = () => {
             {reviewImage && <span>{reviewImage.name}</span>}
           </div>
           <div className={styles.review_actions}>
-            <button className="btn" onClick={onSubmitReview}>제출하기</button>
-            <Link className="btn" to="/mypage/history/purchase">뒤로가기</Link>
+            <button className="btn" onClick={onSubmitReview}>
+              제출하기
+            </button>
+            <Link className="btn" to="/mypage/history/purchase">
+              뒤로가기
+            </Link>
           </div>
         </div>
       )}
@@ -144,15 +180,22 @@ const PurchaseDetail = () => {
           <h4>작성된 후기</h4>
           {reviews.map((rev) => (
             <div key={rev.id} className={styles.purchase_card}>
-              <div className={styles.purchase_card_title}>별점: {rev.rating}점</div>
+              <div className={styles.purchase_card_title}>
+                별점: {rev.rating}점
+              </div>
               <div className={styles.purchase_card_meta}>{rev.createdAt}</div>
               {editReviewId === rev.id ? (
                 <div className={styles.review_edit_wrap}>
                   <div className={styles.review_row}>
                     <label>평가 점수:</label>
-                    <select value={editRating} onChange={(e) => setEditRating(Number(e.target.value))}>
+                    <select
+                      value={editRating}
+                      onChange={(e) => setEditRating(Number(e.target.value))}
+                    >
                       {[1, 2, 3, 4, 5].map((v) => (
-                        <option key={v} value={v}>{v}점</option>
+                        <option key={v} value={v}>
+                          {v}점
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -162,8 +205,12 @@ const PurchaseDetail = () => {
                     onChange={(e) => setEditComment(e.target.value)}
                   />
                   <div className={styles.review_actions}>
-                    <button className="btn" onClick={saveEdit}>저장</button>
-                    <button className="btn" onClick={cancelEditing}>취소</button>
+                    <button className="btn" onClick={saveEdit}>
+                      저장
+                    </button>
+                    <button className="btn" onClick={cancelEditing}>
+                      취소
+                    </button>
                   </div>
                 </div>
               ) : (
@@ -171,8 +218,15 @@ const PurchaseDetail = () => {
                   <p>{rev.comment}</p>
                   {rev.imageName && <p>첨부: {rev.imageName}</p>}
                   <div className={styles.review_actions}>
-                    <button className="btn" onClick={() => startEditing(rev)}>수정</button>
-                    <button className="btn" onClick={() => removeReview(rev.id)}>삭제</button>
+                    <button className="btn" onClick={() => startEditing(rev)}>
+                      수정
+                    </button>
+                    <button
+                      className="btn"
+                      onClick={() => removeReview(rev.id)}
+                    >
+                      삭제
+                    </button>
                   </div>
                 </>
               )}

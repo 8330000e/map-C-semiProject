@@ -25,9 +25,11 @@ public class SpringSecurityConfig {
         .authorizeHttpRequests(auth -> auth
         		//"/members/login", "/members"-> 직접 회원가입, 로그인 요청의 post 경로를 설정
         		.requestMatchers("/members/login", "/members").permitAll() // permitAll-> 로그인 경로 허용(임시) // 수정 필요  
-        		.requestMatchers("/members/**").permitAll()
+        		
+        		
         		//이 URL은 로그인 안 해도 들어와도 된다”
         		//현재 토큰이 없는 관계로 이 방식을 통해 리엑트와 연결 
+                
 //                .anyRequest().authenticated() // 나머지는 인증 필요
         		.anyRequest().permitAll() // 모든 요청 허용-> jwt를 만들면 해제
         )

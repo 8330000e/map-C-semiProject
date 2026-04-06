@@ -1,6 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.co.iei.admin.model.dao.AdminDao">
+	<insert id="insertNotice">
+		insert into notice_tbl values (
+			notice_seq.nextval,
+			#{noticeTitle},
+			#{noticeContent},
+			sysdate,
+			0,
+			#{noticePublic},
+			#{noticeFixed}
+		)
+	</insert>
+	
+	<select id="selectNoticeList" resultType="notice">
+		select
+			notice_no,
+			notice_fixed,
+			notice_title,
+			notice_content,
+			notice_date
+		from notice_tbl
+		order by notice_fixed desc, notice_date desc
+	</select>
+	
+	<update id="editNotice">
+		update notice_tbl set 
+			notice_title = #{noticeTitle},
+			notice_content = #{noticeContent},
+			notice_public = #{noticePublic},
+			notice_fixed = #{noticeFixed}
+		where notice_no = #{noticeNo}
+	</update>
+	
+	<select id="getDashData" resultType="dashdata">
+	select
+		(select count(*) from member_tbl1) as totalMember,
+		(select count (case when trunc(enroll_date, 'MM') = trunc(sysdate, 'MM') then 1 end) from member_tbl1) as thisMonthMember,
+		(select	count (case when trunc(enroll_date, 'MM') = add_months(trunc(sysdate, 'MM'), -1) then 1 end) from member_tbl1) as lastMonthMember,
+		(select count (case when trunc(enroll_date) = trunc(sysdate) then 1 end) from member_tbl1) as todayMember,
+		(select count (case when trunc(enroll_date) = trunc(sysdate - 1) then 1 end) from member_tbl1) as yesterdayMember,
+		(select count(case when report_category = '광고' then 1 end) from board_report_tbl) as ad,
+		(select count(case when report_category = '욕설' then 1 end) from board_report_tbl) as hate,
+		(select count(case when report_category = '스팸' then 1 end) from board_report_tbl) as spam,
+		(select count(case when report_category = '기타' then 1 end) from board_report_tbl) as etc
+	from dual
+	</select>
+	
 	
 
 </mapper>
