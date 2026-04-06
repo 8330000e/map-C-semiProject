@@ -24,4 +24,8 @@ public interface MemberDao {
 	Member memberPw(String memberId);
 
 	int updatePw(Member m);
+
+	int selectMemberPoint(String memberId);
+
+	int decreasePoint(String memberId, int point);
 }
