@@ -372,7 +372,7 @@ const Community = () => {
                   {isLogin && (
                     <button
                       type="button"
-                      className={styles.mapCommunityBtn}
+                      className={`${styles.mapCommunityBtn} ${styles.writeBtn}`}
                       onClick={() => setMode("write")}
                     >
                       게시글 작성
