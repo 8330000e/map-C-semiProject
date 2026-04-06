@@ -1,105 +1,119 @@
 package kr.co.iei.store.model.service;
 
+import kr.co.iei.store.model.dao.StoreBoardDAO;
 import kr.co.iei.store.model.vo.StoreBoard;
 import kr.co.iei.store.model.vo.StoreRating;
 import kr.co.iei.store.model.vo.StoreReview;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
-/**
- * Minimal stub implementation so Spring can create a StoreBoardService bean.
- *
- * Replace with a full implementation wired to DAOs/MyBatis mappers when ready.
- */
 @Service
 public class StoreBoardServiceImpl implements StoreBoardService {
 
+    private final StoreBoardDAO storeBoardDAO;
+
+    public StoreBoardServiceImpl(StoreBoardDAO storeBoardDAO) {
+        this.storeBoardDAO = storeBoardDAO;
+    }
+
     @Override
     public Long createStoreBoard(StoreBoard storeBoard) {
-        if (storeBoard == null) return 0L;
+        if (storeBoard == null) {
+            return 0L;
+        }
+        storeBoardDAO.insertBoardForStore(storeBoard);
+        if (storeBoard.getBoardNo() == null) {
+            return 0L;
+        }
+        storeBoardDAO.insertStoreBoard(storeBoard);
         return storeBoard.getMarketNo() != null ? storeBoard.getMarketNo() : 0L;
     }
 
     @Override
     public List<StoreBoard> getStoreBoardList() {
-        return Collections.emptyList();
+        return storeBoardDAO.selectStoreBoardList();
     }
 
     @Override
     public StoreBoard getStoreBoard(Long marketNo) {
-        return null;
+        return storeBoardDAO.selectStoreBoard(marketNo);
     }
 
     @Override
     public void updateProductStatus(Long marketNo, Integer status) {
-        // no-op stub
+        storeBoardDAO.updateProductStatus(marketNo, status);
     }
 
     @Override
     public void deleteStoreBoard(Long marketNo) {
-        // no-op stub
+        storeBoardDAO.deleteStoreBoard(marketNo);
     }
 
     @Override
     public Long updateStoreBoardItem(StoreBoard storeBoard) {
-        if (storeBoard == null) return 0L;
-        return storeBoard.getMarketNo() != null ? storeBoard.getMarketNo() : 0L;
+        if (storeBoard == null || storeBoard.getMarketNo() == null) {
+            return 0L;
+        }
+        storeBoardDAO.updateBoardForStore(storeBoard);
+        storeBoardDAO.updateStoreBoard(storeBoard);
+        return storeBoard.getMarketNo();
     }
 
     @Override
     public void incrementReadCount(Long marketNo) {
-        // no-op stub
+        storeBoardDAO.incrementReadCount(marketNo);
     }
 
     @Override
     public List<StoreReview> getReviewList(Long marketNo) {
-        return Collections.emptyList();
+        return storeBoardDAO.selectReviewList(marketNo);
     }
 
     @Override
     public StoreReview addReview(StoreReview review) {
+        storeBoardDAO.insertReview(review);
         return review;
     }
 
     @Override
     public void editReview(StoreReview review) {
-        // no-op stub
+        storeBoardDAO.updateReview(review);
     }
 
     @Override
     public void removeReview(Long reviewNo, String memberId) {
-        // no-op stub
+        storeBoardDAO.deleteReview(reviewNo, memberId);
     }
 
     @Override
     public List<StoreReview> getLatestReviews(int limit) {
-        return Collections.emptyList();
+        return storeBoardDAO.selectLatestReviews(limit);
     }
 
     @Override
     public List<StoreRating> getRatingsByTrade(Long tradeNo) {
-        return Collections.emptyList();
+        return storeBoardDAO.selectRatingsByTrade(tradeNo);
     }
 
     @Override
     public List<StoreRating> getRatingsByMarket(Long marketNo) {
-        return Collections.emptyList();
+        return storeBoardDAO.selectRatingsByMarket(marketNo);
     }
 
     @Override
     public StoreRating addRating(StoreRating rating) {
+        storeBoardDAO.insertRating(rating);
         return rating;
     }
 
     @Override
     public void editRating(StoreRating rating) {
-        // no-op stub
+        storeBoardDAO.updateRating(rating);
     }
 
     @Override
     public void removeRating(Long reviewNo, String buyerId) {
-        // no-op stub
+        storeBoardDAO.deleteRating(reviewNo, buyerId);
     }
 }
