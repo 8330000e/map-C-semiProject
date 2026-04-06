@@ -1,18 +1,24 @@
 package kr.co.iei.utils;
 
+
+import java.security.Key;
+
 import java.util.Calendar;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
 
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import kr.co.iei.member.model.vo.LoginMember;
+
 
 //@Component
 //스프링이 이 클래스를 자동으로 관리하라.
@@ -36,6 +42,7 @@ public class JwtUtils {
 		// -> 전달받은 바이트를 HMAC-SHA 방식의 서명 키(SecretKey) 로 만들어줌
 		// 토큰 위조 방지용 디지털 도장 -> 사인에 필수
 		// -> 이 키 없으면 토큰 절대 못 만듦 (위조 불가)
+
 		SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes());
 
 		Calendar c = Calendar.getInstance();
@@ -60,6 +67,7 @@ public class JwtUtils {
 		login.setEndTime(endTime.getTime());
 		login.setMemberNickname(memberNickname);
 		return login; // 위의 과정을 잘 통합해서 토큰을 발행하라는 의미
+
 	}
 	
 	// 위에서 설정한 토큰을 검증하기 위한 로직
@@ -96,4 +104,8 @@ public class JwtUtils {
 			}
 		}
 
+
+	
+
+	
 }

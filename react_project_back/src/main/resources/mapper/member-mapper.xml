@@ -62,4 +62,30 @@ fetch first 1 row only
 
 
 
+<select id="selectMemberList" resultType="member">
+		select
+			member_id,
+			member_name,
+			member_email,
+			enroll_date,
+			member_grade,
+			member_status
+		from member_tbl1
+	</select>
+	<update id="updateMemberInfo">
+		update member_tbl set member_name=#{memberName}, member_nickname=#{memberNickname}, member_email=#{memberEmail}
+		where member_id=#{memberId}
+	</update>
+	<select id="getOneMemberInfo" resultType="member">
+		select member_name,member_email,enroll_date,member_status from member_tbl1 where member_id = #{memberId} 
+	</select>
+	<select id="memberPw" resultType="member">
+		select member_pw from member_tbl1 where member_id =#{memberId}
+	</select>
+	<update id="updatePw">
+		update member_tbl1 set member_pw=#{memberPw} where member_id = #{memberId}
+	</update>
+	<update id="updateMemberThumb">
+		update member_tbl1 set member_thumb=#{memberThumb} where member_id = #{memberId}
+	</update>
 </mapper>

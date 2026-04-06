@@ -1,5 +1,7 @@
 package kr.co.iei.member.model.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,30 +14,36 @@ import kr.co.iei.utils.JwtUtils;
 
 @Service
 public class MemberService {
+
 	@Autowired
 	private MemberDao memberDao;
-	
+
+
+	// 암호화 객체 선언
 	@Autowired
 	private BCryptPasswordEncoder bcrypt;
+
 	
 	@Autowired
 	private JwtUtils jwtUtils;
 	
+
 	@Transactional
 	public int insertMember(Member member) {
-		
-		
-		//회원가입에서 비밀번호를 입력했을 떄 그 값을 암호화하는 과정 
-				//-> 이 과정에는 이미 salt과정이 포함되어 있음.
-				String memberPw = member.getMemberPw();
-				String encPw = bcrypt.encode(memberPw);
-				 System.out.println("암호화된 비밀번호: " + encPw);
-				
-				member.setMemberPw(encPw);
-				
+
+		// 회원가입에서 비밀번호를 입력했을 떄 그 값을 암호화하는 과정
+		// -> 이 과정에는 이미 salt과정이 포함되어 있음.
+
+		String memberPw = member.getMemberPw();
+		String encPw = bcrypt.encode(memberPw);
+		System.out.println("암호화된 비밀번호: " + encPw);
+
+		member.setMemberPw(encPw);
+
 		int result = memberDao.insertMember(member);
 		return result;
 	}
+
 
 	
 	//로그인 로직 
@@ -82,4 +90,39 @@ public class MemberService {
 			Integer result = memberDao.existsByIdAndEmail(memberId,memberEmail);
 			return result > 0;
 		}
+		public Member getOneMemberInfo(String memberId) {
+			Member member = memberDao.getOneMemberInfo(memberId);
+			return member;
+		}
+
+		public List<Member> selectMemberList() {
+			List<Member> memberList = memberDao.selectMemberList();
+			return memberList;
+		}
+
+		@Transactional
+		public int updateMemberInfo(Member form) {
+			int result = memberDao.updateMemberInfo(form);
+			return result;
+		}
+
+		public boolean checkPw(Member member) {
+			String memberId = member.getMemberId();
+			Member forCheck = memberDao.memberPw(memberId);
+		//		System.out.println(forCheck.getMemberPw());
+		//		System.out.println(member.getMemberPw());
+			boolean result=bcrypt.matches(member.getMemberPw(), forCheck.getMemberPw());
+			return result;
+		}
+
+		@Transactional
+		public int updatePw(Member m) {
+			String newMemberPw = m.getMemberPw();
+			String encodedNewMemberPw = bcrypt.encode(newMemberPw);
+			m.setMemberPw(encodedNewMemberPw);
+			int result = memberDao.updatePw(m);
+			return result;
+		}
+
 }
+	
