@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.iei.admin.model.service.AdminService;
 import kr.co.iei.admin.model.vo.DashData;
+import kr.co.iei.admin.model.vo.Faq;
 import kr.co.iei.admin.model.vo.Notice;
 
 @RequestMapping(value="admins")
@@ -56,5 +57,11 @@ public class AdminController {
 	public ResponseEntity<?> deleteNotice(@PathVariable Integer noticeNo) {
 		int result = adminService.deleteNotice(noticeNo);
 		return ResponseEntity.ok(result);
+	}
+	
+	@GetMapping(value="faq")
+	public ResponseEntity<?> selectFaqList() {
+		List<Faq> faqList = adminService.selectFaqList();
+		return ResponseEntity.ok(faqList);
 	}
 }

@@ -30,8 +30,7 @@ const AdminNotice = ({
             </div>
             <div className={styles.notice_write_content}>
               <label htmlFor="noticeContent">공지사항 내용</label>
-              <input
-                type="text"
+              <TextArea
                 id="noticeContent"
                 name="noticeContent"
                 value={notice.noticeContent}
@@ -64,11 +63,7 @@ const AdminNotice = ({
                 <option value={1}>고정</option>
               </select>
             </div>
-            <Button
-              className="btn primary"
-              type="submit"
-              onClick={insertNotice}
-            >
+            <Button className="btn admin" type="submit" onClick={insertNotice}>
               {isEdit ? "수정하기" : "등록하기"}
             </Button>
           </section>
@@ -112,7 +107,7 @@ const AdminNotice = ({
                     <td className={styles.col_date}>{item.noticeDate}</td>
                     <td className={styles.col_edit}>
                       <Button
-                        className="btn primary outline sm"
+                        className="btn admin sm"
                         onClick={() => {
                           setIsEdit(true);
 
