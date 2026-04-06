@@ -64,6 +64,7 @@ coverage/
 .DS_Store
 Thumbs.db
 .metadata/
+.project
 
 
 # TypeScript
