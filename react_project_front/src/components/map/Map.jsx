@@ -1,5 +1,8 @@
 import { useEffect, useRef } from "react";
 import styles from "./Map.module.css";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import CelebrationOutlinedIcon from "@mui/icons-material/CelebrationOutlined";
+import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 
 const Map = () => {
   const mapDivRef = useRef(null);
@@ -14,6 +17,36 @@ const Map = () => {
   }, []);
   return (
     <div className={styles.map_div}>
+      <div>
+        <div className={styles.spot_box}>
+          <div className={styles.spot_box_top}>
+            <p>대한민국</p>
+            <p>
+              <div className={styles.spot_box_top_posts}>
+                <DescriptionOutlinedIcon sx={{ fontSize: "20px" }} />
+                <p>125</p>
+              </div>
+            </p>
+          </div>
+          <div>
+            <p>
+              <CelebrationOutlinedIcon />
+            </p>
+            <p>
+              <strong>1,321명</strong>의 구민들이 탄소 배출량{" "}
+              <strong>10,151kg</strong>을 절감했습니다!
+            </p>
+          </div>
+        </div>
+        <div className={styles.map_item}>
+          <p>
+            <ErrorOutlineOutlinedIcon
+              sx={{ color: "#fff", fontSize: "18px" }}
+            />
+          </p>
+          <p>탄소 배출량</p>
+        </div>
+      </div>
       <div id="map" className={styles.map} ref={mapDivRef}></div>
     </div>
   );
