@@ -10,7 +10,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import Swal from "sweetalert2";
 
 const Community = () => {
-  const { memberId } = useAuthStore();
+  const { memberId, memberNickname } = useAuthStore();
   const isLogin = !!memberId;
 
   const [mode, setMode] = useState("list");
@@ -90,7 +90,7 @@ const Community = () => {
       const thumbnailUrl = extractFirstImageSrc(content);
       const requestData = {
         writerId: memberId,
-        memberNickname: memberId,
+        memberNickname: memberNickname,
         boardTitle: title,
         boardContent: content,
         boardThumb: thumbnailUrl,
