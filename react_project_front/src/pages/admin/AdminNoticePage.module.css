@@ -3,14 +3,17 @@
   background-color: #202c47;
   border-radius: 18px;
   margin: 14px 12px;
+  margin-bottom: 26px;
 }
 .notice_write_title {
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 .notice_write_content {
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 .notice_write_content > input {
   min-height: 140px;
@@ -42,7 +45,7 @@
 .notice_option_wrap > button {
   padding: 12px 8px;
   border-radius: 12px;
-  margin-top: 36px;
+  margin-top: 48px;
 }
 .select {
   padding: 4px;
@@ -125,4 +128,12 @@
 .table_wrap::-webkit-scrollbar-thumb {
   background: #334c69;
   border-radius: 10px;
+}
+
+/*textarea 관리자전용*/
+.notice_write_content textarea {
+  background-color: var(--admin-input-bg);
+  border: 3px solid var(--admin-stroke);
+  color: var(--admin-text);
+  min-height: 140px;
 }
