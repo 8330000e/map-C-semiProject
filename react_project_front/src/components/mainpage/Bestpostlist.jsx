@@ -16,7 +16,9 @@ const Bestpostlist = () => {
         setBestPostList(res.data);
       })
       .catch((err) => {
-        console.err("인기 게시글 데이터를 가져오는 중 오류 발생:", err);
+        // 이전에는 console.err를 사용하여 오류가 발생했습니다.
+        // console.error로 변경하여 콘솔에 정상적으로 출력되도록 합니다.
+        console.error("인기 게시글 데이터를 가져오는 중 오류 발생:", err);
       });
   }, []);
   const boardView = (i) => {

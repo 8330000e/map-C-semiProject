@@ -36,7 +36,7 @@ import lombok.Getter;
 import kr.co.iei.utils.FileUtils;
 
 
-@CrossOrigin(value = "*")
+@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
 @RestController
 @RequestMapping(value = "/members")
 

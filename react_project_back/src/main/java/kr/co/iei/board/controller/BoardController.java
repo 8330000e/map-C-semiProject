@@ -23,7 +23,7 @@ import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.utils.FileUtils;
 
-@CrossOrigin(value="*")
+@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
 @RestController
 @RequestMapping(value="/boards")
 public class BoardController {
@@ -90,14 +90,12 @@ public class BoardController {
 	     return boardService.insertBoardFiles(boardNo, memberId, files);
 	 }
 	 
-	 /*
-	 // 인기게시글 조회
-	 @GetMapping(value="/best")
-	 public List<BoardLike> bestBoardList() {
-		 List<BoardLike> list = boardService.bestBoardList();
-		 return list;
-	 }
-	 */
+	// frontend에서 인기 게시글을 조회하기 위해 추가한 엔드포인트입니다.
+	// Bestpostlist.jsx에서 /boards/best로 요청하여 top 게시글 목록을 받아옵니다.
+	@GetMapping(value="/best")
+	public List<BoardLike> bestBoardList() {
+		return boardService.bestBoardList();
+	}
 	 
 	 @GetMapping(value="{memberId}")
 	 public ResponseEntity<?> selectMemberIdBoard(@PathVariable String memberId,@RequestParam String searchBoard,@RequestParam String filter){
