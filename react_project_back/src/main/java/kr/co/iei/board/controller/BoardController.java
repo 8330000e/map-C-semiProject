@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.iei.board.model.service.BoardService;
 import kr.co.iei.board.model.vo.Board;
+import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.utils.FileUtils;
 
 @CrossOrigin(value="*")
@@ -85,5 +86,12 @@ public class BoardController {
 	         @RequestParam("memberId") String memberId
 	 ) {
 	     return boardService.insertBoardFiles(boardNo, memberId, files);
+	 }
+	 
+	 // 인기게시글 조회
+	 @GetMapping(value="/best")
+	 public List<BoardLike> bestBoardList() {
+		 List<BoardLike> list = boardService.bestBoardList();
+		 return list;
 	 }
 }
