@@ -90,12 +90,14 @@ public class BoardController {
 	     return boardService.insertBoardFiles(boardNo, memberId, files);
 	 }
 	 
+	 /*
 	 // 인기게시글 조회
 	 @GetMapping(value="/best")
 	 public List<BoardLike> bestBoardList() {
 		 List<BoardLike> list = boardService.bestBoardList();
 		 return list;
 	 }
+	 */
 	 
 	 @GetMapping(value="{memberId}")
 	 public ResponseEntity<?> selectMemberIdBoard(@PathVariable String memberId,@RequestParam String searchBoard,@RequestParam String filter){

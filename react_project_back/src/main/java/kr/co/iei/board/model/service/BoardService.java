@@ -74,9 +74,11 @@ public class BoardService {
 
 	    return result;
 	}
+	/*
 	public List<BoardLike> bestBoardList() {
 		List<BoardLike> list = boardDao.bestBoardList();
 	}
+	*/
 	
 	public List<Board> selectMemberIdBoard(HashMap<String, String> map) {
 		List<Board> list = boardDao.selectMemberIdBoard(map);

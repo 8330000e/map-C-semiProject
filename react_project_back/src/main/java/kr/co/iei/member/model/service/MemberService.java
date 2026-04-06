@@ -39,9 +39,7 @@ public class MemberService {
 		return result;
 	}
 
-	// 로그인
-	public Member login(Member member) {
-		Member loginUser = memberDao.selectOneMember(member.getMemberId());
+
 
 	
 	//로그인 로직 
@@ -69,6 +67,7 @@ public class MemberService {
 			}
 			return null;
 }
+		/*
 		//이메일 인증을 통한 아이디 찾기 
 		if (loginUser != null && bcrypt.matches(member.getMemberPw(), loginUser.getMemberPw())) {
 			loginUser.setMemberPw(null);
@@ -77,6 +76,7 @@ public class MemberService {
 
 		return null;
 	}
+	*/
 
 	// 회원 1명 조회
 	public Member getOneMemberInfo(String memberId) {
@@ -101,21 +101,14 @@ public class MemberService {
 			Integer result = memberDao.existsByIdAndEmail(memberId,memberEmail);
 			return result > 0;
 		}
-		public Member getOneMemberInfo(String memberId) {
-			Member member = memberDao.getOneMemberInfo(memberId);
-			return member;
-		}
+		
 
 		public List<Member> selectMemberList() {
 			List<Member> memberList = memberDao.selectMemberList();
 			return memberList;
 		}
 
-		@Transactional
-		public int updateMemberInfo(Member form) {
-			int result = memberDao.updateMemberInfo(form);
-			return result;
-		}
+		
 
 		public boolean checkPw(Member member) {
 			String memberId = member.getMemberId();
@@ -135,7 +128,7 @@ public class MemberService {
 			return result;
 		}
 
-}
+
 	
 
 	// 회원정보 수정
@@ -156,7 +149,8 @@ public class MemberService {
 		return memberDao.selectMemberPoint(memberId);
 	}
 
-		
+
+}
 
 
 	
