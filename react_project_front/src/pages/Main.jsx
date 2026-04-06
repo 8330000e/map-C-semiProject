@@ -11,8 +11,18 @@ import Bestpostlist from "../components/mainpage/Bestpostlist";
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
 const getSaleStatusLabel = (productStatus) => {
-  if (productStatus === "예약중" || productStatus === 1 || productStatus === "1") return "예약중";
-  if (productStatus === "판매완료" || productStatus === 2 || productStatus === "2") return "판매완료";
+  if (
+    productStatus === "예약중" ||
+    productStatus === 1 ||
+    productStatus === "1"
+  )
+    return "예약중";
+  if (
+    productStatus === "판매완료" ||
+    productStatus === 2 ||
+    productStatus === "2"
+  )
+    return "판매완료";
   return "판매중";
 };
 
@@ -47,7 +57,9 @@ const Main = () => {
   useEffect(() => {
     axios
       .get(`${BACKSERVER}/api/store/reviews/latest?limit=30`)
-      .then((res) => setRealtimeComments(Array.isArray(res.data) ? res.data : []))
+      .then((res) =>
+        setRealtimeComments(Array.isArray(res.data) ? res.data : []),
+      )
       .catch((err) => console.error("실시간 댓글 조회 실패", err));
   }, []);
 
@@ -197,7 +209,7 @@ const Main = () => {
         <div className="main_map roundBorder">
           {/* <p>Map</p> */}
           {/*위치설명*/}
-          {/* <Map /> */}
+          <Map />
         </div>
 
         <div className="main_content_one">
@@ -250,23 +262,34 @@ const Main = () => {
           <div className="used_list_scroll" ref={usedListRef}>
             <ul>
               {usedGoods.map((item, index) => (
-                 <li key={item.marketNo ?? item.boardNo ?? index}>
+                <li key={item.marketNo ?? item.boardNo ?? index}>
                   <Link to={`/store/${item.marketNo}`}>
                     <div className="used_item_image" aria-hidden="true" />
                     <div className="used_item_info">
                       <strong>
-                      [{getSaleStatusLabel(item.productStatus)}] {item.marketTitle}
+                        [{getSaleStatusLabel(item.productStatus)}]{" "}
+                        {item.marketTitle}
                       </strong>
-                     <p className="used_item_price">{item.productPrice ? `${Number(item.productPrice).toLocaleString("ko-KR")}원` : ""}</p>
+                      <p className="used_item_price">
+                        {item.productPrice
+                          ? `${Number(item.productPrice).toLocaleString("ko-KR")}원`
+                          : ""}
+                      </p>
                       <div className="used_item_meta">
-                      <span>{item.memberNickname || item.memberId}</span>
+                        <span>{item.memberNickname || item.memberId}</span>
                         <span>|</span>
-                      <span>💬 0</span>
+                        <span>💬 0</span>
                         <span>|</span>
-                      <span>{item.createdAt ? new Date(item.createdAt).toLocaleDateString("ko-KR") : ""}</span>
+                        <span>
+                          {item.createdAt
+                            ? new Date(item.createdAt).toLocaleDateString(
+                                "ko-KR",
+                              )
+                            : ""}
+                        </span>
                       </div>
                       <span className="used_item_view">
-                      👀 {item.readCount || 0}
+                        👀 {item.readCount || 0}
                       </span>
                     </div>
                   </Link>
