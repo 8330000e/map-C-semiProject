@@ -77,6 +77,13 @@ const AdminNotice = ({
       <section className={styles.notice_list_wrap}>
         <div className={styles.table_wrap}>
           <table className={styles.notice_table}>
+            <colgroup>
+              <col className={styles.col_fixed} />
+              <col className={styles.col_title} />
+              <col className={styles.col_date} />
+              <col className={styles.col_edit} />
+              <col className={styles.col_delete} />
+            </colgroup>
             <thead>
               <tr>
                 <th className={styles.col_fixed}>고정</th>
@@ -89,21 +96,21 @@ const AdminNotice = ({
             <tbody>
               {noticeList.length === 0 ? (
                 <tr>
-                  <td>등록된 공지사항이 없습니다.</td>
+                  <td colSpan={5}>등록된 공지사항이 없습니다.</td>
                 </tr>
               ) : (
                 noticeList.map((item) => (
                   <tr key={item.noticeNo}>
-                    <td>
+                    <td className={styles.col_fixed}>
                       {item.noticeFixed === 1 ? (
                         <span className={styles.badge_fixed}>고정</span>
                       ) : (
                         ""
                       )}
                     </td>
-                    <td>{item.noticeTitle}</td>
-                    <td>{item.noticeDate}</td>
-                    <td>
+                    <td className={styles.col_title}>{item.noticeTitle}</td>
+                    <td className={styles.col_date}>{item.noticeDate}</td>
+                    <td className={styles.col_edit}>
                       <Button
                         className="btn primary outline sm"
                         onClick={() => {
@@ -121,7 +128,7 @@ const AdminNotice = ({
                         수정
                       </Button>
                     </td>
-                    <td>
+                    <td className={styles.col_delete}>
                       <Button
                         className="btn danger sm"
                         onClick={() => {
