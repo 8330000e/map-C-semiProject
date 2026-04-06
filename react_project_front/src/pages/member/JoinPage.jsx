@@ -46,10 +46,10 @@ const Join = () => {
   // 비밀번호 일치 체크
   useEffect(() => {
     if (!memberPwRe) {
-      //setCheckPw(0);
+      setCheckPw(0);
       return;
     }
-    //setCheckPw(member.memberPw === memberPwRe ? 1 : 2);
+    setCheckPw(member.memberPw === memberPwRe ? 1 : 2);
   }, [memberPwRe, member.memberPw]);
 
   const inputMember = (e) => {
