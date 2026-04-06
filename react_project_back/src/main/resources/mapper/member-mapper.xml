@@ -101,4 +101,7 @@ fetch first 1 row only
     SET TOTAL_POINT = TOTAL_POINT - #{point}
     WHERE MEMBER_ID = #{memberId}
 </update>
+<update id="leaveMember">
+	update member_tbl1 set member_status = 2 where member_id =#{memberId}
+</update>
 </mapper>
