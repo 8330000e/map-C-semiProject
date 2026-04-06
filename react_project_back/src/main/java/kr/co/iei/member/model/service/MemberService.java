@@ -70,13 +70,14 @@ public class MemberService {
 			return memberId;
 		}
 
-		// 아이디 충복 체크 설정
+		// 아이디 중복 체크 설정
 		public Member selectOneMember(String memberId) {
 			Member m = memberDao.selectOneMember(memberId);
 			return m;
 		}
 
 		//boolean이기 떄문에 return도 !형식으로 줘야함.
+		//비밀번호 찾기를 위한 아이디 검증 및 이메일 인증 신청 로직
 		public boolean existsByIdAndEmail(String memberId, String memberEmail) {
 			Integer result = memberDao.existsByIdAndEmail(memberId,memberEmail);
 			return result > 0;
