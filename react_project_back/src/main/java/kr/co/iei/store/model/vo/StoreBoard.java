@@ -17,8 +17,13 @@ public class StoreBoard {
 
     private Integer productStatus;
     private Long productPrice;
+    private String tradeType;
 
     private String productThumb;
+    private String memberNickname;
+
+    private Integer readCount;
+    private Integer isDeleted;
 
     private Date createdAt;
     private Date updatedAt;

@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
 import styles from "./store.module.css";
-import { storeDummyData } from "../../mock/dummyData";
+import axios from "axios";
 
 // 로컬스토리지 저장 키
 const STORE_STATUS_KEY = "storeSaleStatusMap";
@@ -22,7 +22,7 @@ const getSaleStatusMap = () => {
     }
 };
 
-const getSaleStatusById = (id, map) => map[id] || "판매중";
+const getSaleStatusById = (id, map, fallbackStatus = "판매중") => map[id] || fallbackStatus;
 
 const Store = () => {
     // 현재 페이지 / 페이지당 노출 개수
@@ -34,6 +34,8 @@ const Store = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [activeSearch, setActiveSearch] = useState("");
     const [saleStatusMap, setSaleStatusMap] = useState(() => getSaleStatusMap());
+    const [goods, setGoods] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const syncSaleStatus = () => setSaleStatusMap(getSaleStatusMap());
@@ -46,10 +48,39 @@ const Store = () => {
         };
     }, []);
 
-    // 데이터 준비 (75개로 제한)
-    const goods = useMemo(() => {
-        const shuffled = [...storeDummyData].sort(() => Math.random() - 0.5);
-        return shuffled.slice(0, 75);
+    useEffect(() => {
+        const loadStoreBoards = async () => {
+            try {
+                const baseUrl = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+                const { data } = await axios.get(`${baseUrl}/api/store/boards`);
+
+                const mapped = (data || []).map((item) => ({
+                    id: item.marketNo,
+                    title: item.marketTitle,
+                    price: `${Number(item.productPrice || 0).toLocaleString("ko-KR")}원`,
+                    author: item.memberId,
+                    region: item.ctpvsggId || "택배거래",
+                    date: item.createdAt ? String(item.createdAt).slice(0, 10) : "-",
+                    comments: 0,
+                    viewCount: item.readCount ?? 0,
+                    tradeTypeText: item.tradeType || "직거래/택배",
+                    saleStatus:
+                        item.productStatus === 1
+                            ? "예약중"
+                            : item.productStatus === 2
+                              ? "판매완료"
+                              : "판매중",
+                }));
+                setGoods(mapped);
+            } catch (error) {
+                console.error("중고장터 목록 조회 실패", error);
+                setGoods([]);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadStoreBoards();
     }, []);
 
     // 검색 필터
@@ -67,7 +98,7 @@ const Store = () => {
     const displayGoods = useMemo(
         () =>
             searchedGoods.map((item) => {
-                const status = getSaleStatusById(item.id, saleStatusMap);
+                const status = getSaleStatusById(item.id, saleStatusMap, item.saleStatus);
                 return {
                     ...item,
                     displayTitle: `[${status}] ${item.title}`,
@@ -167,6 +198,8 @@ const Store = () => {
 
                 {/* 상품 카드 목록 섹션 */}
                 <div className={styles.grid_box}>
+                    {isLoading && <p>불러오는 중...</p>}
+                    {!isLoading && visibleGoods.length === 0 && <p>등록된 중고장터 글이 없습니다.</p>}
                     {visibleGoods.map((item) => {
                         const tradeMethodLabel =
                             item.tradeTypeText ||

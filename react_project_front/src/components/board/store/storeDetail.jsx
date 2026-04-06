@@ -2,9 +2,9 @@
 // 상품 정보, 판매 상태 변경, 댓글 작성/수정/삭제 기능을 제공합니다.
 import React, { useMemo, useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { storeDummyData } from "../../mock/dummyData";
 import Swal from "sweetalert2";
 import styles from "./storeDetail.module.css";
+import axios from "axios";
 
 const STORE_STATUS_KEY = "storeSaleStatusMap";
 
@@ -33,12 +33,56 @@ const StoreDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const itemId = Number(id);
+  const [item, setItem] = useState(null);
+  const [displaySame, setDisplaySame] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // 목 데이터에서 해당 상품 찾기
-  const item = useMemo(
-    () => storeDummyData.find((product) => product.id === itemId),
-    [itemId],
-  );
+  useEffect(() => {
+    const loadStoreDetail = async () => {
+      try {
+        const baseUrl = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+        const [{ data: detail }, { data: list }] = await Promise.all([
+          axios.get(`${baseUrl}/api/store/boards/${itemId}`),
+          axios.get(`${baseUrl}/api/store/boards`),
+        ]);
+
+        if (!detail) {
+          setItem(null);
+          return;
+        }
+
+        const mappedItem = {
+          id: detail.marketNo,
+          title: detail.marketTitle,
+          content: detail.marketContent,
+          price: `${Number(detail.productPrice || 0).toLocaleString("ko-KR")}원`,
+          author: detail.memberId,
+          region: detail.ctpvsggId || "택배거래",
+          date: detail.createdAt ? String(detail.createdAt).slice(0, 10) : "-",
+          comments: 0,
+          viewCount: detail.readCount ?? 0,
+          tradeTypeText: detail.tradeType,
+          productStatus: detail.productStatus,
+        };
+
+        const mappedList = (list || []).map((v) => ({
+          id: v.marketNo,
+          title: v.marketTitle,
+          price: `${Number(v.productPrice || 0).toLocaleString("ko-KR")}원`,
+        }));
+
+        setItem(mappedItem);
+        setDisplaySame(mappedList.filter((v) => v.id !== itemId).slice(0, 6));
+      } catch (error) {
+        console.error("중고장터 상세 조회 실패", error);
+        setItem(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadStoreDetail();
+  }, [itemId]);
 
   const [comments, setComments] = useState([
     { id: 1, user: "구매희망자1", text: "직거래로 확인하고 싶습니다.", date: "5분 전", isPrivate: false },
@@ -57,16 +101,15 @@ const StoreDetail = () => {
   // ---------------------------
   const itemTradeSetting = useMemo(() => {
     if (!item) return { direct: true, delivery: true };
-    // DB/더미에 저장된 tradeType 사용(0=직거래/택배, 1=직거래, 2=택배)
+    // DB 기준 tradeType 문자열 사용: 직거래/택배, 직거래, 택배
+    if (item.tradeTypeText === "직거래/택배") return { direct: true, delivery: true };
+    if (item.tradeTypeText === "직거래") return { direct: true, delivery: false };
+    if (item.tradeTypeText === "택배") return { direct: false, delivery: true };
     if (typeof item.tradeType !== "undefined" && item.tradeType !== null) {
       if (item.tradeType === 0) return { direct: true, delivery: true };
       if (item.tradeType === 1) return { direct: true, delivery: false };
       if (item.tradeType === 2) return { direct: false, delivery: true };
     }
-    // tradeTypeText 보조 처리
-    if (item.tradeTypeText === "직거래/택배") return { direct: true, delivery: true };
-    if (item.tradeTypeText === "직거래") return { direct: true, delivery: false };
-    if (item.tradeTypeText === "택배") return { direct: false, delivery: true };
     return { direct: true, delivery: true };
   }, [item]);
 
@@ -85,6 +128,15 @@ const StoreDetail = () => {
       setDeliveryMethod("direct");
     }
   }, [itemTradeSetting]);
+
+  useEffect(() => {
+    if (!item) return;
+    const statusMap = getSaleStatusMap();
+    if (statusMap[itemId]) return;
+    const dbStatus =
+      item.productStatus === 1 ? "예약중" : item.productStatus === 2 ? "판매완료" : "판매중";
+    setSaleStatus(dbStatus);
+  }, [item, itemId]);
   // ---------------------------
 
   const parsePriceToNumber = (value) => Number(String(value || "").replace(/[^0-9]/g, "")) || 0;
@@ -117,6 +169,15 @@ const StoreDetail = () => {
     setEditingText("");
   };
 
+  if (isLoading) {
+    return (
+      <section className={styles.detail_wrap}>
+        <h1>중고장터</h1>
+        <p>불러오는 중...</p>
+      </section>
+    );
+  }
+
   if (!item) {
     return (
       <section className={styles.detail_wrap}>
@@ -129,8 +190,6 @@ const StoreDetail = () => {
     );
   }
 
-  const sameProducts = storeDummyData.filter((product) => product.title === item.title && product.id !== item.id);
-  const displaySame = sameProducts.length > 0 ? sameProducts.slice(0, 6) : storeDummyData.slice(0, 6);
   const displayTitle = `[${saleStatus}] ${item.title}`;
 
   const handleChangeSaleStatus = async (status) => {
@@ -202,7 +261,7 @@ const StoreDetail = () => {
 
           {/* 추가: 판매자가 등록한 거래방법 표시 */}
           <p>
-            거래방법 : {item.tradeTypeText || (item.tradeType === 0 ? "직거래/택배" : item.tradeType === 1 ? "직거래" : "택배")}
+            거래방법 : {item.tradeTypeText || "직거래/택배"}
           </p>
 
           <div className={styles.delivery_box}>

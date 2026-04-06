@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; // 추가
 import styles from "./productRegistration.module.css";
+import useAuthStore from "../../../store/useAuthStore";
 
 const ProductRegistration = () => {
     // React Router 페이지 이동 훅
@@ -17,20 +18,22 @@ const ProductRegistration = () => {
     const [displayPrice, setDisplayPrice] = useState(""); // 화면 표시용 가격 (콤마 포함)
     const [description, setDescription] = useState(""); // 상품 설명
     const [imageName, setImageName] = useState(""); // 업로드된 이미지 파일명
-    const [region, setRegion] = useState(""); // 거래 가능 지역
+    const [region, setRegion] = useState(""); // 거래 가능 지역 코드
+    const authMemberId = useAuthStore((state) => state.memberId);
+    const authNickname = useAuthStore((state) => state.memberNickname);
 
     // 거래 가능 지역 목록
     const regions = [
-        "서울 강남구",
-        "서울 마포구",
-        "서울 송파구",
-        "서울 영등포구",
-        "서울 성동구",
-        "서울 용산구",
-        "서울 서초구",
-        "서울 동작구",
-        "서울 은평구",
-        "서울 강동구",
+        { code: "11680000", name: "서울 강남구" },
+        { code: "11440000", name: "서울 마포구" },
+        { code: "11710000", name: "서울 송파구" },
+        { code: "11560000", name: "서울 영등포구" },
+        { code: "11200000", name: "서울 성동구" },
+        { code: "11170000", name: "서울 용산구" },
+        { code: "11650000", name: "서울 서초구" },
+        { code: "11590000", name: "서울 동작구" },
+        { code: "11380000", name: "서울 은평구" },
+        { code: "11740000", name: "서울 강동구" },
     ];
 
     /**
@@ -69,31 +72,34 @@ const ProductRegistration = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!authMemberId) {
+            alert("로그인 후 등록할 수 있습니다.");
+            return;
+        }
+
         if (!title || !tradeMethod || !productState || !price || !region) {
             alert("필수 항목(제목, 거래방법, 상품상태, 가격, 거래지역)을 모두 입력해주세요.");
             return;
         }
 
-        // 요청 value 매핑: 0=직거래/택배, 1=직거래, 2=택배
-        let tradeType;
-        if (tradeMethod === "직거래/택배") tradeType = 0;
-        else if (tradeMethod === "직거래") tradeType = 1;
-        else if (tradeMethod === "택배") tradeType = 2;
-        else {
+        // DB 제약조건: 택배일 때만 CTPVSGG_ID NULL 허용
+        if (!["직거래/택배", "직거래", "택배"].includes(tradeMethod)) {
             alert("거래방법을 정확히 선택해주세요.");
             return;
         }
 
+        const ctpvsggId = tradeMethod === "택배" ? null : region;
+
         const payload = {
             marketTitle: title,
             marketContent: description,
-            ctpvsggId: region,
+            ctpvsggId,
             productPrice: Number(price),
-            productStatus: productState,
+            productStatus: 0,
             productThumb: imageName || "",
-            tradeTypeText: tradeMethod,
-            tradeType: tradeType,
-            memberId: "로그인멤버", // 실제 로그인에서 가져온 회원 ID로 교체
+            tradeType: tradeMethod,
+            memberId: authMemberId,
+            memberNickname: authNickname || authMemberId,
         };
 
         try {
@@ -185,8 +191,8 @@ const ProductRegistration = () => {
                                         선택
                                     </option>
                                     {regions.map((r) => (
-                                        <option key={r} value={r}>
-                                            {r}
+                                        <option key={r.code} value={r.code}>
+                                            {r.name}
                                         </option>
                                     ))}
                                 </select>
