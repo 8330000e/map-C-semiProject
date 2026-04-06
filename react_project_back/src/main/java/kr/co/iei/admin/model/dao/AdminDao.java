@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.iei.admin.model.vo.DashData;
+import kr.co.iei.admin.model.vo.Faq;
 import kr.co.iei.admin.model.vo.Notice;
 
 @Mapper
@@ -17,6 +18,10 @@ public interface AdminDao {
 	int editNotice(Notice notice);
 
 	DashData getDashData();
+
+	int deleteNotice(Integer noticeNo);
+
+	List<Faq> selectFaqList();
 
 
 

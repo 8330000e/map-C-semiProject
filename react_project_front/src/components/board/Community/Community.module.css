@@ -46,12 +46,12 @@
 /* 검색 + 버튼 */
 .mapCommunityTop {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 12px;
   margin-bottom: 14px;
   padding-bottom: 14px;
   border-bottom: 1px solid #ececec;
+  flex-wrap: nowrap;
 }
 
 .mapCommunitySearchWrap {
@@ -90,11 +90,14 @@
 }
 
 .mapCommunityAction {
-  min-width: 100px;
   display: flex;
   justify-content: flex-end;
+  flex-shrink: 0;
 }
-
+.mapCommunityAction .mapCommunityBtn {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 .mapCommunityBtn {
   height: 42px;
   padding: 0 16px;
