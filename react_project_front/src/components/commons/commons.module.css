@@ -72,10 +72,6 @@ header > .profile_bar_wrap {
   cursor: pointer;
 }
 
-.profile_item_icon {
-  display: flex;
-  gap: 8px;
-  margin-left: 10px;
 .header_drawer {
   position: absolute;
   top: calc(100% + 12px);
@@ -117,7 +113,10 @@ header > .profile_bar_wrap {
   text-decoration: none;
   font-size: 14px;
   font-weight: 600;
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .drawer_link:hover,

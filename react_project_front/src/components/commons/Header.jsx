@@ -60,13 +60,6 @@ const Header = () => {
                 >
                   <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
                   <span>{memberNickname}</span>
-                  <div className={styles.profile_item_icon}>
-                    <NotificationsIcon
-                      sx={{ fontSize: 30, color: "#464d3e" }}
-                    />
-                    <MailIcon sx={{ fontSize: 30, color: "#464d3e" }} />
-                    <SettingsIcon sx={{ fontSize: 30, color: "#464d3e" }} />
-                  </div>
                 </div>
               )}
 
