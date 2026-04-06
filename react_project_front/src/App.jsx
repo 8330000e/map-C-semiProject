@@ -21,7 +21,6 @@ import PaymentFail from "./pages/payment/PaymentFail";
 import JoinPage from "./pages/member/JoinPage";
 import LoginPage from "./pages/member/LoginPage";
 
-import TestHeader from "./components/commons/TestHeader";
 import { useEffect } from "react";
 import useAuthStore from "./store/useAuthStore";
 import axios from "axios";
