@@ -223,6 +223,44 @@ const StoreDetail = () => {
     });
   };
 
+  const handleEdit = () => {
+    navigate("/store/register", { state: { editItem: item } });
+  };
+
+  const handleDelete = async () => {
+    const result = await Swal.fire({
+      icon: "warning",
+      title: "게시글 삭제",
+      text: "정말 이 상품을 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.",
+      showCancelButton: true,
+      confirmButtonText: "삭제",
+      cancelButtonText: "취소",
+      confirmButtonColor: "#c0392b",
+      cancelButtonColor: "#8c9482",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await axios.delete(`${BACKSERVER}/api/store/boards/${itemId}`);
+      await Swal.fire({
+        icon: "success",
+        title: "삭제 완료",
+        text: "상품이 삭제되었습니다.",
+        confirmButtonColor: "#464d3e",
+      });
+      navigate("/store");
+    } catch (error) {
+      console.error("상품 삭제 실패", error);
+      Swal.fire({
+        icon: "error",
+        title: "삭제 실패",
+        text: "상품을 삭제하지 못했습니다.",
+        confirmButtonColor: "#464d3e",
+      });
+    }
+  };
+
   return (
     <section className={styles.detail_wrap}>
       <div className={styles.detail_header}>
@@ -291,12 +329,12 @@ const StoreDetail = () => {
               onClick={() => handleChangeSaleStatus("예약중")}
               disabled={saleStatus === "판매완료"}
             >
-              예약중
+              {saleStatus === "예약중" ? "판매중으로 변경" : "예약중으로 변경"}
             </button>
-            <button type="button" className={styles.edit_button} disabled={saleStatus === "판매완료"}>
+            <button type="button" className={styles.edit_button} onClick={handleEdit} disabled={saleStatus === "판매완료"}>
               수정
             </button>
-            <button type="button" className={styles.delete_button} disabled={saleStatus === "판매완료"}>
+            <button type="button" className={styles.delete_button} onClick={handleDelete} disabled={saleStatus === "판매완료"}>
               삭제
             </button>
           </div>

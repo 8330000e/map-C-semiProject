@@ -249,8 +249,8 @@ const Main = () => {
         <div className="used_list roundBorder">
           <div className="used_list_scroll" ref={usedListRef}>
             <ul>
-              {usedGoods.map((item) => (
-                 <li key={item.marketNo}>
+              {usedGoods.map((item, index) => (
+                 <li key={item.marketNo ?? item.boardNo ?? index}>
                   <Link to={`/store/${item.marketNo}`}>
                     <div className="used_item_image" aria-hidden="true" />
                     <div className="used_item_info">
