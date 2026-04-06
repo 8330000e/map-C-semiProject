@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.member.model.vo.Member;
@@ -79,6 +80,10 @@ public class Membercontroller {
 		int result = memberService.updatePw(m);
 		return ResponseEntity.ok(result);
 	}
+
+
+	
+	
 
 	@GetMapping
 	public ResponseEntity<?> selectMemberList() {

@@ -43,6 +43,7 @@ public class MemberService {
 				loginUser.setMemberPw(null);
 				return loginUser;
 			}
+
 		}
 		return null;
 	}
@@ -60,15 +61,26 @@ public class MemberService {
 			return false;
 		}
 
+			return null;
+	}
+
+
 		boolean result = bcrypt.matches(member.getMemberPw(), forCheck.getMemberPw());
 		return result;
 	}
+
 
 	@Transactional
 	public int updatePw(Member m) {
 		String newMemberPw = m.getMemberPw();
 		String encodedNewMemberPw = bcrypt.encode(newMemberPw);
 		m.setMemberPw(encodedNewMemberPw);
+	}
+	public Member getOneMemberInfo(String memberId) {
+		Member member = memberDao.getOneMemberInfo(memberId);
+		return member;
+	
+
 
 		int result = memberDao.updatePw(m);
 		return result;
@@ -85,9 +97,34 @@ public class MemberService {
 		return result;
 	}
 
-	@Transactional
-	public int updateMemberThumb(Member mem) {
-		int result = memberDao.updateMemberThumb(mem);
+	public boolean checkPw(Member member) {
+		String memberId = member.getMemberId();
+		Member forCheck = memberDao.memberPw(memberId);
+	//		System.out.println(forCheck.getMemberPw());
+	//		System.out.println(member.getMemberPw());
+		boolean result=bcrypt.matches(member.getMemberPw(), forCheck.getMemberPw());
 		return result;
 	}
-}
+
+	@Transactional
+	public int updatePw(Member m) {
+		String newMemberPw = m.getMemberPw();
+		String encodedNewMemberPw = bcrypt.encode(newMemberPw);
+		m.setMemberPw(encodedNewMemberPw);
+		int result = memberDao.updatePw(m);
+		return result;
+	}
+
+
+	public List<Member> selectMemberList() {
+		List<Member> memberList = memberDao.selectMemberList();
+		return memberList;
+	}
+
+	
+	@Transactional
+	public int updateMemberInfo(Member member) {
+		int result = memberDao.updateMemberInfo(member);
+		return result;
+	}
+	

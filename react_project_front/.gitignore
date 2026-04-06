@@ -63,6 +63,8 @@ coverage/
 *.swo
 .DS_Store
 Thumbs.db
+.metadata/
+
 
 # TypeScript
 *.tsbuildinfo
@@ -71,3 +73,4 @@ Thumbs.db
 # yarn.lock
 # pnpm-lock.yaml
 /.metadata/
+
