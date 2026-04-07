@@ -1,6 +1,38 @@
 .mapCommunityPage {
   width: 100%;
-  padding: 30px 0;
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.to_main {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color1);
+  margin: 12px 0;
+}
+.to_main > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.to_main > div:hover {
+  color: var(--color1);
+  transform: translateX(-4px);
+  transition-duration: 0.3s;
+}
+.to_main > div:hover > svg {
+  color: var(--color1);
+  transform: translateX(-4px);
+  transition-duration: 0.3s;
 }
 
 .container {
