@@ -3,12 +3,11 @@
 import React from "react";
 import { dummyData } from "../mock/dummyData";
 
-const PostList = ({
-  limit,
-  expandedPostId = null,
-  onExpandedIdChange,
-}) => {
-  const posts = Number.isInteger(limit) && limit > 0 ? dummyData.slice(0, limit) : dummyData;
+const PostList = ({ limit, expandedPostId = null, onExpandedIdChange }) => {
+  const posts =
+    Number.isInteger(limit) && limit > 0
+      ? dummyData.slice(0, limit)
+      : dummyData;
 
   const handleToggle = (postId) => {
     if (!onExpandedIdChange) return;

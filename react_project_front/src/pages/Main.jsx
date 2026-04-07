@@ -1,7 +1,7 @@
 // 서비스 메인 화면 컴포넌트입니다.
 // 실시간 댓글, 메뉴, 중고거래 요약 리스트 등 메인 대시보드 UI를 렌더링합니다.
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import HelpIcon from "@mui/icons-material/Help";
 import useAuthStore from "../store/useAuthStore";
@@ -61,6 +61,8 @@ const Main = () => {
   const realtimeTextRef = useRef(null);
   // 중고거래 API 데이터
   const [goods, setGoods] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -235,7 +237,9 @@ const Main = () => {
             </span>
             <p>고객센터 운영시간</p>
             <p>10:00 ~ 18:00</p>
-            <button className="btn">문의하기 ▶</button>
+            <button className="btn" onClick={() => navigate("/support")}>
+              문의하기 ▶
+            </button>
           </div>
         </div>
 

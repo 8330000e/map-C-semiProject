@@ -51,4 +51,9 @@ public class RegionService {
 
         return 1;
     }
+    
+    @Transactional
+    public int resetWeeklyTree() {
+        return regionDao.resetWeeklyTree();
+    }
 }
