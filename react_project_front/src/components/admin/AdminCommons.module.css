@@ -1,18 +1,32 @@
 /* AdminHeader.jsx */
 .admin_header {
+  display: block;
+  width: 100%;
   position: relative;
+  background-color: #0b0f1a;
 }
-.admin_header > a {
+
+.admin_header_inner {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.admin_header_inner > a {
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
 }
-.admin_header > a > img {
+.admin_header_inner > a > img {
   width: 36px;
   height: 36px;
 }
-.admin_header > a > h1 {
+.admin_header_inner > a > h1 {
   font-size: 32px;
   font-family: "NanumGothicExtraBold", sans-serif;
   font-weight: 800;
@@ -28,6 +42,7 @@ header > h1 a:active {
 
 .header_wrap {
   display: flex;
+  flex: 1 1 auto;
   justify-content: flex-end;
   align-items: center;
 }

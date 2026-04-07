@@ -20,32 +20,34 @@ const AdminHeader = () => {
   return (
     <>
       <header className={styles.admin_header}>
-        <NavLink to="/" className={styles.logo}>
-          <img src="src\assets\logo\logo.svg" alt="logo" />
-          <h1>탄소커넥트</h1>
-        </NavLink>
-        <div className={styles.header_wrap}>
-          <div className={styles.profile_bar_wrap}>
-            {memberGrade === 1 ? (
-              <div
-                className={styles.profile_item}
-                onClick={() => {
-                  navigate("/admin");
-                }}
-              >
-                <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
-                <span>{memberNickname}</span>
-              </div>
-            ) : (
-              <div className={styles.profile_item}>
-                <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
-                <span>{memberNickname}</span>
-              </div>
-            )}
+        <div className={styles.admin_header_inner}>
+          <NavLink to="/" className={styles.logo}>
+            <img src="src\assets\logo\logo.svg" alt="logo" />
+            <h1>탄소커넥트</h1>
+          </NavLink>
+          <div className={styles.header_wrap}>
+            <div className={styles.profile_bar_wrap}>
+              {memberGrade === 1 ? (
+                <div
+                  className={styles.profile_item}
+                  onClick={() => {
+                    navigate("/admin");
+                  }}
+                >
+                  <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
+                  <span>{memberNickname}</span>
+                </div>
+              ) : (
+                <div className={styles.profile_item}>
+                  <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
+                  <span>{memberNickname}</span>
+                </div>
+              )}
 
-            <NotificationsIcon sx={{ fontSize: 30, color: "#464d3e" }} />
+              <NotificationsIcon sx={{ fontSize: 30, color: "#464d3e" }} />
 
-            <button onClick={handleLogout}>로그아웃</button>
+              <button onClick={handleLogout}>로그아웃</button>
+            </div>
           </div>
         </div>
       </header>
