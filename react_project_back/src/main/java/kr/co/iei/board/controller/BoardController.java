@@ -155,12 +155,16 @@ public class BoardController {
 	}
 	 
 	@GetMapping(value="{memberId}")
-	public ResponseEntity<?> selectMemberIdBoard(@PathVariable String memberId, @RequestParam(defaultValue = "") String searchBoard, @RequestParam(defaultValue = "1") String filter) {
-		HashMap<String, String> map = new HashMap<>();
+	public ResponseEntity<?> selectMemberIdBoard(@PathVariable String memberId, @RequestParam(defaultValue = "") String searchBoard, @RequestParam(defaultValue = "2") String filter,
+			@RequestParam(defaultValue="1") Integer checker) {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("checker", checker);
 		map.put("searchBoard", searchBoard);
 		map.put("memberId", memberId);
 		map.put("filter", filter);
-		List<Board> list = boardService.selectMemberIdBoard(map);
-		return ResponseEntity.ok(list);
-	}
+		 List<Board> list = boardService.selectMemberIdBoard(map);
+		 return ResponseEntity.ok(list);
+	 }
+	 
+	 
 }

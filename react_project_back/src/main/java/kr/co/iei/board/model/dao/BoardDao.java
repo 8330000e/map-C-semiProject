@@ -38,7 +38,11 @@ public interface BoardDao {
 
 	List<BoardLike> bestBoardList();
 	
-	List<Board> selectMemberIdBoard(HashMap<String, String> map);
+	List<Board> selectMemberIdBoard(HashMap<String, Object> map);
+
+	List<Integer> selectLikeBoard(String memberId);
+
+	List<Integer> selectTipBoard(String memberId);
     
 
 }

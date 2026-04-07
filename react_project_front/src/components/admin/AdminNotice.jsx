@@ -16,11 +16,11 @@ const AdminNotice = ({
   return (
     <>
       <section className={styles.notice_write_wrap}>
-        <form>
+        <form onSubmit={insertNotice}>
           <section className={styles.notice_input_wrap}>
             <div className={styles.notice_write_title}>
               <label htmlFor="noticeTitle">공지사항 제목</label>
-              <input
+              <Input
                 type="text"
                 id="noticeTitle"
                 name="noticeTitle"
@@ -42,6 +42,7 @@ const AdminNotice = ({
             <div className={styles.notice_public}>
               <label htmlFor="noticePublic">공개 설정</label>
               <select
+                id="noticePublic"
                 className={styles.select}
                 name="noticePublic"
                 value={notice.noticePublic}
@@ -54,6 +55,7 @@ const AdminNotice = ({
             <div className={styles.notice_fixed}>
               <label htmlFor="noticeFixed">고정 설정</label>
               <select
+                id="noticeFixed"
                 className={styles.select}
                 name="noticeFixed"
                 value={notice.noticeFixed}
@@ -63,7 +65,7 @@ const AdminNotice = ({
                 <option value={1}>고정</option>
               </select>
             </div>
-            <Button className="btn admin" type="submit" onClick={insertNotice}>
+            <Button className="btn admin" type="submit">
               {isEdit ? "수정하기" : "등록하기"}
             </Button>
           </section>
@@ -108,6 +110,7 @@ const AdminNotice = ({
                     <td className={styles.col_edit}>
                       <Button
                         className="btn admin sm"
+                        type="button"
                         onClick={() => {
                           setIsEdit(true);
 
@@ -126,6 +129,7 @@ const AdminNotice = ({
                     <td className={styles.col_delete}>
                       <Button
                         className="btn danger sm"
+                        type="button"
                         onClick={() => {
                           deleteNotice(item.noticeNo);
                         }}

@@ -709,3 +709,9 @@
     grid-row: 3;
   }
 }
+.waterButton:disabled {
+  background: #c9cfbf;
+  color: #6a7265;
+  cursor: not-allowed;
+  opacity: 0.9;
+}

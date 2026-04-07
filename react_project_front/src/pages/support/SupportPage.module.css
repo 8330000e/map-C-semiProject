@@ -1,0 +1,65 @@
+.support_wrap {
+  width: 100%;
+  margin: 0 auto;
+  padding: 22px 0 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  --support-text: #1d2430;
+  --support-muted: #5d6772;
+  --support-hero-bg: #dce7f2;
+  --support-card-blue: #c4daef;
+  --support-card-green: #cfe4cc;
+  --support-card-sand: #ebd7b8;
+  --support-white: #ffffff;
+  --support-border: #d5dee8;
+  --support-border-strong: #c3ceda;
+  --support-btn: #2f7bec;
+  --support-btn-hover: #2368cf;
+  --support-focus: rgba(47, 123, 236, 0.24);
+}
+
+:global(body.support-page-active .carbonconnect.wrap) {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+}
+
+:global(body.support-page-active .carbonconnect > header) {
+  margin-bottom: 6px;
+}
+
+:global(body.support-page-active .carbonconnect > header .profile_bar_wrap) {
+  gap: 12px;
+}
+
+:global(body.support-page-active .carbonconnect > header .profile_bar_wrap > button) {
+  display: none;
+}
+
+:global(body.support-page-active .carbonconnect > main) {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+}
+
+:global(body.support-page-active .carbonconnect > main.main) {
+  flex: 1 0 auto;
+}
+
+@media (max-width: 1280px) {
+  .support_wrap {
+    padding: 18px 0 14px;
+  }
+}
+
+@media (max-width: 900px) {
+  .support_wrap {
+    padding: 14px 0 10px;
+  }
+
+  :global(body.support-page-active .carbonconnect > header .profile_bar_wrap > button) {
+    display: inline-flex;
+  }
+}

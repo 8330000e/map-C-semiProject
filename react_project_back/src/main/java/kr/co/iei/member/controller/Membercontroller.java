@@ -198,7 +198,7 @@ public class Membercontroller {
 	@PatchMapping(value = "/{memberId}")
 	public ResponseEntity<?> updateMemberInfo(@PathVariable String memberId, @RequestBody Member form) {
 		form.setMemberId(memberId);
-
+		System.out.println(form);
 		int result = memberService.updateMemberInfo(form);
 		return ResponseEntity.ok(result);
 	}

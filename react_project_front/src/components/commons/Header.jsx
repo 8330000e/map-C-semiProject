@@ -21,7 +21,10 @@ const Header = () => {
   return (
     <>
       <header className={styles.header}>
-        <h1 onClick={() => navigate("/")}>탄소커넥트</h1>
+        <NavLink to="/" className={styles.logo}>
+          <img src="src\assets\logo\logo.svg" alt="logo" />
+          <h1>탄소커넥트</h1>
+        </NavLink>
 
         <div className={styles.header_wrap}>
           {!memberId ? (
@@ -68,12 +71,6 @@ const Header = () => {
               <NotificationsIcon
                 sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }}
               />
-              <MailIcon
-                sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }}
-              />
-              <SettingsIcon
-                sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }}
-              />
 
               <button
                 onClick={handleLogout}
@@ -81,14 +78,14 @@ const Header = () => {
               >
                 로그아웃
               </button>
-              <button
+              {/* <button
                 onClick={() => setDrawer((prev) => !prev)}
                 className={`${styles.btn} ${styles.outline}`}
                 aria-expanded={drawer}
                 aria-controls="header-drawer"
               >
                 메뉴 열기
-              </button>
+              </button> */}
 
               <div
                 id="header-drawer"

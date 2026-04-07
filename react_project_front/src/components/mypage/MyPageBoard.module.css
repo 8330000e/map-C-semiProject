@@ -1,0 +1,37 @@
+.board_main_wrap {
+  width: 700px;
+  background-color: var(--gray6);
+  min-height: 700px;
+}
+.board_title_wrap {
+  text-align: center;
+}
+.board_content_wrap {
+  margin-top: 30px;
+}
+.board_search_wrap {
+  width: 500px;
+  margin: 0px auto;
+  display: flex;
+  gap: 5px;
+}
+.board_search_wrap > label {
+  cursor: pointer;
+  align-self: center;
+}
+.board_search_wrap > select {
+  border-radius: 5px;
+}
+.board_list_wrap {
+  width: 600px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.one_board {
+  width: fit-content;
+  height: 70px;
+  display: flex;
+  background-color: var(--gray8);
+}
