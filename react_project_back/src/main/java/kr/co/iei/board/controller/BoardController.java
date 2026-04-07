@@ -1,10 +1,12 @@
 package kr.co.iei.board.controller;
 
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,11 +32,11 @@ public class BoardController {
 	@Autowired
 	private BoardService boardService;
 	
-	//이미지 경로
-	@Autowired
-    private FileUtils fileUtils;
-	
-	
+	// application.properties의 file.root 값을 주입받아 파일 업로드/조회 경로를 결정합니다.
+	// Windows 와 macOS 모두에서 동작하도록 File 객체로 경로를 생성합니다.
+	@Value("${file.root}")
+	private String root;
+
 	//게시글 조회
 	@GetMapping
     public HashMap<String, Object> selectBoardList(
@@ -57,16 +59,21 @@ public class BoardController {
 	    return board;
 	}
 	//이미지 저장
-	 @PostMapping("/editor/upload")
-	    public String uploadEditorImage(@RequestParam("upfile") MultipartFile upfile) {
-	        if (upfile == null || upfile.isEmpty()) {
-	            throw new RuntimeException("업로드할 파일이 없습니다.");
-	        }
+	@PostMapping("/editor/upload")
+	public String uploadEditorImage(@RequestParam("upfile") MultipartFile upfile) {
+		if (upfile == null || upfile.isEmpty()) {
+			throw new RuntimeException("업로드할 파일이 없습니다.");
+		}
 
-	        String savePath = "C:/Temp/upload/board/editor/";
-	        String fileName = fileUtils.upload(savePath, upfile);
-	        return "/board/editor/" + fileName;
-	    }
+		// root 설정값을 실제 OS 경로로 변환합니다. Windows, macOS 모두 정상 동작해야 합니다.
+		File saveDir = new File(new File(root), "board/editor");
+		if (!saveDir.exists()) {
+			saveDir.mkdirs();
+		}
+
+		String fileName = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
+		return "/board/editor/" + fileName;
+	}
 	 
 	// 수정
 	 @PatchMapping("/{boardNo}")

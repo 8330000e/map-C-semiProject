@@ -36,6 +36,9 @@ public class DatabaseInitializer implements CommandLineRunner {
         addColumnIfNotExists("STORE_REVIEW_TBL", "IS_PRIVATE",       "NUMBER(1) DEFAULT 0 NOT NULL");
         addColumnIfNotExists("STORE_REVIEW_TBL", "CREATED_AT",       "TIMESTAMP DEFAULT SYSTIMESTAMP");
         addColumnIfNotExists("STORE_REVIEW_TBL", "IS_DELETED",       "NUMBER(1) DEFAULT 0 NOT NULL");
+        addColumnIfNotExists("STORE_BOARD_TRADEINFO_TBL", "INVOICE_NUMBER", "VARCHAR2(100)");
+        addColumnIfNotExists("STORE_BOARD_TRADEINFO_TBL", "COURIER_CODE", "NUMBER");
+        addColumnIfNotExists("STORE_BOARD_TRADEINFO_TBL", "SHIPPING_STATUS", "NUMBER DEFAULT 0");
     }
 
     private void addColumnIfNotExists(String table, String column, String definition) {
