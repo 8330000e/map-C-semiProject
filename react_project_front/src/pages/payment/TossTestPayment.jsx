@@ -134,6 +134,11 @@ const TossTestPayment = () => {
 
 		try {
 			const orderId = `ORDER-${Date.now()}`;
+			const tradeTypeText = location.state?.deliveryMethod === "delivery"
+				? "택배"
+				: location.state?.deliveryMethod === "direct"
+				? "직거래"
+				: tradeType;
 			setPendingPurchase(orderId, {
 				id: orderId,
 				marketNo,
@@ -142,19 +147,25 @@ const TossTestPayment = () => {
 				amount,
 				status: "구매완료",
 				tradeType,
-				tradeTypeText: tradeType,
+				tradeTypeText,
+				deliveryMethod: location.state?.deliveryMethod,
+				deliveryFee: Number(location.state?.deliveryFee || 0),
 				sellerId,
 				seller: sellerNickname,
 				buyerId: memberId,
 				buyerNickname: memberNickname || memberId,
+				orderInfo,
+				productThumb: location.state?.productThumb,
 				date: new Date().toISOString(),
 			});
+			const customerMobilePhone = orderInfo?.phone?.toString().replace(/[^0-9]/g, "");
+			const deliveryMethodParam = encodeURIComponent(location.state?.deliveryMethod || "");
 			await widgets.requestPayment({
 				orderId,
 				orderName,
 				customerName: orderInfo?.receiverName || "테스트구매자",
-				customerMobilePhone: orderInfo?.phone,
-				successUrl: `${window.location.origin}/payment/success?itemId=${itemId}&marketNo=${marketNo}`,
+				customerMobilePhone,
+				successUrl: `${window.location.origin}/payment/success?itemId=${itemId}&marketNo=${marketNo}&orderId=${encodeURIComponent(orderId)}&amount=${encodeURIComponent(amount)}&deliveryMethod=${deliveryMethodParam}`,
 				failUrl: `${window.location.origin}/payment/fail`,
 			});
 		} catch (error) {

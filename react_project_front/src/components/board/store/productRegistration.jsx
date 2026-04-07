@@ -19,6 +19,7 @@ const ProductRegistration = () => {
     const [displayPrice, setDisplayPrice] = useState("");
     const [description, setDescription] = useState("");
     const [imageName, setImageName] = useState("");
+    const [productThumb, setProductThumb] = useState("");
     const [regionLabel, setRegionLabel] = useState("");
     const [region, setRegion] = useState("");
     const [regions, setRegions] = useState([]);
@@ -36,10 +37,27 @@ const ProductRegistration = () => {
 - 하자 여부
 * 실제 촬영한 사진과 함께 상세 정보를 입력해주세요.`;
 
-    const handleImageUpload = (e) => {
+    const handleImageUpload = async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
         setImageName(file.name);
+
+        const formData = new FormData();
+        formData.append("upfile", file);
+
+        try {
+            const response = await axios.post(`${BACKSERVER}/boards/editor/upload`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            setProductThumb(response.data);
+        } catch (error) {
+            console.error("상품 이미지 업로드 실패", error);
+            alert("상품 이미지 업로드에 실패했습니다.");
+            setImageName("");
+            setProductThumb("");
+        }
     };
 
     const normalizeTradeType = (tradeType) => {
@@ -47,6 +65,14 @@ const ProductRegistration = () => {
         if (tradeType === 1 || tradeType === "1" || tradeType === "직거래" || String(tradeType).trim() === "직거래") return "직거래";
         if (tradeType === 2 || tradeType === "2" || tradeType === "택배" || String(tradeType).trim() === "택배") return "택배";
         return "";
+    };
+
+    const getImageUrl = (thumb) => {
+        if (!thumb) return null;
+        if (typeof thumb !== "string") return null;
+        if (thumb.startsWith("http")) return thumb;
+        if (thumb.startsWith("/")) return `${BACKSERVER}${thumb}`;
+        return `${BACKSERVER}/board/editor/${thumb}`;
     };
 
     useEffect(() => {
@@ -71,7 +97,8 @@ const ProductRegistration = () => {
         setPrice(editItem.productPrice ? String(editItem.productPrice) : "");
         setDisplayPrice(editItem.productPrice ? Number(editItem.productPrice).toLocaleString("ko-KR") : "");
         setDescription(editItem.marketContent || "");
-        setImageName(editItem.productThumb || "");
+        setImageName(editItem.productThumb ? editItem.productThumb.split("/").pop() : "");
+        setProductThumb(editItem.productThumb || "");
         setRegion(editItem.ctpvsggId || "");
         setRegionLabel(editItem.regionName || editItem.ctpvsggId || "");
     }, [editItem]);
@@ -134,7 +161,7 @@ const ProductRegistration = () => {
             ctpvsggId: tradeType === "택배" ? null : region || null,
             productPrice: Number(price),
             productStatus,
-            productThumb: imageName || "",
+            productThumb: productThumb || "",
             tradeType,
             memberId,
             memberNickname,
@@ -178,14 +205,28 @@ const ProductRegistration = () => {
 
                 <div className={styles.content_grid}>
                     <div className={styles.left_panel}>
-                        <div className={styles.image_box}>{imageName || "이미지"}</div>
+                        <div className={styles.image_box}>
+                            {(() => {
+                                const url = getImageUrl(productThumb);
+                                if (url) {
+                                    return <img src={url} alt={imageName || "상품 이미지"} className={styles.uploaded_image} />;
+                                }
+                                return imageName || "이미지";
+                            })()}
+                        </div>
                         <div className={styles.left_actions}>
                             <label className={styles.action_btn}>
                                 업로드
                                 <input type="file" accept="image/*" onChange={handleImageUpload} hidden />
                             </label>
-                            <button type="button" className={styles.action_btn} onClick={() => setImageName("")}>
-                                수정하기
+                            <button
+                                type="button"
+                                className={styles.action_btn}
+                                onClick={() => {
+                                    setImageName("");
+                                    setProductThumb("");
+                                }}
+                            > 수정하기
                             </button>
                         </div>
                     </div>
