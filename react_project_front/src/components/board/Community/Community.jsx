@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./Community.module.css";
 import axios from "axios";
 import TextEditor from "./TextEditor";
+import CommunityDetail from "./CommunityDetail";
 import useAuthStore from "../../../store/useAuthStore";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ChatIcon from "@mui/icons-material/Chat";
@@ -9,11 +10,12 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import Swal from "sweetalert2";
 
 const Community = () => {
-  const { memberId } = useAuthStore();
+  const { memberId, memberNickname } = useAuthStore();
   const isLogin = !!memberId;
 
   const [mode, setMode] = useState("list");
   const [boardList, setBoardList] = useState([]);
+  const [expandedBoardNo, setExpandedBoardNo] = useState(null);
 
   const [type, setType] = useState(1);
   const [keyword, setKeyword] = useState("");
@@ -88,7 +90,7 @@ const Community = () => {
       const thumbnailUrl = extractFirstImageSrc(content);
       const requestData = {
         writerId: memberId,
-        memberNickname: memberId,
+        memberNickname: memberNickname,
         boardTitle: title,
         boardContent: content,
         boardThumb: thumbnailUrl,
@@ -206,6 +208,7 @@ const Community = () => {
       const res = await axios.patch(
         `${import.meta.env.VITE_BACKSERVER}/boards/${selectedBoard.boardNo}`,
         requestData,
+        { params: { memberId } },
       );
 
       if (res.data > 0) {
@@ -269,7 +272,10 @@ const Community = () => {
     try {
       const res = await axios.delete(
         `${import.meta.env.VITE_BACKSERVER}/boards/${boardNo}`,
-        { timeout: 5000 },
+        {
+          timeout: 5000,
+          params: { memberId },
+        },
       );
 
       if (res.data > 0) {
@@ -383,12 +389,30 @@ const Community = () => {
 
               <div className={styles.boardListBox}>
                 {boardList.length > 0 ? (
-                  boardList.map((board) => (
-                    <div
-                      className={styles.boardItem}
-                      key={board.boardNo}
-                      /* onClick={() => moveToDetail(board.boardNo)} //상세보기 기능 */
-                    >
+                  boardList.map((board, index) => {
+                    const isExpanded = expandedBoardNo === board.boardNo;
+                    return (
+                      <div
+                        className={styles.boardItem}
+                        key={board.boardNo ?? `${board.boardTitle}-${board.createDate}-${index}`}
+                        onClick={async () => {
+                          if (!isExpanded) {
+                            try {
+                              await axios.get(`${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/read`);
+                              setBoardList((prev) =>
+                                prev.map((item) =>
+                                  item.boardNo === board.boardNo
+                                    ? { ...item, readCount: (item.readCount ?? 0) + 1 }
+                                    : item,
+                                ),
+                              );
+                            } catch (err) {
+                              console.error("조회수 증가 실패", err);
+                            }
+                          }
+                          setExpandedBoardNo(isExpanded ? null : board.boardNo);
+                        }}
+                      >
                       <div className={styles.boardItemTop}>
                         <div className={styles.boardWriter}>
                           <span className={styles.writerIcon}>👤</span>
@@ -418,7 +442,7 @@ const Community = () => {
 
                           <button
                             type="button"
-                            className={styles.deleteBtn}
+                            className={`${styles.mapCommunityBtn} ${styles.deleteBtn}`}
                             onClick={(e) => {
                               e.stopPropagation();
                               deleteBoard(board.boardNo);
@@ -454,8 +478,28 @@ const Community = () => {
                           <span>{board.commentCount ?? 0}</span>
                         </span>
                       </div>
+                      {isExpanded && (
+                        <CommunityDetail
+                          board={board}
+                          onEdit={(boardItem) => {
+                            setSelectedBoard(boardItem);
+                            startEdit(boardItem);
+                          }}
+                          onDelete={(boardNo) => deleteBoard(boardNo)}
+                          onLikeChange={(boardNo, newLikeCount) => {
+                            setBoardList((prev) =>
+                              prev.map((item) =>
+                                item.boardNo === boardNo
+                                  ? { ...item, likeCount: newLikeCount }
+                                  : item,
+                              ),
+                            );
+                          }}
+                        />
+                      )}
                     </div>
-                  ))
+                  );
+                })
                 ) : (
                   <div className={styles.emptyBoard}>
                     등록된 게시글이 없습니다.

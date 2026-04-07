@@ -37,6 +37,14 @@ public class JwtUtils {
 	
 	public LoginMember createToken(String memberId, Integer memberGrade, String memberNickname) {
 
+		if (memberNickname == null) {
+			memberNickname = "";
+		}
+
+		if (secretKey == null || secretKey.isBlank()) {
+			throw new IllegalStateException("JWT secret key is not configured");
+		}
+
 		// 즉 이런 형태임 -> "hello" → [104, 101, 108, 108, 111]
 		// keys.hmacShaKeyFor->
 		// -> 전달받은 바이트를 HMAC-SHA 방식의 서명 키(SecretKey) 로 만들어줌

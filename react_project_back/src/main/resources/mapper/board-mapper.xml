@@ -1,136 +1,203 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="kr.co.iei.board.model.dao.BoardDao">
-<select id="selectBoardList" parameterType="map" resultType="board">
-    SELECT
-        BOARD_NO,
-        WRITER_ID,
-        BOARD_TITLE,
-        BOARD_CONTENT,
-        BOARD_THUMB,
-        TO_CHAR(BOARD_DATE, 'YYYY-MM-DD') AS BOARD_DATE,
-        MEMBER_NICKNAME,
-        BOARD_STATUS,
-        BOARD_LAT,
-        BOARD_LNG,
-        READ_COUNT,
 
-        MEMBER_NICKNAME AS WRITER_NICKNAME,
-        TO_CHAR(BOARD_DATE, 'YYYY-MM-DD') AS CREATE_DATE,
-        BOARD_THUMB AS THUMBNAIL_URL,
-        0 AS LIKE_COUNT,
-        0 AS COMMENT_COUNT
-    FROM BOARD_TBL
-    WHERE BOARD_STATUS = #{status}
+    <!-- 게시글 리스트 -->
+    <select id="selectBoardList" parameterType="map" resultType="board">
+        SELECT
+            b.BOARD_NO AS boardNo,
+            b.WRITER_ID AS writerId,
+            b.BOARD_TITLE AS boardTitle,
+            b.BOARD_CONTENT AS boardContent,
+            b.BOARD_THUMB AS boardThumb,
+            TO_CHAR(b.BOARD_DATE, 'YYYY-MM-DD') AS boardDate,
+            b.MEMBER_NICKNAME AS memberNickname,
+            b.BOARD_STATUS AS boardStatus,
+            b.BOARD_LAT AS boardLat,
+            b.BOARD_LNG AS boardLng,
+            b.READ_COUNT AS readCount,
+            NVL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0) AS likeCount,
 
-    <if test="searchKeyword != null and searchKeyword != ''">
-        <choose>
-            <when test="searchType == 1">
-                AND BOARD_TITLE LIKE '%' || #{searchKeyword} || '%'
-            </when>
-            <when test="searchType == 2">
-                AND MEMBER_NICKNAME LIKE '%' || #{searchKeyword} || '%'
-            </when>
-        </choose>
-    </if>
+            b.MEMBER_NICKNAME AS writerNickname,
+            TO_CHAR(b.BOARD_DATE, 'YYYY-MM-DD') AS createDate,
+            b.BOARD_THUMB AS thumbnailUrl,
+            0 AS commentCount
+        FROM BOARD_TBL b
+        WHERE BOARD_STATUS = #{status}
+        AND NOT EXISTS (
+            SELECT 1 FROM STORE_BOARD_TBL s WHERE s.BOARD_NO = b.BOARD_NO
+        )
 
-    ORDER BY BOARD_NO DESC
-</select>
-<insert id="insertBoard" parameterType="board">
-    <selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
-        SELECT ISEQ$$_80822.NEXTVAL FROM DUAL
-    </selectKey>
+        <if test="sido != null and sido != ''">
+            AND b.ctpv = #{sido}
+        </if>
+        <if test="sigungu != null and sigungu != ''">
+            AND b.sgg = #{sigungu}
+        </if>
 
-    INSERT INTO BOARD_TBL (
-        BOARD_NO,
-        WRITER_ID,
-        BOARD_TITLE,
-        BOARD_CONTENT,
-        BOARD_THUMB,
-        MEMBER_NICKNAME,
-        BOARD_STATUS,
-        BOARD_LAT,
-        BOARD_LNG
-    ) VALUES (
-        #{boardNo},
-        #{writerId},
-        #{boardTitle},
-        #{boardContent},
-        #{boardThumb},
-        #{memberNickname},
-        #{boardStatus},
-        #{boardLat},
-        #{boardLng}
-    )
-</insert>
+        <if test="searchKeyword != null and searchKeyword != ''">
+            <choose>
+                <when test="searchType == 1">
+                    AND BOARD_TITLE LIKE '%' || #{searchKeyword} || '%'
+                </when>
+                <when test="searchType == 2">
+                    AND MEMBER_NICKNAME LIKE '%' || #{searchKeyword} || '%'
+                </when>
+            </choose>
+        </if>
 
+        ORDER BY (b.READ_COUNT + NVL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0)) DESC
+    </select>
 
-<update id="updateBoard" parameterType="board">
-    UPDATE BOARD_TBL
-    SET
-        BOARD_TITLE = #{boardTitle},
-        BOARD_CONTENT = #{boardContent},
-        BOARD_THUMB = #{boardThumb}
-    WHERE BOARD_NO = #{boardNo}
-</update>
+    <!-- 게시글 등록 -->
+    <insert id="insertBoard" parameterType="board">
+        <selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
+            SELECT ISEQ$$_80822.NEXTVAL FROM DUAL
+        </selectKey>
 
-<delete id="deleteBoard" parameterType="int">
-    DELETE FROM BOARD_TBL
-    WHERE BOARD_NO = #{boardNo}
-</delete>
-<insert id="insertBoardFile" parameterType="boardFile">
-    <selectKey keyProperty="fileNo" resultType="int" order="BEFORE">
-        SELECT BOARD_FILE_SEQ.NEXTVAL FROM DUAL
-    </selectKey>
+        INSERT INTO BOARD_TBL (
+            BOARD_NO,
+            WRITER_ID,
+            BOARD_TITLE,
+            BOARD_CONTENT,
+            BOARD_THUMB,
+            MEMBER_NICKNAME,
+            BOARD_STATUS,
+            BOARD_LAT,
+            BOARD_LNG
+        ) VALUES (
+            #{boardNo},
+            #{writerId},
+            #{boardTitle},
+            #{boardContent},
+            #{boardThumb},
+            #{memberNickname},
+            #{boardStatus},
+            #{boardLat},
+            #{boardLng}
+        )
+    </insert>
 
-    INSERT INTO BOARD_FILE_TBL (
-        FILE_NO,
-        BOARD_NO,
-        MEMBER_ID,
-        BOARD_FILE_NAME,
-        BOARD_FILE_PATH
-    ) VALUES (
-        #{fileNo},
-        #{boardNo},
-        #{memberId},
-        #{boardFileName},
-        #{boardFilePath}
-    )
-</insert>
-<select id="bestBoardList" resultType="BoardLike">
-select 
-t.board_no, count(t.board_no) as count, b.board_title, b.ctpv, b.sgg
-from board_like_tbl t 
-join board_tbl b on (t.board_no = b.board_no)
-where t.board_no = t.board_no
-group by t.board_no, b.board_title, b.ctpv, b.sgg order by 2 desc
-</select>
+    <!-- 게시글 수정 -->
+    <update id="updateBoard" parameterType="board">
+        UPDATE BOARD_TBL
+        SET
+            BOARD_TITLE = #{boardTitle},
+            BOARD_CONTENT = #{boardContent},
+            BOARD_THUMB = #{boardThumb}
+        WHERE BOARD_NO = #{boardNo}
+    </update>
 
-<select id="selectMemberIdBoard" resultType="board">
-	select 
-	board_no,
-	member_nickname,
-	board_title,
-	board_thumb,
-	board_date,
-	read_count 
-	from board_tbl 
-	where writer_id = #{memberId} 
-	
-	<if test="searchBoard != '' and searchBoard != null">
-		and board_title like '%' || #{searchBoard} || '%'
-	</if>
-	<if test="filter==1">
-		order by board_no desc
-	</if>
-	<if test="filter==2">
-		order by board_no asc
-	</if>
-	<if test="filter==3">
-		order by read_count desc
-	</if>
-	<if test="filter==4">
-		order by read_count asc
-	</if>
-</select>
+    <!-- 작성자 확인 -->
+    <select id="selectBoardAuthor" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM BOARD_TBL
+        WHERE BOARD_NO = #{boardNo}
+        AND WRITER_ID = #{writerId}
+    </select>
+
+    <!-- 게시글 삭제 -->
+    <delete id="deleteBoard" parameterType="int">
+        DELETE FROM BOARD_TBL
+        WHERE BOARD_NO = #{boardNo}
+    </delete>
+
+    <!-- 조회수 증가 -->
+    <update id="incrementReadCount" parameterType="int">
+        UPDATE BOARD_TBL
+        SET READ_COUNT = NVL(READ_COUNT, 0) + 1
+        WHERE BOARD_NO = #{boardNo}
+    </update>
+
+    <!-- 좋아요 추가 -->
+    <insert id="insertBoardLike" parameterType="map">
+        INSERT INTO BOARD_LIKE_TBL (BOARD_NO, MEMBER_ID)
+        VALUES (#{boardNo}, #{memberId})
+    </insert>
+
+    <!-- 좋아요 삭제 -->
+    <delete id="deleteBoardLike" parameterType="map">
+        DELETE FROM BOARD_LIKE_TBL
+        WHERE BOARD_NO = #{boardNo}
+        AND MEMBER_ID = #{memberId}
+    </delete>
+
+    <!-- 좋아요 여부 -->
+    <select id="selectBoardLikeByMember" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM BOARD_LIKE_TBL
+        WHERE BOARD_NO = #{boardNo}
+        AND MEMBER_ID = #{memberId}
+    </select>
+
+    <!-- 파일 업로드 -->
+    <insert id="insertBoardFile" parameterType="boardFile">
+        <selectKey keyProperty="fileNo" resultType="int" order="BEFORE">
+            SELECT BOARD_FILE_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO BOARD_FILE_TBL (
+            FILE_NO,
+            BOARD_NO,
+            MEMBER_ID,
+            BOARD_FILE_NAME,
+            BOARD_FILE_PATH
+        ) VALUES (
+            #{fileNo},
+            #{boardNo},
+            #{memberId},
+            #{boardFileName},
+            #{boardFilePath}
+        )
+    </insert>
+
+    <!-- 인기 게시글 -->
+    <select id="bestBoardList" resultType="kr.co.iei.board.model.vo.BoardLike">
+        SELECT 
+            t.board_no, 
+            COUNT(t.board_no) AS count, 
+            b.board_title, 
+            b.ctpv, 
+            b.sgg
+        FROM board_like_tbl t
+        JOIN board_tbl b ON (t.board_no = b.board_no)
+        WHERE NOT EXISTS (
+            SELECT 1 FROM store_board_tbl s WHERE s.board_no = b.board_no
+        )
+        GROUP BY t.board_no, b.board_title, b.ctpv, b.sgg
+        ORDER BY count DESC
+    </select>
+
+    <!-- 내가 쓴 글 -->
+    <select id="selectMemberIdBoard" resultType="board">
+        SELECT 
+            board_no,
+            member_nickname,
+            board_title,
+            board_thumb,
+            board_date,
+            read_count 
+        FROM board_tbl 
+        WHERE writer_id = #{memberId}
+
+        <if test="searchBoard != null and searchBoard != ''">
+            AND board_title LIKE '%' || #{searchBoard} || '%'
+        </if>
+
+        <if test="filter == 1 or filter == '1'">
+            ORDER BY board_no DESC
+        </if>
+        <if test="filter == 2 or filter == '2'">
+            ORDER BY board_no ASC
+        </if>
+        <if test="filter == 3 or filter == '3'">
+            ORDER BY read_count DESC
+        </if>
+        <if test="filter == 4 or filter == '4'">
+            ORDER BY read_count ASC
+        </if>
+    </select>
+
 </mapper>

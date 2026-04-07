@@ -2,24 +2,29 @@
 // 실시간 댓글, 메뉴, 중고거래 요약 리스트 등 메인 대시보드 UI를 렌더링합니다.
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import HelpIcon from "@mui/icons-material/Help";
-import { dummyData, storeDummyData } from "../components/mock/dummyData";
 import useAuthStore from "../store/useAuthStore";
 import Map from "../components/mainpage/Map";
 import Bestpostlist from "../components/mainpage/Bestpostlist";
 
-const STORE_STATUS_KEY = "storeSaleStatusMap";
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-const getSaleStatusMap = () => {
-  try {
-    const raw = localStorage.getItem(STORE_STATUS_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
+const getSaleStatusLabel = (productStatus) => {
+  if (
+    productStatus === "예약중" ||
+    productStatus === 1 ||
+    productStatus === "1"
+  )
+    return "예약중";
+  if (
+    productStatus === "판매완료" ||
+    productStatus === 2 ||
+    productStatus === "2"
+  )
+    return "판매완료";
+  return "판매중";
 };
-
-const getSaleStatusById = (id, map) => map[id] || "판매중";
 
 const Main = () => {
   // 중고거래 리스트 가로 스크롤 영역 DOM에 접근하기 위한 ref
@@ -28,43 +33,34 @@ const Main = () => {
   const realtimeViewportRef = useRef(null);
   // 실시간 댓글 "실제 텍스트" DOM
   const realtimeTextRef = useRef(null);
-  const [saleStatusMap, setSaleStatusMap] = useState(() => getSaleStatusMap());
+  // 중고거래 API 데이터
+  const [goods, setGoods] = useState([]);
 
   useEffect(() => {
-    const syncSaleStatus = () => setSaleStatusMap(getSaleStatusMap());
-    window.addEventListener("storage", syncSaleStatus);
-    window.addEventListener("store-status-updated", syncSaleStatus);
-
-    return () => {
-      window.removeEventListener("storage", syncSaleStatus);
-      window.removeEventListener("store-status-updated", syncSaleStatus);
-    };
+    axios
+      .get(`${BACKSERVER}/api/store/boards`)
+      .then((res) => setGoods(Array.isArray(res.data) ? res.data : []))
+      .catch((err) => console.error("중고장터 목록 조회 실패", err));
   }, []);
 
-  // 중고거래 리스트(조회수 기준 상위 10개)
-  // useMemo: 렌더링마다 정렬/슬라이스를 반복하지 않도록 결과를 메모이징
+  // 중고거래 리스트(조회수 기준 상위 10개, 판매중인 항목만)
   const usedGoods = useMemo(() => {
-    return [...storeDummyData]
-      .map((item) => ({
-        ...item,
-        saleStatus: getSaleStatusById(item.id, saleStatusMap),
-      }))
-      .filter((item) => item.saleStatus === "판매중")
-      .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
+    return goods
+      .filter((item) => getSaleStatusLabel(item.productStatus) === "판매중")
+      .sort((a, b) => (b.readCount || 0) - (a.readCount || 0))
       .slice(0, 10);
-  }, [saleStatusMap]);
+  }, [goods]);
 
-  // 게시글의 댓글들을 "실시간 댓글용" 형태로 평탄화
-  // 예) { user, text, region } 형태로 변환
-  const realtimeComments = useMemo(() => {
-    return dummyData.flatMap((post) =>
-      (post.comments || []).map((comment) => ({
-        id: comment.id,
-        user: comment.user,
-        text: comment.text,
-        region: post.locationName,
-      })),
-    );
+  // 실시간 댓글 - 최신 리뷰 30개를 API에서 가져옴
+  const [realtimeComments, setRealtimeComments] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`${BACKSERVER}/api/store/reviews/latest?limit=30`)
+      .then((res) =>
+        setRealtimeComments(Array.isArray(res.data) ? res.data : []),
+      )
+      .catch((err) => console.error("실시간 댓글 조회 실패", err));
   }, []);
 
   // 화면에 현재 보여줄 댓글 1개
@@ -82,19 +78,15 @@ const Main = () => {
   const [realtimeTransition, setRealtimeTransition] = useState("none");
 
   // 20초마다 댓글 1개를 랜덤으로 교체
+  // 댓글 목록이 로드되면 20초마다 순서대로 교체
   useEffect(() => {
     if (!realtimeComments.length) return;
-
-    setVisibleRealtimeComment(
-      realtimeComments[Math.floor(Math.random() * realtimeComments.length)],
-    );
-
+    let idx = 0;
+    setVisibleRealtimeComment(realtimeComments[0]);
     const timer = setInterval(() => {
-      setVisibleRealtimeComment(
-        realtimeComments[Math.floor(Math.random() * realtimeComments.length)],
-      );
+      idx = (idx + 1) % realtimeComments.length;
+      setVisibleRealtimeComment(realtimeComments[idx]);
     }, 20000);
-
     return () => clearInterval(timer);
   }, [realtimeComments]);
 
@@ -217,7 +209,7 @@ const Main = () => {
         <div className="main_map roundBorder">
           {/* <p>Map</p> */}
           {/*위치설명*/}
-          {/* <Map /> */}
+          <Map />
         </div>
 
         <div className="main_content_one">
@@ -252,7 +244,7 @@ const Main = () => {
                 }}
               >
                 {visibleRealtimeComment
-                  ? `${visibleRealtimeComment.user} : ${visibleRealtimeComment.text} ${visibleRealtimeComment.region}`
+                  ? `${visibleRealtimeComment.memberNickname || visibleRealtimeComment.memberId} : ${visibleRealtimeComment.reviewContent}`
                   : "실시간 댓글이 없습니다."}
               </p>
             </div>
@@ -269,24 +261,35 @@ const Main = () => {
         <div className="used_list roundBorder">
           <div className="used_list_scroll" ref={usedListRef}>
             <ul>
-              {usedGoods.map((item) => (
-                <li key={item.id}>
-                  <Link to={`/store/${item.id}`}>
+              {usedGoods.map((item, index) => (
+                <li key={item.marketNo ?? item.boardNo ?? index}>
+                  <Link to={`/store/${item.marketNo}`}>
                     <div className="used_item_image" aria-hidden="true" />
                     <div className="used_item_info">
                       <strong>
-                        [{item.saleStatus}] {item.title}
+                        [{getSaleStatusLabel(item.productStatus)}]{" "}
+                        {item.marketTitle}
                       </strong>
-                      <p className="used_item_price">{item.price}</p>
+                      <p className="used_item_price">
+                        {item.productPrice
+                          ? `${Number(item.productPrice).toLocaleString("ko-KR")}원`
+                          : ""}
+                      </p>
                       <div className="used_item_meta">
-                        <span>{item.author}</span>
+                        <span>{item.memberNickname || item.memberId}</span>
                         <span>|</span>
-                        <span>💬 {item.comments || 0}</span>
+                        <span>💬 0</span>
                         <span>|</span>
-                        <span>{item.date}</span>
+                        <span>
+                          {item.createdAt
+                            ? new Date(item.createdAt).toLocaleDateString(
+                                "ko-KR",
+                              )
+                            : ""}
+                        </span>
                       </div>
                       <span className="used_item_view">
-                        👀 {item.viewCount || 0}
+                        👀 {item.readCount || 0}
                       </span>
                     </div>
                   </Link>
