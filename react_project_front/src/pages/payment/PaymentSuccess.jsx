@@ -2,17 +2,17 @@
 // 결제 완료 시 구매한 상품을 자동으로 "판매완료" 상태로 처리합니다.
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import axios from "axios";
 import styles from "./payment.module.css";
+import { addCompletedPurchase, clearPendingPurchase, getPendingPurchase } from "../../components/mypage/orderHistoryStorage";
 
-const STORE_STATUS_KEY = "storeSaleStatusMap";
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-const updateProductStatus = (itemId) => {
+const updateProductStatus = async (itemId) => {
 	try {
-		const raw = localStorage.getItem(STORE_STATUS_KEY);
-		const statusMap = raw ? JSON.parse(raw) : {};
-		statusMap[itemId] = "판매완료";
-		localStorage.setItem(STORE_STATUS_KEY, JSON.stringify(statusMap));
-		window.dispatchEvent(new Event("store-status-updated"));
+		await axios.patch(`${BACKSERVER}/api/store/boards/${itemId}/status`, null, {
+			params: { status: 2 },
+		});
 	} catch (error) {
 		console.error("상품 상태 업데이트 실패:", error);
 	}
@@ -24,13 +24,24 @@ const PaymentSuccess = () => {
 	const paymentKey = params.get("paymentKey");
 	const orderId = params.get("orderId");
 	const amount = params.get("amount");
-	const itemId = Number(params.get("itemId")) || null;
+	const marketNo = Number(params.get("marketNo")) || Number(params.get("itemId")) || null;
+	const order = orderId ? getPendingPurchase(orderId) : null;
 
 	useEffect(() => {
-		if (itemId) {
-			updateProductStatus(itemId);
+		if (marketNo) {
+			updateProductStatus(marketNo);
 		}
-	}, [itemId]);
+		if (orderId && order) {
+			addCompletedPurchase({
+				...order,
+				status: "구매완료",
+				date: new Date().toISOString(),
+				paymentKey,
+				amount: Number(amount || order.amount || 0),
+			});
+			clearPendingPurchase(orderId);
+		}
+	}, [amount, marketNo, order, orderId, paymentKey]);
 
 	return (
 		<section className={styles.payment_wrap}>

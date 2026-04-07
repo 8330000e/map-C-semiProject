@@ -19,9 +19,9 @@ import MyInformation from "../../components/mypage/MyInformation.jsx";
 
 // 현재는 프로필 정보와 내 페이지 서브 라우트들이 함께 표시됩니다.
 const Mypage = () => {
-  const { memberId } = useAuthStore();
+  const { memberId, isReady } = useAuthStore();
 
-  if (!memberId) {
+  if (!memberId && isReady) {
     return (
       <section className={styles.mypage_wrap}>
         <h1>마이페이지</h1>

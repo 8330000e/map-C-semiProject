@@ -8,10 +8,11 @@ import useAuthStore from "../../store/useAuthStore";
 const MyBoard = () => {
   const { memberId } = useAuthStore();
   const [boardSearch, setBoardSearch] = useState("");
-  const [searchBoard, setSearchBoard] = useState("shit");
+  const [searchBoard, setSearchBoard] = useState("");
   const [filter, setFilter] = useState(2);
   const [boardList, setBoardList] = useState([]);
   useEffect(() => {
+    console.log(memberId);
     axios
       .get(
         `${import.meta.env.VITE_BACKSERVER}/boards/${memberId}?searchBoard=${searchBoard}&filter=${filter}`,

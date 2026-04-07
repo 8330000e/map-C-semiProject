@@ -14,14 +14,14 @@ const formatDate = (value) => {
     return date.toLocaleDateString("ko-KR");
 };
 const getTradeTypeLabel = (tradeType) => {
-    if (tradeType === 0) return "직거래/택배";
-    if (tradeType === 1) return "직거래";
-    if (tradeType === 2) return "택배";
+    if (tradeType === 0 || tradeType === "0" || tradeType === "직거래/택배") return "직거래/택배";
+    if (tradeType === 1 || tradeType === "1" || tradeType === "직거래") return "직거래";
+    if (tradeType === 2 || tradeType === "2" || tradeType === "택배") return "택배";
     return "미정";
 };
 const getSaleStatusLabel = (productStatus) => {
-    if (productStatus === "예약중") return "예약중";
-    if (productStatus === "판매완료") return "판매완료";
+    if (productStatus === "예약중" || productStatus === 1 || productStatus === "1") return "예약중";
+    if (productStatus === "판매완료" || productStatus === 2 || productStatus === "2") return "판매완료";
     return "판매중";
 };
 
@@ -94,10 +94,11 @@ const Store = () => {
             {/* 레이아웃: 왼쪽 메뉴 + 오른쪽 중고장터 컨텐츠 */}
             <aside className={styles.menu_panel}>
                 {/* 메뉴 섹션 */}
+
                 <div className={styles.menu_title}>메뉴</div>
                 <ul className={styles.menu_list}>
                     <li>
-                        <a href="#">맵 커뮤니티</a>
+                        <Link to="/map-community">맵 커뮤니티</Link>
                     </li>
                     <li>
                         <a href="#">회원끼리 캠페인</a>
@@ -106,10 +107,10 @@ const Store = () => {
                         <Link to="/store">중고거래</Link>
                     </li>
                     <li>
-                        <a href="#">미션</a>
+                        <Link to="/mission">미션(출석체크)</Link>
                     </li>
                     <li>
-                        <a href="#">나무 키우기</a>
+                        <Link to="/tree-grow" className={styles.treeGrow}>나무 키우기</Link>
                     </li>
                     <li>
                         <span>
@@ -167,16 +168,16 @@ const Store = () => {
                 <div className={styles.grid_box}>
                     {isLoading && <p>목록을 불러오는 중입니다.</p>}
                     {!isLoading && loadError && <p>{loadError}</p>}
-                    {visibleGoods.map((item) => {
+                    {visibleGoods.map((item, index) => {
                         const tradeMethodLabel = getTradeTypeLabel(item.tradeType);
 
                         return (
-                            <Link key={item.marketNo} to={`/store/${item.marketNo}`} className={styles.cardLink}>
+                            <Link key={item.marketNo ?? item.boardNo ?? index} to={`/store/${item.marketNo}`} className={styles.cardLink}>
                                 <article className={styles.card}>
                                     <div className={styles.image}>{item.productThumb || "이미지"}</div>
                                     <h3>{item.displayTitle}</h3>
                                     <p className={styles.price}>{formatPrice(item.productPrice)}</p>
-                                    <div className={styles.region_badge}>{item.ctpvsggId || "지역 미등록"}</div>
+                                    <div className={styles.region_badge}>{item.regionName || item.ctpvsggId || "지역 미등록"}</div>
                                     <p className={styles.tradeType}>거래방법 : {tradeMethodLabel}</p>
 
                                     <div className={styles.metaRow}>

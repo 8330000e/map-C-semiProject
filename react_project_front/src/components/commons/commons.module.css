@@ -5,6 +5,7 @@
 /* Header.jsx */
 .header {
   position: relative;
+  cursor: pointer;
 }
 
 header > h1 > a {

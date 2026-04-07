@@ -36,7 +36,7 @@ import lombok.Getter;
 import kr.co.iei.utils.FileUtils;
 
 
-@CrossOrigin(value = "*")
+@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
 @RestController
 @RequestMapping(value = "/members")
 
@@ -227,7 +227,7 @@ public class Membercontroller {
 
 	
 	
-
+	//썸네일 변경
 	@PatchMapping(value="/{memberId}/thumb")
 	public ResponseEntity<?> updateThumb(@PathVariable String memberId,@ModelAttribute MultipartFile file){
 		String savepath = root + "member/";
@@ -267,5 +267,10 @@ public class Membercontroller {
 	public ResponseEntity<?> selectMemberPoint(@PathVariable String memberId) {
 		int totalPoint = memberService.selectMemberPoint(memberId);
 		return ResponseEntity.ok(totalPoint);
+	}
+	@PatchMapping(value="/{memberId}/leave")
+	public ResponseEntity<?> leaveMember(@PathVariable String memberId){
+		int result = memberService.leaveMember(memberId);
+		return ResponseEntity.ok(result);
 	}
 }
