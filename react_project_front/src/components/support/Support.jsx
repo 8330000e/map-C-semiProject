@@ -1,30 +1,24 @@
-import { useNavigate } from "react-router-dom";
-import styles from "./SupportMain.module.css";
+import styles from "./Support.module.css";
 
-const SupportMain = () => {
-  const navigate = useNavigate();
-
+const Support = () => {
   const cards = [
     {
       title: "자주 묻는 질문",
       desc: "이용자들이 자주 문의한 내용을 모아 확인할 수 있습니다.",
       btn: "전체보기",
-      path: "/support/faq",
-      color: "blue",
+      color: "faq",
     },
     {
       title: "공지사항",
       desc: "서비스 점검, 업데이트, 이벤트 소식을 확인할 수 있습니다.",
       btn: "전체보기",
-      path: "/support/notice",
-      color: "blue",
+      color: "notice",
     },
     {
       title: "1:1 문의",
       desc: "개별 문의를 등록하고 처리 상태를 확인할 수 있습니다.",
       btn: "문의하기",
-      path: "/support/qna",
-      color: "green",
+      color: "qna",
     },
   ];
 
@@ -44,7 +38,7 @@ const SupportMain = () => {
             <p className={styles.card_desc}>{card.desc}</p>
             <button
               className={`${styles.card_btn} ${styles[`btn_${card.color}`]}`}
-              onClick={() => navigate(card.path)}
+              type="button"
             >
               {card.btn}
             </button>
@@ -55,4 +49,4 @@ const SupportMain = () => {
   );
 };
 
-export default SupportMain;
+export default Support;
