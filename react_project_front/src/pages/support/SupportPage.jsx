@@ -1,19 +1,19 @@
-import { Route, Routes } from "react-router-dom";
-import SupportMain from "../../components/support/SupportMain";
-import NoticePage from "./NoticePage";
-import FaqPage from "./FaqPage";
-import QnaPage from "./QnaPage";
+import { useEffect } from "react";
+import Support from "../../components/support/Support";
 import styles from "./SupportPage.module.css";
 
 const SupportPage = () => {
+  useEffect(() => {
+    document.body.classList.add("support-page-active");
+
+    return () => {
+      document.body.classList.remove("support-page-active");
+    };
+  }, []);
+
   return (
     <section className={styles.support_wrap}>
-      <Routes>
-        <Route path="" element={<SupportMain />} />
-        <Route path="notice" element={<NoticePage />} />
-        <Route path="faq" element={<FaqPage />} />
-        <Route path="qna" element={<QnaPage />} />
-      </Routes>
+      <Support />
     </section>
   );
 };
