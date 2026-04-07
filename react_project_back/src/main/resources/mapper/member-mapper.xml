@@ -64,19 +64,18 @@ fetch first 1 row only
 </select>
 
  
+
+	
 	
 <update id="resetPw">
 	update member_tbl1
 	set member_pw =#{memberPw}
 	where member_id = #{memberId}
 </update>
-	
- 
 
 
 
-
-<!--..............................................................-->
+	<!--..............................................................-->
 
 <select id="selectMemberList" resultType="member">
 		select
@@ -104,7 +103,7 @@ fetch first 1 row only
 	<update id="updateMemberThumb">
 		update member_tbl1 set member_thumb=#{memberThumb} where member_id = #{memberId}
 	</update>
-	
+
 	<!-- 포인트 조회 -->
 	<select id="selectMemberPoint" parameterType="string" resultType="int">
 	SELECT TOTAL_POINT

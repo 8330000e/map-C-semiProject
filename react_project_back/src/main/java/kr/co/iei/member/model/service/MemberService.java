@@ -127,7 +127,7 @@ public class MemberService {
 		int result = memberDao.resetPw(member.getMemberId(),encPw);
 		return result;
 	}
-	
+
 	
 	////////////////////////////////////////////////////////////////////////
 
