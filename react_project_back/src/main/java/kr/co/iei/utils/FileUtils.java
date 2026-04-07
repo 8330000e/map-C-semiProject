@@ -11,20 +11,17 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileUtils {
 
     public static String upload(String savepath, MultipartFile file) {
-        // 사용자가 올린 원본 파일 이름
-        String filename = file.getOriginalFilename();
-
-        int dotIndex = filename.lastIndexOf(".");
-        String extension = "";
-
-        if (dotIndex != -1) {
-            extension = filename.substring(dotIndex);
+        if (savepath == null || savepath.trim().isEmpty()) {
+            savepath = System.getProperty("user.home") + File.separator + "upload" + File.separator;
         }
 
-        String uuid = UUID.randomUUID().toString();
-        String filepath = uuid + extension;
+        File dir = new File(savepath);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
 
-        File savefile = new File(savepath + filepath);
+        String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        File savefile = new File(dir, filename);
 
         try {
             file.transferTo(savefile);
@@ -32,6 +29,6 @@ public class FileUtils {
             e.printStackTrace();
         }
 
-        return filepath;
+        return filename;
     }
 }

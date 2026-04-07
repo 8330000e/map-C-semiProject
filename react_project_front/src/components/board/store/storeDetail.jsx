@@ -105,6 +105,8 @@ const StoreDetail = () => {
   }, [item]);
 
   const getImageUrl = (thumb) => {
+    // 여기서도 thumb가 여러 모양으로 들어와요.
+    // 파일명만 들어오면 /upload/ 경로로 바꿔서 보여줍니다.
     if (!thumb) return null;
     if (typeof thumb !== "string") return null;
     let trimmed = thumb.trim();
@@ -126,7 +128,9 @@ const StoreDetail = () => {
     }
 
     if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+    if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
     if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+    if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
     return `${BACKSERVER}/board/editor/${trimmed}`;
   };
 
@@ -206,6 +210,9 @@ const StoreDetail = () => {
     }
   };
 
+  // 댓글 삭제 확인창 추가
+  // 이전에는 삭제 버튼 클릭 시 바로 삭제 API를 호출했을 수 있으므로,
+  // 사용자가 삭제 여부를 확실히 선택하도록 확인창을 띄웁니다.
   const handleDeleteComment = async (comment) => {
     if (!memberId || memberId !== comment.memberId) return;
     const result = await Swal.fire({
@@ -272,6 +279,8 @@ const StoreDetail = () => {
     setEditingPrivate(false);
   };
 
+  // 댓글 수정 처리
+  // 수정 버튼 클릭 시 서버에 수정 내용을 저장하고, 목록을 새로 고침합니다.
   const saveEditComment = async () => {
     if (!editingTarget) return;
     const text = editingText.trim();
@@ -647,9 +656,20 @@ const StoreDetail = () => {
         <div className={styles.comment_list}>
           {comments.length === 0 && <p>등록된 댓글이 없습니다.</p>}
           {comments.map((comment) => {
+            // 비공개 댓글 접근 권한 처리
+            // 댓글 작성자, 판매글 작성자, 또는 부모 댓글 작성자만 볼 수 있도록 합니다.
             const isOwn = comment.memberId && memberId === comment.memberId;
+            const isBoardAuthor = memberId && item?.memberId === memberId;
+            const parentAuthorId = comment.parentCommentNo
+              ? comments.find((c) => c.reviewNo === comment.parentCommentNo)?.memberId
+              : null;
+            const canViewSecret =
+              comment.isPrivate !== 1 ||
+              isOwn ||
+              isBoardAuthor ||
+              parentAuthorId === memberId;
             const isSecret = comment.isPrivate === 1;
-            const displayContent = isSecret && !isOwn ? "비공개 댓글입니다." : comment.reviewContent;
+            const displayContent = isSecret && !canViewSecret ? "비공개 댓글입니다." : comment.reviewContent;
             return (
               <div
                 key={comment.reviewNo}
