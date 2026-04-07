@@ -152,6 +152,7 @@ const OrderPage = () => {
                 sellerId,
                 sellerNickname,
                 tradeType,
+                productThumb: location.state?.productThumb,
                 // 입력된 주문 정보를 정리하여 전달
                 orderInfo: {
                     receiverName: receiverName.trim(),
