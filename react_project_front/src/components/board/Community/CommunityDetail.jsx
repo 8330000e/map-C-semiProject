@@ -93,13 +93,38 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
   }, [board.boardNo, board.likeCount, memberId]);
 
   useEffect(() => {
+    if (!board?.boardNo) {
+      setComments([]);
+      return;
+    }
+
+    axios
+      .get(`${BACKSERVER}/boards/${board.boardNo}/comments`)
+      .then((res) => {
+        const loaded = Array.isArray(res.data) ? res.data : [];
+        setComments(
+          loaded.map((item) => ({
+            ...item,
+            id: item.commentNo,
+            parentId: item.parentCommentNo,
+            depth: item.commentDepth,
+            isPrivate: item.isSecret,
+            content: item.content,
+            memberNickname: item.memberNickname || item.memberId,
+          })),
+        );
+      })
+      .catch((err) => console.error("댓글 목록 조회 실패", err));
+  }, [board.boardNo]);
+
+  useEffect(() => {
     commentsEndRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "nearest",
     });
   }, [comments]);
 
-  const handleAddComment = () => {
+  const handleAddComment = async () => {
     if (!memberId) {
       Swal.fire({ icon: "warning", title: "로그인 후 댓글 작성 가능합니다." });
       return;
@@ -111,21 +136,34 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
       return;
     }
 
-    const nextComment = {
-      id: Date.now(),
-      memberId,
-      memberNickname: memberId,
-      content: text,
-      isPrivate: newPrivate ? 1 : 0,
-      edited: false,
-      createdAt: new Date().toISOString(),
-      depth: replyTarget ? (replyTarget.depth || 0) + 1 : 0,
-      parentId: replyTarget ? replyTarget.id : null,
-    };
-    setComments((prev) => [...prev, nextComment]);
-    setNewComment("");
-    setNewPrivate(false);
-    setReplyTarget(null);
+    try {
+      const payload = {
+        memberId,
+        memberNickname: memberId,
+        content: text,
+        isSecret: newPrivate ? 1 : 0,
+        parentCommentNo: replyTarget ? replyTarget.id : null,
+      };
+
+      const res = await axios.post(`${BACKSERVER}/boards/${board.boardNo}/comments`, payload);
+      const saved = res.data;
+      const addedComment = {
+        ...saved,
+        id: saved.commentNo,
+        parentId: saved.parentCommentNo,
+        depth: saved.commentDepth,
+        isPrivate: saved.isSecret,
+        content: saved.content,
+      };
+
+      setComments((prev) => [...prev, addedComment]);
+      setNewComment("");
+      setNewPrivate(false);
+      setReplyTarget(null);
+    } catch (err) {
+      console.error("댓글 등록 실패", err);
+      Swal.fire({ icon: "error", title: "댓글 등록 실패", text: "댓글 등록 중 오류가 발생했습니다." });
+    }
   };
 
   const toggleLike = async () => {
@@ -211,30 +249,51 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
     setEditPrivate(comment.isPrivate === 1);
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (!editTarget) return;
     const text = editText.trim();
     if (!text) return;
-    setComments((prev) =>
-      prev.map((item) =>
-        item.id === editTarget.id
-          ? {
-              ...item,
-              content: text,
-              isPrivate: editPrivate ? 1 : 0,
-              edited: true,
-            }
-          : item,
-      ),
-    );
-    setEditTarget(null);
-    setEditText("");
-    setEditPrivate(false);
+
+    try {
+      await axios.put(`${BACKSERVER}/boards/${board.boardNo}/comments/${editTarget.id}`, {
+        memberId,
+        content: text,
+        isSecret: editPrivate ? 1 : 0,
+      });
+
+      setComments((prev) =>
+        prev.map((item) =>
+          item.id === editTarget.id
+            ? {
+                ...item,
+                content: text,
+                isPrivate: editPrivate ? 1 : 0,
+                edited: true,
+              }
+            : item,
+        ),
+      );
+      setEditTarget(null);
+      setEditText("");
+      setEditPrivate(false);
+    } catch (err) {
+      console.error("댓글 수정 실패", err);
+      Swal.fire({ icon: "error", title: "댓글 수정 실패", text: "댓글 수정 중 오류가 발생했습니다." });
+    }
   };
 
-  const handleDeleteComment = (comment) => {
+  const handleDeleteComment = async (comment) => {
     if (memberId !== comment.memberId) return;
-    setComments((prev) => prev.filter((item) => item.id !== comment.id));
+
+    try {
+      await axios.delete(`${BACKSERVER}/boards/${board.boardNo}/comments/${comment.id}`, {
+        params: { memberId },
+      });
+      setComments((prev) => prev.filter((item) => item.id !== comment.id));
+    } catch (err) {
+      console.error("댓글 삭제 실패", err);
+      Swal.fire({ icon: "error", title: "댓글 삭제 실패", text: "댓글 삭제 중 오류가 발생했습니다." });
+    }
   };
 
   const commentTree = useMemo(() => {

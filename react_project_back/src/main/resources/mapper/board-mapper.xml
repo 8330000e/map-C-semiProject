@@ -153,6 +153,72 @@
         )
     </insert>
 
+    <!-- 댓글 조회 -->
+    <select id="selectBoardComments" resultType="kr.co.iei.board.model.vo.BoardComment">
+        SELECT
+            C.BOARD_COMMENT_NO AS commentNo,
+            C.BOARD_NO AS boardNo,
+            C.BOARD_COMMENT_WRITER AS memberId,
+            C.MEMBER_NICKNAME AS memberNickname,
+            C.BOARD_COMMENT_CONTENT AS content,
+            TO_CHAR(C.BOARD_COMMENT_DATE, 'YYYY-MM-DD"T"HH24:MI:SS') AS createdAt,
+            TO_CHAR(C.UPDATED_AT, 'YYYY-MM-DD"T"HH24:MI:SS') AS updatedAt,
+            C.PARENT_COMMENT_NO AS parentCommentNo,
+            C.COMMENT_GROUP AS commentGroup,
+            C.COMMENT_DEPTH AS commentDepth,
+            C.IS_SECRET AS isSecret
+        FROM BOARD_COMMENT_TBL C
+        WHERE C.BOARD_NO = #{boardNo}
+        ORDER BY C.COMMENT_GROUP ASC, C.COMMENT_DEPTH ASC, C.BOARD_COMMENT_NO ASC
+    </select>
+
+    <insert id="insertBoardComment" parameterType="boardComment">
+        <selectKey keyProperty="commentNo" resultType="int" order="BEFORE">
+            SELECT SEQ_BOARD_COMMENT_NO.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO BOARD_COMMENT_TBL (
+            BOARD_COMMENT_NO,
+            BOARD_COMMENT_WRITER,
+            BOARD_NO,
+            BOARD_COMMENT_CONTENT,
+            BOARD_COMMENT_DATE,
+            UPDATED_AT,
+            MEMBER_NICKNAME,
+            PARENT_COMMENT_NO,
+            COMMENT_GROUP,
+            COMMENT_DEPTH,
+            IS_SECRET
+        ) VALUES (
+            #{commentNo},
+            #{memberId},
+            #{boardNo},
+            #{content},
+            SYSDATE,
+            SYSDATE,
+            #{memberNickname},
+            #{parentCommentNo},
+            NVL((SELECT COMMENT_GROUP FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), #{commentNo}),
+            NVL((SELECT COMMENT_DEPTH + 1 FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), 1),
+            #{isSecret}
+        )
+    </insert>
+
+    <update id="updateBoardComment" parameterType="boardComment">
+        UPDATE BOARD_COMMENT_TBL
+        SET BOARD_COMMENT_CONTENT = #{content},
+            UPDATED_AT = SYSDATE,
+            IS_SECRET = #{isSecret}
+        WHERE BOARD_COMMENT_NO = #{commentNo}
+          AND BOARD_COMMENT_WRITER = #{memberId}
+    </update>
+
+    <delete id="deleteBoardComment" parameterType="map">
+        DELETE FROM BOARD_COMMENT_TBL
+        WHERE BOARD_COMMENT_NO = #{commentNo}
+          AND BOARD_COMMENT_WRITER = #{memberId}
+    </delete>
+
     <!-- 인기 게시글 -->
     <select id="bestBoardList" resultType="kr.co.iei.board.model.vo.BoardLike">
         SELECT 

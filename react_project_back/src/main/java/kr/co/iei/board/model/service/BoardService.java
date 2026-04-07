@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.iei.board.model.dao.BoardDao;
 import kr.co.iei.board.model.vo.Board;
+import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.utils.FileUtils;
@@ -60,6 +61,23 @@ public class BoardService {
 
 	public int removeBoardLike(int boardNo, String memberId) {
 		return boardDao.deleteBoardLike(boardNo, memberId);
+	}
+
+	public List<BoardComment> getBoardComments(int boardNo) {
+		return boardDao.selectBoardComments(boardNo);
+	}
+
+	public BoardComment addBoardComment(BoardComment comment) {
+		boardDao.insertBoardComment(comment);
+		return comment;
+	}
+
+	public int editBoardComment(BoardComment comment) {
+		return boardDao.updateBoardComment(comment);
+	}
+
+	public int removeBoardComment(long commentNo, String memberId) {
+		return boardDao.deleteBoardComment(commentNo, memberId);
 	}
 
 	public boolean isBoardLiked(int boardNo, String memberId) {
