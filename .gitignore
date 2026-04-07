@@ -78,3 +78,14 @@ Thumbs.db
 # Prevent invalid Windows-style temp upload paths from being tracked
 react_project_back/C:/Temp/upload/semiproject/board/editor/
 react_project_back/C:/Temp/upload/semiproject/board/editor/**
+
+# upload files
+/upload/
+/Temp/
+/*.jpg
+/*.png
+/*.jpeg
+
+# OS
+.DS_Store
+Thumbs.db
