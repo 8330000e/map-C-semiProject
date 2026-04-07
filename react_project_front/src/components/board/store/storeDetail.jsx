@@ -105,6 +105,8 @@ const StoreDetail = () => {
   }, [item]);
 
   const getImageUrl = (thumb) => {
+    // 여기서도 thumb가 여러 모양으로 들어와요.
+    // 파일명만 들어오면 /upload/ 경로로 바꿔서 보여줍니다.
     if (!thumb) return null;
     if (typeof thumb !== "string") return null;
     let trimmed = thumb.trim();
@@ -126,7 +128,9 @@ const StoreDetail = () => {
     }
 
     if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+    if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
     if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+    if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
     return `${BACKSERVER}/board/editor/${trimmed}`;
   };
 

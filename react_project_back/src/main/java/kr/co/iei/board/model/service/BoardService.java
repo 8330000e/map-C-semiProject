@@ -18,8 +18,6 @@ import kr.co.iei.utils.FileUtils;
 public class BoardService {
 	@Autowired
 	private BoardDao boardDao;
-	@Autowired
-	private FileUtils fileUtils;
 	//게시글 조회
 	public List<Board> selectBoardList(int status, int searchType, String searchKeyword) {
 		HashMap<String, Object> param = new HashMap<>();
@@ -74,19 +72,18 @@ public class BoardService {
 	@Transactional
 	public int insertBoardFiles(int boardNo, String memberId, MultipartFile[] files) {
 	    int result = 0;
-	    String savePath = "C:/Temp/upload/board/files/";
 
 	    for (MultipartFile file : files) {
 	        if (file == null || file.isEmpty()) {
 	            continue;
 	        }
 
-	        String filePath = fileUtils.upload(savePath, file);
+	        String filePath = FileUtils.upload(null, file);
 
 	        BoardFile boardFile = new BoardFile();
 	        boardFile.setBoardNo(boardNo);
 	        boardFile.setMemberId(memberId);
-	        boardFile.setBoardFileName(file.getOriginalFilename());
+	        boardFile.setBoardFileName(filePath);
 	        boardFile.setBoardFilePath(filePath);
 
 	        result += boardDao.insertBoardFile(boardFile);

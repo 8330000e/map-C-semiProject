@@ -33,6 +33,8 @@ const getCourierLabel = (code) => {
 };
 
 const getImageUrl = (thumb) => {
+  // 구매 상세에서도 thumb가 여러 모양으로 들어올 수 있어요.
+  // 그래서 여기서 이미지 URL로 깔끔하게 바꿔줍니다.
   if (!thumb) return null;
   if (typeof thumb !== "string") return null;
   let trimmed = thumb.trim();
@@ -54,7 +56,9 @@ const getImageUrl = (thumb) => {
   }
 
   if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
   if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+    if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
   return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 

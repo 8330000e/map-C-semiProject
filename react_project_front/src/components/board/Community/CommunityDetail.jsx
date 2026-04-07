@@ -9,6 +9,8 @@ import FlagIcon from "@mui/icons-material/Flag";
 import styles from "./Community.module.css";
 import Swal from "sweetalert2";
 
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+
 const formatTime = (rawDate) => {
   if (!rawDate) return "방금 전";
   const date = new Date(rawDate);
@@ -20,6 +22,34 @@ const formatTime = (rawDate) => {
   if (hour < 24) return `${hour}시간 전`;
   const day = Math.floor(hour / 24);
   return `${day}일 전`;
+};
+
+const getImageUrl = (thumb) => {
+  if (!thumb) return null;
+  if (typeof thumb !== "string") return null;
+  let trimmed = thumb.trim();
+  if (!trimmed) return null;
+
+  trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
+  if (driveMatch) {
+    const boardIndex = trimmed.indexOf("/board/editor/");
+    if (boardIndex !== -1) {
+      const suffix = trimmed.substring(boardIndex);
+      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
+    }
+    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
+  }
+
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
+  return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
 const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
@@ -382,8 +412,9 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
         />
         {board.boardThumb && (
           <div className={styles.detailImageWrap}>
+            {/* board.boardThumb가 파일명으로 와도 /upload/로 바꿔서 보여줘요. */}
             <img
-              src={board.boardThumb}
+              src={getImageUrl(board.boardThumb)}
               alt="게시글 이미지"
               className={styles.detailImage}
             />
