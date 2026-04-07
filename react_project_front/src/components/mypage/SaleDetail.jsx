@@ -174,6 +174,12 @@ const SaleDetail = () => {
   const shippingStatus = saleOrder ? getShippingStatusLabel(saleOrder.shippingStatus) : "-";
   const saleOrderAddress = saleOrder?.orderInfo?.address || saleOrder?.address || "";
   const tradeMethod = saleOrder ? tradeTypeLabel(saleOrder.tradeType, saleOrder.tradeTypeText, saleOrder.deliveryMethod, saleOrderAddress) : "-";
+  const rawDeliveryFee = Number(saleOrder?.deliveryFee ?? saleOrder?.orderInfo?.deliveryFee ?? 0);
+  const inferredDeliveryFee = rawDeliveryFee > 0 ? rawDeliveryFee : tradeMethod === "택배" ? 5000 : 0;
+  const totalAmount = Number(saleOrder?.tradePrice ?? item.productPrice ?? 0);
+  const productAmount = Math.max(totalAmount - inferredDeliveryFee, 0);
+  const shippingFeeLabel = inferredDeliveryFee > 0 ? `${inferredDeliveryFee.toLocaleString("ko-KR")}원` : "무료";
+  const shippingFeeStatus = inferredDeliveryFee > 0 ? "배송비 추가" : "배송비 없음";
   const isShippingPending = saleOrder && (saleOrder.shippingStatus === 0 || saleOrder.shippingStatus === "0");
   const isDeliveryTrade = Boolean(
     saleOrder?.tradeType === 2 ||
@@ -194,120 +200,170 @@ const SaleDetail = () => {
           ← 판매내역으로 돌아가기
         </Link>
       </div>
-      <div className={styles.sale_card}>
-        <div className={styles.sale_card_title}>[{saleStatus}] {item.marketTitle}</div>
-        <div className={styles.sale_card_meta}>{item.createdAt ? new Date(item.createdAt).toLocaleDateString("ko-KR") : "-"} · {saleStatus}</div>
-        <div>금액: {Number(item.productPrice || 0).toLocaleString("ko-KR")}원</div>
-        <div>거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText, item.deliveryMethod, item.orderInfo?.address || item.address)}</div>
-      </div>
-
-      {saleOrder && (
-        <div className={styles.shipping_info}>
-          <h4>구매자 정보 / 배송 정보</h4>
-          <div>구매자: {saleOrder.buyerNickname || saleOrder.buyerName || saleOrder.buyerId}</div>
-          <div>거래방법: {tradeMethod}</div>
-          {isDeliveryTrade ? (
-            <>
-              <div>배송 상태: {shippingStatus}</div>
-              <div>택배사: {getCourierLabel(saleOrder.courierCode)}</div>
-              {saleOrder.invoiceNumber ? <div>송장번호: {saleOrder.invoiceNumber}</div> : null}
-            </>
-          ) : (
-            <div>배송 정보: 직거래</div>
-          )}
-          <div>연락처: {saleOrder.orderInfo?.phone || saleOrder.buyerPhone || "-"}</div>
-          <div>수령인: {saleOrder.orderInfo?.receiverName || saleOrder.receiverName || "-"}</div>
-          <div>주소: {saleOrder.orderInfo?.address || saleOrder.address || "-"} {saleOrder.orderInfo?.addressDetail || saleOrder.addressDetail || ""}</div>
-          {saleOrder.orderInfo?.deliveryMemo ? <div>배송메모: {saleOrder.orderInfo.deliveryMemo}</div> : null}
-
-          {isSeller && isDeliveryTrade && !saleOrder.invoiceNumber && (
-            <div className={styles.delivery_input_section}>
-              <label>
-                택배사 선택
-                <select value={saleOrder.courierCode || ""} onChange={(e) => setSaleOrder((prev) => ({ ...prev, courierCode: Number(e.target.value) }))}>
-                  <option value="">택배사 선택</option>
-                  <option value={1}>CJ대한통운</option>
-                  <option value={2}>현대택배</option>
-                  <option value={3}>한진택배</option>
-                  <option value={4}>로젠택배</option>
-                  <option value={5}>우체국택배</option>
-                </select>
-              </label>
-              <label>
-                송장번호 입력
-                <input
-                  type="text"
-                  value={invoiceNumber}
-                  onChange={(e) => setInvoiceNumber(e.target.value)}
-                  placeholder="송장번호를 입력하세요"
-                />
-              </label>
-              <button
-                type="button"
-                className={styles.save_invoice_button}
-                disabled={!invoiceNumber.trim() || !saleOrder.courierCode || isSubmittingInvoice}
-                onClick={async () => {
-                  const invoice = invoiceNumber.trim();
-                  if (!invoice || !saleOrder.courierCode) return;
-                  setIsSubmittingInvoice(true);
-                  try {
-                    const path = saleOrder.tradeNo
-                      ? `${BACKSERVER}/api/store/trades/${saleOrder.tradeNo}`
-                      : `${BACKSERVER}/api/store/markets/${id}/trade-info`;
-                    const normalizedTradeType = normalizeTradeType(
-                      saleOrder.tradeType || item.tradeType || item.tradeTypeText,
-                    );
-                    const ctpvsggId = saleOrder.ctpvsggId || item.ctpvsggId || null;
-                    if (normalizedTradeType !== "택배" && !ctpvsggId) {
-                      alert("직거래/택배 거래의 경우 지역 정보(ctpvsggId)가 필요합니다.");
-                      return;
-                    }
-                    await axios.patch(path, {
-                      invoiceNumber: invoice,
-                      courierCode: saleOrder.courierCode,
-                      shippingStatus: 1,
-                      tradeStatus: 2,
-                      buyerId: saleOrder.buyerId,
-                      sellerId: saleOrder.sellerId,
-                      tradePrice: saleOrder.tradePrice || Number(item.productPrice || 0),
-                      tradeType: normalizedTradeType,
-                      ctpvsggId:
-                        normalizedTradeType === "택배"
-                          ? null
-                          : saleOrder.ctpvsggId || item.ctpvsggId || null,
-                      receiverName: saleOrder.orderInfo?.receiverName || saleOrder.receiverName,
-                      buyerName: saleOrder.buyerNickname || saleOrder.buyerName || saleOrder.buyerId,
-                      buyerPhone: saleOrder.orderInfo?.phone || saleOrder.buyerPhone,
-                      zipCode: saleOrder.orderInfo?.zipCode || saleOrder.zipCode,
-                      address: saleOrder.orderInfo?.address || saleOrder.address,
-                      addressDetail: saleOrder.orderInfo?.addressDetail || saleOrder.addressDetail,
-                      deliveryMemo: saleOrder.orderInfo?.deliveryMemo || saleOrder.deliveryMemo,
-                    });
-                    const res = await axios.get(`${BACKSERVER}/api/store/markets/${id}/trade-info`);
-                    setSaleOrder(res.data);
-                    setInvoiceNumber(res.data.invoiceNumber || "");
-                  } catch (error) {
-                    console.error("송장번호 저장 실패", error);
-                    alert(error.response?.data || "송장번호 저장에 실패했습니다. 다시 시도해주세요.");
-                  } finally {
-                    setIsSubmittingInvoice(false);
-                  }
-                }}
-              >
-                배송완료 처리
-              </button>
-            </div>
-          )}
-          {(showSellerCancelButton || (isSeller && isDeliveryTrade && !saleOrder.invoiceNumber)) && (
-            <div className={styles.order_actions}>
-              {showSellerCancelButton && (
-                <button className="btn" disabled={isProcessingOrderAction} onClick={handleSellerOrderAction}>주문 취소하기</button>
-              )}
-            </div>
-          )}
+      <div className={styles.section_card}>
+        <div className={styles.section_header}>
+          <div>
+            <div className={styles.section_title}>주문상품</div>
+            <div className={styles.section_subtitle}>[{saleStatus}] {item.marketTitle}</div>
+          </div>
+          <div className={styles.section_tag}>{tradeMethod}</div>
         </div>
-      )}
-
+        <div className={styles.order_item_price}>상품금액 {productAmount.toLocaleString("ko-KR")}원</div>
+        {tradeMethod === "택배" && (
+          <div className={styles.order_item_shipping}>배송비 {shippingFeeLabel}</div>
+        )}
+        {saleOrder && (
+          <> 
+            {isSeller && isDeliveryTrade && !saleOrder.invoiceNumber && (
+              <div className={styles.order_actions_card}>
+                <div className={styles.delivery_input_section}>
+                  <label>
+                    택배사 선택
+                    <select value={saleOrder.courierCode || ""} onChange={(e) => setSaleOrder((prev) => ({ ...prev, courierCode: Number(e.target.value) }))}>
+                      <option value="">택배사 선택</option>
+                      <option value={1}>CJ대한통운</option>
+                      <option value={2}>현대택배</option>
+                      <option value={3}>한진택배</option>
+                      <option value={4}>로젠택배</option>
+                      <option value={5}>우체국택배</option>
+                    </select>
+                  </label>
+                  <label>
+                    송장번호 입력
+                    <input
+                      type="text"
+                      value={invoiceNumber}
+                      onChange={(e) => setInvoiceNumber(e.target.value)}
+                      placeholder="송장번호를 입력하세요"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    className={styles.save_invoice_button}
+                    disabled={!invoiceNumber.trim() || !saleOrder.courierCode || isSubmittingInvoice}
+                    onClick={async () => {
+                      const invoice = invoiceNumber.trim();
+                      if (!invoice || !saleOrder.courierCode) return;
+                      setIsSubmittingInvoice(true);
+                      try {
+                        const path = saleOrder.tradeNo
+                          ? `${BACKSERVER}/api/store/trades/${saleOrder.tradeNo}`
+                          : `${BACKSERVER}/api/store/markets/${id}/trade-info`;
+                        const normalizedTradeType = normalizeTradeType(
+                          saleOrder.tradeType || item.tradeType || item.tradeTypeText,
+                        );
+                        const ctpvsggId = saleOrder.ctpvsggId || item.ctpvsggId || null;
+                        if (normalizedTradeType !== "택배" && !ctpvsggId) {
+                          alert("직거래/택배 거래의 경우 지역 정보(ctpvsggId)가 필요합니다.");
+                          return;
+                        }
+                        await axios.patch(path, {
+                          invoiceNumber: invoice,
+                          courierCode: saleOrder.courierCode,
+                          shippingStatus: 1,
+                          tradeStatus: 2,
+                          buyerId: saleOrder.buyerId,
+                          sellerId: saleOrder.sellerId,
+                          tradePrice: saleOrder.tradePrice || Number(item.productPrice || 0),
+                          tradeType: normalizedTradeType,
+                          ctpvsggId:
+                            normalizedTradeType === "택배"
+                              ? null
+                              : saleOrder.ctpvsggId || item.ctpvsggId || null,
+                          receiverName: saleOrder.orderInfo?.receiverName || saleOrder.receiverName,
+                          buyerName: saleOrder.buyerNickname || saleOrder.buyerName || saleOrder.buyerId,
+                          buyerPhone: saleOrder.orderInfo?.phone || saleOrder.buyerPhone,
+                          zipCode: saleOrder.orderInfo?.zipCode || saleOrder.zipCode,
+                          address: saleOrder.orderInfo?.address || saleOrder.address,
+                          addressDetail: saleOrder.orderInfo?.addressDetail || saleOrder.addressDetail,
+                          deliveryMemo: saleOrder.orderInfo?.deliveryMemo || saleOrder.deliveryMemo,
+                        });
+                        const res = await axios.get(`${BACKSERVER}/api/store/markets/${id}/trade-info`);
+                        setSaleOrder(res.data);
+                        setInvoiceNumber(res.data.invoiceNumber || "");
+                      } catch (error) {
+                        console.error("송장번호 저장 실패", error);
+                        alert(error.response?.data || "송장번호 저장에 실패했습니다. 다시 시도해주세요.");
+                      } finally {
+                        setIsSubmittingInvoice(false);
+                      }
+                    }}
+                  >
+                    배송완료 처리
+                  </button>
+                </div>
+              </div>
+            )}
+            {showSellerCancelButton && (
+              <div className={styles.order_actions}>
+                <button className="btn" disabled={isProcessingOrderAction} onClick={handleSellerOrderAction}>주문 취소하기</button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+      <div className={styles.section_card}>
+        <div className={styles.section_title}>구매자 정보 / 배송 정보</div>
+        <div className={styles.row}>
+          <span>구매자</span>
+          <span>{saleOrder?.buyerNickname || saleOrder?.buyerName || saleOrder?.buyerId || "-"}</span>
+        </div>
+        <div className={styles.row}>
+          <span>거래방법</span>
+          <span>{tradeMethod}</span>
+        </div>
+        {isDeliveryTrade ? (
+          <>
+            <div className={styles.row}>
+              <span>배송 상태</span>
+              <span>{shippingStatus}</span>
+            </div>
+            <div className={styles.row}>
+              <span>택배사</span>
+              <span>{getCourierLabel(saleOrder.courierCode)}</span>
+            </div>
+            <div className={styles.row}>
+              <span>송장번호</span>
+              <span>{saleOrder.invoiceNumber || "-"}</span>
+            </div>
+          </>
+        ) : (
+          <div className={styles.row}>
+            <span>배송 정보</span>
+            <span>직거래</span>
+          </div>
+        )}
+        <div className={styles.row}>
+          <span>연락처</span>
+          <span>{saleOrder.orderInfo?.phone || saleOrder.buyerPhone || "-"}</span>
+        </div>
+        <div className={styles.row}>
+          <span>수령인</span>
+          <span>{saleOrder.orderInfo?.receiverName || saleOrder.receiverName || "-"}</span>
+        </div>
+        <div className={styles.row}>
+          <span>주소</span>
+          <span>{saleOrder.orderInfo?.address || saleOrder.address || "-"} {saleOrder.orderInfo?.addressDetail || saleOrder.addressDetail || ""}</span>
+        </div>
+      </div>
+      <div className={styles.section_card}>
+        <div className={styles.section_title}>결제정보</div>
+        <div className={styles.payment_summary_header}>
+          <span>총 거래금액</span>
+          <strong>{totalAmount.toLocaleString("ko-KR")}원</strong>
+        </div>
+        <div className={styles.summary_row}>
+          <span>상품 금액</span>
+          <span>{productAmount.toLocaleString("ko-KR")}원</span>
+        </div>
+        {tradeMethod === "택배" && (
+          <div className={styles.summary_row}>
+            <span>배송비</span>
+            <span>{shippingFeeLabel}</span>
+          </div>
+        )}
+        <div className={styles.summary_tag}>{shippingFeeStatus}</div>
+      </div>
       {saleStatus === "판매완료" ? (
         <div className={styles.review_summary}>
           <h4>구매자 후기</h4>

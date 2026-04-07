@@ -74,6 +74,7 @@ const PaymentSuccess = () => {
 			const completedOrder = {
 				...order,
 				deliveryMethod: order.deliveryMethod || deliveryMethodParam || order.deliveryMethod,
+				deliveryFee: Number(order.deliveryFee || 0),
 				status: "구매완료",
 				date: new Date().toISOString(),
 				paymentKey,

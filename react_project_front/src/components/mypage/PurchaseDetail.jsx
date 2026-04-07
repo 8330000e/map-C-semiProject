@@ -267,8 +267,13 @@ const PurchaseDetail = () => {
   const displayDeliveryMethod = item.deliveryMethod || item.orderInfo?.deliveryMethod;
   const displayTradeType = tradeTypeLabel(item.tradeType, item.tradeTypeText, displayDeliveryMethod, addressValue);
   const isDelivery = isDeliveryTrade(item.tradeType, item.tradeTypeText, displayDeliveryMethod, addressValue);
+  const rawDeliveryFee = Number(item.deliveryFee ?? item.orderInfo?.deliveryFee ?? 0);
+  const inferredDeliveryFee = rawDeliveryFee > 0 ? rawDeliveryFee : displayTradeType === "택배" ? 5000 : 0;
+  const productPrice = Math.max(Number(item.amount || 0) - inferredDeliveryFee, 0);
+  const shippingFeeLabel = inferredDeliveryFee > 0 ? `${inferredDeliveryFee.toLocaleString("ko-KR")}원` : "무료";
+  const shippingFeeStatus = inferredDeliveryFee > 0 ? "배송비 추가" : "배송비 없음";
   const shippingStatusValue = item.shippingStatus ?? item.orderInfo?.shippingStatus ?? 0;
-  const shippingInfoAvailable = item.orderInfo?.receiverName || item.orderInfo?.phone || item.orderInfo?.address || item.invoiceNumber || item.courierCode || shippingStatusValue !== undefined;
+  const shippingInfoAvailable = displayTradeType === "택배" || item.orderInfo?.receiverName || item.orderInfo?.phone || item.orderInfo?.address || item.invoiceNumber || item.courierCode || shippingStatusValue !== undefined;
   const showCancelButton = item.status === "구매완료" && shippingStatusValue !== 1;
   const showRefundButton = item.status === "구매완료" && shippingStatusValue === 1;
 
@@ -280,43 +285,92 @@ const PurchaseDetail = () => {
           ← 구매내역으로 돌아가기
         </Link>
       </div>
-      <div className={styles.purchase_card}>
-        <div className={styles.purchase_card_title}>{getStatusPrefix(item.status)}{item.title}</div>
-        <div className={styles.purchase_card_meta}>{item.date} · {item.status}</div>
-        <div>판매자: {item.seller}</div>
-        <div>금액: {item.amount.toLocaleString()}원</div>
-        <div>거래방법: {displayTradeType}</div>
+      <div className={styles.section_card}>
+        <div className={styles.section_header}>
+          <div>
+            <div className={styles.section_title}>주문상품</div>
+            <div className={styles.section_subtitle}>{getStatusPrefix(item.status)}{item.title}</div>
+          </div>
+          <div className={styles.section_tag}>{displayTradeType}</div>
+        </div>
+        <div className={styles.order_item_price}>상품금액 {productPrice.toLocaleString("ko-KR")}원</div>
+        {displayTradeType === "택배" && (
+          <div className={styles.order_item_shipping}>배송비 {shippingFeeLabel}</div>
+        )}
+        {(showCancelButton || showRefundButton) && (
+          <div className={styles.order_actions_card}>
+            {showCancelButton && (
+              <button className="btn" disabled={isProcessingOrderAction} onClick={() => handleOrderAction("cancel")}>결제 취소</button>
+            )}
+            {showRefundButton && (
+              <button className="btn" disabled={isProcessingOrderAction} onClick={() => handleOrderAction("refund")}>환불하기</button>
+            )}
+          </div>
+        )}
+      </div>
+      <div className={styles.section_card}>
+        <div className={styles.section_title}>배송지</div>
+        <div className={styles.row}>
+          <span>거래방법</span>
+          <span>{displayTradeType}</span>
+        </div>
+        {isDelivery ? (
+          <>
+            <div className={styles.row}>
+              <span>배송 상태</span>
+              <span>{getShippingStatusLabel(item.shippingStatus)}</span>
+            </div>
+            <div className={styles.row}>
+              <span>택배사</span>
+              <span>{getCourierLabel(item.courierCode)}</span>
+            </div>
+            <div className={styles.row}>
+              <span>송장번호</span>
+              <span>{item.invoiceNumber || "-"}</span>
+            </div>
+          </>
+        ) : (
+          <div className={styles.row}>
+            <span>배송 정보</span>
+            <span>직거래</span>
+          </div>
+        )}
+        <div className={styles.row}>
+          <span>수령인</span>
+          <span>{item.orderInfo?.receiverName || "-"}</span>
+        </div>
+        <div className={styles.row}>
+          <span>연락처</span>
+          <span>{item.orderInfo?.phone || item.buyerPhone || "-"}</span>
+        </div>
+        <div className={styles.row}>
+          <span>주소</span>
+          <span>{item.orderInfo?.address || "-"} {item.orderInfo?.addressDetail || ""}</span>
+        </div>
+      </div>
+      <div className={styles.section_card}>
+        <div className={styles.section_title}>결제정보</div>
+        <div className={styles.payment_summary_header}>
+          <span>주문금액</span>
+          <strong>{Number(item.amount || 0).toLocaleString("ko-KR")}원</strong>
+        </div>
+        <div className={styles.summary_row}>
+          <span>상품금액</span>
+          <span>{productPrice.toLocaleString("ko-KR")}원</span>
+        </div>
+        {displayTradeType === "택배" && (
+          <div className={styles.summary_row}>
+            <span>배송비</span>
+            <span>{shippingFeeLabel}</span>
+          </div>
+        )}
+        <div className={styles.summary_row}>
+          <span>총 결제금액</span>
+          <strong>{Number(item.amount || 0).toLocaleString("ko-KR")}원</strong>
+        </div>
+        <div className={styles.summary_tag}>{shippingFeeStatus}</div>
       </div>
 
-      {shippingInfoAvailable && (
-        <div className={styles.purchase_card}>
-          <div className={styles.purchase_card_title}>구매 정보 / 배송 정보</div>
-          <div>거래방법: {displayTradeType}</div>
-          {isDelivery ? (
-            <>
-              <div>배송 상태: {getShippingStatusLabel(item.shippingStatus)}</div>
-              <div>택배사: {getCourierLabel(item.courierCode)}</div>
-              {item.invoiceNumber ? <div>송장번호: {item.invoiceNumber}</div> : null}
-            </>
-          ) : (
-            <div>배송 정보: 직거래</div>
-          )}
-          <div>연락처: {item.orderInfo?.phone || item.buyerPhone || "-"}</div>
-          <div>수령인: {item.orderInfo?.receiverName || "-"}</div>
-          <div>주소: {item.orderInfo?.address || "-"} {item.orderInfo?.addressDetail || ""}</div>
-          {item.orderInfo?.deliveryMemo ? <div>배송메모: {item.orderInfo.deliveryMemo}</div> : null}
-        </div>
-      )}
-      {(showCancelButton || showRefundButton) && (
-        <div className={styles.order_actions}>
-          {showCancelButton && (
-            <button className="btn" disabled={isProcessingOrderAction} onClick={() => handleOrderAction("cancel")}>결제 취소</button>
-          )}
-          {showRefundButton && (
-            <button className="btn" disabled={isProcessingOrderAction} onClick={() => handleOrderAction("refund")}>환불하기</button>
-          )}
-        </div>
-      )}
 
       {item.status === "구매완료" && !myReview && (
         <div className={styles.review_area}>
