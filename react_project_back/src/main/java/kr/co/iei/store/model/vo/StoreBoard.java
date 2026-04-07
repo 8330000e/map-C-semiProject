@@ -30,4 +30,8 @@ public class StoreBoard {
         return productStatus;
     }
 
+    public void setProductStatus(String productStatus) {
+        this.productStatus = productStatus;
+    }
+
 }
