@@ -20,7 +20,7 @@ const getStatusPrefix = (status) => (status ? `[${status}] ` : "");
 const PurchaseDetail = () => {
   const { id } = useParams();
   const { memberId: loginMemberId } = useAuthStore();
-  const [item, setItem] = useState(() => getCompletedPurchaseById(id));
+  const [item, setItem] = useState(() => getCompletedPurchaseById(id, loginMemberId));
 
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
@@ -37,8 +37,8 @@ const PurchaseDetail = () => {
   );
 
   useEffect(() => {
-    setItem(getCompletedPurchaseById(id));
-  }, [id]);
+    setItem(getCompletedPurchaseById(id, loginMemberId));
+  }, [id, loginMemberId]);
 
   useEffect(() => {
     if (!item?.marketNo) return;
