@@ -109,8 +109,7 @@ public class BoardService {
 		if(checker == 2) {
 			String memberId=map.get("memberId").toString();
 			List <Integer> boardNoList =boardDao.selectLikeBoard(memberId);	
-			map.put("boardNoList",boardNoList );
-			System.out.println(boardNoList);
+			map.put("boardNoList",boardNoList );	
 			List<Board> list = boardDao.selectMemberIdBoard(map);
 			return list;
 		}
@@ -118,7 +117,6 @@ public class BoardService {
 			String memberId=map.get("memberId").toString();
 			List <Integer> tipList = boardDao.selectTipBoard(memberId);
 			map.put("tipList", tipList);
-			System.out.println(tipList);
 			List<Board> list = boardDao.selectMemberIdBoard(map);
 			return list;
 		}

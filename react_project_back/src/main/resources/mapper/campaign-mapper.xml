@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="kr.co.iei.campaign.model.dao.CampaignDao">
+	<select id="selectAllCampaign" resultType="camp">
+		select campaign_no,
+			   campaign_title,
+			   campaign_status,
+			   campaign_goal_member,
+			   campaign_start_date,
+			   campaign_expire_date
+			   from create_campaign_tbl
+			   where campaign_status=2
+	</select>
+</mapper>

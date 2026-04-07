@@ -51,7 +51,7 @@ public class Membercontroller {
 	private EmailSender emailSender;
 
 	// 회원가입 로직
-
+	@Autowired
 	private FileUtils fileUtil;
 
 	@Value("${file.root}")

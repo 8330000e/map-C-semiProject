@@ -34,7 +34,8 @@ const getImageUrl = (thumb) => {
 
   trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
 
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
+    return trimmed;
   if (trimmed.startsWith("//")) return `https:${trimmed}`;
 
   const driveMatch = trimmed.match(/^[A-Za-z]:\//);
@@ -48,7 +49,8 @@ const getImageUrl = (thumb) => {
   }
 
   if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
   return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
@@ -71,8 +73,8 @@ const Main = () => {
         const items = Array.isArray(res.data)
           ? res.data
           : Array.isArray(res.data?.items)
-          ? res.data.items
-          : [];
+            ? res.data.items
+            : [];
         setGoods(items);
       })
       .catch((err) => console.error("중고장터 목록 조회 실패", err));
@@ -262,9 +264,15 @@ const Main = () => {
         </div>
 
         <div className="main_content_two">
-          <div className="campaign_zone roundBorder">
+          <div
+            className="campaign_zone roundBorder"
+            onClick={() => {
+              console.log("클릭버튼");
+              navigate("/campaign/main");
+            }}
+          >
             <p>캠페인 존</p>
-            {/*위치설명*/}
+            {/*캠페인 컴포넌트 호출 */}
           </div>
 
           <div className="realtime_comment roundBorder">
@@ -305,7 +313,10 @@ const Main = () => {
                     <Link to={`/store/${item.marketNo}`}>
                       <div className="used_item_image" aria-hidden="true">
                         {imageUrl ? (
-                          <img src={imageUrl} alt={item.marketTitle || "상품 이미지"} />
+                          <img
+                            src={imageUrl}
+                            alt={item.marketTitle || "상품 이미지"}
+                          />
                         ) : null}
                       </div>
                       <div className="used_item_info">
@@ -332,7 +343,8 @@ const Main = () => {
                           </span>
                         </div>
                         <span className="used_item_view">
-                          👀 {Number(item.readCount ?? 0).toLocaleString("ko-KR")}
+                          👀{" "}
+                          {Number(item.readCount ?? 0).toLocaleString("ko-KR")}
                         </span>
                       </div>
                     </Link>

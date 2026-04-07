@@ -170,7 +170,7 @@
         ORDER BY count DESC
     </select>
 
-    <!-- 내가 쓴 글 -->
+    <!-- 마이페이지용 -->
     <select id="selectMemberIdBoard" resultType="kr.co.iei.board.model.vo.Board">
         SELECT 
             board_no,

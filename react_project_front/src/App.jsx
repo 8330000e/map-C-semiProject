@@ -52,6 +52,7 @@ import Login from "./pages/member/LoginPage";
 import FindId from "./pages/member/FindId";
 import FindPw from "./pages/member/FindPw";
 import MapCommunityPage from "./pages/MapCommunityPage/MapCommunityPage";
+import CampaignPage from "./pages/campaign/CampaignPage";
 
 function App() {
   const location = useLocation();
@@ -97,7 +98,6 @@ function App() {
           <Route path="/payment/fail" element={<PaymentFail />} />
           <Route path="/Store" element={<Navigate to="/store" replace />} />
           <Route path="/join" element={<JoinPage />}></Route>
-
           <Route path="/members/login" element={<Login />}></Route>
           <Route path="/members/find-id" element={<FindId />}></Route>
           <Route path="/members/find-pw" element={<FindPw />}></Route>
@@ -106,6 +106,7 @@ function App() {
           <Route path="/mission" element={<MissionListPage />} />
           <Route path="/community" element={<MapCommunityPage />} />
 
+          <Route path="/campaign/*" element={<CampaignPage />}></Route>
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/support/*" element={<SupportPage />} />
