@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.iei.admin.model.vo.DashData;
 import kr.co.iei.admin.model.vo.Faq;
+import kr.co.iei.admin.model.vo.ListItem;
 import kr.co.iei.admin.model.vo.Notice;
 import kr.co.iei.admin.model.vo.Qna;
 
@@ -28,9 +29,11 @@ public interface AdminDao {
 
 	int editFaq(Faq faq);
 
-	List<Qna> selectQnaList();
+	List<Qna> selectQnaList(ListItem listItem);
 
 	int qnaAnswer(Qna qna);
+
+	int getTotalCount();
 
 
 

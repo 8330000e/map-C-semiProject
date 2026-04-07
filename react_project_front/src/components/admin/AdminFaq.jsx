@@ -1,6 +1,7 @@
 import styles from "../../pages/admin/AdminFaqPage.module.css";
 import Button from "../ui/Button";
-import { TextArea } from "../ui/Form";
+import { Input, TextArea } from "../ui/Form";
+
 const AdminFaq = ({
   faq,
   changeFaq,
@@ -9,15 +10,16 @@ const AdminFaq = ({
   faqList,
   setIsEdit,
   setFaq,
+  deleteFaq,
 }) => {
   return (
     <>
       <section className={styles.faq_write_wrap}>
-        <form>
+        <form onSubmit={insertFaq}>
           <section className={styles.faq_input_wrap}>
             <div className={styles.faq_write_title}>
               <label htmlFor="faqTitle">질문 제목</label>
-              <input
+              <Input
                 type="text"
                 id="faqTitle"
                 name="faqTitle"
@@ -37,8 +39,9 @@ const AdminFaq = ({
           </section>
           <section className={styles.faq_option_wrap}>
             <div className={styles.faq_category}>
-              <label htmlFor="FaqPublic">카테고리</label>
+              <label htmlFor="faqCategory">카테고리</label>
               <select
+                id="faqCategory"
                 className={styles.select}
                 name="faqCategory"
                 value={faq.faqCategory}
@@ -49,7 +52,7 @@ const AdminFaq = ({
               </select>
             </div>
 
-            <Button className="btn admin" type="submit" onClick={insertFaq}>
+            <Button className="btn admin" type="submit">
               {isEdit ? "수정하기" : "등록하기"}
             </Button>
           </section>
@@ -77,13 +80,13 @@ const AdminFaq = ({
             <tbody>
               {faqList.length === 0 ? (
                 <tr>
-                  <td colSpan={5}>등록된 Faq가 없습니다.</td>
+                  <td colSpan={4}>등록된 Faq가 없습니다.</td>
                 </tr>
               ) : (
                 faqList.map((item) => (
                   <tr key={item.faqNo}>
                     <td className={styles.col_category}>
-                      {item.faqCategory === "0" ? (
+                      {Number(item.faqCategory) === 0 ? (
                         <span className={styles.badge_category}>카테고리1</span>
                       ) : (
                         <span className={styles.badge_category}>카테고리2</span>
@@ -94,6 +97,7 @@ const AdminFaq = ({
                     <td className={styles.col_edit}>
                       <Button
                         className="btn admin sm"
+                        type="button"
                         onClick={() => {
                           setIsEdit(true);
                           setFaq({
@@ -110,8 +114,12 @@ const AdminFaq = ({
                     <td className={styles.col_delete}>
                       <Button
                         className="btn danger sm"
+                        type="button"
+                        disabled={typeof deleteFaq !== "function"}
                         onClick={() => {
-                          deleteFaq(item.faqNo);
+                          if (typeof deleteFaq === "function") {
+                            deleteFaq(item.faqNo);
+                          }
                         }}
                       >
                         삭제

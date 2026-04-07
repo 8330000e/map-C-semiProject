@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import kr.co.iei.admin.model.service.AdminService;
 import kr.co.iei.admin.model.vo.DashData;
 import kr.co.iei.admin.model.vo.Faq;
+import kr.co.iei.admin.model.vo.ListItem;
+import kr.co.iei.admin.model.vo.ListResponse;
 import kr.co.iei.admin.model.vo.Notice;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.utils.FileUtils;
@@ -84,9 +86,9 @@ public class AdminController {
 	}
 	
 	@GetMapping(value="qna")
-	public ResponseEntity<?> selectQnaList() {
-		List<Qna> qnaList = adminService.selectQnaList();
-		return ResponseEntity.ok(qnaList);
+	public ResponseEntity<?> selectQnaList(@ModelAttribute ListItem listItem) {
+		ListResponse response = adminService.selectQnaList(listItem);
+		return ResponseEntity.ok(response);
 	}
 	
 	@PatchMapping(value="qna")

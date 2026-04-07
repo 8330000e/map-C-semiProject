@@ -13,6 +13,10 @@ const AdminQnaPage = () => {
 
   const [imageFile, setImageFile] = useState(null);
 
+  const [page, setPage] = useState(0);
+  const size = 10;
+  const [totalPage, setTotalPage] = useState(null);
+
   const qnaAnswer = () => {
     Swal.fire({
       title: "1:1 문의 답변 등록",
@@ -51,10 +55,13 @@ const AdminQnaPage = () => {
 
   const selectQnaList = () => {
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/admins/qna`)
+      .get(
+        `${import.meta.env.VITE_BACKSERVER}/admins/qna?page=${page}&size=${size}`,
+      )
       .then((res) => {
         console.log(res);
-        setQnaList(res.data);
+        setQnaList(res.data.items);
+        setTotalPage(res.data.totalPage);
       })
       .catch((err) => {
         console.log(err);
@@ -63,7 +70,7 @@ const AdminQnaPage = () => {
 
   useEffect(() => {
     selectQnaList();
-  }, []);
+  }, [page]);
   return (
     <AdminQna
       qnaList={qnaList}
@@ -75,6 +82,10 @@ const AdminQnaPage = () => {
       setAnswer={setAnswer}
       qnaAnswer={qnaAnswer}
       setImageFile={setImageFile}
+      page={page}
+      setPage={setPage}
+      totalPage={totalPage}
+      imageFile={imageFile}
     />
   );
 };

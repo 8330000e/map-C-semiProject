@@ -3,6 +3,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { Input, TextArea } from "../ui/Form";
 import Button from "../ui/Button";
 import { useRef } from "react";
+import Pagination from "../ui/Pagination";
 
 const AdminQna = ({
   qnaList,
@@ -14,8 +15,21 @@ const AdminQna = ({
   setAnswer,
   qnaAnswer,
   setImageFile,
+
+  page,
+  setPage,
+  totalPage,
+  imageFile,
 }) => {
   const fileRef = useRef(null);
+
+  const openDetailModal = (item) => {
+    setSelectedQna(item);
+    setAnswer("");
+    setImageFile(null);
+    setIsOpen(true);
+  };
+
   return (
     <>
       <section className={styles.qna_list_wrap}>
@@ -36,13 +50,13 @@ const AdminQna = ({
                 <th className={styles.col_writer}>작성자</th>
                 <th className={styles.col_date}>문의일</th>
                 <th className={styles.col_status}>상태</th>
-                <th className={styles.col_status}>상세보기 및 답변</th>
+                <th className={styles.col_answer}>상세보기 및 답변</th>
               </tr>
             </thead>
             <tbody>
               {qnaList.length === 0 ? (
                 <tr>
-                  <td colSpan={5}>등록된 Qna가 없습니다.</td>
+                  <td colSpan={6}>등록된 Qna가 없습니다.</td>
                 </tr>
               ) : (
                 qnaList.map((item) => (
@@ -66,9 +80,17 @@ const AdminQna = ({
                     </td>
                     <td
                       className={styles.col_answer}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`${item.qnaNo}번 문의 상세보기`}
                       onClick={() => {
-                        setSelectedQna(item);
-                        setIsOpen(true);
+                        openDetailModal(item);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          openDetailModal(item);
+                        }
                       }}
                     >
                       <OpenInNewIcon />
@@ -96,7 +118,7 @@ const AdminQna = ({
                   id="qnaTitle"
                   name="qnaTitle"
                   value={selectedQna.qnaTitle}
-                  readOnly="ture"
+                  readOnly
                 />
                 <label htmlFor="qnaContent">문의 내용</label>
                 <TextArea
@@ -104,7 +126,7 @@ const AdminQna = ({
                   id="qnaContent"
                   name="qnaContent"
                   value={selectedQna.qnaContent}
-                  readOnly="true"
+                  readOnly
                 />
               </div>
               <div className={styles.qna_image}>질문 이미지 영역</div>
@@ -113,6 +135,7 @@ const AdminQna = ({
             <div className={styles.modal_answer}>
               <label htmlFor="qnaAnswer">답변 작성</label>
               <TextArea
+                id="qnaAnswer"
                 name="qnaAnswer"
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
@@ -127,18 +150,25 @@ const AdminQna = ({
               <div className={styles.modal_btn}>
                 <Button
                   className="btn admin sm"
+                  type="button"
                   onClick={() => fileRef.current.click()}
                 >
                   이미지 첨부
                 </Button>
+                <span>{imageFile ? imageFile.name : "첨부된 이미지 없음"}</span>
                 <div className={styles.modal_btn_right}>
                   <Button
                     className="btn admin"
+                    type="button"
                     onClick={() => setIsOpen(false)}
                   >
                     취소하기
                   </Button>
-                  <Button className="btn admin" onClick={qnaAnswer}>
+                  <Button
+                    className="btn admin"
+                    type="button"
+                    onClick={qnaAnswer}
+                  >
                     답변하기
                   </Button>
                 </div>
@@ -147,6 +177,12 @@ const AdminQna = ({
           </div>
         </div>
       )}
+      <Pagination
+        page={page}
+        setPage={setPage}
+        totalPage={totalPage}
+        naviSize={5}
+      />
     </>
   );
 };

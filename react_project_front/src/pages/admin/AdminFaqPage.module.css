@@ -1,77 +1,99 @@
 .faq_write_wrap {
-  padding: 32px;
-  background-color: #202c47;
-  border-radius: 18px;
-  margin: 14px 12px;
-  margin-bottom: 26px;
+  padding: 24px;
+  margin: 16px 12px 24px;
+  background-color: var(--admin-panel-2);
+  border: 1px solid var(--admin-stroke);
+  border-radius: 16px;
 }
-.faq_write_title {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.faq_write_content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.faq_write_content > input {
-  min-height: 140px;
-}
+
 .faq_write_wrap > form {
   display: flex;
+  gap: 20px;
   align-items: stretch;
-  gap: 24px;
 }
+
 .faq_input_wrap {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
+
+.faq_write_title,
+.faq_write_content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.faq_write_title label,
+.faq_write_content label,
+.faq_option_wrap label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--admin-muted);
+}
+
+.faq_write_wrap input,
+.faq_write_wrap select,
+.faq_write_wrap textarea {
+  width: 100%;
+  border: 2px solid var(--admin-stroke);
+  border-radius: 10px;
+  background-color: var(--admin-input-bg);
+  color: var(--admin-text);
+  padding: 10px 12px;
+}
+
+.faq_write_wrap input:focus-visible,
+.faq_write_wrap select:focus-visible,
+.faq_write_wrap textarea:focus-visible {
+  outline: 2px solid var(--admin-accent);
+  outline-offset: 1px;
+}
+
+.faq_write_content textarea {
+  min-height: 160px;
+  resize: vertical;
+}
+
+.select {
+  min-height: 40px;
+}
+
 .faq_option_wrap {
   min-width: 250px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  justify-content: space-between;
-  height: 100%;
 }
-.faq_option_wrap > div {
+
+.faq_category {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
+
 .faq_option_wrap > button {
-  padding: 12px 8px;
-  border-radius: 12px;
-  margin-top: 48px;
-}
-.select {
-  padding: 4px;
-  border-radius: 12px;
-}
-.faq_write_title > input {
-  padding: 4px;
-  border-radius: 12px;
-}
-.faq_write_content > input {
-  padding: 4px;
-  border-radius: 12px;
+  width: 100%;
+  margin-top: auto;
+  border-radius: 10px;
 }
 
 .faq_list_wrap {
-  max-height: 210px;
-  border: 1px solid #334c69;
+  margin: 0 12px 12px;
+  border: 1px solid var(--admin-stroke);
   border-radius: 12px;
   overflow: hidden;
-  margin: 14px 12px;
+  background-color: var(--admin-panel);
 }
+
 .table_wrap {
-  max-height: 210px;
+  max-height: 280px;
   overflow-y: auto;
-  
+  scrollbar-gutter: stable;
 }
+
 .faq_table {
   width: 100%;
   table-layout: fixed;
@@ -80,64 +102,92 @@
 
 .faq_table th,
 .faq_table td {
-  padding: 4px 12px;
-  text-align: left;
+  padding: 10px 12px;
   vertical-align: middle;
-  
+  border-bottom: 1px solid var(--admin-stroke);
 }
+
 .faq_table th {
-    background-color: #334c69;
+  position: sticky;
+  top: 0;
+  background-color: var(--admin-stroke);
+  text-align: left;
+  z-index: 1;
+}
+
+.faq_table tbody tr:hover {
+  background-color: var(--admin-accent-soft);
 }
 
 .col_category {
   width: 120px;
-}
-.col_title {
-  width: auto;
-}
-
-.col_edit {
-  width: 70px;
-}
-.col_delete {
-  width: 70px;
-}
-
-.faq_write_wrap input {
-  background-color: #0a1224;
-  border: none;
-  border: 3px solid #334c69;
-  color: #ffffff;
-}
-.faq_write_wrap select {
-  background-color: #0a1224;
-  border: none;
-  border: 3px solid #334c69;
-  color: #ffffff;
-}
-/* 수정, 삭제, 고정 컬럼은 중앙 정렬 */
-.col_category,
-.col_edit,
-.col_delete {
   text-align: center !important;
 }
 
-/* 스크롤 바 디자인 */
+.col_title {
+  width: auto;
+  word-break: break-word;
+}
+
+.col_edit,
+.col_delete {
+  width: 86px;
+  text-align: center !important;
+}
+
+.badge_category {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 86px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: var(--admin-accent-soft);
+  color: var(--admin-text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .table_wrap::-webkit-scrollbar {
   width: 6px;
 }
+
 .table_wrap::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .table_wrap::-webkit-scrollbar-thumb {
-  background: #334c69;
+  background: var(--admin-stroke);
   border-radius: 10px;
 }
 
-/*textarea 관리자전용*/
-.faq_write_content textarea {
-  background-color: var(--admin-input-bg);
-  border: 3px solid var(--admin-stroke);
-  color: var(--admin-text);
-  min-height: 140px;
+@media (max-width: 1024px) {
+  .faq_write_wrap > form {
+    flex-direction: column;
+  }
+
+  .faq_option_wrap {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .faq_write_wrap {
+    padding: 16px;
+    margin: 12px 8px 16px;
+  }
+
+  .faq_list_wrap {
+    margin: 0 8px 8px;
+  }
+
+  .faq_table th,
+  .faq_table td {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .col_category {
+    width: 96px;
+  }
 }

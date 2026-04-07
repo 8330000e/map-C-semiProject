@@ -1,0 +1,147 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.back_btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #4a9fd5;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 500;
+}
+
+.back_btn:hover {
+  text-decoration: underline;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+/* ===== 카테고리 탭 ===== */
+.category_wrap {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cat_btn {
+  padding: 8px 20px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  color: #555;
+  transition: all 0.15s;
+}
+
+.cat_btn:hover {
+  border-color: #4a9fd5;
+  color: #4a9fd5;
+}
+
+.cat_active {
+  background-color: #4a9fd5;
+  color: #fff;
+  border-color: #4a9fd5;
+}
+
+/* ===== FAQ 아코디언 ===== */
+.faq_list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.faq_item {
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.question {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  background: #fafafa;
+  transition: background 0.15s;
+}
+
+.question:hover {
+  background: #f0f7fc;
+}
+
+.q_badge {
+  background-color: #4a9fd5;
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.q_text {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+}
+
+.arrow {
+  font-size: 12px;
+  color: #999;
+  flex-shrink: 0;
+}
+
+.answer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #fff;
+  border-top: 1px solid #e5e5e5;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.7;
+}
+
+.a_badge {
+  background-color: #5cb878;
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px 0;
+  color: #999;
+  font-size: 14px;
+}
