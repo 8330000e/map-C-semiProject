@@ -17,6 +17,20 @@ const tradeTypeLabel = (type, text) => {
 
 const getStatusPrefix = (status) => (status ? `[${status}] ` : "");
 
+const getShippingStatusLabel = (status) => {
+  if (status === 1 || status === "1") return "배송완료";
+  return "배송전";
+};
+
+const getCourierLabel = (code) => {
+  if (code === 1 || code === "1") return "CJ대한통운";
+  if (code === 2 || code === "2") return "현대택배";
+  if (code === 3 || code === "3") return "한진택배";
+  if (code === 4 || code === "4") return "로젠택배";
+  if (code === 5 || code === "5") return "우체국택배";
+  return "미지정";
+};
+
 const PurchaseDetail = () => {
   const { id } = useParams();
   const { memberId: loginMemberId } = useAuthStore();
@@ -61,6 +75,9 @@ const PurchaseDetail = () => {
               deliveryMemo: response.data.deliveryMemo || prev?.orderInfo?.deliveryMemo,
             },
             tradeNo: response.data.tradeNo || prev?.tradeNo,
+            courierCode: response.data.courierCode ?? prev?.courierCode,
+            shippingStatus: response.data.shippingStatus ?? prev?.shippingStatus,
+            invoiceNumber: response.data.invoiceNumber ?? prev?.invoiceNumber,
           }));
         }
       } catch (error) {
@@ -186,6 +203,9 @@ const PurchaseDetail = () => {
         <div className={styles.purchase_card_title}>{getStatusPrefix(item.status)}{item.title}</div>
         <div className={styles.purchase_card_meta}>{item.date} · {item.status}</div>
         <div>판매자: {item.seller}</div>
+        <div>배송 상태: {getShippingStatusLabel(item.shippingStatus)}</div>
+        <div>택배사: {getCourierLabel(item.courierCode)}</div>
+        {item.invoiceNumber ? <div>송장번호: {item.invoiceNumber}</div> : null}
         <div>금액: {item.amount.toLocaleString()}원</div>
         <div>거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText)}</div>
       </div>

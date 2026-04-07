@@ -66,10 +66,11 @@ const OrderPage = () => {
         zipCode: false,
         address: false,
     });
+    const [phoneHelperText, setPhoneHelperText] = useState("");
 
     /**
      * 전화번호 형식 검사 함수
-     * 01012345678 or 010-1234-5678 / 011-123-4567 등 변형 허용
+     * 01012345678 or 010-1234-5678 등을 허용
      */
     const isValidPhone = (value) => {
         const cleaned = (value || "").replace(/[^0-9]/g, "");
@@ -82,13 +83,21 @@ const OrderPage = () => {
      * 직거래는 주소 정보 불필요
      */
     const validateForm = () => {
+        const phoneIsInvalid = !phone.trim() || !isValidPhone(phone.trim());
         const newErrors = {
             receiverName: !receiverName.trim(),
-            phone: !phone.trim() || !isValidPhone(phone.trim()),
+            phone: phoneIsInvalid,
             zipCode: deliveryMethod === "delivery" ? !zipCode.trim() : false,
             address: deliveryMethod === "delivery" ? !address.trim() : false,
         };
         setErrors(newErrors);
+        setPhoneHelperText(
+            !phone.trim()
+                ? "전화번호를 입력해주세요."
+                : phoneIsInvalid
+                    ? "010-0000-0000 또는 01000000000 형식으로 입력해주세요."
+                    : ""
+        );
         // 에러가 하나도 없으면 true 반환
         return !Object.values(newErrors).some((err) => err);
     };
@@ -196,18 +205,20 @@ const OrderPage = () => {
                     <input
                         value={phone}
                         onChange={(e) => {
-                            setPhone(e.target.value);
-                            // 입력 중 에러 상태 자동 해제
-                            if (e.target.value.trim()) {
-                                setErrors((prev) => ({ ...prev, phone: false }));
-                            }
+                            const value = e.target.value;
+                            setPhone(value);
+                            const isInvalid = value.trim() && !isValidPhone(value);
+                            setErrors((prev) => ({ ...prev, phone: isInvalid }));
+                            setPhoneHelperText(
+                                isInvalid ? "010-0000-0000 또는 01000000000 형식으로 입력해주세요." : ""
+                            );
                         }}
                         placeholder="010-0000-0000"
                         className={errors.phone ? styles.input_error : ""}
                     />
                     {/* 필수 입력 및 형식 오류 표시 */}
                     {errors.phone && (
-                        <span className={styles.error_text}>유효한 연락처를 입력해주세요 (예: 010-1234-5678)</span>
+                        <span className={styles.error_text}>{phoneHelperText || "유효한 연락처를 입력해주세요 (예: 010-1234-5678)"}</span>
                     )}
                 </label>
 

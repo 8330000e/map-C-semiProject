@@ -150,11 +150,12 @@ const TossTestPayment = () => {
 				orderInfo,
 				date: new Date().toISOString(),
 			});
+			const customerMobilePhone = orderInfo?.phone?.toString().replace(/[^0-9]/g, "");
 			await widgets.requestPayment({
 				orderId,
 				orderName,
 				customerName: orderInfo?.receiverName || "테스트구매자",
-				customerMobilePhone: orderInfo?.phone,
+				customerMobilePhone,
 				successUrl: `${window.location.origin}/payment/success?itemId=${itemId}&marketNo=${marketNo}`,
 				failUrl: `${window.location.origin}/payment/fail`,
 			});
