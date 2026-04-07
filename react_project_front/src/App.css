@@ -297,6 +297,16 @@ header {
   border-radius: 14px;
   background: #d8ded0;
   flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.used_item_image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 .used_item_info {
   display: flex;

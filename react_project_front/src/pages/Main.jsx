@@ -26,6 +26,16 @@ const getSaleStatusLabel = (productStatus) => {
   return "판매중";
 };
 
+const getImageUrl = (thumb) => {
+  if (!thumb) return null;
+  if (typeof thumb !== "string") return null;
+  const trimmed = thumb.trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  return `${BACKSERVER}/board/editor/${trimmed}`;
+};
+
 const Main = () => {
   // 중고거래 리스트 가로 스크롤 영역 DOM에 접근하기 위한 ref
   const usedListRef = useRef(null);
@@ -268,40 +278,47 @@ const Main = () => {
         <div className="used_list roundBorder">
           <div className="used_list_scroll" ref={usedListRef}>
             <ul>
-              {usedGoods.map((item, index) => (
-                <li key={item.marketNo ?? item.boardNo ?? index}>
-                  <Link to={`/store/${item.marketNo}`}>
-                    <div className="used_item_image" aria-hidden="true" />
-                    <div className="used_item_info">
-                      <strong>
-                        [{getSaleStatusLabel(item.productStatus)}]{" "}
-                        {item.marketTitle}
-                      </strong>
-                      <p className="used_item_price">
-                        {item.productPrice
-                          ? `${Number(item.productPrice).toLocaleString("ko-KR")}원`
-                          : ""}
-                      </p>
-                      <div className="used_item_meta">
-                        <span>{item.memberNickname || item.memberId}</span>
-                        <span>|</span>
-                        <span>💬 {item.commentCount ?? 0}</span>
-                        <span>|</span>
-                        <span>
-                          {item.createdAt
-                            ? new Date(item.createdAt).toLocaleDateString(
-                                "ko-KR",
-                              )
+              {usedGoods.map((item, index) => {
+                const imageUrl = getImageUrl(item.productThumb);
+                return (
+                  <li key={item.marketNo ?? item.boardNo ?? index}>
+                    <Link to={`/store/${item.marketNo}`}>
+                      <div className="used_item_image" aria-hidden="true">
+                        {imageUrl ? (
+                          <img src={imageUrl} alt={item.marketTitle || "상품 이미지"} />
+                        ) : null}
+                      </div>
+                      <div className="used_item_info">
+                        <strong>
+                          [{getSaleStatusLabel(item.productStatus)}]{" "}
+                          {item.marketTitle}
+                        </strong>
+                        <p className="used_item_price">
+                          {item.productPrice
+                            ? `${Number(item.productPrice).toLocaleString("ko-KR")}원`
                             : ""}
+                        </p>
+                        <div className="used_item_meta">
+                          <span>{item.memberNickname || item.memberId}</span>
+                          <span>|</span>
+                          <span>💬 {item.commentCount ?? 0}</span>
+                          <span>|</span>
+                          <span>
+                            {item.createdAt
+                              ? new Date(item.createdAt).toLocaleDateString(
+                                  "ko-KR",
+                                )
+                              : ""}
+                          </span>
+                        </div>
+                        <span className="used_item_view">
+                          👀 {Number(item.readCount ?? 0).toLocaleString("ko-KR")}
                         </span>
                       </div>
-                      <span className="used_item_view">
-                        👀 {Number(item.readCount ?? 0).toLocaleString("ko-KR")}
-                      </span>
-                    </div>
-                  </Link>
-                </li>
-              ))}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>
