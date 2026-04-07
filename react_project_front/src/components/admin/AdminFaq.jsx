@@ -47,8 +47,11 @@ const AdminFaq = ({
                 value={faq.faqCategory}
                 onChange={changeFaq}
               >
-                <option value={0}>카테고리1</option>
-                <option value={1}>카테고리2</option>
+                <option value="회원·계정">회원·계정</option>
+                <option value="커뮤니티">커뮤니티</option>
+                <option value="중고거래">중고거래</option>
+                <option value="미션·포인트">미션·포인트</option>
+                <option value="기타">기타</option>
               </select>
             </div>
 
@@ -86,11 +89,9 @@ const AdminFaq = ({
                 faqList.map((item) => (
                   <tr key={item.faqNo}>
                     <td className={styles.col_category}>
-                      {Number(item.faqCategory) === 0 ? (
-                        <span className={styles.badge_category}>카테고리1</span>
-                      ) : (
-                        <span className={styles.badge_category}>카테고리2</span>
-                      )}
+                      <span className={styles.badge_category}>
+                        {item.faqCategory}
+                      </span>
                     </td>
                     <td className={styles.col_title}>{item.faqTitle}</td>
 
