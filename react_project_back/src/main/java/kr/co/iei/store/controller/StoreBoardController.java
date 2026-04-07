@@ -4,6 +4,7 @@ import kr.co.iei.store.model.service.StoreBoardService;
 import kr.co.iei.store.model.vo.StoreBoard;
 import kr.co.iei.store.model.vo.StoreRating;
 import kr.co.iei.store.model.vo.StoreReview;
+import kr.co.iei.store.model.vo.StoreTradeInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -234,6 +235,66 @@ public class StoreBoardController {
         } catch (Exception e) {
             log.error("평가 삭제 실패 marketNo={} reviewNo={}", marketNo, reviewNo, e);
             return ResponseEntity.internalServerError().body("평가 삭제 실패: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/trades")
+    public ResponseEntity<?> saveTradeInfo(@RequestBody StoreTradeInfo tradeInfo) {
+        try {
+            storeBoardService.saveTradeInfo(tradeInfo);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            log.error("결제 정보 저장 실패 payload={}", tradeInfo, e);
+            return ResponseEntity.internalServerError().body("결제 정보 저장 실패: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/markets/{marketNo}/trade-info")
+    public ResponseEntity<?> getTradeInfo(@PathVariable Long marketNo,
+                                          @RequestParam(required = false) String buyerId) {
+        try {
+            StoreTradeInfo tradeInfo = buyerId != null
+                                      ? storeBoardService.getTradeInfoByMarketNoAndBuyerId(marketNo, buyerId)
+                                      : storeBoardService.getTradeInfoByMarketNo(marketNo);
+            if (tradeInfo == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(tradeInfo);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            log.error("거래 정보 조회 실패 marketNo={} buyerId={}", marketNo, buyerId, e);
+            return ResponseEntity.internalServerError().body("거래 정보 조회 실패: " + e.getMessage());
+        }
+    }
+
+    @PatchMapping("/trades/{tradeNo}")
+    public ResponseEntity<?> updateTradeInfo(@PathVariable Long tradeNo, @RequestBody StoreTradeInfo tradeInfo) {
+        try {
+            tradeInfo.setTradeNo(tradeNo);
+            storeBoardService.updateTradeInfo(tradeInfo);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            log.error("거래 정보 수정 실패 tradeNo={} payload={}", tradeNo, tradeInfo, e);
+            return ResponseEntity.internalServerError().body("거래 정보 수정 실패: " + e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/markets/{marketNo}/trade-info", method = {RequestMethod.PATCH, RequestMethod.PUT})
+    public ResponseEntity<?> updateTradeInfoByMarketNo(@PathVariable Long marketNo, @RequestBody StoreTradeInfo tradeInfo) {
+        try {
+            tradeInfo.setMarketNo(marketNo);
+            storeBoardService.updateTradeInfoByMarketNo(tradeInfo);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            log.error("거래 정보 수정 실패 marketNo={} payload={}", marketNo, tradeInfo, e);
+            return ResponseEntity.internalServerError().body("거래 정보 수정 실패: " + e.getMessage());
         }
     }
 

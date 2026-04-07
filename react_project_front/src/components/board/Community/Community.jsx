@@ -66,7 +66,12 @@ const Community = () => {
       })
       .then((res) => {
         console.log("게시글 목록 응답:", res.data);
-        setBoardList(res.data.items || []);
+        const items = Array.isArray(res.data.items)
+          ? res.data.items
+          : Array.isArray(res.data)
+          ? res.data
+          : [];
+        setBoardList(items);
       })
       .catch((err) => {
         console.error("게시글 조회 실패:", err);
@@ -480,6 +485,11 @@ const Community = () => {
                           `${board.boardTitle}-${board.createDate}-${index}`
                         }
                         onClick={async () => {
+                          if (!board?.boardNo) {
+                            console.warn("boardNo is undefined, skipping read count update.", board);
+                            return;
+                          }
+
                           if (!isExpanded) {
                             try {
                               await axios.get(
