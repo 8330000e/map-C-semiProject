@@ -109,4 +109,6 @@ public class BoardController {
 		 List<Board> list = boardService.selectMemberIdBoard(map);
 		 return ResponseEntity.ok(list);
 	 }
+	 
+	 
 }

@@ -64,4 +64,17 @@ public class AdminController {
 		List<Faq> faqList = adminService.selectFaqList();
 		return ResponseEntity.ok(faqList);
 	}
+	
+	@PostMapping(value="faq")
+	public ResponseEntity<?> insertFaq(@RequestBody Faq faq) {
+		System.out.println(faq);
+		int result = adminService.insertFaq(faq);
+		return ResponseEntity.ok(result);
+	}
+	
+	@PatchMapping(value="faq")
+	public ResponseEntity<?> editFaq(@RequestBody Faq faq) {
+		int result = adminService.editFaq(faq);
+		return ResponseEntity.ok(result);
+	}
 }

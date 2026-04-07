@@ -1,7 +1,15 @@
 import styles from "../../pages/admin/AdminFaqPage.module.css";
 import Button from "../ui/Button";
 import { TextArea } from "../ui/Form";
-const AdminFaq = ({ faq, changeFaq, isEdit }) => {
+const AdminFaq = ({
+  faq,
+  changeFaq,
+  isEdit,
+  insertFaq,
+  faqList,
+  setIsEdit,
+  setFaq,
+}) => {
   return (
     <>
       <section className={styles.faq_write_wrap}>
@@ -17,8 +25,8 @@ const AdminFaq = ({ faq, changeFaq, isEdit }) => {
                 onChange={changeFaq}
               />
             </div>
-            <div className={styles.notice_write_content}>
-              <label htmlFor="noticeContent">답변 내용</label>
+            <div className={styles.faq_write_content}>
+              <label htmlFor="faqContent">답변 내용</label>
               <TextArea
                 id="faqContent"
                 name="faqContent"
@@ -46,6 +54,75 @@ const AdminFaq = ({ faq, changeFaq, isEdit }) => {
             </Button>
           </section>
         </form>
+      </section>
+      <section className={styles.faq_list_wrap}>
+        <div className={styles.table_wrap}>
+          <table className={styles.faq_table}>
+            <colgroup>
+              <col className={styles.col_category} />
+              <col className={styles.col_title} />
+
+              <col className={styles.col_edit} />
+              <col className={styles.col_delete} />
+            </colgroup>
+            <thead>
+              <tr>
+                <th className={styles.col_category}>카테고리</th>
+                <th className={styles.col_title}>제목</th>
+
+                <th className={styles.col_edit}>수정</th>
+                <th className={styles.col_delete}>삭제</th>
+              </tr>
+            </thead>
+            <tbody>
+              {faqList.length === 0 ? (
+                <tr>
+                  <td colSpan={5}>등록된 Faq가 없습니다.</td>
+                </tr>
+              ) : (
+                faqList.map((item) => (
+                  <tr key={item.faqNo}>
+                    <td className={styles.col_category}>
+                      {item.faqCategory === "0" ? (
+                        <span className={styles.badge_category}>카테고리1</span>
+                      ) : (
+                        <span className={styles.badge_category}>카테고리2</span>
+                      )}
+                    </td>
+                    <td className={styles.col_title}>{item.faqTitle}</td>
+
+                    <td className={styles.col_edit}>
+                      <Button
+                        className="btn admin sm"
+                        onClick={() => {
+                          setIsEdit(true);
+                          setFaq({
+                            faqNo: item.faqNo,
+                            faqTitle: item.faqTitle,
+                            faqContent: item.faqContent,
+                            faqCategory: item.faqCategory,
+                          });
+                        }}
+                      >
+                        수정
+                      </Button>
+                    </td>
+                    <td className={styles.col_delete}>
+                      <Button
+                        className="btn danger sm"
+                        onClick={() => {
+                          deleteFaq(item.faqNo);
+                        }}
+                      >
+                        삭제
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </section>
     </>
   );
