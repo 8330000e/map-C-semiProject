@@ -15,6 +15,7 @@ const Community = () => {
   const mapDivRef = useRef(null);
 
   const [mode, setMode] = useState("list");
+
   const [boardList, setBoardList] = useState([]);
   const [expandedBoardNo, setExpandedBoardNo] = useState(null);
 
@@ -33,6 +34,23 @@ const Community = () => {
   const [selectedBoard, setSelectedBoard] = useState(null);
 
   const [attachedFiles, setAttachedFiles] = useState([]);
+
+  const location = useLocation();
+  const [missionType, setMissionType] = useState(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const modeParam = params.get("mode");
+    const missionParam = params.get("mission");
+
+    if (modeParam === "write") {
+      setMode("write");
+    } else {
+      setMode("list");
+    }
+
+    setMissionType(missionParam || null);
+  }, [location.search]);
 
   const [addr, setAddr] = useState("선택된 위치 없음");
   const [lnglat, setLnglat] = useState({
@@ -69,8 +87,8 @@ const Community = () => {
         const items = Array.isArray(res.data.items)
           ? res.data.items
           : Array.isArray(res.data)
-          ? res.data
-          : [];
+            ? res.data
+            : [];
         setBoardList(items);
       })
       .catch((err) => {
@@ -202,12 +220,25 @@ const Community = () => {
             },
           );
         }
-        await Swal.fire({
-          icon: "success",
-          title: "게시글이 등록되었습니다!",
-          text: "작성한 게시글이 정상적으로 등록되었습니다.",
-          confirmButtonText: "확인",
-        });
+
+        if (missionType === "board-write") {
+          localStorage.setItem("mission_board_write_completed", "true");
+          localStorage.setItem("mission_board_write_point", "5");
+
+          await Swal.fire({
+            icon: "success",
+            title: "게시글 등록 완료",
+            text: "게시글이 등록되었고, 미션 완료로 5포인트가 지급되었습니다.",
+            confirmButtonText: "확인",
+          });
+        } else {
+          await Swal.fire({
+            icon: "success",
+            title: "게시글이 등록되었습니다!",
+            text: "작성한 게시글이 정상적으로 등록되었습니다.",
+            confirmButtonText: "확인",
+          });
+        }
 
         // 초기화
         setTitle("");
@@ -486,7 +517,10 @@ const Community = () => {
                         }
                         onClick={async () => {
                           if (!board?.boardNo) {
-                            console.warn("boardNo is undefined, skipping read count update.", board);
+                            console.warn(
+                              "boardNo is undefined, skipping read count update.",
+                              board,
+                            );
                             return;
                           }
 
@@ -521,7 +555,6 @@ const Community = () => {
                             {board.createDate}
                           </div>
                         </div>
-
                         <div className={styles.boardTitle}>
                           {board.boardTitle}
                         </div>
@@ -551,7 +584,6 @@ const Community = () => {
                             </button>
                           </div>
                         )}
-
                         {board.thumbnailUrl && (
                           <div className={styles.boardThumbnailBox}>
                             <img
@@ -561,7 +593,6 @@ const Community = () => {
                             />
                           </div>
                         )}
-
                         <div className={styles.boardItemBottom}>
                           <span className={styles.iconItem}>
                             <VisibilityIcon fontSize="small" />

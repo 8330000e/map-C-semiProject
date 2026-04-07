@@ -4,6 +4,89 @@
   box-sizing: border-box;
 }
 
+.topSection {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto 18px;
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 13px 16px;
+  border: 1px solid #8e9684;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #2f372b;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.backButton:hover {
+  background: #f3f6ee;
+  transform: translateY(-1px);
+}
+
+.noticeBox {
+  flex: 1;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border: 1px solid #b8c0ae;
+  border-radius: 14px;
+  background: #f8fbf4;
+  box-sizing: border-box;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.noticeLabel {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #e4efda;
+  color: #4c6440;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.noticeText {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2e342b;
+}
+.noticeViewport {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.noticeTrack {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: noticeMarquee 14s linear infinite;
+}
+
+@keyframes noticeMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
 .container {
   width: 100%;
   max-width: 1280px;
@@ -24,9 +107,10 @@
 }
 
 .mapBox {
+  position: relative;
   width: 100%;
   height: clamp(500px, 60vw, 700px);
-  border-radius: 32px;
+  border-radius: 24px;
   overflow: hidden;
   background: linear-gradient(180deg, #dde7f5 0%, #dbe8e3 100%);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
@@ -40,68 +124,6 @@
   box-sizing: border-box;
 }
 
-@media (max-width: 1240px) {
-  .treeGrowMainPage {
-    padding: 20px 0 32px;
-  }
-
-  .container {
-    padding: 0 20px;
-    grid-template-columns: minmax(280px, 1fr) minmax(320px, 1fr);
-    gap: 16px;
-  }
-
-  .mapBox {
-    height: clamp(460px, 56vw, 620px);
-  }
-}
-
-@media (max-width: 1100px) {
-  .container {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-
-  .mapBox {
-    height: 420px;
-  }
-}
-
-@media (max-width: 768px) {
-  .treeGrowMainPage {
-    padding: 16px 0 24px;
-  }
-
-  .container {
-    padding: 0 16px;
-    gap: 14px;
-  }
-
-  .mapBox {
-    height: 320px;
-    border-radius: 22px;
-    font-size: 18px;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: 0 12px;
-  }
-
-  .mapBox {
-    height: 260px;
-    border-radius: 18px;
-    font-size: 16px;
-  }
-}
-.mapBox {
-  position: relative;
-  width: 100%;
-  height: 680px;
-  overflow: hidden;
-  border-radius: 24px;
-}
 .mapBackground {
   width: 100%;
   height: 100%;
@@ -135,4 +157,94 @@
 .activePin {
   background-color: #9cc63b;
   color: #111;
+}
+
+@media (max-width: 1240px) {
+  .treeGrowMainPage {
+    padding: 20px 0 32px;
+  }
+
+  .topSection {
+    padding: 0 20px;
+  }
+
+  .container {
+    padding: 0 20px;
+    grid-template-columns: minmax(280px, 1fr) minmax(320px, 1fr);
+    gap: 16px;
+  }
+
+  .mapBox {
+    height: clamp(460px, 56vw, 620px);
+  }
+}
+
+@media (max-width: 1100px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .mapBox {
+    height: 420px;
+  }
+}
+
+@media (max-width: 768px) {
+  .treeGrowMainPage {
+    padding: 16px 0 24px;
+  }
+
+  .topSection {
+    padding: 0 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .backButton {
+    font-size: 13px;
+    padding: 7px 12px;
+  }
+
+  .noticeBox {
+    min-height: 46px;
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .noticeLabel {
+    font-size: 12px;
+    padding: 5px 8px;
+  }
+
+  .noticeText {
+    font-size: 13px;
+  }
+
+  .container {
+    padding: 0 16px;
+    gap: 14px;
+  }
+
+  .mapBox {
+    height: 320px;
+    border-radius: 22px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .topSection {
+    padding: 0 12px;
+  }
+
+  .container {
+    padding: 0 12px;
+  }
+
+  .mapBox {
+    height: 260px;
+    border-radius: 18px;
+    font-size: 16px;
+  }
 }

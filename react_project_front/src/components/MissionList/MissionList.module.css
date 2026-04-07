@@ -1,0 +1,185 @@
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px 0;
+  box-sizing: border-box;
+
+  min-height: calc(100vh - 170px);
+  display: flex;
+}
+
+.mainBox {
+  width: 100%;
+  background: #f8f8f6;
+  border: 1px solid #cfcfc8;
+  border-radius: 20px;
+  padding: 30px 28px 24px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hero {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 80px;
+}
+
+/* 가운데 텍스트 */
+.heroText {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+/* 가운데 텍스트 */
+.heroText {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+.heroText h2 {
+  margin: 0 0 8px;
+  font-size: 32px;
+  font-weight: 800;
+  color: #1d1d1d;
+}
+
+.heroText p {
+  margin: 0 0 6px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #333;
+}
+
+.heroText span {
+  font-size: 14px;
+  color: #666;
+}
+
+.attendanceButton {
+  min-width: 170px;
+  height: 44px;
+  border: 1px solid #7d7d7d;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cardSection {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  flex: 1;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #d6d6d0;
+  border-radius: 18px;
+  padding: 24px 20px 20px;
+  min-height: 470px;
+  text-align: center;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.card h3 {
+  margin: 0 0 18px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #111;
+}
+
+.imageBox {
+  width: 100%;
+  height: 170px;
+  margin-bottom: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imageBox img {
+  max-width: 180px;
+  max-height: 160px;
+  object-fit: contain;
+}
+
+.card h4 {
+  margin: 0 0 12px;
+  font-size: 24px;
+  font-weight: 800;
+  color: #111;
+}
+
+.card p {
+  margin: 0 0 10px;
+  font-size: 15px;
+  color: #444;
+}
+
+.card strong {
+  display: block;
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #111;
+}
+
+.card button {
+  margin-top: auto;
+  width: 100%;
+  height: 46px;
+  border: none;
+  border-radius: 10px;
+  background: #a9c957;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.bottomNotice {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+}
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+
+  margin-bottom: 12px;
+}
+.backButton:hover {
+  opacity: 0.7;
+}
