@@ -27,7 +27,7 @@
   --shadow:
     rgba(70, 77, 62, 0.2) 0px 4px 6px -1px,
     rgba(70, 77, 62, 0.1) 0px 2px 4px -1px;
-  --sans: system-ui, "Roboto", sans-serif;
+  --sans: system-ui, "NanumGothic", sans-serif;
   --headline: system-ui, "Jua", sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 }
