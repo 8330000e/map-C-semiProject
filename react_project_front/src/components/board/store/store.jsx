@@ -25,6 +25,13 @@ const getSaleStatusLabel = (productStatus) => {
     return "판매중";
 };
 
+const getImageUrl = (thumb) => {
+    if (!thumb) return null;
+    if (thumb.startsWith("http://") || thumb.startsWith("https://")) return thumb;
+    if (thumb.startsWith("/")) return `${BACKSERVER}${thumb}`;
+    return `${BACKSERVER}/${thumb}`;
+};
+
 const Store = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 16;
@@ -175,11 +182,18 @@ const Store = () => {
                     {!isLoading && loadError && <p>{loadError}</p>}
                     {visibleGoods.map((item, index) => {
                         const tradeMethodLabel = getTradeTypeLabel(item.tradeType);
+                        const imageUrl = getImageUrl(item.productThumb);
 
                         return (
                             <Link key={item.marketNo ?? item.boardNo ?? index} to={`/store/${item.marketNo}`} className={styles.cardLink}>
                                 <article className={styles.card}>
-                                    <div className={styles.image}>{item.productThumb || "이미지"}</div>
+                                    <div className={styles.image}>
+                                        {imageUrl ? (
+                                            <img src={imageUrl} alt={item.marketTitle || "상품 이미지"} />
+                                        ) : (
+                                            "이미지"
+                                        )}
+                                    </div>
                                     <h3>{item.displayTitle}</h3>
                                     <p className={styles.price}>{formatPrice(item.productPrice)}</p>
                                     <div className={styles.region_badge}>{item.regionName || item.ctpvsggId || "지역 미등록"}</div>

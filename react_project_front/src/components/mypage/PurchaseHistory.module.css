@@ -276,6 +276,17 @@
   color: #2f3d26;
 }
 
+.review_image_wrap {
+  margin-top: 12px;
+}
+
+.review_image {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  max-height: 260px;
+}
+
 .review_textarea {
   width: 100%;
   min-height: 140px;
