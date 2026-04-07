@@ -1,0 +1,103 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.back_btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #4a9fd5;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 500;
+}
+
+.back_btn:hover {
+  text-decoration: underline;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+/* ===== 테이블 ===== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background-color: #e8f4fa;
+}
+
+.table th,
+.table td {
+  padding: 14px 16px;
+  text-align: center;
+  font-size: 14px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.table th {
+  font-weight: 600;
+  color: #333;
+}
+
+.td_title {
+  text-align: left;
+  cursor: pointer;
+}
+
+.td_title:hover {
+  color: #4a9fd5;
+}
+
+.empty {
+  padding: 40px 0;
+  color: #999;
+}
+
+/* ===== 페이지네이션 ===== */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.pagination button {
+  padding: 8px 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  color: #555;
+  transition: all 0.15s;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #e8f4fa;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.pagination .active {
+  background-color: #4a9fd5;
+  color: #fff;
+  border-color: #4a9fd5;
+}

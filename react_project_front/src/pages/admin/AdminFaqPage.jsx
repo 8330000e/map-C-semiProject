@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import AdminFaq from "../../components/admin/AdminFaq";
-import styles from "./AdminFaqPage.module.css";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -19,6 +18,34 @@ const AdminFaqPage = () => {
   };
 
   const [faqList, setFaqList] = useState([]);
+
+  const deleteFaq = (faqNo) => {
+    Swal.fire({
+      title: "FAQ 삭제",
+      text: "삭제하시겠습니까?",
+      icon: "question",
+      showCancelButton: true,
+      cancelButtonText: "취소",
+      confirmButtonText: "삭제",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`${import.meta.env.VITE_BACKSERVER}/admins/faq/${faqNo}`)
+          .then((res) => {
+            if (res.data === 1) {
+              selectFaqList();
+              Swal.fire({
+                title: "삭제 완료",
+                icon: "success",
+              });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    });
+  };
 
   const insertFaq = (e) => {
     e.preventDefault();
@@ -103,6 +130,7 @@ const AdminFaqPage = () => {
       faqList={faqList}
       setIsEdit={setIsEdit}
       setFaq={setFaq}
+      deleteFaq={deleteFaq}
     />
   );
 };

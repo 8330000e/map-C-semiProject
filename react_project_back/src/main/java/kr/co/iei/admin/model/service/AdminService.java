@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.iei.admin.model.dao.AdminDao;
 import kr.co.iei.admin.model.vo.DashData;
 import kr.co.iei.admin.model.vo.Faq;
+import kr.co.iei.admin.model.vo.ListItem;
+import kr.co.iei.admin.model.vo.ListResponse;
 import kr.co.iei.admin.model.vo.Notice;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.utils.FileUtils;
@@ -75,9 +77,13 @@ public class AdminService {
 		return result;
 	}
 
-	public List<Qna> selectQnaList() {
-		List<Qna> qnaList = adminDao.selectQnaList();
-		return qnaList;
+	public ListResponse selectQnaList(ListItem listItem) {
+		int totalCount = adminDao.getTotalCount();
+		int totalPage = (int)Math.ceil((double)totalCount / listItem.getSize());
+		
+		List<Qna> qnaList = adminDao.selectQnaList(listItem);
+		ListResponse response = new ListResponse(qnaList, totalPage);
+		return response;
 	}
 
 	@Transactional

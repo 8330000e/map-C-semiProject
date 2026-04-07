@@ -85,6 +85,7 @@
 		where faq_no = #{faqNo}
 	</update>
 	
+	
 	<select id="selectQnaList" resultType="qna">
 		select 
 			qna_no,
@@ -95,6 +96,11 @@
 			qna_date
 		from qna_tbl
 		order by qna_status asc, qna_date desc
+		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
+	</select>
+	
+	<select id="getTotalCount">
+		select count(*) from qna_tbl
 	</select>
 	
 	<update id="qnaAnswer">
