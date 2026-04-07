@@ -174,18 +174,36 @@
     <select id="selectMemberIdBoard" resultType="board">
         SELECT 
             board_no,
+            writer_id,
             member_nickname,
             board_title,
             board_thumb,
             board_date,
             read_count 
         FROM board_tbl 
-        WHERE writer_id = #{memberId}
-
-        <if test="searchBoard != null and searchBoard != ''">
-            AND board_title LIKE '%' || #{searchBoard} || '%'
-        </if>
-
+   
+        
+   		<where>
+   			<if test="checker == 1">
+        		writer_id = #{memberId}
+   			</if>
+   			<if test="checker == 2 and boardNoList != null and boardNoList != ''">
+   				board_no in
+   				<foreach collection="boardNoList" item="boardNo" open="(" close=")" separator=",">
+   					#{boardNo}
+   				</foreach>
+   			</if>
+   			<if test="checker == 3 and tipList != null and tipList != ''">
+   				board_no in
+   				<foreach collection="tipList" item="boardNo" open="(" close=")" separator=",">
+   					#{boardNo}
+   				</foreach>
+   			</if>
+   			<if test="searchBoard != null and searchBoard != ''">
+            	and board_title LIKE '%' || #{searchBoard} || '%'
+        	</if>
+   		</where>
+        
         <if test="filter == 1 or filter == '1'">
             ORDER BY board_no DESC
         </if>
@@ -198,6 +216,12 @@
         <if test="filter == 4 or filter == '4'">
             ORDER BY read_count ASC
         </if>
+    </select>
+    <select id="selectLikeBoard" resultType="Integer">
+    select board_no from board_like_tbl where member_id = #{memberId}
+    </select>
+    <select id="selectTipBoard" resultType="Integer">
+    	select board_no from tip_tbl where member_id=#{memberId}
     </select>
 
 </mapper>

@@ -123,6 +123,7 @@ public class MemberService {
 	// 회원정보 수정
 	@Transactional
 	public int updateMemberInfo(Member member) {
+	
 		int result = memberDao.updateMemberInfo(member);
 		return result;
 	}
