@@ -85,6 +85,26 @@
 		where faq_no = #{faqNo}
 	</update>
 	
+	<select id="selectQnaList" resultType="qna">
+		select 
+			qna_no,
+			member_id as qnaMemberId,
+			qna_title,
+			qna_content,
+			qna_status,
+			qna_date
+		from qna_tbl
+		order by qna_status asc, qna_date desc
+	</select>
+	
+	<update id="qnaAnswer">
+		update qna_tbl set
+			qna_answer = #{qnaAnswer},
+			qna_image_path = #{qnaImagePath},
+			qna_status = 1
+		where qna_no = #{qnaNo}
+	</update>
+	
 	
 	
 

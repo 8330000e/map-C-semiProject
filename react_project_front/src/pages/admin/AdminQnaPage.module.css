@@ -1,0 +1,147 @@
+.qna_list_wrap {
+  min-height: 500px;
+  border: 1px solid #334c69;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 14px 12px;
+}
+.table_wrap {
+  overflow-y: auto;
+}
+.qna_table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.qna_table th,
+.qna_table td {
+  padding: 4px 12px;
+  text-align: center;
+  vertical-align: middle;
+}
+.qna_table th {
+  background-color: #334c69;
+}
+
+.col_no {
+  width: 120px;
+}
+.col_title {
+  width: auto;
+}
+
+.col_date {
+  width: auto;
+}
+.col_status {
+  width: 85px;
+}
+.col_answer {
+  width: 140px;
+}
+
+/* 스크롤 바 디자인 */
+.table_wrap::-webkit-scrollbar {
+  width: 6px;
+}
+.table_wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+.table_wrap::-webkit-scrollbar-thumb {
+  background: #334c69;
+  border-radius: 10px;
+}
+
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal_content {
+  background-color: var(--admin-panel-2);
+  border: 1px solid var(--admin-stroke);
+  border-radius: 18px;
+  padding: 32px;
+  width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.modal_content > h3 {
+  display: flex;
+  justify-content: center;
+  font-size: 24px;
+}
+.modal_body {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.qna_detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.qna_image {
+  min-width: 200px;
+  height: 200px;
+  border: 1px solid #334c69;
+  border-radius: 8px;
+}
+.qna_detail > textarea {
+  min-height: 140px;
+  resize: none;
+}
+.modal_answer {
+  margin-top: 32px;
+}
+
+.modal_answer {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.modal_btn {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+.modal_btn_right {
+  display: flex;
+  gap: 12px;
+}
+.modal_content input,
+.modal_content textarea {
+  background-color: var(--admin-input-bg);
+  border: 2px solid var(--admin-stroke);
+  color: var(--admin-text);
+  border-radius: 8px;
+  padding: 8px;
+  width: 100%;
+}
+
+.badge_pending {
+  background-color: var(--admin-warning);
+  color: #000;
+  padding: 8px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+.badge_done {
+  background-color: var(--admin-success);
+  color: #000;
+  padding: 8px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}

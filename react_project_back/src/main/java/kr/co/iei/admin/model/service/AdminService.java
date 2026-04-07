@@ -4,6 +4,7 @@ package kr.co.iei.admin.model.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,11 +12,20 @@ import kr.co.iei.admin.model.dao.AdminDao;
 import kr.co.iei.admin.model.vo.DashData;
 import kr.co.iei.admin.model.vo.Faq;
 import kr.co.iei.admin.model.vo.Notice;
+import kr.co.iei.admin.model.vo.Qna;
+import kr.co.iei.utils.FileUtils;
 
 @Service
 public class AdminService {
 	@Autowired
 	private AdminDao adminDao;
+	
+	@Autowired
+	private FileUtils fileUtils;
+	
+	@Value("${file.root}")
+	private String root;
+	
 
 	@Transactional
 	public int insertNotice(Notice notice) {
@@ -63,5 +73,19 @@ public class AdminService {
 	public int editFaq(Faq faq) {
 		int result = adminDao.editFaq(faq);
 		return result;
+	}
+
+	public List<Qna> selectQnaList() {
+		List<Qna> qnaList = adminDao.selectQnaList();
+		return qnaList;
+	}
+
+	@Transactional
+	public int qnaAnswer(Qna qna) {
+		if (qna.getQnaImage() != null) {
+			String filepath = fileUtils.upload(root + "qna/", qna.getQnaImage());
+			qna.setQnaImagePath(filepath);
+		}
+		return adminDao.qnaAnswer(qna);
 	}
 }
