@@ -32,6 +32,18 @@ const getCourierLabel = (code) => {
   return "미지정";
 };
 
+const getImageUrl = (thumb) => {
+  if (!thumb) return null;
+  if (typeof thumb !== "string") return null;
+  const trimmed = thumb.trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith("http")) return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  return `${BACKSERVER}/board/editor/${trimmed}`;
+};
+
 const isDeliveryTrade = (tradeType, tradeTypeText, deliveryMethod, address) => {
   const normalized = String(tradeType ?? tradeTypeText ?? deliveryMethod ?? "").trim();
   const resolved = tradeTypeLabel(tradeType, tradeTypeText, deliveryMethod, address);
@@ -48,6 +60,7 @@ const PurchaseDetail = () => {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [reviewImage, setReviewImage] = useState(null);
+  const [reviewImageUrl, setReviewImageUrl] = useState("");
   const [reviews, setReviews] = useState([]);
   const [editReviewId, setEditReviewId] = useState(null);
   const [editRating, setEditRating] = useState(5);
@@ -114,9 +127,27 @@ const PurchaseDetail = () => {
       .finally(() => setIsLoading(false));
   }, [item?.marketNo]);
 
-  const onFileChange = (e) => {
+  const onFileChange = async (e) => {
     const file = e.target.files[0];
-    if (file) setReviewImage(file);
+    if (!file) return;
+    setReviewImage(file);
+
+    const formData = new FormData();
+    formData.append("upfile", file);
+
+    try {
+      const res = await axios.post(`${BACKSERVER}/boards/editor/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      setReviewImageUrl(res.data);
+    } catch (error) {
+      console.error("후기 이미지 업로드 실패", error);
+      alert("후기 이미지 업로드에 실패했습니다.");
+      setReviewImage(null);
+      setReviewImageUrl("");
+    }
   };
 
   const handleOrderAction = async (actionType) => {
@@ -191,7 +222,7 @@ const PurchaseDetail = () => {
         buyerNickname: item.buyerNickname || loginMemberId,
         rating,
         reviewContent: comment,
-        reviewThumb: reviewImage ? reviewImage.name : null,
+        reviewThumb: reviewImageUrl || null,
       });
       setReviews((prev) => [res.data, ...prev.filter((rev) => rev.reviewNo !== res.data.reviewNo)]);
       alert("평가가 정상적으로 제출되었습니다.");
@@ -207,12 +238,15 @@ const PurchaseDetail = () => {
     setEditReviewId(review.reviewNo);
     setEditRating(review.rating);
     setEditComment(review.reviewContent);
+    setReviewImageUrl(review.reviewThumb || "");
   };
 
   const cancelEditing = () => {
     setEditReviewId(null);
     setEditRating(5);
     setEditComment("");
+    setReviewImage(null);
+    setReviewImageUrl("");
   };
 
   const saveEdit = async () => {
@@ -226,11 +260,13 @@ const PurchaseDetail = () => {
         buyerNickname: item.buyerNickname || loginMemberId,
         rating: editRating,
         reviewContent: editComment,
-        reviewThumb: reviewImage ? reviewImage.name : myReview?.reviewThumb || null,
+        reviewThumb: reviewImageUrl || myReview?.reviewThumb || null,
       });
       setReviews((prev) =>
         prev.map((rev) =>
-          rev.reviewNo === editReviewId ? { ...rev, rating: editRating, reviewContent: editComment } : rev,
+          rev.reviewNo === editReviewId
+            ? { ...rev, rating: editRating, reviewContent: editComment, reviewThumb: reviewImageUrl || rev.reviewThumb }
+            : rev,
         ),
       );
       cancelEditing();
@@ -436,7 +472,18 @@ const PurchaseDetail = () => {
               ) : (
                 <>
                   <p>{rev.reviewContent}</p>
-                  {rev.reviewThumb && <p>첨부: {rev.reviewThumb}</p>}
+                  {rev.reviewThumb && (
+                    <div className={styles.review_image_wrap}>
+                      <img
+                        src={getImageUrl(rev.reviewThumb)}
+                        alt="후기 이미지"
+                        className={styles.review_image}
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                    </div>
+                  )}
                   <div className={styles.review_actions}>
                     {rev.buyerId === loginMemberId && (
                       <>
