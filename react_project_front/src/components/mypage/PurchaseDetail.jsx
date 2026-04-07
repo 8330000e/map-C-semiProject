@@ -196,6 +196,8 @@ const PurchaseDetail = () => {
     );
   }
 
+  const shippingInfoAvailable = item.orderInfo?.receiverName || item.orderInfo?.phone || item.orderInfo?.address || item.invoiceNumber || item.courierCode || item.shippingStatus !== undefined;
+
   return (
     <div className={styles.purchase_history_wrap}>
       <h3 className={styles.purchase_title}>구매 상세 ({getStatusPrefix(item.status)}{item.title})</h3>
@@ -203,12 +205,22 @@ const PurchaseDetail = () => {
         <div className={styles.purchase_card_title}>{getStatusPrefix(item.status)}{item.title}</div>
         <div className={styles.purchase_card_meta}>{item.date} · {item.status}</div>
         <div>판매자: {item.seller}</div>
-        <div>배송 상태: {getShippingStatusLabel(item.shippingStatus)}</div>
-        <div>택배사: {getCourierLabel(item.courierCode)}</div>
-        {item.invoiceNumber ? <div>송장번호: {item.invoiceNumber}</div> : null}
         <div>금액: {item.amount.toLocaleString()}원</div>
         <div>거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText)}</div>
       </div>
+
+      {shippingInfoAvailable && (
+        <div className={styles.purchase_card}>
+          <div className={styles.purchase_card_title}>구매 정보 / 배송 정보</div>
+          <div>배송 상태: {getShippingStatusLabel(item.shippingStatus)}</div>
+          <div>택배사: {getCourierLabel(item.courierCode)}</div>
+          {item.invoiceNumber ? <div>송장번호: {item.invoiceNumber}</div> : null}
+          <div>연락처: {item.orderInfo?.phone || item.buyerPhone || "-"}</div>
+          <div>수령인: {item.orderInfo?.receiverName || "-"}</div>
+          <div>주소: {item.orderInfo?.address || "-"} {item.orderInfo?.addressDetail || ""}</div>
+          {item.orderInfo?.deliveryMemo ? <div>배송메모: {item.orderInfo.deliveryMemo}</div> : null}
+        </div>
+      )}
 
       {item.status === "구매완료" && !myReview && (
         <div className={styles.review_area}>
