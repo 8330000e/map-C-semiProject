@@ -1,5 +1,7 @@
 package kr.co.iei;
 
+import java.io.File;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -8,7 +10,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
 @Configuration
-public class WebConfig implements WebMvcConfigurer{//MVC 관련 설정
+public class WebConfig implements WebMvcConfigurer {//MVC 관련 설정
+	// application.properties에 설정된 file.root 값을 사용하여 정적 리소스의 실제 파일 시스템 위치를 결정합니다.
+	// Windows와 macOS 모두에서 동작하도록 File.toURI()를 사용합니다.
 	@Value("${file.root}")
 	private String root;
 
@@ -25,15 +29,22 @@ public class WebConfig implements WebMvcConfigurer{//MVC 관련 설정
 	}
 
 	@Override
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {//정적 파일 URL과 실제 서버 폴더를 연결하는 매니저(.......)
-	
-		
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		// 정적 파일 매핑을 운영체제 경로에 맞게 생성합니다.
 		registry
-		.addResourceHandler("/member/thumb/**")		//요청패턴 
-		.addResourceLocations("file:///"+root+"member/");	//실제경로(파일과 직접 연결)
-        // 에디터 이미지
-        registry.addResourceHandler("/board/editor/**")
-                .addResourceLocations("file:///C:/Temp/upload/board/editor/");
+			.addResourceHandler("/member/thumb/**")
+			.addResourceLocations(getFileUri(new File(root, "member")));
+
+		// 에디터 이미지 매핑도 동일한 파일 루트를 사용합니다.
+		registry.addResourceHandler("/board/editor/**")
+			.addResourceLocations(getFileUri(new File(root, "board/editor")));
+	}
+
+	/**
+	 * 윈도우와 맥(macOS) 모두에서 정상 동작하도록 파일 시스템 경로를 URI로 변환합니다.
+	 */
+	private String getFileUri(File file) {
+		return file.toURI().toString();
 	}
 
 }

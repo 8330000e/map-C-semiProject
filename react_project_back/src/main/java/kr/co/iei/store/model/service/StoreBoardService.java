@@ -3,6 +3,7 @@ package kr.co.iei.store.model.service;
 import kr.co.iei.store.model.vo.StoreBoard;
 import kr.co.iei.store.model.vo.StoreRating;
 import kr.co.iei.store.model.vo.StoreReview;
+import kr.co.iei.store.model.vo.StoreTradeInfo;
 
 import java.util.List;
 
@@ -33,6 +34,16 @@ public interface StoreBoardService {
     void removeReview(Long reviewNo, String memberId);
 
     List<StoreReview> getLatestReviews(int limit);
+
+    void saveTradeInfo(StoreTradeInfo tradeInfo);
+
+    StoreTradeInfo getTradeInfoByMarketNo(Long marketNo);
+
+    StoreTradeInfo getTradeInfoByMarketNoAndBuyerId(Long marketNo, String buyerId);
+
+    void updateTradeInfo(StoreTradeInfo tradeInfo);
+
+    void updateTradeInfoByMarketNo(StoreTradeInfo tradeInfo);
 
     List<StoreRating> getRatingsByTrade(Long tradeNo);
 

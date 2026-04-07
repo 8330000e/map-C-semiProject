@@ -47,7 +47,7 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
     setLikeCount(board.likeCount ?? 0);
     setScrapped(localStorage.getItem(`scrap_board_${board.boardNo}`) === "1");
 
-    if (memberId) {
+    if (memberId && board?.boardNo) {
       axios
         .get(
           `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes/${memberId}`,
@@ -55,6 +55,9 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
         .then((res) => setLiked(res.data === true))
         .catch((err) => console.error("좋아요 여부 조회 실패", err));
     } else {
+      if (memberId && !board?.boardNo) {
+        console.warn("boardNo is undefined, skipping like status fetch.", board);
+      }
       setLiked(false);
     }
   }, [board.boardNo, board.likeCount, memberId]);

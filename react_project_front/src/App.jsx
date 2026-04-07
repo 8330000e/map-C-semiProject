@@ -24,6 +24,7 @@ import { useEffect } from "react";
 import useAuthStore from "./store/useAuthStore";
 
 import axios from "axios";
+import SupportPage from "./pages/support/SupportPage";
 
 import MapCommunity from "./pages/MapCommunityPage/MapCommunityPage";
 import TreeGrowMainPage from "./pages/TreeGrowMainPage/TreeGrowMainPage";
@@ -107,6 +108,7 @@ function App() {
 
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/support/*" element={<SupportPage />} />
         </Routes>
       </main>
       {!isAdmin && <Footer />}
