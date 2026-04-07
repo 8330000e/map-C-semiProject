@@ -81,7 +81,7 @@ const TreeGrowMainPage = () => {
     <div className={styles.treeGrowMainPage}>
       <div className={styles.topSection}>
         <button className={styles.backButton} onClick={() => navigate(-1)}>
-          ← 뒤로가기
+          ← 홈으로
         </button>
 
         <div className={styles.noticeBox}>

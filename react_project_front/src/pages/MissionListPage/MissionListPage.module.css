@@ -1,0 +1,17 @@
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 28px 0 24px;
+  box-sizing: border-box;
+  min-height: calc(100vh - 170px);
+}
+
+.mainBox {
+  width: 100%;
+  border: 1px solid #b8b8b8;
+  border-radius: 18px;
+  background-color: #f7f7f5;
+  padding: 34px 28px 28px;
+  box-sizing: border-box;
+}
