@@ -100,9 +100,31 @@ public class BoardService {
 		return boardDao.bestBoardList();
 	}
 	
-	public List<Board> selectMemberIdBoard(HashMap<String, String> map) {
-		List<Board> list = boardDao.selectMemberIdBoard(map);
-		return list;
+	public List<Board> selectMemberIdBoard(HashMap<String, Object> map) {
+		Integer checker = (Integer)(map.get("checker"));
+		if(checker ==1) {
+			List<Board> list = boardDao.selectMemberIdBoard(map);
+			return list;
+		}
+		if(checker == 2) {
+			String memberId=map.get("memberId").toString();
+			List <Integer> boardNoList =boardDao.selectLikeBoard(memberId);	
+			map.put("boardNoList",boardNoList );
+			System.out.println(boardNoList);
+			List<Board> list = boardDao.selectMemberIdBoard(map);
+			return list;
+		}
+		if(checker == 3) {
+			String memberId=map.get("memberId").toString();
+			List <Integer> tipList = boardDao.selectTipBoard(memberId);
+			map.put("tipList", tipList);
+			System.out.println(tipList);
+			List<Board> list = boardDao.selectMemberIdBoard(map);
+			return list;
+		}
+		else {
+			return null;
+		}
 	}
 }
 

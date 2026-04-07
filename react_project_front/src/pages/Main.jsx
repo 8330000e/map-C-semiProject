@@ -1,7 +1,7 @@
 // 서비스 메인 화면 컴포넌트입니다.
 // 실시간 댓글, 메뉴, 중고거래 요약 리스트 등 메인 대시보드 UI를 렌더링합니다.
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import HelpIcon from "@mui/icons-material/Help";
 import useAuthStore from "../store/useAuthStore";
@@ -26,6 +26,16 @@ const getSaleStatusLabel = (productStatus) => {
   return "판매중";
 };
 
+const getImageUrl = (thumb) => {
+  if (!thumb) return null;
+  if (typeof thumb !== "string") return null;
+  const trimmed = thumb.trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  return `${BACKSERVER}/board/editor/${trimmed}`;
+};
+
 const Main = () => {
   // 중고거래 리스트 가로 스크롤 영역 DOM에 접근하기 위한 ref
   const usedListRef = useRef(null);
@@ -36,10 +46,19 @@ const Main = () => {
   // 중고거래 API 데이터
   const [goods, setGoods] = useState([]);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     axios
       .get(`${BACKSERVER}/api/store/boards`)
-      .then((res) => setGoods(Array.isArray(res.data) ? res.data : []))
+      .then((res) => {
+        const items = Array.isArray(res.data)
+          ? res.data
+          : Array.isArray(res.data?.items)
+          ? res.data.items
+          : [];
+        setGoods(items);
+      })
       .catch((err) => console.error("중고장터 목록 조회 실패", err));
   }, []);
 
@@ -202,7 +221,9 @@ const Main = () => {
             </span>
             <p>고객센터 운영시간</p>
             <p>10:00 ~ 18:00</p>
-            <button className="btn">문의하기 ▶</button>
+            <button className="btn" onClick={() => navigate("/support")}>
+              문의하기 ▶
+            </button>
           </div>
         </div>
 
@@ -261,40 +282,47 @@ const Main = () => {
         <div className="used_list roundBorder">
           <div className="used_list_scroll" ref={usedListRef}>
             <ul>
-              {usedGoods.map((item, index) => (
-                <li key={item.marketNo ?? item.boardNo ?? index}>
-                  <Link to={`/store/${item.marketNo}`}>
-                    <div className="used_item_image" aria-hidden="true" />
-                    <div className="used_item_info">
-                      <strong>
-                        [{getSaleStatusLabel(item.productStatus)}]{" "}
-                        {item.marketTitle}
-                      </strong>
-                      <p className="used_item_price">
-                        {item.productPrice
-                          ? `${Number(item.productPrice).toLocaleString("ko-KR")}원`
-                          : ""}
-                      </p>
-                      <div className="used_item_meta">
-                        <span>{item.memberNickname || item.memberId}</span>
-                        <span>|</span>
-                        <span>💬 0</span>
-                        <span>|</span>
-                        <span>
-                          {item.createdAt
-                            ? new Date(item.createdAt).toLocaleDateString(
-                                "ko-KR",
-                              )
+              {usedGoods.map((item, index) => {
+                const imageUrl = getImageUrl(item.productThumb);
+                return (
+                  <li key={item.marketNo ?? item.boardNo ?? index}>
+                    <Link to={`/store/${item.marketNo}`}>
+                      <div className="used_item_image" aria-hidden="true">
+                        {imageUrl ? (
+                          <img src={imageUrl} alt={item.marketTitle || "상품 이미지"} />
+                        ) : null}
+                      </div>
+                      <div className="used_item_info">
+                        <strong>
+                          [{getSaleStatusLabel(item.productStatus)}]{" "}
+                          {item.marketTitle}
+                        </strong>
+                        <p className="used_item_price">
+                          {item.productPrice
+                            ? `${Number(item.productPrice).toLocaleString("ko-KR")}원`
                             : ""}
+                        </p>
+                        <div className="used_item_meta">
+                          <span>{item.memberNickname || item.memberId}</span>
+                          <span>|</span>
+                          <span>💬 {item.commentCount ?? 0}</span>
+                          <span>|</span>
+                          <span>
+                            {item.createdAt
+                              ? new Date(item.createdAt).toLocaleDateString(
+                                  "ko-KR",
+                                )
+                              : ""}
+                          </span>
+                        </div>
+                        <span className="used_item_view">
+                          👀 {Number(item.readCount ?? 0).toLocaleString("ko-KR")}
                         </span>
                       </div>
-                      <span className="used_item_view">
-                        👀 {item.readCount || 0}
-                      </span>
-                    </div>
-                  </Link>
-                </li>
-              ))}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>

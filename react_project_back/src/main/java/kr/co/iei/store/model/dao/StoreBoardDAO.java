@@ -3,6 +3,7 @@ package kr.co.iei.store.model.dao;
 import kr.co.iei.store.model.vo.StoreBoard;
 import kr.co.iei.store.model.vo.StoreRating;
 import kr.co.iei.store.model.vo.StoreReview;
+import kr.co.iei.store.model.vo.StoreTradeInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -50,6 +51,15 @@ public interface StoreBoardDAO {
 
     StoreRating selectRatingByMarketAndBuyer(@Param("marketNo") Long marketNo,
                                              @Param("buyerId") String buyerId);
+
+    StoreTradeInfo selectTradeInfoByMarketNo(@Param("marketNo") Long marketNo);
+
+    StoreTradeInfo selectTradeInfoByMarketNoAndBuyerId(@Param("marketNo") Long marketNo,
+                                                       @Param("buyerId") String buyerId);
+
+    int insertTradeInfo(StoreTradeInfo tradeInfo);
+
+    int updateTradeInfo(StoreTradeInfo tradeInfo);
 
     int insertRating(StoreRating rating);
 

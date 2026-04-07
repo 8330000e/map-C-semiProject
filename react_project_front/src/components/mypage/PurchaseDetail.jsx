@@ -1,30 +1,66 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
 import styles from "./PurchaseHistory.module.css";
-import { getCompletedPurchaseById } from "./orderHistoryStorage";
+import { getCompletedPurchaseById, removeCompletedPurchase } from "./orderHistoryStorage";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-const tradeTypeLabel = (type, text) => {
-  if (text) return text;
-  if (type === 0) return "직거래/택배";
-  if (type === 1) return "직거래";
-  if (type === 2) return "택배";
-  return "-";
+const tradeTypeLabel = (type, text, deliveryMethod, address) => {
+  const normalized = String(type ?? text ?? deliveryMethod ?? "").trim();
+  const hasAddress = Boolean((address ?? "").toString().trim());
+  if (normalized === "0" || normalized === "직거래/택배") return hasAddress ? "택배" : "직거래";
+  if (normalized === "1" || normalized === "직거래" || normalized === "direct") return "직거래";
+  if (normalized === "2" || normalized === "택배" || normalized === "delivery") return "택배";
+  return hasAddress ? "택배" : "직거래";
 };
 
 const getStatusPrefix = (status) => (status ? `[${status}] ` : "");
 
+const getShippingStatusLabel = (status) => {
+  if (status === 1 || status === "1") return "배송완료";
+  return "배송전";
+};
+
+const getCourierLabel = (code) => {
+  if (code === 1 || code === "1") return "CJ대한통운";
+  if (code === 2 || code === "2") return "현대택배";
+  if (code === 3 || code === "3") return "한진택배";
+  if (code === 4 || code === "4") return "로젠택배";
+  if (code === 5 || code === "5") return "우체국택배";
+  return "미지정";
+};
+
+const getImageUrl = (thumb) => {
+  if (!thumb) return null;
+  if (typeof thumb !== "string") return null;
+  const trimmed = thumb.trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith("http")) return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  return `${BACKSERVER}/board/editor/${trimmed}`;
+};
+
+const isDeliveryTrade = (tradeType, tradeTypeText, deliveryMethod, address) => {
+  const normalized = String(tradeType ?? tradeTypeText ?? deliveryMethod ?? "").trim();
+  const resolved = tradeTypeLabel(tradeType, tradeTypeText, deliveryMethod, address);
+  return resolved === "택배" || resolved === "직거래/택배";
+};
+
 const PurchaseDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { memberId: loginMemberId } = useAuthStore();
-  const [item, setItem] = useState(() => getCompletedPurchaseById(id));
+  const [item, setItem] = useState(() => getCompletedPurchaseById(id, loginMemberId));
+  const [isProcessingOrderAction, setIsProcessingOrderAction] = useState(false);
 
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [reviewImage, setReviewImage] = useState(null);
+  const [reviewImageUrl, setReviewImageUrl] = useState("");
   const [reviews, setReviews] = useState([]);
   const [editReviewId, setEditReviewId] = useState(null);
   const [editRating, setEditRating] = useState(5);
@@ -37,8 +73,46 @@ const PurchaseDetail = () => {
   );
 
   useEffect(() => {
-    setItem(getCompletedPurchaseById(id));
-  }, [id]);
+    setItem(getCompletedPurchaseById(id, loginMemberId));
+  }, [id, loginMemberId]);
+
+  useEffect(() => {
+    if (!item?.marketNo || !loginMemberId) return;
+
+    const fetchTradeInfo = async () => {
+      try {
+        const response = await axios.get(`${BACKSERVER}/api/store/markets/${item.marketNo}/trade-info`, {
+          params: { buyerId: loginMemberId },
+        });
+        if (response.data) {
+          setItem((prev) => ({
+            ...prev,
+            orderInfo: {
+              ...prev?.orderInfo,
+              receiverName: response.data.receiverName || prev?.orderInfo?.receiverName,
+              phone: response.data.buyerPhone || prev?.orderInfo?.phone,
+              zipCode: response.data.zipCode || prev?.orderInfo?.zipCode,
+              address: response.data.address || prev?.orderInfo?.address,
+              addressDetail: response.data.addressDetail || prev?.orderInfo?.addressDetail,
+              deliveryMemo: response.data.deliveryMemo || prev?.orderInfo?.deliveryMemo,
+              deliveryMethod: response.data.deliveryMethod || prev?.orderInfo?.deliveryMethod,
+            },
+            tradeNo: response.data.tradeNo || prev?.tradeNo,
+            tradeType: response.data.tradeType ?? prev?.tradeType,
+            tradeTypeText: response.data.tradeTypeText ?? prev?.tradeTypeText,
+            deliveryMethod: response.data.deliveryMethod ?? prev?.deliveryMethod,
+            courierCode: response.data.courierCode ?? prev?.courierCode,
+            shippingStatus: response.data.shippingStatus ?? prev?.shippingStatus,
+            invoiceNumber: response.data.invoiceNumber ?? prev?.invoiceNumber,
+          }));
+        }
+      } catch (error) {
+        console.error("거래 정보 조회 실패", error);
+      }
+    };
+
+    fetchTradeInfo();
+  }, [item?.marketNo, loginMemberId]);
 
   useEffect(() => {
     if (!item?.marketNo) return;
@@ -53,9 +127,81 @@ const PurchaseDetail = () => {
       .finally(() => setIsLoading(false));
   }, [item?.marketNo]);
 
-  const onFileChange = (e) => {
+  const onFileChange = async (e) => {
     const file = e.target.files[0];
-    if (file) setReviewImage(file);
+    if (!file) return;
+    setReviewImage(file);
+
+    const formData = new FormData();
+    formData.append("upfile", file);
+
+    try {
+      const res = await axios.post(`${BACKSERVER}/boards/editor/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      setReviewImageUrl(res.data);
+    } catch (error) {
+      console.error("후기 이미지 업로드 실패", error);
+      alert("후기 이미지 업로드에 실패했습니다.");
+      setReviewImage(null);
+      setReviewImageUrl("");
+    }
+  };
+
+  const handleOrderAction = async (actionType) => {
+    if (!item?.marketNo || !item?.sellerId) {
+      alert("상품 정보가 부족하여 처리할 수 없습니다.");
+      return;
+    }
+
+    const isCancel = actionType === "cancel";
+    const actionText = isCancel ? "결제 취소" : "환불";
+    if (!window.confirm(`${actionText} 처리하면 구매내역에서 삭제되고 해당 상품은 판매중으로 돌아갑니다. 계속하시겠습니까?`)) {
+      return;
+    }
+
+    setIsProcessingOrderAction(true);
+    try {
+      await axios.patch(`${BACKSERVER}/api/store/boards/${item.marketNo}/status`, null, {
+        params: { status: 0, memberId: item.sellerId },
+      });
+
+      const tradePayload = {
+        tradeStatus: 0,
+        shippingStatus: 0,
+        tradeType: "직거래",
+        tradeTypeText: "직거래",
+        receiverName: null,
+        buyerPhone: null,
+        zipCode: null,
+        address: null,
+        addressDetail: null,
+        deliveryMemo: null,
+        invoiceNumber: null,
+        courierCode: null,
+      };
+
+      try {
+        if (item.tradeNo) {
+          await axios.patch(`${BACKSERVER}/api/store/trades/${item.tradeNo}`, tradePayload);
+        } else if (item.marketNo) {
+          await axios.patch(`${BACKSERVER}/api/store/markets/${item.marketNo}/trade-info`, tradePayload);
+        }
+      } catch (error) {
+        console.warn("거래 정보 초기화 실패", error);
+      }
+
+      removeCompletedPurchase(item.id);
+      alert(`${actionText} 처리되었습니다.`);
+      navigate("/mypage/history/purchase");
+    } catch (error) {
+      console.error(`${actionText} 실패`, error);
+      alert(error.response?.data || `${actionText} 처리에 실패했습니다.`);
+    } finally {
+      setIsProcessingOrderAction(false);
+    }
   };
 
   const onSubmitReview = async () => {
@@ -76,7 +222,7 @@ const PurchaseDetail = () => {
         buyerNickname: item.buyerNickname || loginMemberId,
         rating,
         reviewContent: comment,
-        reviewThumb: reviewImage ? reviewImage.name : null,
+        reviewThumb: reviewImageUrl || null,
       });
       setReviews((prev) => [res.data, ...prev.filter((rev) => rev.reviewNo !== res.data.reviewNo)]);
       alert("평가가 정상적으로 제출되었습니다.");
@@ -92,12 +238,15 @@ const PurchaseDetail = () => {
     setEditReviewId(review.reviewNo);
     setEditRating(review.rating);
     setEditComment(review.reviewContent);
+    setReviewImageUrl(review.reviewThumb || "");
   };
 
   const cancelEditing = () => {
     setEditReviewId(null);
     setEditRating(5);
     setEditComment("");
+    setReviewImage(null);
+    setReviewImageUrl("");
   };
 
   const saveEdit = async () => {
@@ -111,11 +260,13 @@ const PurchaseDetail = () => {
         buyerNickname: item.buyerNickname || loginMemberId,
         rating: editRating,
         reviewContent: editComment,
-        reviewThumb: reviewImage ? reviewImage.name : myReview?.reviewThumb || null,
+        reviewThumb: reviewImageUrl || myReview?.reviewThumb || null,
       });
       setReviews((prev) =>
         prev.map((rev) =>
-          rev.reviewNo === editReviewId ? { ...rev, rating: editRating, reviewContent: editComment } : rev,
+          rev.reviewNo === editReviewId
+            ? { ...rev, rating: editRating, reviewContent: editComment, reviewThumb: reviewImageUrl || rev.reviewThumb }
+            : rev,
         ),
       );
       cancelEditing();
@@ -148,16 +299,114 @@ const PurchaseDetail = () => {
     );
   }
 
+  const addressValue = item.orderInfo?.address || item.address || "";
+  const displayDeliveryMethod = item.deliveryMethod || item.orderInfo?.deliveryMethod;
+  const displayTradeType = tradeTypeLabel(item.tradeType, item.tradeTypeText, displayDeliveryMethod, addressValue);
+  const isDelivery = isDeliveryTrade(item.tradeType, item.tradeTypeText, displayDeliveryMethod, addressValue);
+  const rawDeliveryFee = Number(item.deliveryFee ?? item.orderInfo?.deliveryFee ?? 0);
+  const inferredDeliveryFee = rawDeliveryFee > 0 ? rawDeliveryFee : displayTradeType === "택배" ? 5000 : 0;
+  const productPrice = Math.max(Number(item.amount || 0) - inferredDeliveryFee, 0);
+  const shippingFeeLabel = inferredDeliveryFee > 0 ? `${inferredDeliveryFee.toLocaleString("ko-KR")}원` : "무료";
+  const shippingFeeStatus = inferredDeliveryFee > 0 ? "배송비 추가" : "배송비 없음";
+  const shippingStatusValue = item.shippingStatus ?? item.orderInfo?.shippingStatus ?? 0;
+  const shippingInfoAvailable = displayTradeType === "택배" || item.orderInfo?.receiverName || item.orderInfo?.phone || item.orderInfo?.address || item.invoiceNumber || item.courierCode || shippingStatusValue !== undefined;
+  const showCancelButton = item.status === "구매완료" && shippingStatusValue !== 1;
+  const showRefundButton = item.status === "구매완료" && shippingStatusValue === 1;
+
   return (
     <div className={styles.purchase_history_wrap}>
-      <h3 className={styles.purchase_title}>구매 상세 ({getStatusPrefix(item.status)}{item.title})</h3>
-      <div className={styles.purchase_card}>
-        <div className={styles.purchase_card_title}>{getStatusPrefix(item.status)}{item.title}</div>
-        <div className={styles.purchase_card_meta}>{item.date} · {item.status}</div>
-        <div>판매자: {item.seller}</div>
-        <div>금액: {item.amount.toLocaleString()}원</div>
-        <div>거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText)}</div>
+      <div className={styles.detail_header}>
+        <h3 className={styles.purchase_title}>구매 상세</h3>
+        <Link className={styles.detail_back_link} to="/mypage/history/purchase">
+          ← 구매내역으로 돌아가기
+        </Link>
       </div>
+      <div className={styles.section_card}>
+        <div className={styles.section_header}>
+          <div>
+            <div className={styles.section_title}>주문상품</div>
+            <div className={styles.section_subtitle}>{getStatusPrefix(item.status)}{item.title}</div>
+          </div>
+          <div className={styles.section_tag}>{displayTradeType}</div>
+        </div>
+        <div className={styles.order_item_price}>상품금액 {productPrice.toLocaleString("ko-KR")}원</div>
+        {displayTradeType === "택배" && (
+          <div className={styles.order_item_shipping}>배송비 {shippingFeeLabel}</div>
+        )}
+        {(showCancelButton || showRefundButton) && (
+          <div className={styles.order_actions_card}>
+            {showCancelButton && (
+              <button className="btn" disabled={isProcessingOrderAction} onClick={() => handleOrderAction("cancel")}>결제 취소</button>
+            )}
+            {showRefundButton && (
+              <button className="btn" disabled={isProcessingOrderAction} onClick={() => handleOrderAction("refund")}>환불하기</button>
+            )}
+          </div>
+        )}
+      </div>
+      <div className={styles.section_card}>
+        <div className={styles.section_title}>배송지</div>
+        <div className={styles.row}>
+          <span>거래방법</span>
+          <span>{displayTradeType}</span>
+        </div>
+        {isDelivery ? (
+          <>
+            <div className={styles.row}>
+              <span>배송 상태</span>
+              <span>{getShippingStatusLabel(item.shippingStatus)}</span>
+            </div>
+            <div className={styles.row}>
+              <span>택배사</span>
+              <span>{getCourierLabel(item.courierCode)}</span>
+            </div>
+            <div className={styles.row}>
+              <span>송장번호</span>
+              <span>{item.invoiceNumber || "-"}</span>
+            </div>
+          </>
+        ) : (
+          <div className={styles.row}>
+            <span>배송 정보</span>
+            <span>직거래</span>
+          </div>
+        )}
+        <div className={styles.row}>
+          <span>수령인</span>
+          <span>{item.orderInfo?.receiverName || "-"}</span>
+        </div>
+        <div className={styles.row}>
+          <span>연락처</span>
+          <span>{item.orderInfo?.phone || item.buyerPhone || "-"}</span>
+        </div>
+        <div className={styles.row}>
+          <span>주소</span>
+          <span>{item.orderInfo?.address || "-"} {item.orderInfo?.addressDetail || ""}</span>
+        </div>
+      </div>
+      <div className={styles.section_card}>
+        <div className={styles.section_title}>결제정보</div>
+        <div className={styles.payment_summary_header}>
+          <span>주문금액</span>
+          <strong>{Number(item.amount || 0).toLocaleString("ko-KR")}원</strong>
+        </div>
+        <div className={styles.summary_row}>
+          <span>상품금액</span>
+          <span>{productPrice.toLocaleString("ko-KR")}원</span>
+        </div>
+        {displayTradeType === "택배" && (
+          <div className={styles.summary_row}>
+            <span>배송비</span>
+            <span>{shippingFeeLabel}</span>
+          </div>
+        )}
+        <div className={styles.summary_row}>
+          <span>총 결제금액</span>
+          <strong>{Number(item.amount || 0).toLocaleString("ko-KR")}원</strong>
+        </div>
+        <div className={styles.summary_tag}>{shippingFeeStatus}</div>
+      </div>
+
 
       {item.status === "구매완료" && !myReview && (
         <div className={styles.review_area}>
@@ -223,7 +472,18 @@ const PurchaseDetail = () => {
               ) : (
                 <>
                   <p>{rev.reviewContent}</p>
-                  {rev.reviewThumb && <p>첨부: {rev.reviewThumb}</p>}
+                  {rev.reviewThumb && (
+                    <div className={styles.review_image_wrap}>
+                      <img
+                        src={getImageUrl(rev.reviewThumb)}
+                        alt="후기 이미지"
+                        className={styles.review_image}
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                    </div>
+                  )}
                   <div className={styles.review_actions}>
                     {rev.buyerId === loginMemberId && (
                       <>
@@ -239,9 +499,6 @@ const PurchaseDetail = () => {
         </div>
       )}
 
-      <Link className={styles.purchase_back_link} to="/mypage/history/purchase">
-        ← 구매내역으로 돌아가기
-      </Link>
     </div>
   );
 };

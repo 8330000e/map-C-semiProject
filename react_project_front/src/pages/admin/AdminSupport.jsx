@@ -1,7 +1,8 @@
 import { Navigate, NavLink, Route, Routes } from "react-router-dom";
 import styles from "./AdminSupport.module.css";
 import AdminNotice from "./AdminNoticePage";
-import AdminFaq from "../../components/admin/AdminFaq";
+import AdminFaqPage from "../../pages/admin/AdminFaqPage";
+import AdminQnaPage from "./AdminQnaPage";
 
 const AdminSupport = () => {
   return (
@@ -31,7 +32,8 @@ const AdminSupport = () => {
         <Routes>
           <Route path="" element={<Navigate to="notice" />} />
           <Route path="notice" element={<AdminNotice />} />
-          <Route path="faq" element={<AdminFaq />} />
+          <Route path="faq" element={<AdminFaqPage />} />
+          <Route path="qna" element={<AdminQnaPage />} />
         </Routes>
       </div>
     </section>
