@@ -3,6 +3,7 @@ import Support from "../../components/support/Support";
 import styles from "./SupportPage.module.css";
 import { Route, Routes } from "react-router-dom";
 import SupportFaqPage from "./SupportFaqPage";
+import SupportNoticePage from "./SupportNoticePage";
 
 const SupportPage = () => {
   useEffect(() => {
@@ -18,6 +19,7 @@ const SupportPage = () => {
       <Routes>
         <Route path="" element={<Support />} />
         <Route path="faq" element={<SupportFaqPage />} />
+        <Route path="notice" element={<SupportNoticePage />} />
       </Routes>
     </section>
   );

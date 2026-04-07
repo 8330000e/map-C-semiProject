@@ -16,6 +16,7 @@ const Support = () => {
       desc: "서비스 점검, 업데이트, 이벤트 소식을 확인할 수 있습니다.",
       btn: "전체보기",
       color: "notice",
+      path: "/support/notice",
     },
     {
       title: "1:1 문의",
