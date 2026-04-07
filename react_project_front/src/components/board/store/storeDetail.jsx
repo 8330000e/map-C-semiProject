@@ -107,10 +107,24 @@ const StoreDetail = () => {
   const getImageUrl = (thumb) => {
     if (!thumb) return null;
     if (typeof thumb !== "string") return null;
-    const trimmed = thumb.trim();
+    let trimmed = thumb.trim();
     if (!trimmed) return null;
-    if (trimmed.startsWith("http")) return trimmed;
+
+    trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
+
+    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
     if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+    const driveMatch = trimmed.match(/^[A-Za-z]:\//);
+    if (driveMatch) {
+      const boardIndex = trimmed.indexOf("/board/editor/");
+      if (boardIndex !== -1) {
+        const suffix = trimmed.substring(boardIndex);
+        return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
+      }
+      trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
+    }
+
     if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
     if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
     return `${BACKSERVER}/board/editor/${trimmed}`;
