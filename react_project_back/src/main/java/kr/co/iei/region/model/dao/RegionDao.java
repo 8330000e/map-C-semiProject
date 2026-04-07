@@ -16,4 +16,6 @@ public interface RegionDao {
 
 	int insertContribution(String memberId, int regionNo, int point);
 
+	int resetWeeklyTree();
+
 }

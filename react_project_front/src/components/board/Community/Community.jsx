@@ -394,15 +394,23 @@ const Community = () => {
                     return (
                       <div
                         className={styles.boardItem}
-                        key={board.boardNo ?? `${board.boardTitle}-${board.createDate}-${index}`}
+                        key={
+                          board.boardNo ??
+                          `${board.boardTitle}-${board.createDate}-${index}`
+                        }
                         onClick={async () => {
                           if (!isExpanded) {
                             try {
-                              await axios.get(`${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/read`);
+                              await axios.get(
+                                `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/read`,
+                              );
                               setBoardList((prev) =>
                                 prev.map((item) =>
                                   item.boardNo === board.boardNo
-                                    ? { ...item, readCount: (item.readCount ?? 0) + 1 }
+                                    ? {
+                                        ...item,
+                                        readCount: (item.readCount ?? 0) + 1,
+                                      }
                                     : item,
                                 ),
                               );
@@ -413,93 +421,90 @@ const Community = () => {
                           setExpandedBoardNo(isExpanded ? null : board.boardNo);
                         }}
                       >
-                      <div className={styles.boardItemTop}>
-                        <div className={styles.boardWriter}>
-                          <span className={styles.writerIcon}>👤</span>
-                          <span>{board.writerNickname}</span>
+                        <div className={styles.boardItemTop}>
+                          <div className={styles.boardWriter}>
+                            <span className={styles.writerIcon}>👤</span>
+                            <span>{board.writerNickname}</span>
+                          </div>
+                          <div className={styles.boardDate}>
+                            {board.createDate}
+                          </div>
                         </div>
-                        <div className={styles.boardDate}>
-                          {board.createDate}
+                        <div className={styles.boardTitle}>
+                          {board.boardTitle}
                         </div>
-                      </div>
 
-                      <div className={styles.boardTitle}>
-                        {board.boardTitle}
-                      </div>
+                        {memberId === board.writerId && (
+                          <div className={styles.boardActionBox}>
+                            <button
+                              type="button"
+                              className={styles.mapCommunityBtn}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                startEdit(board);
+                              }}
+                            >
+                              수정
+                            </button>
 
-                      {memberId === board.writerId && (
-                        <div className={styles.boardActionBox}>
-                          <button
-                            type="button"
-                            className={styles.mapCommunityBtn}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              startEdit(board);
+                            <button
+                              type="button"
+                              className={`${styles.mapCommunityBtn} ${styles.deleteBtn}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteBoard(board.boardNo);
+                              }}
+                            >
+                              삭제
+                            </button>
+                          </div>
+                        )}
+                        {board.thumbnailUrl && (
+                          <div className={styles.boardThumbnailBox}>
+                            <img
+                              src={board.thumbnailUrl}
+                              alt="썸네일"
+                              className={styles.boardThumbnail}
+                            />
+                          </div>
+                        )}
+                        <div className={styles.boardItemBottom}>
+                          <span className={styles.iconItem}>
+                            <VisibilityIcon fontSize="small" />
+                            <span>{board.readCount ?? 0}</span>
+                          </span>
+                          <span className={styles.iconItem}>
+                            <FavoriteBorderIcon fontSize="small" />
+                            <span>{board.likeCount ?? 0}</span>
+                          </span>
+
+                          <span className={styles.iconItem}>
+                            <ChatIcon fontSize="small" />
+                            <span>{board.commentCount ?? 0}</span>
+                          </span>
+                        </div>
+                        {isExpanded && (
+                          <CommunityDetail
+                            board={board}
+                            onEdit={(boardItem) => {
+                              setSelectedBoard(boardItem);
+                              startEdit(boardItem);
                             }}
-                          >
-                            수정
-                          </button>
-
-                          <button
-                            type="button"
-                            className={`${styles.mapCommunityBtn} ${styles.deleteBtn}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              deleteBoard(board.boardNo);
+                            onDelete={(boardNo) => deleteBoard(boardNo)}
+                            onLikeChange={(boardNo, newLikeCount) => {
+                              setBoardList((prev) =>
+                                prev.map((item) =>
+                                  item.boardNo === boardNo
+                                    ? { ...item, likeCount: newLikeCount }
+                                    : item,
+                                ),
+                              );
                             }}
-                          >
-                            삭제
-                          </button>
-                        </div>
-                      )}
-
-                      {board.thumbnailUrl && (
-                        <div className={styles.boardThumbnailBox}>
-                          <img
-                            src={board.thumbnailUrl}
-                            alt="썸네일"
-                            className={styles.boardThumbnail}
                           />
-                        </div>
-                      )}
-
-                      <div className={styles.boardItemBottom}>
-                        <span className={styles.iconItem}>
-                          <VisibilityIcon fontSize="small" />
-                          <span>{board.readCount ?? 0}</span>
-                        </span>
-                        <span className={styles.iconItem}>
-                          <FavoriteBorderIcon fontSize="small" />
-                          <span>{board.likeCount ?? 0}</span>
-                        </span>
-
-                        <span className={styles.iconItem}>
-                          <ChatIcon fontSize="small" />
-                          <span>{board.commentCount ?? 0}</span>
-                        </span>
+                        )}
                       </div>
-                      {isExpanded && (
-                        <CommunityDetail
-                          board={board}
-                          onEdit={(boardItem) => {
-                            setSelectedBoard(boardItem);
-                            startEdit(boardItem);
-                          }}
-                          onDelete={(boardNo) => deleteBoard(boardNo)}
-                          onLikeChange={(boardNo, newLikeCount) => {
-                            setBoardList((prev) =>
-                              prev.map((item) =>
-                                item.boardNo === boardNo
-                                  ? { ...item, likeCount: newLikeCount }
-                                  : item,
-                              ),
-                            );
-                          }}
-                        />
-                      )}
-                    </div>
-                  );
-                })
+                    );
+                  })
                 ) : (
                   <div className={styles.emptyBoard}>
                     등록된 게시글이 없습니다.
