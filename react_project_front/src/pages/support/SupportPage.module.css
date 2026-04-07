@@ -2,6 +2,9 @@
   width: 100%;
   margin: 0 auto;
   padding: 22px 0 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
   --support-text: #1d2430;
   --support-muted: #5d6772;
   --support-hero-bg: #dce7f2;
@@ -14,6 +17,12 @@
   --support-btn: #2f7bec;
   --support-btn-hover: #2368cf;
   --support-focus: rgba(47, 123, 236, 0.24);
+}
+
+:global(body.support-page-active .carbonconnect.wrap) {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
 }
 
 :global(body.support-page-active .carbonconnect > header) {
@@ -29,7 +38,14 @@
 }
 
 :global(body.support-page-active .carbonconnect > main) {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
   margin-top: 0;
+}
+
+:global(body.support-page-active .carbonconnect > main.main) {
+  flex: 1 0 auto;
 }
 
 @media (max-width: 1280px) {
