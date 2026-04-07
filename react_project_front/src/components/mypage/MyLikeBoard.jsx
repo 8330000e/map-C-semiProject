@@ -26,12 +26,12 @@ const MyLikeBoard = () => {
       });
   }, [searchBoard, filter]);
   return (
-    <div className={styles.mylikeboard_wrap}>
-      <div className={styles.mylikeboard_title_wrap}>
+    <div className={styles.board_main_wrap}>
+      <div className={styles.board_title_wrap}>
         <h3>내 좋아요 게시물</h3>
       </div>
-      <div className={styles.mylikeboard_content_wrap}>
-        <div className={styles.mylikeboard_search_wrap}>
+      <div className={styles.board_content_wrap}>
+        <div className={styles.board_search_wrap}>
           <label
             htmlFor="likeBoardSearch"
             onClick={() => {
@@ -60,19 +60,21 @@ const MyLikeBoard = () => {
             <option value={4}>최대조회수</option>
           </select>
         </div>
-        <div className={styles.mylikeboard_list_wrap}>
-          {likeBoardList.map((likeBoard, index) => {
-            return (
-              <ul key={likeBoard.boardTitle}>
-                <li>{"글번호:" + likeBoard.boardNo}</li>
-                <li>{"게시자:" + likeBoard.writerId}</li>
-                <li>{"게시일:" + likeBoard.boardDate}</li>
-                <li>{"제목:" + likeBoard.boardTitle}</li>
-                <li>{"조회수:" + likeBoard.readCount}</li>
-              </ul>
-            );
-          })}
-        </div>
+        {likeBoardList && (
+          <div className={styles.board_list_wrap}>
+            {likeBoardList.map((likeBoard, index) => {
+              return (
+                <ul key={likeBoard.boardTitle} className={styles.one_board}>
+                  <li>{"글번호:" + likeBoard.boardNo}</li>
+                  <li>{"게시자:" + likeBoard.writerId}</li>
+                  <li>{"게시일:" + likeBoard.boardDate}</li>
+                  <li>{"제목:" + likeBoard.boardTitle}</li>
+                  <li>{"조회수:" + likeBoard.readCount}</li>
+                </ul>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
