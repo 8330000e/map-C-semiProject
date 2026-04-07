@@ -50,6 +50,7 @@ import Mypage from "./pages/member/MyPage";
 import Login from "./pages/member/LoginPage";
 import FindId from "./pages/member/FindId";
 import FindPw from "./pages/member/FindPw";
+import MapCommunityPage from "./pages/MapCommunityPage/MapCommunityPage";
 
 function App() {
   const location = useLocation();
@@ -102,6 +103,7 @@ function App() {
           <Route path="/map-community" element={<MapCommunity />} />
           <Route path="/tree-grow" element={<TreeGrowMainPage />} />
           <Route path="/mission" element={<MissionListPage />} />
+          <Route path="/community" element={<MapCommunityPage />} />
 
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
