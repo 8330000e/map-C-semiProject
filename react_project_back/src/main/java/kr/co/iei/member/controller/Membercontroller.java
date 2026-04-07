@@ -173,7 +173,7 @@ public class Membercontroller {
 			// 링크 방식 (프런트 reset 페이지로 이동)
 			String content = "<h3>비밀번호를 재설정하려면 아래 링크를 클릭하세요</h3>"
 					//아래 링크를 클릭하면 해당 페이지로 이동
-					+ "<a href='http://localhost:5173/members/change-pw?memberId=" + member.getMemberId()
+					+ "<a href='http://localhost:5173/members/reset-pw?memberId=" + member.getMemberId()
 					+ "'>비밀번호 재설정하기</a>";
 			// 이메일 전송
 
