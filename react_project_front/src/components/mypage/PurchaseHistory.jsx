@@ -4,7 +4,7 @@ import useAuthStore from "../../store/useAuthStore";
 import styles from "./PurchaseHistory.module.css";
 import { getCompletedPurchases } from "./orderHistoryStorage";
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 6;
 const getStatusPrefix = (status) => (status ? `[${status}] ` : "");
 
 const getShippingStatusLabel = (status) => {
@@ -100,10 +100,14 @@ const PurchaseHistory = () => {
 
   return (
     <div className={styles.purchase_history_wrap}>
-      <h3 className={styles.purchase_title}>구매내역</h3>
-      <div className={styles.purchase_list}>
-        {purchaseHistory.length === 0 && <p>실제 결제 완료 내역이 없습니다.</p>}
-        {currentItems.map((item) => {
+      <section className={styles.purchase_status_section}>
+        <div className={styles.status_header}>
+          <h3 className={styles.purchase_title}>구매내역</h3>
+          <span>{purchaseHistory.length}건</span>
+        </div>
+        <div className={styles.purchase_list}>
+          {purchaseHistory.length === 0 && <p>실제 결제 완료 내역이 없습니다.</p>}
+          {currentItems.map((item) => {
           const marketNo = item.marketNo ?? item.id;
           const tradeInfo = marketNo ? tradeInfoMap[marketNo] : null;
           const displayShippingStatus = tradeInfo?.shippingStatus ?? item.shippingStatus;
@@ -166,6 +170,7 @@ const PurchaseHistory = () => {
           </button>
         </div>
       )}
+      </section>
     </div>
   );
 };

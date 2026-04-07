@@ -381,6 +381,7 @@ const SaleDetail = () => {
         </div>
       ) : (
         <div className={styles.review_summary}>
+          <h4>구매자 후기</h4>
           <p>판매완료 상태에서만 구매자 후기를 확인할 수 있습니다.</p>
         </div>
       )}
