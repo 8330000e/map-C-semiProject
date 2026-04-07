@@ -89,6 +89,7 @@
       S.PRODUCT_STATUS AS productStatus,
       S.READ_COUNT AS readCount,
       NVL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = S.BOARD_NO), 0) AS likeCount,
+      NVL((SELECT COUNT(*) FROM BOARD_COMMENT_TBL c WHERE c.BOARD_NO = S.BOARD_NO), 0) AS commentCount,
       S.IS_DELETED AS isDeleted,
       S.CREATED_AT AS createdAt,
       S.TRADE_TYPE AS tradeType

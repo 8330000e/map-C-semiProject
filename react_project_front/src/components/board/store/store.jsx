@@ -40,7 +40,12 @@ const Store = () => {
             try {
                 setIsLoading(true);
                 const response = await axios.get(`${BACKSERVER}/api/store/boards`);
-                setGoods(Array.isArray(response.data) ? response.data : []);
+                const items = Array.isArray(response.data)
+                    ? response.data
+                    : Array.isArray(response.data?.items)
+                    ? response.data.items
+                    : [];
+                setGoods(items);
                 setLoadError("");
             } catch (error) {
                 console.error("중고장터 목록 조회 실패", error);
@@ -183,11 +188,11 @@ const Store = () => {
                                     <div className={styles.metaRow}>
                                         <span className={styles.author}>{item.memberId}</span>
                                         <span className={styles.metaDivider}>|</span>
-                                        <span className={styles.commentCount}>💬 0</span>
+                                        <span className={styles.commentCount}>💬 {item.commentCount ?? 0}</span>
                                         <span className={styles.metaDivider}>|</span>
                                         <span className={styles.dateLine}>{formatDate(item.createdAt)}</span>
                                     </div>
-                                    <p className={styles.viewCount}>👀 조회수 {item.readCount || 0}</p>
+                                    <p className={styles.viewCount}>👀 조회수 {Number(item.readCount ?? 0).toLocaleString("ko-KR")}</p>
                                 </article>
                             </Link>
                         );
