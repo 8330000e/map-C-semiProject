@@ -149,6 +149,7 @@ const TossTestPayment = () => {
 				tradeType,
 				tradeTypeText,
 				deliveryMethod: location.state?.deliveryMethod,
+				deliveryFee: Number(location.state?.deliveryFee || 0),
 				sellerId,
 				seller: sellerNickname,
 				buyerId: memberId,

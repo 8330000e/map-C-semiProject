@@ -1,5 +1,16 @@
 .purchase_history_wrap {
+  width: 740px;
+  max-width: 740px;
+  min-width: 740px;
+  box-sizing: border-box;
   padding: 12px;
+}
+
+.purchase_card,
+.shipping_info,
+.review_area {
+  width: 100%;
+  max-width: none;
 }
 
 .purchase_title {
@@ -39,12 +50,148 @@
   color: #34452c;
 }
 
+.order_summary_card {
+  background: #ffffff;
+  border: 1px solid #d8dfcf;
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.order_summary_title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #34452c;
+}
+
+.summary_row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+
+.summary_tag {
+  margin-top: 10px;
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #f0f7ee;
+  color: #4f6d35;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
 .purchase_subtitle {
   margin-top: 0;
   margin-bottom: 12px;
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 600;
   color: #34452c;
+}
+
+.section_card {
+  background: #ffffff;
+  border: 1px solid #d8dfcf;
+  border-radius: 16px;
+  padding: 18px;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.section_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.section_title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #34452c;
+}
+
+.section_subtitle {
+  font-size: 0.92rem;
+  color: #5e6a56;
+  margin-top: 4px;
+}
+
+.detail_header h3 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.payment_summary_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: #1a6f2d;
+}
+
+.row,
+.summary_row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 0.92rem;
+}
+
+.summary_tag {
+  margin-top: 12px;
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #f0f7ee;
+  color: #4f6d35;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.order_item_price,
+.order_item_shipping {
+  margin-bottom: 10px;
+  color: #4f6d35;
+  font-size: 0.92rem;
+}
+
+.detail_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.detail_back_link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid #d8dfcf;
+  border-radius: 999px;
+  padding: 10px 16px;
+  color: #4f6d35;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.detail_back_link:hover {
+  background: #eef2e8;
+  transform: translateY(-1px);
 }
 
 .purchase_card_meta {
@@ -64,24 +211,11 @@
   font-weight: 600;
 }
 
-.detail_header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
-}
-
-.detail_back_link {
-  color: #4f6d35;
-  font-weight: 700;
-  text-decoration: none;
-}
-
 .order_actions {
   margin-top: 16px;
   display: flex;
+  justify-content: flex-end;
+  width: 100%;
   gap: 12px;
   flex-wrap: wrap;
 }
@@ -105,36 +239,63 @@
 .review_area {
   margin-top: 18px;
   border: 1px solid #d8dfcf;
-  border-radius: 10px;
-  padding: 14px;
+  border-radius: 16px;
+  padding: 18px;
   background: #fafaf7;
 }
 
+.review_area h4 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #34452c;
+}
+
 .review_row {
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
 .review_row label {
-  min-width: 90px;
+  display: block;
   font-weight: 600;
+  color: #3f4d37;
+}
+
+.review_row select,
+.review_row input[type="file"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #c3ccbb;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #2f3d26;
 }
 
 .review_textarea {
   width: 100%;
-  min-height: 110px;
+  min-height: 140px;
   border: 1px solid #c3ccbb;
-  border-radius: 8px;
-  padding: 8px;
+  border-radius: 12px;
+  padding: 12px;
   resize: vertical;
+  background: #ffffff;
 }
 
 .review_actions {
-  margin-top: 10px;
+  margin-top: 16px;
   display: flex;
-  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+
+.review_actions .btn {
+  min-width: 120px;
 }
 
 .review_edit_wrap {
