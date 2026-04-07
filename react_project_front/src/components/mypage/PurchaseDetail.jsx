@@ -7,11 +7,11 @@ import { getCompletedPurchaseById } from "./orderHistoryStorage";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-const tradeTypeLabel = (type, text) => {
-  if (text) return text;
-  if (type === 0) return "직거래/택배";
-  if (type === 1) return "직거래";
-  if (type === 2) return "택배";
+const tradeTypeLabel = (type, text, deliveryMethod) => {
+  const normalized = String(type ?? text ?? deliveryMethod ?? "").trim();
+  if (normalized === "0" || normalized === "직거래/택배") return "직거래/택배";
+  if (normalized === "1" || normalized === "직거래") return "직거래";
+  if (normalized === "2" || normalized === "택배" || normalized === "delivery") return "택배";
   return "-";
 };
 
@@ -29,6 +29,11 @@ const getCourierLabel = (code) => {
   if (code === 4 || code === "4") return "로젠택배";
   if (code === 5 || code === "5") return "우체국택배";
   return "미지정";
+};
+
+const isDeliveryTrade = (tradeType, tradeTypeText, deliveryMethod) => {
+  const normalized = String(tradeType ?? tradeTypeText ?? deliveryMethod ?? "").trim();
+  return normalized === "택배" || normalized === "직거래/택배" || normalized === "2" || normalized === "0" || normalized === "delivery";
 };
 
 const PurchaseDetail = () => {
@@ -196,6 +201,7 @@ const PurchaseDetail = () => {
     );
   }
 
+  const isDelivery = isDeliveryTrade(item.tradeType, item.tradeTypeText, item.deliveryMethod);
   const shippingInfoAvailable = item.orderInfo?.receiverName || item.orderInfo?.phone || item.orderInfo?.address || item.invoiceNumber || item.courierCode || item.shippingStatus !== undefined;
 
   return (
@@ -206,15 +212,22 @@ const PurchaseDetail = () => {
         <div className={styles.purchase_card_meta}>{item.date} · {item.status}</div>
         <div>판매자: {item.seller}</div>
         <div>금액: {item.amount.toLocaleString()}원</div>
-        <div>거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText)}</div>
+        <div>거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText, item.deliveryMethod)}</div>
       </div>
 
       {shippingInfoAvailable && (
         <div className={styles.purchase_card}>
           <div className={styles.purchase_card_title}>구매 정보 / 배송 정보</div>
-          <div>배송 상태: {getShippingStatusLabel(item.shippingStatus)}</div>
-          <div>택배사: {getCourierLabel(item.courierCode)}</div>
-          {item.invoiceNumber ? <div>송장번호: {item.invoiceNumber}</div> : null}
+          <div>거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText, item.deliveryMethod)}</div>
+          {isDelivery ? (
+            <>
+              <div>배송 상태: {getShippingStatusLabel(item.shippingStatus)}</div>
+              <div>택배사: {getCourierLabel(item.courierCode)}</div>
+              {item.invoiceNumber ? <div>송장번호: {item.invoiceNumber}</div> : null}
+            </>
+          ) : (
+            <div>배송 정보: 직거래</div>
+          )}
           <div>연락처: {item.orderInfo?.phone || item.buyerPhone || "-"}</div>
           <div>수령인: {item.orderInfo?.receiverName || "-"}</div>
           <div>주소: {item.orderInfo?.address || "-"} {item.orderInfo?.addressDetail || ""}</div>

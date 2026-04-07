@@ -6,11 +6,11 @@ import { getCompletedSaleByMarketNo } from "./orderHistoryStorage";
 import styles from "./SaleHistory.module.css";
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-const tradeTypeLabel = (type, text) => {
-  if (text) return text;
-  if (type === 0 || type === "0") return "직거래/택배";
-  if (type === 1 || type === "1") return "직거래";
-  if (type === 2 || type === "2") return "택배";
+const tradeTypeLabel = (type, text, deliveryMethod) => {
+  const normalized = String(type ?? text ?? deliveryMethod ?? "").trim();
+  if (normalized === "0" || normalized === "직거래/택배") return "직거래/택배";
+  if (normalized === "1" || normalized === "직거래") return "직거래";
+  if (normalized === "2" || normalized === "택배" || normalized === "delivery") return "택배";
   return "-";
 };
 
@@ -113,6 +113,7 @@ const SaleDetail = () => {
   const saleStatus = getSaleStatusLabel(item.productStatus);
   const isSeller = saleOrder?.sellerId && saleOrder.sellerId === memberId;
   const shippingStatus = saleOrder ? getShippingStatusLabel(saleOrder.shippingStatus) : "-";
+  const tradeMethod = saleOrder ? tradeTypeLabel(saleOrder.tradeType, saleOrder.tradeTypeText, saleOrder.deliveryMethod) : "-";
   const isShippingPending = saleOrder && (saleOrder.shippingStatus === 0 || saleOrder.shippingStatus === "0");
   const isDeliveryTrade = Boolean(
     saleOrder?.tradeType === 2 ||
@@ -121,10 +122,7 @@ const SaleDetail = () => {
     saleOrder?.tradeType === "0" ||
     saleOrder?.tradeType === "택배" ||
     saleOrder?.tradeType === "직거래/택배" ||
-    saleOrder?.tradeType === "delivery" ||
-    saleOrder?.tradeType === "direct" ||
-    saleOrder?.tradeTypeText?.includes("택배") ||
-    saleOrder?.orderInfo?.address
+    saleOrder?.tradeTypeText?.includes("택배")
   );
 
   return (
@@ -141,13 +139,20 @@ const SaleDetail = () => {
         <div className={styles.shipping_info}>
           <h4>구매자 정보 / 배송 정보</h4>
           <div>구매자: {saleOrder.buyerNickname || saleOrder.buyerName || saleOrder.buyerId}</div>
-          <div>거래 상태: {shippingStatus}</div>
-          <div>택배사: {getCourierLabel(saleOrder.courierCode)}</div>
+          <div>거래방법: {tradeMethod}</div>
+          {isDeliveryTrade ? (
+            <>
+              <div>배송 상태: {shippingStatus}</div>
+              <div>택배사: {getCourierLabel(saleOrder.courierCode)}</div>
+              {saleOrder.invoiceNumber ? <div>송장번호: {saleOrder.invoiceNumber}</div> : null}
+            </>
+          ) : (
+            <div>배송 정보: 직거래</div>
+          )}
           <div>연락처: {saleOrder.orderInfo?.phone || saleOrder.buyerPhone || "-"}</div>
           <div>수령인: {saleOrder.orderInfo?.receiverName || saleOrder.receiverName || "-"}</div>
           <div>주소: {saleOrder.orderInfo?.address || saleOrder.address || "-"} {saleOrder.orderInfo?.addressDetail || saleOrder.addressDetail || ""}</div>
           {saleOrder.orderInfo?.deliveryMemo ? <div>배송메모: {saleOrder.orderInfo.deliveryMemo}</div> : null}
-          {saleOrder.invoiceNumber ? <div>송장번호: {saleOrder.invoiceNumber}</div> : null}
 
           {isSeller && isDeliveryTrade && !saleOrder.invoiceNumber && (
             <div className={styles.delivery_input_section}>

@@ -6,19 +6,84 @@ import styles from "./SaleHistory.module.css";
 const PAGE_SIZE = 9;
 const getSaleStatusLabel = (productStatus) => {
   if (productStatus === "예약중" || productStatus === 1 || productStatus === "1") return "예약중";
-  if (productStatus === "판매완료" || productStatus === 2 || productStatus === "2") return "판매완료";
+  if (productStatus === "판매완료" || productStatus === 2 || productStatus === "2" || productStatus === "구매완료") return "판매완료";
   return "판매중";
+};
+
+const getShippingStatusLabel = (status) => {
+  if (status === 1 || status === "1") return "배송완료";
+  return "배송전";
+};
+
+const getCourierLabel = (code) => {
+  if (code === 1 || code === "1") return "CJ대한통운";
+  if (code === 2 || code === "2") return "현대택배";
+  if (code === 3 || code === "3") return "한진택배";
+  if (code === 4 || code === "4") return "로젠택배";
+  if (code === 5 || code === "5") return "우체국택배";
+  return "미지정";
+};
+
+const resolveTradeType = (type, typeText, deliveryMethod) => {
+  const normalized = String(type ?? typeText ?? deliveryMethod ?? "").trim();
+  if (normalized === "0" || normalized === "직거래/택배") return "직거래/택배";
+  if (normalized === "1" || normalized === "직거래") return "직거래";
+  if (normalized === "2" || normalized === "택배" || normalized === "delivery") return "택배";
+  return "-";
+};
+
+const getTradeTypeLabel = (item) => resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod);
+
+const isDeliveryTrade = (item) => {
+  const resolved = resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod);
+  return resolved === "택배" || resolved === "직거래/택배";
 };
 
 const SaleHistory = () => {
   const { memberId } = useAuthStore();
   const [salesHistory, setSalesHistory] = useState([]);
+  const [tradeInfoMap, setTradeInfoMap] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     if (!memberId) return;
     setSalesHistory(getCompletedSales(memberId));
   }, [memberId]);
+
+  useEffect(() => {
+    const backendUrl = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+    const currentItems = salesHistory.slice((currentPage - 1) * PAGE_SIZE, (currentPage - 1) * PAGE_SIZE + PAGE_SIZE);
+
+    const fetchTradeInfo = async (marketNo) => {
+      try {
+        const url = `${backendUrl}/api/store/markets/${marketNo}/trade-info`;
+        const res = await fetch(url);
+        if (!res.ok) return null;
+        return await res.json();
+      } catch {
+        return null;
+      }
+    };
+
+    const loadTradeInfos = async () => {
+      if (!memberId || currentItems.length === 0) return;
+      const marketNos = currentItems
+        .map((item) => item.marketNo ?? item.id)
+        .filter((marketNo) => marketNo && !tradeInfoMap[marketNo]);
+      if (marketNos.length === 0) return;
+
+      const results = await Promise.all(marketNos.map((marketNo) => fetchTradeInfo(marketNo)));
+      setTradeInfoMap((prev) => {
+        const next = { ...prev };
+        marketNos.forEach((marketNo, index) => {
+          if (results[index]) next[marketNo] = results[index];
+        });
+        return next;
+      });
+    };
+
+    loadTradeInfos();
+  }, [salesHistory, currentPage, memberId, tradeInfoMap]);
 
   const pageCount = Math.max(1, Math.ceil(salesHistory.length / PAGE_SIZE));
 
@@ -37,18 +102,38 @@ const SaleHistory = () => {
       <h3 className={styles.sale_title}>판매내역</h3>
       <div className={styles.sale_list}>
         {salesHistory.length === 0 && <p>등록된 판매내역이 없습니다.</p>}
-        {currentItems.map((item) => (
-          <Link
-            key={item.id}
-            to={`/mypage/history/sale/${item.marketNo}`}
-            className={styles.sale_card}
-          >
-            <div className={styles.sale_card_title}>[{item.status}] {item.title}</div>
-            <div className={styles.sale_card_meta}>{item.date ? new Date(item.date).toLocaleDateString("ko-KR") : "-"} · {item.status}</div>
-            <div>{Number(item.amount || 0).toLocaleString("ko-KR")}원</div>
-            <div className={styles.sale_card_buyer}>구매자: {item.buyerNickname || item.buyerId}</div>
-          </Link>
-        ))}
+        {currentItems.map((item) => {
+          const marketNo = item.marketNo ?? item.id;
+          const tradeInfo = marketNo ? tradeInfoMap[marketNo] : null;
+          const displayShippingStatus = tradeInfo?.shippingStatus ?? item.shippingStatus;
+          const displayCourierCode = tradeInfo?.courierCode ?? item.courierCode;
+          const displayInvoiceNumber = tradeInfo?.invoiceNumber ?? item.invoiceNumber;
+          const displayTradeType = getTradeTypeLabel(item);
+          const hasDelivery = displayTradeType === "택배" || displayTradeType === "직거래/택배";
+
+          return (
+            <Link
+              key={item.id}
+              to={`/mypage/history/sale/${item.marketNo}`}
+              className={styles.sale_card}
+            >
+              <div className={styles.sale_card_title}>[{getSaleStatusLabel(item.status)}] {item.title}</div>
+              <div className={styles.sale_card_meta}>{item.date ? new Date(item.date).toLocaleDateString("ko-KR") : "-"} · {getSaleStatusLabel(item.status)}</div>
+              <div>{Number(item.amount || 0).toLocaleString("ko-KR")}원</div>
+              <div>거래방법: {displayTradeType}</div>
+              {item.buyerId || item.buyerNickname ? (
+                <div className={styles.sale_card_buyer}>구매자: {item.buyerNickname || item.buyerId}</div>
+              ) : null}
+              {hasDelivery && (
+                <>
+                  <div>배송 상태: {getShippingStatusLabel(displayShippingStatus)}</div>
+                  <div>택배사: {getCourierLabel(displayCourierCode)}</div>
+                  {displayInvoiceNumber ? <div>송장번호: {displayInvoiceNumber}</div> : null}
+                </>
+              )}
+            </Link>
+          );
+        })}
       </div>
       {pageCount > 1 && (
         <div className={styles.pagination}>
