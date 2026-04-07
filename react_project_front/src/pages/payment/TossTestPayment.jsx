@@ -157,12 +157,13 @@ const TossTestPayment = () => {
 				date: new Date().toISOString(),
 			});
 			const customerMobilePhone = orderInfo?.phone?.toString().replace(/[^0-9]/g, "");
+			const deliveryMethodParam = encodeURIComponent(location.state?.deliveryMethod || "");
 			await widgets.requestPayment({
 				orderId,
 				orderName,
 				customerName: orderInfo?.receiverName || "테스트구매자",
 				customerMobilePhone,
-				successUrl: `${window.location.origin}/payment/success?itemId=${itemId}&marketNo=${marketNo}`,
+				successUrl: `${window.location.origin}/payment/success?itemId=${itemId}&marketNo=${marketNo}&orderId=${encodeURIComponent(orderId)}&amount=${encodeURIComponent(amount)}&deliveryMethod=${deliveryMethodParam}`,
 				failUrl: `${window.location.origin}/payment/fail`,
 			});
 		} catch (error) {

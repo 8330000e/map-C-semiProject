@@ -63,6 +63,7 @@ const PaymentSuccess = () => {
 	const orderId = params.get("orderId");
 	const amount = params.get("amount");
 	const marketNo = Number(params.get("marketNo")) || Number(params.get("itemId")) || null;
+	const deliveryMethodParam = params.get("deliveryMethod");
 	const order = orderId ? getPendingPurchase(orderId) : null;
 
 	useEffect(() => {
@@ -70,14 +71,16 @@ const PaymentSuccess = () => {
 			updateProductStatus(marketNo, order?.sellerId);
 		}
 		if (orderId && order) {
-			saveTradeInfo(order);
-			addCompletedPurchase({
+			const completedOrder = {
 				...order,
+				deliveryMethod: order.deliveryMethod || deliveryMethodParam || order.deliveryMethod,
 				status: "구매완료",
 				date: new Date().toISOString(),
 				paymentKey,
 				amount: Number(amount || order.amount || 0),
-			});
+			};
+			saveTradeInfo(completedOrder);
+			addCompletedPurchase(completedOrder);
 			clearPendingPurchase(orderId);
 		}
 	}, [amount, marketNo, order, orderId, paymentKey]);

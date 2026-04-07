@@ -24,18 +24,23 @@ const getCourierLabel = (code) => {
   return "미지정";
 };
 
-const resolveTradeType = (type, typeText, deliveryMethod) => {
+const resolveTradeType = (type, typeText, deliveryMethod, address) => {
   const normalized = String(type ?? typeText ?? deliveryMethod ?? "").trim();
-  if (normalized === "0" || normalized === "직거래/택배") return "직거래/택배";
-  if (normalized === "1" || normalized === "직거래") return "직거래";
+  const addressExists = Boolean((address ?? "").toString().trim());
+  if (normalized === "0" || normalized === "직거래/택배") return addressExists ? "택배" : "직거래";
+  if (normalized === "1" || normalized === "직거래" || normalized === "direct") return "직거래";
   if (normalized === "2" || normalized === "택배" || normalized === "delivery") return "택배";
-  return "-";
+  return addressExists ? "택배" : "직거래";
 };
 
-const getTradeTypeLabel = (item) => resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod);
+const getTradeTypeLabel = (item) => {
+  const address = item.orderInfo?.address || item.address || "";
+  return resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod, address);
+};
 
 const isDeliveryTrade = (item) => {
-  const resolved = resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod);
+  const address = item.orderInfo?.address || item.address || "";
+  const resolved = resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod, address);
   return resolved === "택배" || resolved === "직거래/택배";
 };
 
@@ -108,7 +113,8 @@ const SaleHistory = () => {
           const displayShippingStatus = tradeInfo?.shippingStatus ?? item.shippingStatus;
           const displayCourierCode = tradeInfo?.courierCode ?? item.courierCode;
           const displayInvoiceNumber = tradeInfo?.invoiceNumber ?? item.invoiceNumber;
-          const displayTradeType = getTradeTypeLabel(item);
+          const address = item.orderInfo?.address || item.address || "";
+          const displayTradeType = resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod, address);
           const hasDelivery = displayTradeType === "택배" || displayTradeType === "직거래/택배";
 
           return (

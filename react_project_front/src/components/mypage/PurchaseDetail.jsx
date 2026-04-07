@@ -1,18 +1,19 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
 import styles from "./PurchaseHistory.module.css";
-import { getCompletedPurchaseById } from "./orderHistoryStorage";
+import { getCompletedPurchaseById, removeCompletedPurchase } from "./orderHistoryStorage";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-const tradeTypeLabel = (type, text, deliveryMethod) => {
+const tradeTypeLabel = (type, text, deliveryMethod, address) => {
   const normalized = String(type ?? text ?? deliveryMethod ?? "").trim();
-  if (normalized === "0" || normalized === "직거래/택배") return "직거래/택배";
-  if (normalized === "1" || normalized === "직거래") return "직거래";
+  const hasAddress = Boolean((address ?? "").toString().trim());
+  if (normalized === "0" || normalized === "직거래/택배") return hasAddress ? "택배" : "직거래";
+  if (normalized === "1" || normalized === "직거래" || normalized === "direct") return "직거래";
   if (normalized === "2" || normalized === "택배" || normalized === "delivery") return "택배";
-  return "-";
+  return hasAddress ? "택배" : "직거래";
 };
 
 const getStatusPrefix = (status) => (status ? `[${status}] ` : "");
@@ -31,15 +32,18 @@ const getCourierLabel = (code) => {
   return "미지정";
 };
 
-const isDeliveryTrade = (tradeType, tradeTypeText, deliveryMethod) => {
+const isDeliveryTrade = (tradeType, tradeTypeText, deliveryMethod, address) => {
   const normalized = String(tradeType ?? tradeTypeText ?? deliveryMethod ?? "").trim();
-  return normalized === "택배" || normalized === "직거래/택배" || normalized === "2" || normalized === "0" || normalized === "delivery";
+  const resolved = tradeTypeLabel(tradeType, tradeTypeText, deliveryMethod, address);
+  return resolved === "택배" || resolved === "직거래/택배";
 };
 
 const PurchaseDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { memberId: loginMemberId } = useAuthStore();
   const [item, setItem] = useState(() => getCompletedPurchaseById(id, loginMemberId));
+  const [isProcessingOrderAction, setIsProcessingOrderAction] = useState(false);
 
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
@@ -78,8 +82,12 @@ const PurchaseDetail = () => {
               address: response.data.address || prev?.orderInfo?.address,
               addressDetail: response.data.addressDetail || prev?.orderInfo?.addressDetail,
               deliveryMemo: response.data.deliveryMemo || prev?.orderInfo?.deliveryMemo,
+              deliveryMethod: response.data.deliveryMethod || prev?.orderInfo?.deliveryMethod,
             },
             tradeNo: response.data.tradeNo || prev?.tradeNo,
+            tradeType: response.data.tradeType ?? prev?.tradeType,
+            tradeTypeText: response.data.tradeTypeText ?? prev?.tradeTypeText,
+            deliveryMethod: response.data.deliveryMethod ?? prev?.deliveryMethod,
             courierCode: response.data.courierCode ?? prev?.courierCode,
             shippingStatus: response.data.shippingStatus ?? prev?.shippingStatus,
             invoiceNumber: response.data.invoiceNumber ?? prev?.invoiceNumber,
@@ -109,6 +117,60 @@ const PurchaseDetail = () => {
   const onFileChange = (e) => {
     const file = e.target.files[0];
     if (file) setReviewImage(file);
+  };
+
+  const handleOrderAction = async (actionType) => {
+    if (!item?.marketNo || !item?.sellerId) {
+      alert("상품 정보가 부족하여 처리할 수 없습니다.");
+      return;
+    }
+
+    const isCancel = actionType === "cancel";
+    const actionText = isCancel ? "결제 취소" : "환불";
+    if (!window.confirm(`${actionText} 처리하면 구매내역에서 삭제되고 해당 상품은 판매중으로 돌아갑니다. 계속하시겠습니까?`)) {
+      return;
+    }
+
+    setIsProcessingOrderAction(true);
+    try {
+      await axios.patch(`${BACKSERVER}/api/store/boards/${item.marketNo}/status`, null, {
+        params: { status: 0, memberId: item.sellerId },
+      });
+
+      const tradePayload = {
+        tradeStatus: 0,
+        shippingStatus: 0,
+        tradeType: "직거래",
+        tradeTypeText: "직거래",
+        receiverName: null,
+        buyerPhone: null,
+        zipCode: null,
+        address: null,
+        addressDetail: null,
+        deliveryMemo: null,
+        invoiceNumber: null,
+        courierCode: null,
+      };
+
+      try {
+        if (item.tradeNo) {
+          await axios.patch(`${BACKSERVER}/api/store/trades/${item.tradeNo}`, tradePayload);
+        } else if (item.marketNo) {
+          await axios.patch(`${BACKSERVER}/api/store/markets/${item.marketNo}/trade-info`, tradePayload);
+        }
+      } catch (error) {
+        console.warn("거래 정보 초기화 실패", error);
+      }
+
+      removeCompletedPurchase(item.id);
+      alert(`${actionText} 처리되었습니다.`);
+      navigate("/mypage/history/purchase");
+    } catch (error) {
+      console.error(`${actionText} 실패`, error);
+      alert(error.response?.data || `${actionText} 처리에 실패했습니다.`);
+    } finally {
+      setIsProcessingOrderAction(false);
+    }
   };
 
   const onSubmitReview = async () => {
@@ -201,24 +263,35 @@ const PurchaseDetail = () => {
     );
   }
 
-  const isDelivery = isDeliveryTrade(item.tradeType, item.tradeTypeText, item.deliveryMethod);
-  const shippingInfoAvailable = item.orderInfo?.receiverName || item.orderInfo?.phone || item.orderInfo?.address || item.invoiceNumber || item.courierCode || item.shippingStatus !== undefined;
+  const addressValue = item.orderInfo?.address || item.address || "";
+  const displayDeliveryMethod = item.deliveryMethod || item.orderInfo?.deliveryMethod;
+  const displayTradeType = tradeTypeLabel(item.tradeType, item.tradeTypeText, displayDeliveryMethod, addressValue);
+  const isDelivery = isDeliveryTrade(item.tradeType, item.tradeTypeText, displayDeliveryMethod, addressValue);
+  const shippingStatusValue = item.shippingStatus ?? item.orderInfo?.shippingStatus ?? 0;
+  const shippingInfoAvailable = item.orderInfo?.receiverName || item.orderInfo?.phone || item.orderInfo?.address || item.invoiceNumber || item.courierCode || shippingStatusValue !== undefined;
+  const showCancelButton = item.status === "구매완료" && shippingStatusValue !== 1;
+  const showRefundButton = item.status === "구매완료" && shippingStatusValue === 1;
 
   return (
     <div className={styles.purchase_history_wrap}>
-      <h3 className={styles.purchase_title}>구매 상세 ({getStatusPrefix(item.status)}{item.title})</h3>
+      <div className={styles.detail_header}>
+        <h3 className={styles.purchase_title}>구매 상세</h3>
+        <Link className={styles.detail_back_link} to="/mypage/history/purchase">
+          ← 구매내역으로 돌아가기
+        </Link>
+      </div>
       <div className={styles.purchase_card}>
         <div className={styles.purchase_card_title}>{getStatusPrefix(item.status)}{item.title}</div>
         <div className={styles.purchase_card_meta}>{item.date} · {item.status}</div>
         <div>판매자: {item.seller}</div>
         <div>금액: {item.amount.toLocaleString()}원</div>
-        <div>거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText, item.deliveryMethod)}</div>
+        <div>거래방법: {displayTradeType}</div>
       </div>
 
       {shippingInfoAvailable && (
         <div className={styles.purchase_card}>
           <div className={styles.purchase_card_title}>구매 정보 / 배송 정보</div>
-          <div>거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText, item.deliveryMethod)}</div>
+          <div>거래방법: {displayTradeType}</div>
           {isDelivery ? (
             <>
               <div>배송 상태: {getShippingStatusLabel(item.shippingStatus)}</div>
@@ -232,6 +305,16 @@ const PurchaseDetail = () => {
           <div>수령인: {item.orderInfo?.receiverName || "-"}</div>
           <div>주소: {item.orderInfo?.address || "-"} {item.orderInfo?.addressDetail || ""}</div>
           {item.orderInfo?.deliveryMemo ? <div>배송메모: {item.orderInfo.deliveryMemo}</div> : null}
+        </div>
+      )}
+      {(showCancelButton || showRefundButton) && (
+        <div className={styles.order_actions}>
+          {showCancelButton && (
+            <button className="btn" disabled={isProcessingOrderAction} onClick={() => handleOrderAction("cancel")}>결제 취소</button>
+          )}
+          {showRefundButton && (
+            <button className="btn" disabled={isProcessingOrderAction} onClick={() => handleOrderAction("refund")}>환불하기</button>
+          )}
         </div>
       )}
 
@@ -315,9 +398,6 @@ const PurchaseDetail = () => {
         </div>
       )}
 
-      <Link className={styles.purchase_back_link} to="/mypage/history/purchase">
-        ← 구매내역으로 돌아가기
-      </Link>
     </div>
   );
 };
