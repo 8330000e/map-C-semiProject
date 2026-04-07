@@ -9,7 +9,7 @@ const AdminFaqPage = () => {
     faqNo: null,
     faqTitle: "",
     faqContent: "",
-    faqCategory: 0,
+    faqCategory: "회원·계정",
   });
   const changeFaq = (e) => {
     const name = e.target.name;
