@@ -189,6 +189,18 @@ public class Membercontroller {
 
 	}
 
+	//비밀번호 변경창 설정 로직(로그인 시 비밀번호 찾기 버튼을 눌렀을 때 실행되는 로직)
+	//지원씨가 작성해 논 updatePw를 사용해서 memberId로 비밀번호 변경 요청하기 
+	@PostMapping (value = "reset-pw")
+	public ResponseEntity<?> resetPw(@RequestBody Member member ){
+		int result = memberService.resetPw(member);
+		
+		return ResponseEntity.ok(result);
+	}
+	
+	
+	////////////////////////////////////////////////////////////////////////////
+
 	/////////////////////////////////////////////////////////////////////////
 
 	// 회원정보 수정

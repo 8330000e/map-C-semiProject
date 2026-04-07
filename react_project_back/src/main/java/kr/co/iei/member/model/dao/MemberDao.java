@@ -24,7 +24,10 @@ public interface MemberDao {
 	 */
 	//김경건
 	public Integer existsByIdAndEmail(@Param("memberId") String memberId, @Param("memberEmail") String memberEmail);
+	// 비밀번호 재설정 (김경건)
+	int resetPw(@Param("memberId") String memberId, @Param("memberPw") String encPw);
 	
+	/////////////////////////////////////////
 	List<Member> selectMemberList();
 
 	int updateMemberThumb(Member mem);
