@@ -31,4 +31,12 @@
 	    (CONTRIBUTION_NO, MEMBER_ID, REGION_NO, CONTRIBUTED_POINT)
 	    VALUES (contribution_seq.NEXTVAL, #{memberId}, #{regionNo}, #{point})
 	</insert>
+	
+	
+	<update id="resetWeeklyTree">
+    UPDATE REGION_TREE_TBL
+    SET TREE_LEVEL = 1,
+        TREE_EXP = 0,
+        TOTAL_POINT_USED = 0
+</update>
 </mapper>

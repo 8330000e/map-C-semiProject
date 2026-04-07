@@ -49,7 +49,9 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
 
     if (memberId) {
       axios
-        .get(`${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes/${memberId}`)
+        .get(
+          `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes/${memberId}`,
+        )
         .then((res) => setLiked(res.data === true))
         .catch((err) => console.error("좋아요 여부 조회 실패", err));
     } else {
@@ -58,7 +60,10 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
   }, [board.boardNo, board.likeCount, memberId]);
 
   useEffect(() => {
-    commentsEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    commentsEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
   }, [comments]);
 
   const handleAddComment = () => {
@@ -119,7 +124,11 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
       }
     } catch (err) {
       console.error("좋아요 처리 실패", err);
-      Swal.fire({ icon: "error", title: "좋아요 처리 실패", text: "다시 시도해주세요." });
+      Swal.fire({
+        icon: "error",
+        title: "좋아요 처리 실패",
+        text: "다시 시도해주세요.",
+      });
     }
   };
 
@@ -176,7 +185,12 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
     setComments((prev) =>
       prev.map((item) =>
         item.id === editTarget.id
-          ? { ...item, content: text, isPrivate: editPrivate ? 1 : 0, edited: true }
+          ? {
+              ...item,
+              content: text,
+              isPrivate: editPrivate ? 1 : 0,
+              edited: true,
+            }
           : item,
       ),
     );
@@ -213,7 +227,8 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
     items.map((comment) => {
       const isOwn = comment.memberId === memberId;
       const isSecret = comment.isPrivate === 1;
-      const displayText = isSecret && !isOwn ? "비공개 댓글입니다." : comment.content;
+      const displayText =
+        isSecret && !isOwn ? "비공개 댓글입니다." : comment.content;
       return (
         <div
           key={comment.id}
@@ -240,16 +255,42 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
                 />
                 비공개
               </label>
-              <button type="button" onClick={handleSaveEdit}>저장</button>
-              <button type="button" onClick={() => setEditTarget(null)}>취소</button>
+              <button type="button" onClick={handleSaveEdit}>
+                저장
+              </button>
+              <button type="button" onClick={() => setEditTarget(null)}>
+                취소
+              </button>
             </div>
           ) : (
             <p className={styles.commentText}>{displayText}</p>
           )}
           <div className={styles.commentActions}>
-            <button type="button" className={styles.commentActionBtn} onClick={() => handleStartReply(comment)}>답글</button>
-            {isOwn && <button type="button" className={styles.commentActionBtn} onClick={() => handleStartEdit(comment)}>수정</button>}
-            {isOwn && <button type="button" className={styles.commentActionBtn} onClick={() => handleDeleteComment(comment)}>삭제</button>}
+            <button
+              type="button"
+              className={styles.commentActionBtn}
+              onClick={() => handleStartReply(comment)}
+            >
+              답글
+            </button>
+            {isOwn && (
+              <button
+                type="button"
+                className={styles.commentActionBtn}
+                onClick={() => handleStartEdit(comment)}
+              >
+                수정
+              </button>
+            )}
+            {isOwn && (
+              <button
+                type="button"
+                className={styles.commentActionBtn}
+                onClick={() => handleDeleteComment(comment)}
+              >
+                삭제
+              </button>
+            )}
           </div>
           {comment.replies.length > 0 && renderComments(comment.replies)}
         </div>
@@ -257,7 +298,10 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
     });
 
   return (
-    <div className={styles.boardDetailContainer} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={styles.boardDetailContainer}
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className={styles.detailTopArea}>
         <div>
           <div className={styles.detailTitle}>{board.boardTitle}</div>
@@ -268,13 +312,35 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
           </div>
         </div>
         <div className={styles.detailButtonsTop}>
-          <button type="button" className={`${styles.smallButton} ${liked ? styles.activeButton : ""}`} onClick={toggleLike}>
-            {liked ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />} 좋아요 {likeCount}
+          <button
+            type="button"
+            className={`${styles.smallButton} ${liked ? styles.activeButton : ""}`}
+            onClick={toggleLike}
+          >
+            {liked ? (
+              <FavoriteIcon fontSize="small" />
+            ) : (
+              <FavoriteBorderIcon fontSize="small" />
+            )}{" "}
+            좋아요 {likeCount}
           </button>
-          <button type="button" className={`${styles.smallButton} ${scrapped ? styles.activeButton : ""}`} onClick={toggleScrap}>
-            {scrapped ? <BookmarkIcon fontSize="small" /> : <BookmarkBorderIcon fontSize="small" />} 스크랩
+          <button
+            type="button"
+            className={`${styles.smallButton} ${scrapped ? styles.activeButton : ""}`}
+            onClick={toggleScrap}
+          >
+            {scrapped ? (
+              <BookmarkIcon fontSize="small" />
+            ) : (
+              <BookmarkBorderIcon fontSize="small" />
+            )}{" "}
+            스크랩
           </button>
-          <button type="button" className={`${styles.smallButton} ${styles.reportButton}`} onClick={handleReport}>
+          <button
+            type="button"
+            className={`${styles.smallButton} ${styles.reportButton}`}
+            onClick={handleReport}
+          >
             <FlagIcon fontSize="small" /> 신고
           </button>
         </div>
@@ -291,11 +357,15 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
         </div>
         <div className={styles.statItem}>
           <span className={styles.statLabel}>댓글</span>
-          <span className={styles.statValue}>{board.commentCount ?? comments.length}</span>
+          <span className={styles.statValue}>
+            {board.commentCount ?? comments.length}
+          </span>
         </div>
         <div className={styles.statItem}>
           <span className={styles.statLabel}>작성자</span>
-          <span className={styles.statValue}>{board.writerNickname || board.writerId}</span>
+          <span className={styles.statValue}>
+            {board.writerNickname || board.writerId}
+          </span>
         </div>
       </div>
 
@@ -303,7 +373,9 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
       <div className={styles.detailContentBox}>
         <div
           className={styles.detailContent}
-          dangerouslySetInnerHTML={{ __html: board.boardContent || "<p>내용 없음</p>" }}
+          dangerouslySetInnerHTML={{
+            __html: board.boardContent || "<p>내용 없음</p>",
+          }}
         />
         {board.boardThumb && (
           <div className={styles.detailImageWrap}>
@@ -319,10 +391,18 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
       <div className={styles.detailActionsRow}>
         {memberId === board.writerId && (
           <>
-            <button type="button" className={styles.detailActionBtn} onClick={() => onEdit(board)}>
+            <button
+              type="button"
+              className={styles.detailActionBtn}
+              onClick={() => onEdit(board)}
+            >
               수정
             </button>
-            <button type="button" className={styles.detailActionBtn} onClick={() => onDelete(board.boardNo)}>
+            <button
+              type="button"
+              className={styles.detailActionBtn}
+              onClick={() => onDelete(board.boardNo)}
+            >
               삭제
             </button>
           </>
@@ -332,7 +412,9 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
       <div className={styles.commentSection}>
         <h4>댓글</h4>
         <div className={styles.commentWrapper}>
-          {comments.length === 0 && <p className={styles.commentEmpty}>등록된 댓글이 없습니다.</p>}
+          {comments.length === 0 && (
+            <p className={styles.commentEmpty}>등록된 댓글이 없습니다.</p>
+          )}
           {renderComments(commentTree)}
         </div>
 
@@ -340,7 +422,9 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
           {replyTarget && (
             <div className={styles.replyNote}>
               답글 대상: {replyTarget.memberNickname || replyTarget.memberId}
-              <button type="button" onClick={handleCancelReply}>취소</button>
+              <button type="button" onClick={handleCancelReply}>
+                취소
+              </button>
             </div>
           )}
           <div className={styles.commentFormRow}>
@@ -358,7 +442,11 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
               />
               비공개
             </label>
-            <button type="button" onClick={handleAddComment} className={styles.detailActionBtn}>
+            <button
+              type="button"
+              onClick={handleAddComment}
+              className={styles.detailActionBtn}
+            >
               등록
             </button>
           </div>
