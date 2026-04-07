@@ -7,14 +7,79 @@ import { getCompletedPurchases } from "./orderHistoryStorage";
 const PAGE_SIZE = 9;
 const getStatusPrefix = (status) => (status ? `[${status}] ` : "");
 
+const getShippingStatusLabel = (status) => {
+  if (status === 1 || status === "1") return "배송완료";
+  return "배송전";
+};
+
+const getCourierLabel = (code) => {
+  if (code === 1 || code === "1") return "CJ대한통운";
+  if (code === 2 || code === "2") return "현대택배";
+  if (code === 3 || code === "3") return "한진택배";
+  if (code === 4 || code === "4") return "로젠택배";
+  if (code === 5 || code === "5") return "우체국택배";
+  return "미지정";
+};
+
+const resolveTradeType = (type, typeText, deliveryMethod) => {
+  const normalized = String(type ?? typeText ?? deliveryMethod ?? "").trim();
+  if (normalized === "0" || normalized === "직거래/택배") return "직거래/택배";
+  if (normalized === "1" || normalized === "직거래") return "직거래";
+  if (normalized === "2" || normalized === "택배" || normalized === "delivery") return "택배";
+  return "-";
+};
+
+const getTradeTypeLabel = (item) => resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod);
+
+const isDeliveryTrade = (item) => {
+  const resolved = resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod);
+  return resolved === "택배" || resolved === "직거래/택배";
+};
+
 const PurchaseHistory = () => {
   const { memberId } = useAuthStore();
   const [purchaseHistory, setPurchaseHistory] = useState([]);
+  const [tradeInfoMap, setTradeInfoMap] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     setPurchaseHistory(getCompletedPurchases(memberId));
   }, [memberId]);
+
+  useEffect(() => {
+    const backendUrl = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+    const currentItems = purchaseHistory.slice((currentPage - 1) * PAGE_SIZE, (currentPage - 1) * PAGE_SIZE + PAGE_SIZE);
+
+    const fetchTradeInfo = async (marketNo) => {
+      try {
+        const url = `${backendUrl}/api/store/markets/${marketNo}/trade-info${memberId ? `?buyerId=${memberId}` : ""}`;
+        const res = await fetch(url);
+        if (!res.ok) return null;
+        return await res.json();
+      } catch {
+        return null;
+      }
+    };
+
+    const loadTradeInfos = async () => {
+      if (!memberId || currentItems.length === 0) return;
+      const marketNos = currentItems
+        .map((item) => item.marketNo ?? item.id)
+        .filter((marketNo) => marketNo && !tradeInfoMap[marketNo]);
+      if (marketNos.length === 0) return;
+
+      const results = await Promise.all(marketNos.map((marketNo) => fetchTradeInfo(marketNo)));
+      setTradeInfoMap((prev) => {
+        const next = { ...prev };
+        marketNos.forEach((marketNo, index) => {
+          if (results[index]) next[marketNo] = results[index];
+        });
+        return next;
+      });
+    };
+
+    loadTradeInfos();
+  }, [purchaseHistory, currentPage, memberId, tradeInfoMap]);
 
   const pageCount = Math.max(1, Math.ceil(purchaseHistory.length / PAGE_SIZE));
 
@@ -33,17 +98,35 @@ const PurchaseHistory = () => {
       <h3 className={styles.purchase_title}>구매내역</h3>
       <div className={styles.purchase_list}>
         {purchaseHistory.length === 0 && <p>실제 결제 완료 내역이 없습니다.</p>}
-        {currentItems.map((item) => (
-          <Link
-            key={item.id}
-            to={`/mypage/history/purchase/${item.id}`}
-            className={styles.purchase_card}
-          >
-            <div className={styles.purchase_card_title}>{getStatusPrefix(item.status)}{item.title}</div>
-            <div className={styles.purchase_card_meta}>{item.date} · {item.status}</div>
-            <div>{item.amount?.toLocaleString("ko-KR")}원</div>
-          </Link>
-        ))}
+        {currentItems.map((item) => {
+          const marketNo = item.marketNo ?? item.id;
+          const tradeInfo = marketNo ? tradeInfoMap[marketNo] : null;
+          const displayShippingStatus = tradeInfo?.shippingStatus ?? item.shippingStatus;
+          const displayCourierCode = tradeInfo?.courierCode ?? item.courierCode;
+          const displayInvoiceNumber = tradeInfo?.invoiceNumber ?? item.invoiceNumber;
+          const displayTradeType = resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod);
+          const hasDelivery = displayTradeType === "택배" || displayTradeType === "직거래/택배";
+
+          return (
+            <Link
+              key={item.id}
+              to={`/mypage/history/purchase/${item.id}`}
+              className={styles.purchase_card}
+            >
+              <div className={styles.purchase_card_title}>{getStatusPrefix(item.status)}{item.title}</div>
+              <div className={styles.purchase_card_meta}>{item.date} · {item.status}</div>
+              <div>{item.amount?.toLocaleString("ko-KR")}원</div>
+              <div>거래방법: {displayTradeType}</div>
+              {hasDelivery && (
+                <>
+                  <div>배송 상태: {getShippingStatusLabel(displayShippingStatus)}</div>
+                  <div>택배사: {getCourierLabel(displayCourierCode)}</div>
+                  {displayInvoiceNumber ? <div>송장번호: {displayInvoiceNumber}</div> : null}
+                </>
+              )}
+            </Link>
+          );
+        })}
       </div>
       {pageCount > 1 && (
         <div className={styles.pagination}>

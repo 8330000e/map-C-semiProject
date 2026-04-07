@@ -134,6 +134,11 @@ const TossTestPayment = () => {
 
 		try {
 			const orderId = `ORDER-${Date.now()}`;
+			const tradeTypeText = location.state?.deliveryMethod === "delivery"
+				? "택배"
+				: location.state?.deliveryMethod === "direct"
+				? "직거래"
+				: tradeType;
 			setPendingPurchase(orderId, {
 				id: orderId,
 				marketNo,
@@ -142,7 +147,8 @@ const TossTestPayment = () => {
 				amount,
 				status: "구매완료",
 				tradeType,
-				tradeTypeText: tradeType,
+				tradeTypeText,
+				deliveryMethod: location.state?.deliveryMethod,
 				sellerId,
 				seller: sellerNickname,
 				buyerId: memberId,

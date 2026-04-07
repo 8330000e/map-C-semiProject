@@ -28,6 +28,9 @@ const saveTradeInfo = async (order) => {
 		return;
 	}
 
+	const tradeTypeText = order.tradeTypeText ||
+		(order.deliveryMethod === "delivery" ? "택배" : order.deliveryMethod === "direct" ? "직거래" : null);
+
 	try {
 		await axios.post(`${BACKSERVER}/api/store/trades`, {
 			marketNo: order.marketNo,
@@ -36,7 +39,8 @@ const saveTradeInfo = async (order) => {
 			buyerName: order.buyerNickname || order.buyerId,
 			tradePrice: Number(order.amount || 0),
 			tradeStatus: 1,
-			tradeType: order.tradeType,
+			tradeType: tradeTypeText || order.tradeType,
+			tradeTypeText,
 			receiverName: order.orderInfo?.receiverName,
 			buyerPhone: order.orderInfo?.phone,
 			zipCode: order.orderInfo?.zipCode,
