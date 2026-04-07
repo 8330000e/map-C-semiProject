@@ -1,18 +1,44 @@
 import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
 import { getCompletedSales } from "./orderHistoryStorage";
 import styles from "./SaleHistory.module.css";
-const PAGE_SIZE = 9;
+
+const PAGE_SIZE = 3;
+
+const normalizeStatus = (status) => String(status ?? "").replace(/\s+/g, "").trim();
+
 const getSaleStatusLabel = (productStatus) => {
-  if (productStatus === "예약중" || productStatus === 1 || productStatus === "1") return "예약중";
-  if (productStatus === "판매완료" || productStatus === 2 || productStatus === "2" || productStatus === "구매완료") return "판매완료";
+  const normalized = normalizeStatus(productStatus);
+  if (normalized === "예약중" || normalized === "1") return "예약중";
+  if (normalized === "판매완료" || normalized === "2" || normalized === "구매완료") return "판매완료";
   return "판매중";
 };
 
 const getShippingStatusLabel = (status) => {
-  if (status === 1 || status === "1") return "배송완료";
-  return "배송전";
+  const normalized = String(status ?? "").trim();
+  if (!normalized) return null;
+  if (
+    normalized === "1" ||
+    normalized === "배송완료" ||
+    normalized === "배송 완료" ||
+    normalized === "판매완료" ||
+    normalized === "구매완료"
+  ) {
+    return "배송완료";
+  }
+  if (
+    normalized === "0" ||
+    normalized === "배송전" ||
+    normalized === "배송 전" ||
+    normalized === "배송대기" ||
+    normalized === "배송 대기"
+  ) {
+    return "배송전";
+  }
+  if (normalized.includes("완료")) return "배송완료";
+  return null;
 };
 
 const getCourierLabel = (code) => {
@@ -38,17 +64,37 @@ const getTradeTypeLabel = (item) => {
   return resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod, address);
 };
 
-const isDeliveryTrade = (item) => {
-  const address = item.orderInfo?.address || item.address || "";
-  const resolved = resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod, address);
-  return resolved === "택배" || resolved === "직거래/택배";
+const getShippingStatusValue = (item, tradeInfo) => {
+  if (tradeInfo?.shippingStatus != null) return tradeInfo.shippingStatus;
+  if (item.shippingStatus != null) return item.shippingStatus;
+  return null;
+};
+
+const getTradeInfoForItem = (item, tradeInfoMap) => {
+  const marketNo = item.marketNo ?? item.id;
+  return marketNo ? tradeInfoMap[marketNo] : null;
+};
+
+const getItemTitle = (item) => {
+  return item.title || item.marketTitle || item.marketName || item.boardTitle || "";
+};
+
+const hasSellingTag = (item) => {
+  return getItemTitle(item).includes("[판매중]");
+};
+
+const isBoardSelling = (item) => {
+  return getSaleStatusLabel(item.productStatus) === "판매중";
 };
 
 const SaleHistory = () => {
   const { memberId } = useAuthStore();
   const [salesHistory, setSalesHistory] = useState([]);
+  const [sellerBoards, setSellerBoards] = useState([]);
   const [tradeInfoMap, setTradeInfoMap] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
+  const [sellingPage, setSellingPage] = useState(1);
+  const [deliveryWaitingPage, setDeliveryWaitingPage] = useState(1);
+  const [completedPage, setCompletedPage] = useState(1);
 
   useEffect(() => {
     if (!memberId) return;
@@ -57,27 +103,48 @@ const SaleHistory = () => {
 
   useEffect(() => {
     const backendUrl = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
-    const currentItems = salesHistory.slice((currentPage - 1) * PAGE_SIZE, (currentPage - 1) * PAGE_SIZE + PAGE_SIZE);
 
-    const fetchTradeInfo = async (marketNo) => {
+    const loadSellerBoards = async () => {
+      if (!memberId) return;
       try {
-        const url = `${backendUrl}/api/store/markets/${marketNo}/trade-info`;
-        const res = await fetch(url);
-        if (!res.ok) return null;
-        return await res.json();
-      } catch {
-        return null;
+        const res = await axios.get(`${backendUrl}/api/store/boards`);
+        const items = Array.isArray(res.data)
+          ? res.data
+          : Array.isArray(res.data?.items)
+          ? res.data.items
+          : Array.isArray(res.data?.list)
+          ? res.data.list
+          : [];
+        setSellerBoards(items.filter((board) => String(board.memberId) === String(memberId)));
+      } catch (error) {
+        console.error("판매자 게시물 조회 실패", error);
       }
     };
 
     const loadTradeInfos = async () => {
-      if (!memberId || currentItems.length === 0) return;
-      const marketNos = currentItems
-        .map((item) => item.marketNo ?? item.id)
-        .filter((marketNo) => marketNo && !tradeInfoMap[marketNo]);
+      if (!memberId || salesHistory.length === 0) return;
+      const marketNos = Array.from(
+        new Set(
+          salesHistory
+            .map((item) => item.marketNo ?? item.id)
+            .filter((marketNo) => marketNo && !tradeInfoMap[marketNo]),
+        ),
+      );
       if (marketNos.length === 0) return;
 
-      const results = await Promise.all(marketNos.map((marketNo) => fetchTradeInfo(marketNo)));
+      const results = await Promise.all(
+        marketNos.map(async (marketNo) => {
+          try {
+            const url = `${backendUrl}/api/store/markets/${marketNo}/trade-info`;
+            const res = await fetch(url);
+            if (!res.ok) return null;
+            return await res.json();
+          } catch {
+            return null;
+          }
+        }),
+      );
+
       setTradeInfoMap((prev) => {
         const next = { ...prev };
         marketNos.forEach((marketNo, index) => {
@@ -87,24 +154,84 @@ const SaleHistory = () => {
       });
     };
 
+    loadSellerBoards();
     loadTradeInfos();
-  }, [salesHistory, currentPage, memberId, tradeInfoMap]);
-
-  const pageCount = Math.max(1, Math.ceil(salesHistory.length / PAGE_SIZE));
-
-  const currentItems = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return salesHistory.slice(start, start + PAGE_SIZE);
-  }, [currentPage, salesHistory]);
+  }, [memberId, salesHistory, tradeInfoMap]);
 
   const sellingItems = useMemo(
-    () => currentItems.filter((item) => getSaleStatusLabel(item.status) !== "판매완료"),
-    [currentItems],
+    () => sellerBoards.filter(isBoardSelling),
+    [sellerBoards],
+  );
+
+  const deliveryWaitingItems = useMemo(
+    () =>
+      salesHistory.filter((item) => {
+        if (hasSellingTag(item)) return false;
+        const tradeType = getTradeTypeLabel(item);
+        if (tradeType !== "택배" && tradeType !== "직거래/택배") return false;
+        const tradeInfo = getTradeInfoForItem(item, tradeInfoMap);
+        const shippingStatus = getShippingStatusLabel(getShippingStatusValue(item, tradeInfo));
+        return shippingStatus === "배송전";
+      }),
+    [salesHistory, tradeInfoMap],
   );
 
   const completedItems = useMemo(
-    () => currentItems.filter((item) => getSaleStatusLabel(item.status) === "판매완료"),
-    [currentItems],
+    () =>
+      salesHistory.filter((item) => {
+        if (hasSellingTag(item)) return false;
+        const tradeType = getTradeTypeLabel(item);
+        const tradeInfo = getTradeInfoForItem(item, tradeInfoMap);
+        const shippingStatus = getShippingStatusLabel(getShippingStatusValue(item, tradeInfo));
+        if (tradeType === "택배" || tradeType === "직거래/택배") {
+          return shippingStatus === "배송완료";
+        }
+        return getSaleStatusLabel(item.status) === "판매완료";
+      }),
+    [salesHistory, tradeInfoMap],
+  );
+
+  const sellingPageCount = Math.max(1, Math.ceil(sellingItems.length / PAGE_SIZE));
+  const deliveryWaitingPageCount = Math.max(1, Math.ceil(deliveryWaitingItems.length / PAGE_SIZE));
+  const completedPageCount = Math.max(1, Math.ceil(completedItems.length / PAGE_SIZE));
+
+  const visibleSellingItems = sellingItems.slice((sellingPage - 1) * PAGE_SIZE, sellingPage * PAGE_SIZE);
+  const visibleDeliveryWaitingItems = deliveryWaitingItems.slice((deliveryWaitingPage - 1) * PAGE_SIZE, deliveryWaitingPage * PAGE_SIZE);
+  const visibleCompletedItems = completedItems.slice((completedPage - 1) * PAGE_SIZE, completedPage * PAGE_SIZE);
+
+  useEffect(() => {
+    if (sellingPage > sellingPageCount) setSellingPage(sellingPageCount);
+  }, [sellingPage, sellingPageCount]);
+
+  useEffect(() => {
+    if (deliveryWaitingPage > deliveryWaitingPageCount) setDeliveryWaitingPage(deliveryWaitingPageCount);
+  }, [deliveryWaitingPage, deliveryWaitingPageCount]);
+
+  useEffect(() => {
+    if (completedPage > completedPageCount) setCompletedPage(completedPageCount);
+  }, [completedPage, completedPageCount]);
+
+  const renderPagination = (page, pageCount, onChange) => (
+    <div className={styles.pagination}>
+      <button type="button" disabled={page === 1} onClick={() => onChange(page - 1)}>
+        이전
+      </button>
+      <div className={styles.page_button_group}>
+        {Array.from({ length: pageCount }, (_, index) => index + 1).map((pageNumber) => (
+          <button
+            key={pageNumber}
+            type="button"
+            className={pageNumber === page ? styles.page_button_active : styles.page_button}
+            onClick={() => onChange(pageNumber)}
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
+      <button type="button" disabled={page === pageCount} onClick={() => onChange(page + 1)}>
+        다음
+      </button>
+    </div>
   );
 
   const renderSaleCard = (item) => {
@@ -116,16 +243,21 @@ const SaleHistory = () => {
     const address = item.orderInfo?.address || item.address || "";
     const displayTradeType = resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod, address);
     const hasDelivery = displayTradeType === "택배" || displayTradeType === "직거래/택배";
+    const linkMarketNo = marketNo;
+    const displayTitle = getItemTitle(item);
+    const displayDate = item.date
+      ? new Date(item.date).toLocaleDateString("ko-KR")
+      : item.createdAt
+      ? new Date(item.createdAt).toLocaleDateString("ko-KR")
+      : "-";
+    const displayAmount = Number(item.amount ?? item.productPrice ?? 0).toLocaleString("ko-KR");
+    const saleStatus = getSaleStatusLabel(item.status ?? item.productStatus);
 
     return (
-      <Link
-        key={item.id}
-        to={`/mypage/history/sale/${item.marketNo}`}
-        className={styles.sale_card}
-      >
-        <div className={styles.sale_card_title}>[{getSaleStatusLabel(item.status)}] {item.title}</div>
-        <div className={styles.sale_card_meta}>{item.date ? new Date(item.date).toLocaleDateString("ko-KR") : "-"} · {getSaleStatusLabel(item.status)}</div>
-        <div>{Number(item.amount || 0).toLocaleString("ko-KR")}원</div>
+      <Link key={`${marketNo}-${displayTitle}`} to={`/mypage/history/sale/${linkMarketNo}`} className={styles.sale_card}>
+        <div className={styles.sale_card_title}>[{saleStatus}] {displayTitle}</div>
+        <div className={styles.sale_card_meta}>{displayDate} · {saleStatus}</div>
+        <div>{displayAmount}원</div>
         <div>거래방법: {displayTradeType}</div>
         {item.buyerId || item.buyerNickname ? (
           <div className={styles.sale_card_buyer}>구매자: {item.buyerNickname || item.buyerId}</div>
@@ -141,11 +273,6 @@ const SaleHistory = () => {
     );
   };
 
-  const changePage = (page) => {
-    if (page < 1 || page > pageCount) return;
-    setCurrentPage(page);
-  };
-
   return (
     <div className={styles.sale_history_wrap}>
       <h3 className={styles.sale_title}>판매내역</h3>
@@ -159,9 +286,27 @@ const SaleHistory = () => {
                 <span>{sellingItems.length}건</span>
               </div>
               {sellingItems.length > 0 ? (
-                <div className={styles.status_card_list}>{sellingItems.map(renderSaleCard)}</div>
+                <>
+                  <div className={styles.status_card_list}>{visibleSellingItems.map(renderSaleCard)}</div>
+                  {sellingPageCount > 1 && renderPagination(sellingPage, sellingPageCount, setSellingPage)}
+                </>
               ) : (
                 <p className={styles.empty_section}>판매중인 거래가 없습니다.</p>
+              )}
+            </section>
+
+            <section className={styles.sale_status_section}>
+              <div className={styles.status_header}>
+                <h4>배송대기</h4>
+                <span>{deliveryWaitingItems.length}건</span>
+              </div>
+              {deliveryWaitingItems.length > 0 ? (
+                <>
+                  <div className={styles.status_card_list}>{visibleDeliveryWaitingItems.map(renderSaleCard)}</div>
+                  {deliveryWaitingPageCount > 1 && renderPagination(deliveryWaitingPage, deliveryWaitingPageCount, setDeliveryWaitingPage)}
+                </>
+              ) : (
+                <p className={styles.empty_section}>배송대기 거래가 없습니다.</p>
               )}
             </section>
 
@@ -171,7 +316,10 @@ const SaleHistory = () => {
                 <span>{completedItems.length}건</span>
               </div>
               {completedItems.length > 0 ? (
-                <div className={styles.status_card_list}>{completedItems.map(renderSaleCard)}</div>
+                <>
+                  <div className={styles.status_card_list}>{visibleCompletedItems.map(renderSaleCard)}</div>
+                  {completedPageCount > 1 && renderPagination(completedPage, completedPageCount, setCompletedPage)}
+                </>
               ) : (
                 <p className={styles.empty_section}>판매완료 내역이 없습니다.</p>
               )}
@@ -179,38 +327,6 @@ const SaleHistory = () => {
           </>
         )}
       </div>
-      {pageCount > 1 && (
-        <div className={styles.pagination}>
-          <button
-            type="button"
-            className={styles.pagination_button}
-            onClick={() => changePage(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            이전
-          </button>
-          <div className={styles.page_numbers}>
-            {Array.from({ length: pageCount }, (_, index) => index + 1).map((page) => (
-              <button
-                key={page}
-                type="button"
-                className={`${styles.pagination_button} ${currentPage === page ? styles.pagination_buttonActive : ""}`}
-                onClick={() => changePage(page)}
-              >
-                {page}
-              </button>
-            ))}
-          </div>
-          <button
-            type="button"
-            className={styles.pagination_button}
-            onClick={() => changePage(currentPage + 1)}
-            disabled={currentPage === pageCount}
-          >
-            다음
-          </button>
-        </div>
-      )}
     </div>
   );
 };
