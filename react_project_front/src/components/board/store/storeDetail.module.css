@@ -385,10 +385,14 @@
 
 .review_image_wrap {
 	margin-top: 10px;
+	width: 100%;
+	max-width: 280px;
 }
 
 .review_image {
 	width: 100%;
+	max-width: 280px;
+	height: auto;
 	max-height: 260px;
 	object-fit: cover;
 	border-radius: 10px;
