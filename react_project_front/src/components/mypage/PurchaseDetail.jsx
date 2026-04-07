@@ -41,6 +41,37 @@ const PurchaseDetail = () => {
   }, [id, loginMemberId]);
 
   useEffect(() => {
+    if (!item?.marketNo || !loginMemberId) return;
+
+    const fetchTradeInfo = async () => {
+      try {
+        const response = await axios.get(`${BACKSERVER}/api/store/markets/${item.marketNo}/trade-info`, {
+          params: { buyerId: loginMemberId },
+        });
+        if (response.data) {
+          setItem((prev) => ({
+            ...prev,
+            orderInfo: {
+              ...prev?.orderInfo,
+              receiverName: response.data.receiverName || prev?.orderInfo?.receiverName,
+              phone: response.data.buyerPhone || prev?.orderInfo?.phone,
+              zipCode: response.data.zipCode || prev?.orderInfo?.zipCode,
+              address: response.data.address || prev?.orderInfo?.address,
+              addressDetail: response.data.addressDetail || prev?.orderInfo?.addressDetail,
+              deliveryMemo: response.data.deliveryMemo || prev?.orderInfo?.deliveryMemo,
+            },
+            tradeNo: response.data.tradeNo || prev?.tradeNo,
+          }));
+        }
+      } catch (error) {
+        console.error("거래 정보 조회 실패", error);
+      }
+    };
+
+    fetchTradeInfo();
+  }, [item?.marketNo, loginMemberId]);
+
+  useEffect(() => {
     if (!item?.marketNo) return;
     setIsLoading(true);
     axios

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
+import useAuthStore from "../../store/useAuthStore";
+import { getCompletedSaleByMarketNo } from "./orderHistoryStorage";
 import styles from "./SaleHistory.module.css";
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -20,7 +22,9 @@ const getSaleStatusLabel = (productStatus) => {
 
 const SaleDetail = () => {
   const { id } = useParams();
+  const { memberId } = useAuthStore();
   const [item, setItem] = useState(null);
+  const [saleOrder, setSaleOrder] = useState(null);
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
@@ -30,7 +34,24 @@ const SaleDetail = () => {
         console.error("판매상세 조회 실패", error);
         setItem(null);
       });
-  }, [id]);
+
+    const fetchTradeInfo = async () => {
+      try {
+        const res = await axios.get(`${BACKSERVER}/api/store/markets/${id}/trade-info`);
+        if (res.data) {
+          setSaleOrder(res.data);
+          return;
+        }
+      } catch (error) {
+        console.error("거래 정보 조회 실패", error);
+      }
+      if (memberId) {
+        setSaleOrder(getCompletedSaleByMarketNo(id, memberId));
+      }
+    };
+
+    fetchTradeInfo();
+  }, [id, memberId]);
 
   useEffect(() => {
     if (!id) return;
@@ -63,6 +84,17 @@ const SaleDetail = () => {
         <div>금액: {Number(item.productPrice || 0).toLocaleString("ko-KR")}원</div>
         <div>거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText)}</div>
       </div>
+
+      {saleOrder && (
+        <div className={styles.shipping_info}>
+          <h4>구매자 정보 / 배송 정보</h4>
+          <div>구매자: {saleOrder.buyerNickname || saleOrder.buyerName || saleOrder.buyerId}</div>
+          <div>연락처: {saleOrder.orderInfo?.phone || "-"}</div>
+          <div>수령인: {saleOrder.orderInfo?.receiverName || "-"}</div>
+          <div>주소: {saleOrder.orderInfo?.address || "-"} {saleOrder.orderInfo?.addressDetail || ""}</div>
+          {saleOrder.orderInfo?.deliveryMemo ? <div>배송메모: {saleOrder.orderInfo.deliveryMemo}</div> : null}
+        </div>
+      )}
 
       {saleStatus === "판매완료" ? (
         <div className={styles.review_summary}>

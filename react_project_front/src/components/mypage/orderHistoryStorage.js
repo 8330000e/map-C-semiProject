@@ -16,6 +16,17 @@ export const getCompletedPurchases = (buyerId) => {
   return purchases.filter((item) => item.buyerId === buyerId);
 };
 
+export const getCompletedSales = (sellerId) => {
+  if (typeof window === "undefined") return [];
+  const purchases = parseJson(window.localStorage.getItem(COMPLETED_PURCHASES_KEY), []);
+  if (sellerId == null) return purchases;
+  return purchases.filter((item) => item.sellerId === sellerId);
+};
+
+export const getCompletedSaleByMarketNo = (marketNo, sellerId) => {
+  return getCompletedSales(sellerId).find((item) => String(item.marketNo) === String(marketNo)) || null;
+};
+
 export const saveCompletedPurchases = (items) => {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(COMPLETED_PURCHASES_KEY, JSON.stringify(items));
