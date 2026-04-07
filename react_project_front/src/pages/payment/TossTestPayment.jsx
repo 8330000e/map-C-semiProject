@@ -147,6 +147,7 @@ const TossTestPayment = () => {
 				seller: sellerNickname,
 				buyerId: memberId,
 				buyerNickname: memberNickname || memberId,
+				orderInfo,
 				date: new Date().toISOString(),
 			});
 			await widgets.requestPayment({

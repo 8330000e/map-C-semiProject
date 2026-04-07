@@ -2,9 +2,9 @@ package kr.co.iei.store.model.service;
 
 import kr.co.iei.store.model.dao.StoreBoardDAO;
 import kr.co.iei.store.model.vo.StoreBoard;
-// import kr.co.iei.store.model.vo.StoreBoard.ProductStatus;
 import kr.co.iei.store.model.vo.StoreRating;
 import kr.co.iei.store.model.vo.StoreReview;
+import kr.co.iei.store.model.vo.StoreTradeInfo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -136,6 +136,27 @@ public class StoreBoardServiceImpl implements StoreBoardService {
     @Override
     public void removeRating(Long reviewNo, String buyerId) {
         storeBoardDAO.deleteRating(reviewNo, buyerId);
+    }
+
+    @Override
+    public void saveTradeInfo(StoreTradeInfo tradeInfo) {
+        if (tradeInfo == null || tradeInfo.getMarketNo() == null || tradeInfo.getBuyerId() == null) {
+            return;
+        }
+        StoreTradeInfo existing = storeBoardDAO.selectTradeInfoByMarketNoAndBuyerId(tradeInfo.getMarketNo(), tradeInfo.getBuyerId());
+        if (existing == null) {
+            storeBoardDAO.insertTradeInfo(tradeInfo);
+        }
+    }
+
+    @Override
+    public StoreTradeInfo getTradeInfoByMarketNo(Long marketNo) {
+        return storeBoardDAO.selectTradeInfoByMarketNo(marketNo);
+    }
+
+    @Override
+    public StoreTradeInfo getTradeInfoByMarketNoAndBuyerId(Long marketNo, String buyerId) {
+        return storeBoardDAO.selectTradeInfoByMarketNoAndBuyerId(marketNo, buyerId);
     }
 
     private void normalizeStoreBoard(StoreBoard storeBoard) {

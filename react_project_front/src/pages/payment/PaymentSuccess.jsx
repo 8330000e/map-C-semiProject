@@ -8,13 +8,44 @@ import { addCompletedPurchase, clearPendingPurchase, getPendingPurchase } from "
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-const updateProductStatus = async (itemId) => {
+const updateProductStatus = async (itemId, sellerId) => {
+	if (!sellerId) {
+		console.warn("판매자 아이디가 없어 상품 상태를 변경할 수 없습니다.", itemId);
+		return;
+	}
+
 	try {
 		await axios.patch(`${BACKSERVER}/api/store/boards/${itemId}/status`, null, {
-			params: { status: 2 },
+			params: { status: 2, memberId: sellerId },
 		});
 	} catch (error) {
 		console.error("상품 상태 업데이트 실패:", error);
+	}
+};
+
+const saveTradeInfo = async (order) => {
+	if (!order?.marketNo || !order?.buyerId || !order?.sellerId) {
+		return;
+	}
+
+	try {
+		await axios.post(`${BACKSERVER}/api/store/trades`, {
+			marketNo: order.marketNo,
+			sellerId: order.sellerId,
+			buyerId: order.buyerId,
+			buyerName: order.buyerNickname || order.buyerId,
+			tradePrice: Number(order.amount || 0),
+			tradeStatus: 2,
+			tradeType: order.tradeType,
+			receiverName: order.orderInfo?.receiverName,
+			buyerPhone: order.orderInfo?.phone,
+			zipCode: order.orderInfo?.zipCode,
+			address: order.orderInfo?.address,
+			addressDetail: order.orderInfo?.addressDetail,
+			deliveryMemo: order.orderInfo?.deliveryMemo,
+		});
+	} catch (error) {
+		console.error("거래 정보 저장 실패:", error);
 	}
 };
 
@@ -29,9 +60,10 @@ const PaymentSuccess = () => {
 
 	useEffect(() => {
 		if (marketNo) {
-			updateProductStatus(marketNo);
+			updateProductStatus(marketNo, order?.sellerId);
 		}
 		if (orderId && order) {
+			saveTradeInfo(order);
 			addCompletedPurchase({
 				...order,
 				status: "구매완료",

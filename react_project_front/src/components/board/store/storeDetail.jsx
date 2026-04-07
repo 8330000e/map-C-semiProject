@@ -349,11 +349,15 @@ const StoreDetail = () => {
     navigate("/payment/order", {
       state: {
         itemId,
+        marketNo: item.marketNo,
         orderName: item.marketTitle,
         amount: finalAmount,
         deliveryMethod,
         baseAmount,
         deliveryFee: deliveryMethod === "delivery" ? DELIVERY_FEE : 0,
+        sellerId: item.memberId,
+        sellerNickname: item.memberNickname,
+        tradeType: item.tradeType,
       },
     });
   };
