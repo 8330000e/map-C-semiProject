@@ -256,6 +256,9 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
     setEditPrivate(comment.isPrivate === 1);
   };
 
+  // 댓글 수정 처리
+  // 이전에는 수정 버튼 클릭 시 바로 내용을 저장하는 흐름만 있었을 수 있습니다.
+  // 지금은 수정 내용을 서버에 업데이트하고, 로컬 댓글 목록도 즉시 반영합니다.
   const handleSaveEdit = async () => {
     if (!editTarget) return;
     const text = editText.trim();
@@ -289,6 +292,9 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
     }
   };
 
+  // 댓글 삭제 처리
+  // 이전에는 삭제가 바로 실행되거나 버튼 순서가 뒤집혔을 수 있으므로,
+  // 확인창을 띄워 사용자에게 삭제 의사를 다시 묻고, 순서를 "삭제 / 취소"로 고정합니다.
   const handleDeleteComment = async (comment) => {
     if (memberId !== comment.memberId) return;
 
@@ -316,6 +322,8 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
     }
   };
 
+  // 비공개 댓글 보기 권한 판별을 위해 댓글을 ID 맵으로 보관합니다.
+  // 이 맵은 대댓글이 비공개일 때 부모 댓글 작성자를 확인하는 용도로 사용됩니다.
   const commentMap = useMemo(() => {
     const map = {};
     comments.forEach((comment) => {
@@ -343,6 +351,8 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
     return root;
   }, [comments]);
 
+  // 비공개 댓글 접근 권한 조건
+  // 댓글 작성자, 게시글 작성자, 해당 비공개 댓글의 부모 댓글 작성자만 내용을 볼 수 있습니다.
   const canViewSecretComment = (comment) => {
     if (comment.isPrivate !== 1) return true;
     const isOwn = comment.memberId === memberId;

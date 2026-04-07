@@ -210,6 +210,9 @@ const StoreDetail = () => {
     }
   };
 
+  // 댓글 삭제 확인창 추가
+  // 이전에는 삭제 버튼 클릭 시 바로 삭제 API를 호출했을 수 있으므로,
+  // 사용자가 삭제 여부를 확실히 선택하도록 확인창을 띄웁니다.
   const handleDeleteComment = async (comment) => {
     if (!memberId || memberId !== comment.memberId) return;
     const result = await Swal.fire({
@@ -276,6 +279,8 @@ const StoreDetail = () => {
     setEditingPrivate(false);
   };
 
+  // 댓글 수정 처리
+  // 수정 버튼 클릭 시 서버에 수정 내용을 저장하고, 목록을 새로 고침합니다.
   const saveEditComment = async () => {
     if (!editingTarget) return;
     const text = editingText.trim();
@@ -651,6 +656,8 @@ const StoreDetail = () => {
         <div className={styles.comment_list}>
           {comments.length === 0 && <p>등록된 댓글이 없습니다.</p>}
           {comments.map((comment) => {
+            // 비공개 댓글 접근 권한 처리
+            // 댓글 작성자, 판매글 작성자, 또는 부모 댓글 작성자만 볼 수 있도록 합니다.
             const isOwn = comment.memberId && memberId === comment.memberId;
             const isBoardAuthor = memberId && item?.memberId === memberId;
             const parentAuthorId = comment.parentCommentNo

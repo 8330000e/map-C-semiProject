@@ -394,6 +394,9 @@ const Community = () => {
       });
     }
   };
+  // 게시글 삭제 확인 처리
+  // 이전에는 삭제 확인창이 없거나 버튼 순서가 뒤집혀 있을 수 있었습니다.
+  // 지금은 삭제 버튼이 왼쪽에, 취소 버튼이 오른쪽에 표시됩니다.
   const deleteBoard = async (boardNo) => {
     const result = await Swal.fire({
       icon: "warning",

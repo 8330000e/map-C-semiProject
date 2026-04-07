@@ -154,6 +154,10 @@
     </insert>
 
     <!-- 댓글 조회 -->
+    <!--
+      비공개 댓글은 DB에서 'Y'/'N'로 저장됩니다.
+      프론트엔드에서는 1/0 형태로 사용하므로 조회 시 변환합니다.
+    -->
     <select id="selectBoardComments" resultType="kr.co.iei.board.model.vo.BoardComment">
         SELECT
             C.BOARD_COMMENT_NO AS commentNo,
@@ -173,6 +177,10 @@
     </select>
 
     <insert id="insertBoardComment" parameterType="boardComment">
+        <!--
+          댓글 PK는 LONG 타입으로 처리합니다.
+          MyBatis에서 selectKey 결과를 Long으로 매핑해야 올바르게 commentNo가 설정됩니다.
+        -->
         <selectKey keyProperty="commentNo" resultType="java.lang.Long" order="BEFORE">
             SELECT SEQ_BOARD_COMMENT_NO.NEXTVAL FROM DUAL
         </selectKey>
@@ -205,6 +213,10 @@
     </insert>
 
     <update id="updateBoardComment" parameterType="boardComment">
+        <!--
+          비공개 여부는 프론트에서 1/0으로 전달됩니다.
+          DB 저장은 'Y'/'N'로 처리해야 제약 조건에 맞습니다.
+        -->
         UPDATE BOARD_COMMENT_TBL
         SET BOARD_COMMENT_CONTENT = #{content},
             UPDATED_AT = SYSDATE,

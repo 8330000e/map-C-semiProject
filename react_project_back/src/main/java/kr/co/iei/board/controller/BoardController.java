@@ -113,6 +113,8 @@ public class BoardController {
 
 	@PostMapping("/{boardNo}/comments")
 	public ResponseEntity<?> addBoardComment(@PathVariable int boardNo, @RequestBody BoardComment comment) {
+		// 댓글 등록 요청 처리
+		// front에서 boardNo는 URL 경로로, 댓글 내용과 작성자 정보는 body로 전달됩니다.
 		comment.setBoardNo(boardNo);
 		BoardComment saved = boardService.addBoardComment(comment);
 		return ResponseEntity.ok(saved);
@@ -122,6 +124,8 @@ public class BoardController {
 	public ResponseEntity<?> editBoardComment(@PathVariable int boardNo,
 	                                         @PathVariable long commentNo,
 	                                         @RequestBody BoardComment comment) {
+		// 댓글 수정 요청 처리
+		// URL 경로로 boardNo와 commentNo를 받으며, body에는 수정 내용과 비공개 여부가 포함됩니다.
 		comment.setBoardNo(boardNo);
 		comment.setCommentNo(commentNo);
 		boardService.editBoardComment(comment);
@@ -132,6 +136,8 @@ public class BoardController {
 	public ResponseEntity<?> deleteBoardComment(@PathVariable int boardNo,
 	                                           @PathVariable long commentNo,
 	                                           @RequestParam String memberId) {
+		// 댓글 삭제 요청 처리
+		// 요청자는 memberId 쿼리 파라미터로 전달하며 작성자만 삭제할 수 있습니다.
 		boardService.removeBoardComment(commentNo, memberId);
 		return ResponseEntity.ok().build();
 	}
