@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import kr.co.iei.admin.model.vo.DashData;
 import kr.co.iei.admin.model.vo.Faq;
 import kr.co.iei.admin.model.vo.Notice;
+import kr.co.iei.admin.model.vo.Qna;
 
 @Mapper
 public interface AdminDao {
@@ -26,6 +27,10 @@ public interface AdminDao {
 	int insertFaq(Faq faq);
 
 	int editFaq(Faq faq);
+
+	List<Qna> selectQnaList();
+
+	int qnaAnswer(Qna qna);
 
 
 

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,8 @@ import kr.co.iei.admin.model.service.AdminService;
 import kr.co.iei.admin.model.vo.DashData;
 import kr.co.iei.admin.model.vo.Faq;
 import kr.co.iei.admin.model.vo.Notice;
+import kr.co.iei.admin.model.vo.Qna;
+import kr.co.iei.utils.FileUtils;
 
 @RequestMapping(value="admins")
 @CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
@@ -26,6 +29,8 @@ import kr.co.iei.admin.model.vo.Notice;
 public class AdminController {
 	@Autowired
 	private AdminService adminService;
+	
+	
 	
 	@PostMapping(value="notice")
 	public ResponseEntity<?> insertNotice(@RequestBody Notice notice) {
@@ -75,6 +80,19 @@ public class AdminController {
 	@PatchMapping(value="faq")
 	public ResponseEntity<?> editFaq(@RequestBody Faq faq) {
 		int result = adminService.editFaq(faq);
+		return ResponseEntity.ok(result);
+	}
+	
+	@GetMapping(value="qna")
+	public ResponseEntity<?> selectQnaList() {
+		List<Qna> qnaList = adminService.selectQnaList();
+		return ResponseEntity.ok(qnaList);
+	}
+	
+	@PatchMapping(value="qna")
+	public ResponseEntity<?> qnaAnswer(@ModelAttribute Qna qna) {
+		System.out.println(qna);
+		int result = adminService.qnaAnswer(qna);
 		return ResponseEntity.ok(result);
 	}
 }
