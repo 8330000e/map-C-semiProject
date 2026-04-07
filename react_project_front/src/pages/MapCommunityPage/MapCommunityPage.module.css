@@ -1,0 +1,102 @@
+.mapCommunityPage {
+  width: 100%;
+  padding: 30px 0;
+}
+
+.container {
+  width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.left,
+.right {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.mapBox {
+  width: 100%;
+  height: 700px;
+  background-color: #a8c66c;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 40px;
+  font-weight: bold;
+  color: #000;
+  border: 1.3px solid #464d3e;
+}
+
+.left {
+  position: relative;
+}
+.map_div {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  color: var(--color1);
+}
+.spot_box {
+  position: absolute;
+  margin: 18px;
+  width: 300px;
+  height: 120px;
+  border-radius: 20px;
+  border: var(--border);
+  z-index: 1;
+  padding: 15px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: var(--gray8);
+}
+.spot_box_top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.spot_box_top_posts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+.spot_box > div:last-child {
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.map_item {
+  background-color: var(--bg);
+  width: 140px;
+  height: 135px;
+  border-radius: 80px 80px 80px 8px;
+  position: absolute;
+  top: 87%;
+  right: 61%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  color: #fff;
+  font-size: 13px;
+  text-align: center;
+}
+.map_item > p:first-child {
+  padding-top: 12px;
+}
+.map_item > p:last-child {
+  padding: 0px 15px 0px 15px;
+}
+.map {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 20px;
+}

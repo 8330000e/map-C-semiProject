@@ -1,0 +1,138 @@
+.treeGrowMainPage {
+  width: 100%;
+  padding: 24px 0 36px;
+  box-sizing: border-box;
+}
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) minmax(360px, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.left,
+.right {
+  width: 100%;
+  min-width: 0;
+}
+
+.mapBox {
+  width: 100%;
+  height: clamp(500px, 60vw, 700px);
+  border-radius: 32px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #dde7f5 0%, #dbe8e3 100%);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5d6b7d;
+  font-size: 22px;
+  font-weight: 700;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1240px) {
+  .treeGrowMainPage {
+    padding: 20px 0 32px;
+  }
+
+  .container {
+    padding: 0 20px;
+    grid-template-columns: minmax(280px, 1fr) minmax(320px, 1fr);
+    gap: 16px;
+  }
+
+  .mapBox {
+    height: clamp(460px, 56vw, 620px);
+  }
+}
+
+@media (max-width: 1100px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .mapBox {
+    height: 420px;
+  }
+}
+
+@media (max-width: 768px) {
+  .treeGrowMainPage {
+    padding: 16px 0 24px;
+  }
+
+  .container {
+    padding: 0 16px;
+    gap: 14px;
+  }
+
+  .mapBox {
+    height: 320px;
+    border-radius: 22px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 12px;
+  }
+
+  .mapBox {
+    height: 260px;
+    border-radius: 18px;
+    font-size: 16px;
+  }
+}
+.mapBox {
+  position: relative;
+  width: 100%;
+  height: 680px;
+  overflow: hidden;
+  border-radius: 24px;
+}
+.mapBackground {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  font-weight: 700;
+  color: #4f6c92;
+}
+
+.regionPin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  background-color: #ffffff;
+  color: #333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.regionPin:hover {
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+.activePin {
+  background-color: #9cc63b;
+  color: #111;
+}

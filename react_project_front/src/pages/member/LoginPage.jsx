@@ -1,54 +1,106 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
 import useAuthStore from "../../store/useAuthStore";
+import Swal from "sweetalert2";
+import styles from "./LoginPage.module.css";
+import { Link } from "react-router-dom";
 
 const Login = () => {
+  // 페이지 이동 함수 가져오기
   const navigate = useNavigate();
+
+  // 상태 선언: 입력 중인 로그인 값 저장 (id, pw)
   const [member, setMember] = useState({
-    memberId: "",
-    memberPw: "",
+    memberId: "", // 아이디 필드
+    memberPw: "", // 비밀번호 필드
   });
 
+  const [isLoading, setIsLoading] = useState(false); //로딩상태가 아직 로그인이 안된 경우일떄
+  //페이지가 처음 마운트될 때 바로 보여주고 싶다면 isReady를 true로 설정,
+  //  로그인 버튼을 눌렀을 때 isReady를 false로 설정하여 로딩 상태를 보여줄 수 있다
+  const [isReady, setIsReady] = useState(true); //페이지 랜더링 준비 상태
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target; // 이벤트가 발생한 input의 name과 value 추출
     setMember({
-      ...member,
-      [name]: value,
+      ...member, // 기존 상태 유지
+      [name]: value, // 예: name이 memberId이면 memberId 값만 변경
     });
   };
 
   const handleLogin = () => {
-    console.log("로그인 버튼 클릭됨"); // 버튼 작동 체크
+    console.log("로그인 버튼 클릭됨"); // 버튼 클릭 테스트용 출력
 
-    //아이디나 비밀번호가 없으면 입력하라는 문구 넣기
+    // 1) 값 유효성 검사 (아이디/비밀번호 필수)
     if (!member.memberId || !member.memberPw) {
       alert("아이디와 비밀번호를 입력하세요");
       return;
     }
-    //서버에 요청보내기전 member 값 제대로 들어있는지,서버 주소 undefined 아닌지 체크
+
+    // 2) 디버그 출력 (보내는 데이터, 서버 주소)
     console.log("보내는 데이터:", member);
     console.log("서버 주소:", import.meta.env.VITE_BACKSERVER);
-    //로그인에서는 setMember가 then에 들어가지 않는다.
-    //왜냐하면 로그인이 되는지 안되는지만 판단하고, 수정 목적이 아니기 떄문
+
+    //로딩 시작
+    //isLoading → 로그인 시 로딩 표시, 버튼 비활성화.
+    setIsLoading(true);
+    //페이지/컴포넌트가 렌더링 준비가 끝났는지 체크하는 용도..
+    setIsReady(true); //페이지 랜더링 준비 완료
+    //여기에서 로딩 함수를 설정하고 axios에다가 타이머 설정
+    let timer = setTimeout(() => {
+      //3초안에 로그인 안되면 로딩 끝내기
+      setIsLoading(false);
+      Swal.fire({
+        icon: "error",
+        title: "로그인 실패",
+        text: "로그인 시간이 초과되었습니다. 다시 시도해주세요.",
+      });
+    }, 5000); //5초로 설정
 
     axios
       .post(`${import.meta.env.VITE_BACKSERVER}/members/login`, member)
       .then((res) => {
-        console.log("응답 성공:", res);
-        console.log("응답 데이터:", res.data);
+        clearTimeout(timer); //로그인 성공하면 타이머 초기화
+        console.log(res.data);
 
-        useAuthStore.getState().login(res.data);
+        Swal.fire({
+          title: "로그인 성공!!",
+          icon: "success",
+        });
+
+        //앞으로 axios는 기본값으로 "Authorization"이라는 서버에서 보내준 인증하는 값 헤더를
+        //자동으로 붙인다. 즉, 토큰을 이제 전역에 적용시키겠다는 의미
+        //로그인 후 받은 JWT 토큰을 헤더에 넣어야 로그인한 상태를 서버가 인식함.
+
+        if (res.data.token) {
+          axios.defaults.headers.common["Authorization"] =
+            `Bearer ${res.data.token}`;
+        }
+
+        useAuthStore.getState().login(res.data); //상태저장
         navigate("/");
       })
       .catch((err) => {
+        clearTimeout(timer); //실패시 타이머 초기화
+        setIsLoading(false); //로딩 끝내기
+        Swal.fire({
+          icon: "error",
+          title: "로그인 실패",
+          text: "아이디 또는 비밀번호가 올바르지 않습니다.",
+        });
         console.log(err);
       });
   };
 
+  //준비되지 않으면 랜더링 안 함
+  if (!isReady) return null;
+
   return (
     <div className="login-wrap">
       <h3 className="page-title">로그인</h3>
+      {isLoading && <p>로그인 중...</p>}
       <div>
         <input
           type="text"
@@ -75,7 +127,15 @@ const Login = () => {
             if (e.key === "Enter") handleLogin();
           }}
         ></input>
-        <button onClick={handleLogin}>로그인</button>
+        <button onClick={handleLogin} disabled={isLoading}>
+          로그인
+        </button>
+      </div>
+      {/* 여기에 아이디/비밀번호 찾기 링크 추가 */}
+      <div className={styles.search_wrap}>
+        <Link to="/members/find-id">아이디 찾기</Link>
+        {" || "}
+        <Link to="/members/find-pw">비밀번호 찾기</Link>
       </div>
     </div>
   );

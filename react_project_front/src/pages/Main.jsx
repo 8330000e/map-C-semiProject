@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
 import { dummyData, storeDummyData } from "../components/mock/dummyData";
 import useAuthStore from "../store/useAuthStore";
+import Map from "../components/mainpage/Map";
+import Bestpostlist from "../components/mainpage/Bestpostlist";
 
 const STORE_STATUS_KEY = "storeSaleStatusMap";
 
@@ -174,7 +176,7 @@ const Main = () => {
           </div>
           <ul>
             <li>
-              <a href="#">맵 커뮤니티</a>
+              <Link to="map-community">맵 커뮤니티</Link>
             </li>
             <li>
               <a href="#">회원끼리 캠페인</a>
@@ -183,10 +185,12 @@ const Main = () => {
               <Link to="/store">중고거래</Link>
             </li>
             <li>
-              <a href="#">미션</a>
+              <Link to="/mission">미션(출석체크)</Link>
             </li>
             <li>
-              <a href="#">나무 키우기</a>
+              <Link to="/tree-grow" className="treeGrow">
+                나무 키우기
+              </Link>
             </li>
             <li>
               <span>
@@ -206,19 +210,21 @@ const Main = () => {
             </span>
             <p>고객센터 운영시간</p>
             <p>10:00 ~ 18:00</p>
-            <button>문의하기 ▶</button>
+            <button className="btn">문의하기 ▶</button>
           </div>
         </div>
 
         <div className="main_map roundBorder">
-          <p>Map</p>
+          {/* <p>Map</p> */}
           {/*위치설명*/}
+          {/* <Map /> */}
         </div>
 
         <div className="main_content_one">
           <div className="best_list roundBorder">
-            <p>인기게시글</p>
+            {/* <p>인기게시글</p> */}
             {/*위치설명*/}
+            <Bestpostlist className="bestpostlist" />
           </div>
           <div className="tip_list roundBorder">
             <p>팁 리스트</p>
