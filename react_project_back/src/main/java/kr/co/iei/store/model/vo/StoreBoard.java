@@ -20,6 +20,7 @@ public class StoreBoard {
     private String productThumb;
     private String tradeType;
     private Integer readCount;
+    private Integer commentCount;
     private String regionName;
 
     private Date createdAt;

@@ -39,7 +39,14 @@ const Main = () => {
   useEffect(() => {
     axios
       .get(`${BACKSERVER}/api/store/boards`)
-      .then((res) => setGoods(Array.isArray(res.data) ? res.data : []))
+      .then((res) => {
+        const items = Array.isArray(res.data)
+          ? res.data
+          : Array.isArray(res.data?.items)
+          ? res.data.items
+          : [];
+        setGoods(items);
+      })
       .catch((err) => console.error("중고장터 목록 조회 실패", err));
   }, []);
 
@@ -278,7 +285,7 @@ const Main = () => {
                       <div className="used_item_meta">
                         <span>{item.memberNickname || item.memberId}</span>
                         <span>|</span>
-                        <span>💬 0</span>
+                        <span>💬 {item.commentCount ?? 0}</span>
                         <span>|</span>
                         <span>
                           {item.createdAt
@@ -289,7 +296,7 @@ const Main = () => {
                         </span>
                       </div>
                       <span className="used_item_view">
-                        👀 {item.readCount || 0}
+                        👀 {Number(item.readCount ?? 0).toLocaleString("ko-KR")}
                       </span>
                     </div>
                   </Link>
