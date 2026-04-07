@@ -18,7 +18,7 @@ import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.region.model.service.RegionService;
 import kr.co.iei.region.model.vo.Region;
 
-@CrossOrigin(value = "*")
+@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
 @RestController
 @RequestMapping(value = "/regions")
 public class RegionController {

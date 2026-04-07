@@ -1,7 +1,7 @@
 import { useState } from "react";
 import TreeGrowMain from "../../components/TreeGrowMain/TreeGrowMain";
 import styles from "./TreeGrowMainPage.module.css";
-import RegionMap from "../../components/map/RegionMap";
+import RegionMap from "../../components/mainpage/RegionMap";
 
 const TreeGrowMainPage = () => {
   const [selectedRegionNo, setSelectedRegionNo] = useState(2); // 기본 서울

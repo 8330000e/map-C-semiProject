@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.iei.admin.model.dao.AdminDao;
 import kr.co.iei.admin.model.vo.DashData;
+import kr.co.iei.admin.model.vo.Faq;
 import kr.co.iei.admin.model.vo.Notice;
 
 @Service
@@ -37,5 +38,18 @@ public class AdminService {
 		DashData dashData = adminDao.getDashData();
 		System.out.println(dashData);
 		return dashData;
+	}
+
+	
+
+	@Transactional
+	public int deleteNotice(Integer noticeNo) {
+		int result = adminDao.deleteNotice(noticeNo);
+		return result;
+	}
+
+	public List<Faq> selectFaqList() {
+		List<Faq> faqList = adminDao.selectFaqList();
+		return faqList;
 	}
 }

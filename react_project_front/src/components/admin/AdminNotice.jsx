@@ -1,4 +1,6 @@
 import styles from "../../pages/admin/AdminNoticePage.module.css";
+import Button from "../ui/Button";
+import { Input, TextArea } from "../ui/Form";
 
 const AdminNotice = ({
   notice,
@@ -9,6 +11,7 @@ const AdminNotice = ({
   setIsEdit,
 
   setNotice,
+  deleteNotice,
 }) => {
   return (
     <>
@@ -23,17 +26,16 @@ const AdminNotice = ({
                 name="noticeTitle"
                 value={notice.noticeTitle}
                 onChange={changeNotice}
-              ></input>
+              />
             </div>
             <div className={styles.notice_write_content}>
               <label htmlFor="noticeContent">공지사항 내용</label>
-              <input
-                type="text"
+              <TextArea
                 id="noticeContent"
                 name="noticeContent"
                 value={notice.noticeContent}
                 onChange={changeNotice}
-              ></input>
+              />
             </div>
           </section>
           <section className={styles.notice_option_wrap}>
@@ -61,66 +63,82 @@ const AdminNotice = ({
                 <option value={1}>고정</option>
               </select>
             </div>
-            <button type="submit" onClick={insertNotice}>
+            <Button className="btn admin" type="submit" onClick={insertNotice}>
               {isEdit ? "수정하기" : "등록하기"}
-            </button>
+            </Button>
           </section>
         </form>
       </section>
       <section className={styles.notice_list_wrap}>
-        <table className={styles.notice_table}>
-          <thead>
-            <tr>
-              <th className={styles.col_fixed}>고정</th>
-              <th className={styles.col_title}>제목</th>
-              <th className={styles.col_date}>작성일시</th>
-              <th className={styles.col_edit}>수정</th>
-              <th className={styles.col_delete}>삭제</th>
-            </tr>
-          </thead>
-          <tbody>
-            {noticeList.length === 0 ? (
+        <div className={styles.table_wrap}>
+          <table className={styles.notice_table}>
+            <colgroup>
+              <col className={styles.col_fixed} />
+              <col className={styles.col_title} />
+              <col className={styles.col_date} />
+              <col className={styles.col_edit} />
+              <col className={styles.col_delete} />
+            </colgroup>
+            <thead>
               <tr>
-                <td>등록된 공지사항이 없습니다.</td>
+                <th className={styles.col_fixed}>고정</th>
+                <th className={styles.col_title}>제목</th>
+                <th className={styles.col_date}>작성일시</th>
+                <th className={styles.col_edit}>수정</th>
+                <th className={styles.col_delete}>삭제</th>
               </tr>
-            ) : (
-              noticeList.map((item) => (
-                <tr key={item.noticeNo}>
-                  <td>
-                    {item.noticeFixed === 1 ? (
-                      <span className={styles.badge_fixed}>고정</span>
-                    ) : (
-                      ""
-                    )}
-                  </td>
-                  <td>{item.noticeTitle}</td>
-                  <td>{item.noticeDate}</td>
-                  <td>
-                    <button
-                      className={styles.edit_btn}
-                      onClick={() => {
-                        setIsEdit(true);
-
-                        setNotice({
-                          noticeNo: item.noticeNo,
-                          noticeTitle: item.noticeTitle,
-                          noticeContent: item.noticeContent,
-                          noticePublic: item.noticePublic,
-                          noticeFixed: item.noticeFixed,
-                        });
-                      }}
-                    >
-                      수정
-                    </button>
-                  </td>
-                  <td>
-                    <button className={styles.delete_btn}>삭제</button>
-                  </td>
+            </thead>
+            <tbody>
+              {noticeList.length === 0 ? (
+                <tr>
+                  <td colSpan={5}>등록된 공지사항이 없습니다.</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                noticeList.map((item) => (
+                  <tr key={item.noticeNo}>
+                    <td className={styles.col_fixed}>
+                      {item.noticeFixed === 1 ? (
+                        <span className={styles.badge_fixed}>고정</span>
+                      ) : (
+                        ""
+                      )}
+                    </td>
+                    <td className={styles.col_title}>{item.noticeTitle}</td>
+                    <td className={styles.col_date}>{item.noticeDate}</td>
+                    <td className={styles.col_edit}>
+                      <Button
+                        className="btn admin sm"
+                        onClick={() => {
+                          setIsEdit(true);
+
+                          setNotice({
+                            noticeNo: item.noticeNo,
+                            noticeTitle: item.noticeTitle,
+                            noticeContent: item.noticeContent,
+                            noticePublic: item.noticePublic,
+                            noticeFixed: item.noticeFixed,
+                          });
+                        }}
+                      >
+                        수정
+                      </Button>
+                    </td>
+                    <td className={styles.col_delete}>
+                      <Button
+                        className="btn danger sm"
+                        onClick={() => {
+                          deleteNotice(item.noticeNo);
+                        }}
+                      >
+                        삭제
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </section>
     </>
   );

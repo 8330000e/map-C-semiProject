@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.iei.region.model.dao.CtpvsggDao">
+
+  <select id="selectAllRegions" resultType="kr.co.iei.region.model.vo.Ctpvsgg">
+    SELECT
+      CTPVSGG_ID AS ctpvsggId,
+      CTPV_CD AS ctpvCd,
+      SGG_CD AS sggCd,
+      CTPV_NM AS ctpvNm,
+      SGG_NM AS sggNm
+    FROM CTPVSGG_TBL
+    ORDER BY CTPV_CD, SGG_CD
+  </select>
+
+</mapper>

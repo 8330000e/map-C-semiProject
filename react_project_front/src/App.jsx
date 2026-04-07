@@ -19,11 +19,10 @@ import TossTestPayment from "./pages/payment/TossTestPayment";
 import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import PaymentFail from "./pages/payment/PaymentFail";
 import JoinPage from "./pages/member/JoinPage";
-import LoginPage from "./pages/member/LoginPage";
 
-import TestHeader from "./components/commons/TestHeader";
 import { useEffect } from "react";
 import useAuthStore from "./store/useAuthStore";
+
 import axios from "axios";
 
 import MapCommunity from "./pages/MapCommunityPage/MapCommunityPage";
@@ -45,6 +44,12 @@ import PurchaseDetail from "./components/mypage/PurchaseDetail";
 import SaleDetail from "./components/mypage/SaleDetail";
 */
 import AdminPage from "./pages/admin/AdminPage";
+import ChangePw from "./components/mypage/ChangePw";
+import UpdateMyInfo from "./components/mypage/UpdateMyInfo";
+import Mypage from "./pages/member/MyPage";
+import Login from "./pages/member/LoginPage";
+import FindId from "./pages/member/FindId";
+import FindPw from "./pages/member/FindPw";
 
 function App() {
   const location = useLocation();
@@ -53,6 +58,12 @@ function App() {
     /*1. 로그인로직 
     2. 로그인 후 null이 아닌 memeber state를 useAthsore에 저장*/
   }
+
+  // useAuthstore로 token가져오기
+  //왜 로그인이 아닌 app에서 로그인 인증 유지과정 로직을 적는가?
+  // 로그인에서는 로그인을 했을 경우에만 해당. 그 외에는 적용이 어려움
+  //app는 새로고침을 해도 모든 창에 기본적으로 영향을 끼침.
+  //따라서 app에서 토큰을 지속적으로 유지하는 로직을 짬.
 
   //app는 새로고침을 해도 모든 창에 기본적으로 영향을 끼침.
   //따라서 app에서 토큰을 지속적으로 유지하는 로직을 짬.
@@ -74,7 +85,7 @@ function App() {
       <main className={isAdmin ? "" : "main"}>
         <Routes>
           <Route path="/" element={<Main />} />
-
+          <Route path="/mypage/*" element={<Mypage />} />
           <Route path="/store" element={<Store />} />
           <Route path="/store/register" element={<ProductRegistration />} />
           <Route path="/store/:id" element={<StoreDetail />} />
@@ -84,8 +95,10 @@ function App() {
           <Route path="/payment/fail" element={<PaymentFail />} />
           <Route path="/Store" element={<Navigate to="/store" replace />} />
           <Route path="/join" element={<JoinPage />}></Route>
-          <Route path="/members/login" element={<LoginPage />}></Route>
 
+          <Route path="/members/login" element={<Login />}></Route>
+          <Route path="/members/find-id" element={<FindId />}></Route>
+          <Route path="/members/find-pw" element={<FindPw />}></Route>
           <Route path="/map-community" element={<MapCommunity />} />
           <Route path="/tree-grow" element={<TreeGrowMainPage />} />
           <Route path="/mission" element={<MissionListPage />} />

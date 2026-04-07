@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import kr.co.iei.board.model.dao.BoardDao;
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardFile;
+import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.utils.FileUtils;
 
 @Service
@@ -50,6 +51,26 @@ public class BoardService {
 	        throw e;
 	    }
 	}
+
+	public int incrementReadCount(int boardNo) {
+		return boardDao.incrementReadCount(boardNo);
+	}
+
+	public int addBoardLike(int boardNo, String memberId) {
+		return boardDao.insertBoardLike(boardNo, memberId);
+	}
+
+	public int removeBoardLike(int boardNo, String memberId) {
+		return boardDao.deleteBoardLike(boardNo, memberId);
+	}
+
+	public boolean isBoardLiked(int boardNo, String memberId) {
+		return boardDao.selectBoardLikeByMember(boardNo, memberId) > 0;
+	}
+
+	public boolean isBoardAuthor(int boardNo, String writerId) {
+		return boardDao.selectBoardAuthor(boardNo, writerId) > 0;
+	}
 	@Transactional
 	public int insertBoardFiles(int boardNo, String memberId, MultipartFile[] files) {
 	    int result = 0;
@@ -72,6 +93,16 @@ public class BoardService {
 	    }
 
 	    return result;
+	}
+	// 인기 게시글 조회 비즈니스 로직
+	// BoardController.bestBoardList()에서 호출되어 DAO에서 결과를 가져옵니다.
+	public List<BoardLike> bestBoardList() {
+		return boardDao.bestBoardList();
+	}
+	
+	public List<Board> selectMemberIdBoard(HashMap<String, String> map) {
+		List<Board> list = boardDao.selectMemberIdBoard(map);
+		return list;
 	}
 }
 

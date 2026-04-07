@@ -3,14 +3,17 @@
   background-color: #202c47;
   border-radius: 18px;
   margin: 14px 12px;
+  margin-bottom: 26px;
 }
 .notice_write_title {
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 .notice_write_content {
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 .notice_write_content > input {
   min-height: 140px;
@@ -42,7 +45,7 @@
 .notice_option_wrap > button {
   padding: 12px 8px;
   border-radius: 12px;
-  margin-top: 36px;
+  margin-top: 48px;
 }
 .select {
   padding: 4px;
@@ -57,17 +60,28 @@
   border-radius: 12px;
 }
 
-.notice_table {
-  width: 100%;
-}
 .notice_list_wrap {
   max-height: 210px;
-  overflow-y: scroll;
+  border: 1px solid #334c69;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 14px 12px;
+}
+.table_wrap {
+  max-height: 210px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+.notice_table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
 }
 .notice_table th,
 .notice_table td {
   padding: 4px 12px;
   text-align: left;
+  vertical-align: middle;
 }
 .col_fixed {
   width: 60px;
@@ -96,4 +110,30 @@
   border: none;
   border: 3px solid #334c69;
   color: #ffffff;
+}
+/* 수정, 삭제, 고정 컬럼은 중앙 정렬 */
+.col_fixed,
+.col_edit,
+.col_delete {
+  text-align: center !important;
+}
+
+/* 스크롤 바 디자인 */
+.table_wrap::-webkit-scrollbar {
+  width: 6px;
+}
+.table_wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+.table_wrap::-webkit-scrollbar-thumb {
+  background: #334c69;
+  border-radius: 10px;
+}
+
+/*textarea 관리자전용*/
+.notice_write_content textarea {
+  background-color: var(--admin-input-bg);
+  border: 3px solid var(--admin-stroke);
+  color: var(--admin-text);
+  min-height: 140px;
 }

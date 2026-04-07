@@ -1,35 +1,46 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import styles from "./SaleHistory.module.css";
-
-const mockSalesHistory = [
-  { id: 1, title: "업사이클 백팩", date: "2026-03-15", amount: 34000, status: "판매중", tradeType: 0, tradeTypeText: "직거래/택배" },
-  { id: 2, title: "중고 모니터 24인치", date: "2026-03-06", amount: 83000, status: "판매완료", tradeType: 1, tradeTypeText: "직거래" },
-];
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
 const tradeTypeLabel = (type, text) => {
   if (text) return text;
-  if (type === 0) return "직거래/택배";
-  if (type === 1) return "직거래";
-  if (type === 2) return "택배";
+  if (type === 0 || type === "0") return "직거래/택배";
+  if (type === 1 || type === "1") return "직거래";
+  if (type === 2 || type === "2") return "택배";
   return "-";
 };
 
-const mockSaleReviews = {
-  2: [
-    {
-      id: 1,
-      buyer: "그린북구매자",
-      score: 5,
-      text: "배송이 빠르고 상품 상태도 매우 좋았습니다. 감사합니다!",
-      date: "2026-03-10",
-    },
-  ],
+const getSaleStatusLabel = (productStatus) => {
+  if (productStatus === "예약중" || productStatus === 1 || productStatus === "1") return "예약중";
+  if (productStatus === "판매완료" || productStatus === 2 || productStatus === "2") return "판매완료";
+  return "판매중";
 };
 
 const SaleDetail = () => {
   const { id } = useParams();
-  const item = mockSalesHistory.find((p) => String(p.id) === String(id));
+  const [item, setItem] = useState(null);
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${BACKSERVER}/api/store/boards/${id}`)
+      .then((res) => setItem(res.data))
+      .catch((error) => {
+        console.error("판매상세 조회 실패", error);
+        setItem(null);
+      });
+  }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+    axios.get(`${BACKSERVER}/api/store/markets/${id}/ratings`)
+      .then((res) => setReviews(Array.isArray(res.data) ? res.data : []))
+      .catch((error) => {
+        console.error("판매후기 조회 실패", error);
+        setReviews([]);
+      });
+  }, [id]);
 
   if (!item) {
     return (
@@ -41,30 +52,29 @@ const SaleDetail = () => {
       </div>
     );
   }
-
-  const reviews = mockSaleReviews[item.id] || [];
+  const saleStatus = getSaleStatusLabel(item.productStatus);
 
   return (
     <div className={styles.sale_history_wrap}>
-      <h3 className={styles.sale_title}>판매 상세 ({item.title})</h3>
+      <h3 className={styles.sale_title}>판매 상세 ([{saleStatus}] {item.marketTitle})</h3>
       <div className={styles.sale_card}>
-        <div className={styles.sale_card_title}>{item.title}</div>
-        <div className={styles.sale_card_meta}>{item.date} · {item.status}</div>
-        <div>금액: {item.amount.toLocaleString()}원</div>
+        <div className={styles.sale_card_title}>[{saleStatus}] {item.marketTitle}</div>
+        <div className={styles.sale_card_meta}>{item.createdAt ? new Date(item.createdAt).toLocaleDateString("ko-KR") : "-"} · {saleStatus}</div>
+        <div>금액: {Number(item.productPrice || 0).toLocaleString("ko-KR")}원</div>
         <div>거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText)}</div>
       </div>
 
-      {item.status === "판매완료" ? (
+      {saleStatus === "판매완료" ? (
         <div className={styles.review_summary}>
           <h4>구매자 후기</h4>
           {reviews.length === 0 ? (
             <p>아직 등록된 후기가 없습니다.</p>
           ) : (
             reviews.map((rev) => (
-              <div key={rev.id} className={styles.review_card}>
-                <div className={styles.review_score}>★ {rev.score}</div>
-                <div className={styles.review_meta}>{rev.buyer} · {rev.date}</div>
-                <p>{rev.text}</p>
+              <div key={rev.reviewNo} className={styles.review_card}>
+                <div className={styles.review_score}>★ {rev.rating}</div>
+                <div className={styles.review_meta}>{rev.buyerNickname || rev.buyerId} · {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString("ko-KR") : "-"}</div>
+                <p>{rev.reviewContent}</p>
               </div>
             ))
           )}
