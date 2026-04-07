@@ -23,6 +23,10 @@ public interface AdminDao {
 
 	List<Faq> selectFaqList();
 
+	int insertFaq(Faq faq);
+
+	int editFaq(Faq faq);
+
 
 
 

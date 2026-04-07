@@ -52,4 +52,16 @@ public class AdminService {
 		List<Faq> faqList = adminDao.selectFaqList();
 		return faqList;
 	}
+
+	@Transactional
+	public int insertFaq(Faq faq) {
+		int result = adminDao.insertFaq(faq);
+		return result;
+	}
+
+	@Transactional
+	public int editFaq(Faq faq) {
+		int result = adminDao.editFaq(faq);
+		return result;
+	}
 }
