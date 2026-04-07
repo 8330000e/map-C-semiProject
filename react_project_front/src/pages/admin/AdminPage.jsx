@@ -39,6 +39,8 @@ const AdminPage = () => {
           </div>
           <div className={styles.admin_page_content}>
             <Routes>
+              {/*“/admin으로 들어오면 무조건 /admin/dashboard로 보내버려라”라는 설정
+               */}{" "}
               <Route path="" element={<Navigate to="/admin/dashboard" />} />
               <Route path="dashboard" element={<DashBoardPage />} />
               <Route path="members" element={<AdminMember />} />

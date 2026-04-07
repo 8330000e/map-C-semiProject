@@ -1,9 +1,10 @@
 import styles from "./commons.module.css";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate, NavLink } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MailIcon from "@mui/icons-material/Mail";
 import SettingsIcon from "@mui/icons-material/Settings";
+
 import useAuthStore from "../../store/useAuthStore";
 import { useState } from "react";
 
@@ -20,9 +21,8 @@ const Header = () => {
   return (
     <>
       <header className={styles.header}>
-        <h1>
-          <Link to="/">탄소커넥트</Link>
-        </h1>
+        <h1 onClick={() => navigate("/")}>탄소커넥트</h1>
+
         <div className={styles.header_wrap}>
           {!memberId ? (
             <div className={styles.login}>
@@ -44,7 +44,7 @@ const Header = () => {
               </Link>
             </div>
           ) : (
-            <div className={styles.profile_bar_wrap}>
+            <div className={`${styles.profile_bar_wrap}`}>
               {memberGrade === 1 ? (
                 <div
                   className={styles.profile_item}
@@ -55,8 +55,10 @@ const Header = () => {
                 </div>
               ) : (
                 <div
-                  className={styles.profile_item}
-                  onClick={() => navigate("/mypage")}
+                  className={`${styles.profile_item} ${drawer ? styles.drawer_open : styles.drawer_close}`}
+                  onClick={() => {
+                    setDrawer(true);
+                  }}
                 >
                   <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
                   <span>{memberNickname}</span>
