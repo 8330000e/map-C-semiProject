@@ -4,8 +4,21 @@ import useAuthStore from "../../store/useAuthStore";
 import styles from "./PurchaseHistory.module.css";
 import { getCompletedPurchases } from "./orderHistoryStorage";
 
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 const PAGE_SIZE = 6;
 const getStatusPrefix = (status) => (status ? `[${status}] ` : "");
+
+const getImageUrl = (thumb) => {
+  if (!thumb) return null;
+  if (typeof thumb !== "string") return null;
+  const trimmed = thumb.trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith("http")) return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  return `${BACKSERVER}/board/editor/${trimmed}`;
+};
 
 const getShippingStatusLabel = (status) => {
   if (status === 1 || status === "1") return "배송완료";
@@ -116,6 +129,8 @@ const PurchaseHistory = () => {
           const address = item.orderInfo?.address || item.address || "";
           const displayTradeType = resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod, address);
           const hasDelivery = displayTradeType === "택배" || displayTradeType === "직거래/택배";
+          const itemTitle = item.title || item.marketTitle || item.orderName || "상품 이미지";
+          const imageUrl = getImageUrl(item.productThumb || item.thumb || tradeInfo?.productThumb);
 
           return (
             <Link
@@ -123,7 +138,21 @@ const PurchaseHistory = () => {
               to={`/mypage/history/purchase/${item.id}`}
               className={styles.purchase_card}
             >
-              <div className={styles.purchase_card_title}>{getStatusPrefix(item.status)}{item.title}</div>
+              <div className={styles.purchase_card_image_wrap}>
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={itemTitle}
+                    className={styles.purchase_card_image}
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                ) : (
+                  <div className={styles.purchase_card_image_fallback}>이미지</div>
+                )}
+              </div>
+              <div className={styles.purchase_card_title}>{getStatusPrefix(item.status)}{itemTitle}</div>
               <div className={styles.purchase_card_meta}>{item.date} · {item.status}</div>
               <div>{item.amount?.toLocaleString("ko-KR")}원</div>
               <div>거래방법: {displayTradeType}</div>

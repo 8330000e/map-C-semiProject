@@ -382,6 +382,7 @@ const StoreDetail = () => {
         sellerId: item.memberId,
         sellerNickname: item.memberNickname,
         tradeType: item.tradeType,
+        productThumb: item.productThumb,
       },
     });
   };
@@ -601,13 +602,29 @@ const StoreDetail = () => {
       <div className={styles.same_items_section}>
         <h3>같은 상품 더보기</h3>
         <div className={styles.same_items_wrapper}>
-          {displaySame.map((same) => (
-            <Link key={same.marketNo} to={`/store/${same.marketNo}`} className={styles.same_item}>
-              <div className={styles.image}>{same.productThumb || "이미지"}</div>
-              <div className={styles.same_item_title}>{same.marketTitle}</div>
-              <div className={styles.same_item_price}>{formatPrice(same.productPrice)}</div>
-            </Link>
-          ))}
+          {displaySame.map((same) => {
+            const imageUrl = getImageUrl(same.productThumb || same.thumb);
+            return (
+              <Link key={same.marketNo} to={`/store/${same.marketNo}`} className={styles.same_item}>
+                <div className={styles.image}>
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt={same.marketTitle || "상품 이미지"}
+                      className={styles.product_image}
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+                  ) : (
+                    "이미지"
+                  )}
+                </div>
+                <div className={styles.same_item_title}>{same.marketTitle}</div>
+                <div className={styles.same_item_price}>{formatPrice(same.productPrice)}</div>
+              </Link>
+            );
+          })}
         </div>
       </div>
 
