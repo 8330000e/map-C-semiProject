@@ -39,6 +39,22 @@ export const addCompletedPurchase = (purchase) => {
   return next;
 };
 
+export const removeCompletedPurchase = (id) => {
+  if (typeof window === "undefined") return [];
+  const current = getCompletedPurchases();
+  const next = current.filter((item) => String(item.id) !== String(id));
+  saveCompletedPurchases(next);
+  return next;
+};
+
+export const removeCompletedPurchaseByMarketNo = (marketNo) => {
+  if (typeof window === "undefined") return [];
+  const current = getCompletedPurchases();
+  const next = current.filter((item) => String(item.marketNo) !== String(marketNo));
+  saveCompletedPurchases(next);
+  return next;
+};
+
 export const getCompletedPurchaseById = (id, buyerId) => {
   return getCompletedPurchases(buyerId).find((item) => String(item.id) === String(id)) || null;
 };

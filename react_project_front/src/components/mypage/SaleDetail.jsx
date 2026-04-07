@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
-import { getCompletedSaleByMarketNo } from "./orderHistoryStorage";
+import { getCompletedSaleByMarketNo, removeCompletedPurchaseByMarketNo } from "./orderHistoryStorage";
 import styles from "./SaleHistory.module.css";
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-const tradeTypeLabel = (type, text, deliveryMethod) => {
+const tradeTypeLabel = (type, text, deliveryMethod, address) => {
   const normalized = String(type ?? text ?? deliveryMethod ?? "").trim();
-  if (normalized === "0" || normalized === "직거래/택배") return "직거래/택배";
-  if (normalized === "1" || normalized === "직거래") return "직거래";
+  const hasAddress = Boolean((address ?? "").toString().trim());
+  if (normalized === "0" || normalized === "직거래/택배") return hasAddress ? "택배" : "직거래";
+  if (normalized === "1" || normalized === "직거래" || normalized === "direct") return "직거래";
   if (normalized === "2" || normalized === "택배" || normalized === "delivery") return "택배";
-  return "-";
+  return hasAddress ? "택배" : "직거래";
 };
 
 const getSaleStatusLabel = (productStatus) => {
@@ -50,12 +51,63 @@ const normalizeTradeType = (tradeType) => {
 
 const SaleDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { memberId } = useAuthStore();
   const [item, setItem] = useState(null);
   const [saleOrder, setSaleOrder] = useState(null);
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [isSubmittingInvoice, setIsSubmittingInvoice] = useState(false);
+  const [isProcessingOrderAction, setIsProcessingOrderAction] = useState(false);
   const [reviews, setReviews] = useState([]);
+
+  const handleSellerOrderAction = async () => {
+    if (!item?.marketNo || !saleOrder?.sellerId) {
+      alert("해당 주문을 처리할 수 없습니다.");
+      return;
+    }
+
+    const actionText = "주문 취소";
+    if (!window.confirm(`${actionText} 처리하면 판매중으로 돌아갑니다. 계속하시겠습니까?`)) {
+      return;
+    }
+
+    setIsProcessingOrderAction(true);
+    try {
+      await axios.patch(`${BACKSERVER}/api/store/boards/${item.marketNo}/status`, null, {
+        params: { status: 0, memberId: saleOrder.sellerId },
+      });
+
+      const payload = {
+        tradeStatus: 0,
+        shippingStatus: 0,
+        tradeType: "직거래",
+        tradeTypeText: "직거래",
+        receiverName: null,
+        buyerPhone: null,
+        zipCode: null,
+        address: null,
+        addressDetail: null,
+        deliveryMemo: null,
+        invoiceNumber: null,
+        courierCode: null,
+      };
+
+      if (saleOrder.tradeNo) {
+        await axios.patch(`${BACKSERVER}/api/store/trades/${saleOrder.tradeNo}`, payload);
+      } else {
+        await axios.patch(`${BACKSERVER}/api/store/markets/${item.marketNo}/trade-info`, payload);
+      }
+
+      removeCompletedPurchaseByMarketNo(item.marketNo);
+      alert(`${actionText} 처리되었습니다.`);
+      navigate("/mypage/history/sale");
+    } catch (error) {
+      console.error(`${actionText} 실패`, error);
+      alert(error.response?.data || `${actionText} 처리에 실패했습니다.`);
+    } finally {
+      setIsProcessingOrderAction(false);
+    }
+  };
 
   useEffect(() => {
     axios.get(`${BACKSERVER}/api/store/boards/${id}`)
@@ -69,7 +121,14 @@ const SaleDetail = () => {
       try {
         const res = await axios.get(`${BACKSERVER}/api/store/markets/${id}/trade-info`);
         if (res.data) {
-          setSaleOrder(res.data);
+          setSaleOrder((prev) => ({
+            ...prev,
+            ...res.data,
+            tradeType: res.data.tradeType ?? prev?.tradeType,
+            tradeTypeText: res.data.tradeTypeText ?? prev?.tradeTypeText,
+            deliveryMethod: res.data.deliveryMethod ?? prev?.deliveryMethod,
+            invoiceNumber: res.data.invoiceNumber || prev?.invoiceNumber,
+          }));
           setInvoiceNumber(res.data.invoiceNumber || "");
           return;
         }
@@ -113,7 +172,8 @@ const SaleDetail = () => {
   const saleStatus = getSaleStatusLabel(item.productStatus);
   const isSeller = saleOrder?.sellerId && saleOrder.sellerId === memberId;
   const shippingStatus = saleOrder ? getShippingStatusLabel(saleOrder.shippingStatus) : "-";
-  const tradeMethod = saleOrder ? tradeTypeLabel(saleOrder.tradeType, saleOrder.tradeTypeText, saleOrder.deliveryMethod) : "-";
+  const saleOrderAddress = saleOrder?.orderInfo?.address || saleOrder?.address || "";
+  const tradeMethod = saleOrder ? tradeTypeLabel(saleOrder.tradeType, saleOrder.tradeTypeText, saleOrder.deliveryMethod, saleOrderAddress) : "-";
   const isShippingPending = saleOrder && (saleOrder.shippingStatus === 0 || saleOrder.shippingStatus === "0");
   const isDeliveryTrade = Boolean(
     saleOrder?.tradeType === 2 ||
@@ -124,15 +184,21 @@ const SaleDetail = () => {
     saleOrder?.tradeType === "직거래/택배" ||
     saleOrder?.tradeTypeText?.includes("택배")
   );
+  const showSellerCancelButton = isSeller && saleStatus === "판매완료";
 
   return (
     <div className={styles.sale_history_wrap}>
-      <h3 className={styles.sale_title}>판매 상세 ([{saleStatus}] {item.marketTitle})</h3>
+      <div className={styles.detail_header}>
+        <h3 className={styles.sale_title}>판매 상세</h3>
+        <Link className={styles.detail_back_link} to="/mypage/history/sale">
+          ← 판매내역으로 돌아가기
+        </Link>
+      </div>
       <div className={styles.sale_card}>
         <div className={styles.sale_card_title}>[{saleStatus}] {item.marketTitle}</div>
         <div className={styles.sale_card_meta}>{item.createdAt ? new Date(item.createdAt).toLocaleDateString("ko-KR") : "-"} · {saleStatus}</div>
         <div>금액: {Number(item.productPrice || 0).toLocaleString("ko-KR")}원</div>
-        <div>거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText)}</div>
+        <div>거래방법: {tradeTypeLabel(item.tradeType, item.tradeTypeText, item.deliveryMethod, item.orderInfo?.address || item.address)}</div>
       </div>
 
       {saleOrder && (
@@ -232,6 +298,13 @@ const SaleDetail = () => {
               </button>
             </div>
           )}
+          {(showSellerCancelButton || (isSeller && isDeliveryTrade && !saleOrder.invoiceNumber)) && (
+            <div className={styles.order_actions}>
+              {showSellerCancelButton && (
+                <button className="btn" disabled={isProcessingOrderAction} onClick={handleSellerOrderAction}>주문 취소하기</button>
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -256,9 +329,6 @@ const SaleDetail = () => {
         </div>
       )}
 
-      <Link className={styles.sale_back_link} to="/mypage/history/sale">
-        ← 판매내역으로 돌아가기
-      </Link>
     </div>
   );
 };
