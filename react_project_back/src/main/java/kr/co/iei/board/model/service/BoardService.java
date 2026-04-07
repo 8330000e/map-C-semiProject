@@ -21,12 +21,9 @@ import kr.co.iei.utils.FileUtils;
 public class BoardService {
 	@Autowired
 	private BoardDao boardDao;
-<<<<<<< Updated upstream
-=======
 
 	@Value("${file.root}")
 	private String root;
->>>>>>> Stashed changes
 	//게시글 조회
 	public List<Board> selectBoardList(int status, int searchType, String searchKeyword) {
 		HashMap<String, Object> param = new HashMap<>();
@@ -98,24 +95,17 @@ public class BoardService {
 	@Transactional
 	public int insertBoardFiles(int boardNo, String memberId, MultipartFile[] files) {
 	    int result = 0;
-<<<<<<< Updated upstream
-=======
 	    File saveDir = new File(new File(root), "board/files");
 	    if (!saveDir.exists()) {
 	        saveDir.mkdirs();
 	    }
->>>>>>> Stashed changes
 
 	    for (MultipartFile file : files) {
 	        if (file == null || file.isEmpty()) {
 	            continue;
 	        }
 
-<<<<<<< Updated upstream
-	        String filePath = FileUtils.upload(null, file);
-=======
 	        String filePath = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, file);
->>>>>>> Stashed changes
 
 	        BoardFile boardFile = new BoardFile();
 	        boardFile.setBoardNo(boardNo);
