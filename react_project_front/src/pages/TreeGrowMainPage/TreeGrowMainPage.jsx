@@ -1,13 +1,103 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import TreeGrowMain from "../../components/TreeGrowMain/TreeGrowMain";
 import styles from "./TreeGrowMainPage.module.css";
 import RegionMap from "../../components/mainpage/RegionMap";
 
+const BASE_NOTICE =
+  "📢 8개 지역중 거주한 지역에 물을 주세요.📢 나무는 일주일마다 초기화 됩니다..";
+const NOTICE_STORAGE_KEY = "tree_temp_notice";
+
 const TreeGrowMainPage = () => {
-  const [selectedRegionNo, setSelectedRegionNo] = useState(2); // 기본 서울
+  const [selectedRegionNo, setSelectedRegionNo] = useState(2);
+  const navigate = useNavigate();
+
+  const [tempNotice, setTempNotice] = useState(null);
+  const noticeTimerRef = useRef(null);
+
+  useEffect(() => {
+    const savedNotice = localStorage.getItem(NOTICE_STORAGE_KEY);
+    if (!savedNotice) return;
+
+    try {
+      const parsed = JSON.parse(savedNotice);
+      const now = Date.now();
+
+      if (parsed.expiresAt > now) {
+        setTempNotice(parsed);
+
+        const remainTime = parsed.expiresAt - now;
+
+        noticeTimerRef.current = setTimeout(() => {
+          setTempNotice(null);
+          localStorage.removeItem(NOTICE_STORAGE_KEY);
+        }, remainTime);
+      } else {
+        localStorage.removeItem(NOTICE_STORAGE_KEY);
+      }
+    } catch (error) {
+      console.error("공지 복구 실패:", error);
+      localStorage.removeItem(NOTICE_STORAGE_KEY);
+    }
+  }, []);
+
+  const addNotice = (message) => {
+    const expiresAt = Date.now() + 60000;
+
+    const newNotice = {
+      message,
+      expiresAt,
+    };
+
+    setTempNotice(newNotice);
+    localStorage.setItem(NOTICE_STORAGE_KEY, JSON.stringify(newNotice));
+
+    if (noticeTimerRef.current) {
+      clearTimeout(noticeTimerRef.current);
+    }
+
+    noticeTimerRef.current = setTimeout(() => {
+      setTempNotice(null);
+      localStorage.removeItem(NOTICE_STORAGE_KEY);
+    }, 60000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (noticeTimerRef.current) {
+        clearTimeout(noticeTimerRef.current);
+      }
+    };
+  }, []);
+
+  const marqueeText = useMemo(() => {
+    if (tempNotice?.message) {
+      return `${BASE_NOTICE}   ✦   ${tempNotice.message}`;
+    }
+    return BASE_NOTICE;
+  }, [tempNotice]);
 
   return (
     <div className={styles.treeGrowMainPage}>
+      <div className={styles.topSection}>
+        <button className={styles.backButton} onClick={() => navigate(-1)}>
+          ← 홈으로
+        </button>
+
+        <div className={styles.noticeBox}>
+          <span className={styles.noticeLabel}>공지</span>
+
+          <div className={styles.noticeViewport}>
+            <div
+              className={styles.noticeTrack}
+              key={tempNotice?.expiresAt || "base"}
+            >
+              <span className={styles.noticeText}>{marqueeText}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className={styles.container}>
         <div className={styles.left}>
           <div className={styles.mapBox}>
@@ -19,7 +109,10 @@ const TreeGrowMainPage = () => {
         </div>
 
         <div className={styles.right}>
-          <TreeGrowMain selectedRegionNo={selectedRegionNo} />
+          <TreeGrowMain
+            selectedRegionNo={selectedRegionNo}
+            onAddNotice={addNotice}
+          />
         </div>
       </div>
     </div>

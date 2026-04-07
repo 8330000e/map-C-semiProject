@@ -88,7 +88,7 @@ fetch first 1 row only
 		from member_tbl1
 	</select>
 	<update id="updateMemberInfo">
-		update member_tbl set member_name=#{memberName}, member_nickname=#{memberNickname}, member_email=#{memberEmail}
+		update member_tbl1 set member_name=#{memberName}, member_nickname=#{memberNickname}, member_email=#{memberEmail}
 		where member_id=#{memberId}
 	</update>
 	<select id="getOneMemberInfo" resultType="member">

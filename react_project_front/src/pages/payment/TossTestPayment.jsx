@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import styles from "./payment.module.css";
+import useAuthStore from "../../store/useAuthStore";
+import { setPendingPurchase } from "../../components/mypage/orderHistoryStorage";
 
 const TOSS_TEST_CLIENT_KEY = import.meta.env.VITE_TOSS_CLIENT_KEY;
 
@@ -23,6 +25,7 @@ const loadTossScript = () => {
 const TossTestPayment = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
+	const { memberId, memberNickname } = useAuthStore();
 	const [widgets, setWidgets] = useState(null);
 	const [widgetReady, setWidgetReady] = useState(false);
 
@@ -30,6 +33,10 @@ const TossTestPayment = () => {
 	const amount = Number(location.state?.amount || 0);
 	const orderInfo = location.state?.orderInfo;
 	const itemId = location.state?.itemId;
+	const marketNo = location.state?.marketNo || itemId;
+	const sellerId = location.state?.sellerId || null;
+	const sellerNickname = location.state?.sellerNickname || sellerId;
+	const tradeType = location.state?.tradeType ?? null;
 
 	useEffect(() => {
 		if (!location.state?.orderName || !location.state?.amount) {
@@ -126,12 +133,39 @@ const TossTestPayment = () => {
 		}
 
 		try {
+			const orderId = `ORDER-${Date.now()}`;
+			const tradeTypeText = location.state?.deliveryMethod === "delivery"
+				? "택배"
+				: location.state?.deliveryMethod === "direct"
+				? "직거래"
+				: tradeType;
+			setPendingPurchase(orderId, {
+				id: orderId,
+				marketNo,
+				itemId,
+				title: orderName,
+				amount,
+				status: "구매완료",
+				tradeType,
+				tradeTypeText,
+				deliveryMethod: location.state?.deliveryMethod,
+				deliveryFee: Number(location.state?.deliveryFee || 0),
+				sellerId,
+				seller: sellerNickname,
+				buyerId: memberId,
+				buyerNickname: memberNickname || memberId,
+				orderInfo,
+				productThumb: location.state?.productThumb,
+				date: new Date().toISOString(),
+			});
+			const customerMobilePhone = orderInfo?.phone?.toString().replace(/[^0-9]/g, "");
+			const deliveryMethodParam = encodeURIComponent(location.state?.deliveryMethod || "");
 			await widgets.requestPayment({
-				orderId: `ORDER-${Date.now()}`,
+				orderId,
 				orderName,
 				customerName: orderInfo?.receiverName || "테스트구매자",
-				customerMobilePhone: orderInfo?.phone,
-				successUrl: `${window.location.origin}/payment/success?itemId=${itemId}`,
+				customerMobilePhone,
+				successUrl: `${window.location.origin}/payment/success?itemId=${itemId}&marketNo=${marketNo}&orderId=${encodeURIComponent(orderId)}&amount=${encodeURIComponent(amount)}&deliveryMethod=${deliveryMethodParam}`,
 				failUrl: `${window.location.origin}/payment/fail`,
 			});
 		} catch (error) {

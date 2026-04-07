@@ -2,46 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.co.iei.store.model.dao.StoreBoardDAO">
 
-  <insert id="insertBoardForStore" parameterType="kr.co.iei.store.model.vo.StoreBoard">
-    <selectKey keyProperty="boardNo" resultType="long" order="BEFORE">
-      SELECT BOARD_SEQ.NEXTVAL FROM DUAL
+  <insert id="insertBoardForStore"
+          parameterType="kr.co.iei.store.model.vo.StoreBoard">
+    <selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
+      SELECT ISEQ$$_80822.NEXTVAL FROM DUAL
     </selectKey>
     INSERT INTO BOARD_TBL
     (
       BOARD_NO,
-      MEMBER_ID,
-      CTPVSGG_ID,
+      WRITER_ID,
       BOARD_TITLE,
       BOARD_CONTENT,
+      BOARD_THUMB,
+      MEMBER_NICKNAME,
       BOARD_STATUS,
-      BOARD_TYPE,
-      IS_DELETED,
-      CREATED_AT,
-      UPDATED_AT
+      READ_COUNT
     )
     VALUES
     (
       #{boardNo},
       #{memberId},
-      #{ctpvsggId},
       #{marketTitle},
       #{marketContent},
+      #{productThumb},
+      #{memberNickname},
       0,
-      3,
-      0,
-      SYSDATE,
-      NULL
+      0
     )
   </insert>
 
-
-  <insert id="insertStoreBoard" parameterType="kr.co.iei.store.model.vo.StoreBoard">
-    <selectKey keyProperty="marketNo" resultType="long" order="BEFORE">
-      SELECT STORE_BOARD_SEQ.NEXTVAL FROM DUAL
-    </selectKey>
+  <insert id="insertStoreBoard"
+          parameterType="kr.co.iei.store.model.vo.StoreBoard"
+          useGeneratedKeys="true"
+          keyProperty="marketNo"
+          keyColumn="MARKET_NO">
     INSERT INTO STORE_BOARD_TBL
     (
-      MARKET_NO,
       BOARD_NO,
       MEMBER_ID,
       CTPVSGG_ID,
@@ -53,75 +49,445 @@
       READ_COUNT,
       IS_DELETED,
       CREATED_AT,
-      UPDATED_AT,
+       UPDATED_AT,
       TRADE_TYPE
     )
     VALUES
     (
-      #{marketNo},
       #{boardNo},
       #{memberId},
-      #{ctpvsggId},
-      #{marketTitle},
-      #{marketContent},
-      #{productPrice},
-      #{productThumb},
-      #{productStatus},
+      #{ctpvsggId, jdbcType=VARCHAR},
+      #{marketTitle, jdbcType=VARCHAR},
+      #{marketContent, jdbcType=VARCHAR},
+      #{productPrice, jdbcType=NUMERIC},
+      #{productThumb, jdbcType=VARCHAR},
+      #{productStatus, jdbcType=NUMERIC},
       0,
       0,
       SYSDATE,
-      NULL,
-      #{tradeType}
+       NULL,
+      #{tradeType, jdbcType=VARCHAR}
     )
   </insert>
 
   <select id="selectStoreBoardList" resultType="kr.co.iei.store.model.vo.StoreBoard">
     SELECT
-      MARKET_NO,
-      BOARD_NO,
-      MEMBER_ID,
-      CTPVSGG_ID,
-      MARKET_TITLE,
-      MARKET_CONTENT,
-      PRODUCT_PRICE,
-      PRODUCT_THUMB,
-      PRODUCT_STATUS,
-      READ_COUNT,
-      IS_DELETED,
-      CREATED_AT,
-      UPDATED_AT,
-      TRADE_TYPE
-    FROM STORE_BOARD_TBL
-    WHERE IS_DELETED = 0
-    ORDER BY MARKET_NO DESC
+      S.MARKET_NO AS marketNo,
+      S.BOARD_NO AS boardNo,
+      S.MEMBER_ID AS memberId,
+      S.CTPVSGG_ID AS ctpvsggId,
+      R.CTPV_NM AS ctpvNm,
+      R.SGG_NM AS sggNm,
+      CASE
+        WHEN S.CTPVSGG_ID IS NULL THEN NULL
+        ELSE R.CTPV_NM || ' ' || R.SGG_NM
+      END AS regionName,
+      S.MARKET_TITLE AS marketTitle,
+      S.MARKET_CONTENT AS marketContent,
+      S.PRODUCT_PRICE AS productPrice,
+      S.PRODUCT_THUMB AS productThumb,
+      S.PRODUCT_STATUS AS productStatus,
+      S.READ_COUNT AS readCount,
+      NVL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = S.BOARD_NO), 0) AS likeCount,
+      NVL((SELECT COUNT(*) FROM BOARD_COMMENT_TBL c WHERE c.BOARD_NO = S.BOARD_NO), 0) AS commentCount,
+      S.IS_DELETED AS isDeleted,
+      S.CREATED_AT AS createdAt,
+      S.TRADE_TYPE AS tradeType
+    FROM STORE_BOARD_TBL S
+    LEFT JOIN CTPVSGG_TBL R
+      ON S.CTPVSGG_ID = R.CTPVSGG_ID
+    WHERE S.IS_DELETED = 0
+    ORDER BY S.MARKET_NO DESC
   </select>
 
   <select id="selectStoreBoard" resultType="kr.co.iei.store.model.vo.StoreBoard">
     SELECT
-      MARKET_NO,
-      BOARD_NO,
-      MEMBER_ID,
-      CTPVSGG_ID,
-      MARKET_TITLE,
-      MARKET_CONTENT,
-      PRODUCT_PRICE,
-      PRODUCT_THUMB,
-      PRODUCT_STATUS,
-      READ_COUNT,
-      IS_DELETED,
-      CREATED_AT,
-      UPDATED_AT,
-      TRADE_TYPE
-    FROM STORE_BOARD_TBL
-    WHERE MARKET_NO = #{marketNo}
-      AND IS_DELETED = 0
-
+      S.MARKET_NO AS marketNo,
+      S.BOARD_NO AS boardNo,
+      S.MEMBER_ID AS memberId,
+      S.CTPVSGG_ID AS ctpvsggId,
+      R.CTPV_NM AS ctpvNm,
+      R.SGG_NM AS sggNm,
+      CASE
+        WHEN S.CTPVSGG_ID IS NULL THEN NULL
+        ELSE R.CTPV_NM || ' ' || R.SGG_NM
+      END AS regionName,
+      S.MARKET_TITLE AS marketTitle,
+      S.MARKET_CONTENT AS marketContent,
+      S.PRODUCT_PRICE AS productPrice,
+      S.PRODUCT_THUMB AS productThumb,
+      S.PRODUCT_STATUS AS productStatus,
+      S.READ_COUNT AS readCount,
+      S.IS_DELETED AS isDeleted,
+      S.CREATED_AT AS createdAt,
+      S.TRADE_TYPE AS tradeType
+    FROM STORE_BOARD_TBL S
+    LEFT JOIN CTPVSGG_TBL R
+      ON S.CTPVSGG_ID = R.CTPVSGG_ID
+    WHERE S.MARKET_NO = #{marketNo}
+      AND S.IS_DELETED = 0
   </select>
 
-  <insert id="insertTradeInfo">
-    INSERT INTO STORE_BOARD_TRADEINFO_TBL
+
+  <update id="updateProductStatus">
+    UPDATE STORE_BOARD_TBL
+    SET PRODUCT_STATUS = #{status},
+        UPDATED_AT     = SYSDATE
+    WHERE MARKET_NO = #{marketNo}
+  </update>
+
+  <select id="selectStoreBoardAuthor" parameterType="map" resultType="int">
+    SELECT COUNT(*)
+    FROM STORE_BOARD_TBL
+    WHERE MARKET_NO = #{marketNo}
+      AND MEMBER_ID = #{memberId}
+      AND IS_DELETED = 0
+  </select>
+
+  <update id="deleteStoreBoard" parameterType="long">
+    UPDATE STORE_BOARD_TBL
+    SET IS_DELETED = 1,
+        UPDATED_AT = SYSDATE
+    WHERE MARKET_NO = #{marketNo}
+  </update>
+
+  <update id="updateBoardForStore" parameterType="kr.co.iei.store.model.vo.StoreBoard">
+    UPDATE BOARD_TBL
+    SET BOARD_TITLE   = #{marketTitle},
+        BOARD_CONTENT = #{marketContent},
+        BOARD_THUMB   = #{productThumb}
+    WHERE BOARD_NO = #{boardNo}
+  </update>
+
+  <update id="updateStoreBoard" parameterType="kr.co.iei.store.model.vo.StoreBoard">
+    UPDATE STORE_BOARD_TBL
+    SET MARKET_TITLE   = #{marketTitle},
+        MARKET_CONTENT = #{marketContent},
+        PRODUCT_PRICE  = #{productPrice},
+        PRODUCT_THUMB  = #{productThumb},
+        TRADE_TYPE     = #{tradeType, jdbcType=VARCHAR},
+        CTPVSGG_ID     = #{ctpvsggId},
+        UPDATED_AT     = SYSDATE
+    WHERE MARKET_NO = #{marketNo}
+  </update>
+  <update id="incrementReadCount" parameterType="long">
+    UPDATE STORE_BOARD_TBL
+    SET READ_COUNT = READ_COUNT + 1
+    WHERE MARKET_NO = #{marketNo}
+  </update>
+
+  <!-- 댓글 목록 (최신순) -->
+  <select id="selectReviewList" resultType="kr.co.iei.store.model.vo.StoreReview">
+    SELECT
+      C.BOARD_COMMENT_NO      AS REVIEW_NO,
+      S.MARKET_NO             AS MARKET_NO,
+      C.BOARD_COMMENT_WRITER  AS MEMBER_ID,
+      C.MEMBER_NICKNAME       AS MEMBER_NICKNAME,
+      C.BOARD_COMMENT_CONTENT AS REVIEW_CONTENT,
+      C.PARENT_COMMENT_NO     AS PARENT_COMMENT_NO,
+      C.COMMENT_GROUP         AS COMMENT_GROUP,
+      C.COMMENT_DEPTH         AS COMMENT_DEPTH,
+      CASE WHEN C.IS_SECRET = 'Y' THEN 1 ELSE 0 END AS IS_PRIVATE,
+      C.BOARD_COMMENT_DATE    AS CREATED_AT,
+      C.UPDATED_AT            AS UPDATED_AT,
+      0                       AS IS_DELETED
+    FROM BOARD_COMMENT_TBL C
+    JOIN STORE_BOARD_TBL S
+      ON C.BOARD_NO = S.BOARD_NO
+    WHERE S.MARKET_NO = #{marketNo}
+    ORDER BY C.COMMENT_GROUP ASC, C.COMMENT_DEPTH ASC, C.BOARD_COMMENT_NO ASC
+  </select>
+
+  <!-- 댓글 수 -->
+  <select id="countReviews" resultType="int">
+    SELECT COUNT(*)
+    FROM BOARD_COMMENT_TBL C
+    JOIN STORE_BOARD_TBL S
+      ON C.BOARD_NO = S.BOARD_NO
+    WHERE S.MARKET_NO = #{marketNo}
+  </select>
+
+  <!-- 댓글 등록 -->
+  <insert id="insertReview"
+          parameterType="kr.co.iei.store.model.vo.StoreReview">
+    <selectKey keyProperty="reviewNo" resultType="long" order="BEFORE">
+      SELECT SEQ_BOARD_COMMENT_NO.NEXTVAL FROM DUAL
+    </selectKey>
+    INSERT INTO BOARD_COMMENT_TBL
+    (
+      BOARD_COMMENT_NO,
+      BOARD_COMMENT_WRITER,
+      BOARD_NO,
+      BOARD_COMMENT_CONTENT,
+      BOARD_COMMENT_DATE,
+      UPDATED_AT,
+      MEMBER_NICKNAME,
+      PARENT_COMMENT_NO,
+      COMMENT_GROUP,
+      COMMENT_DEPTH,
+      IS_SECRET
+    )
+    VALUES
+    (
+      #{reviewNo},
+      #{memberId},
+      (SELECT BOARD_NO FROM STORE_BOARD_TBL WHERE MARKET_NO = #{marketNo}),
+      #{reviewContent},
+      SYSDATE,
+      SYSDATE,
+      #{memberNickname},
+      #{parentCommentNo},
+      NVL((SELECT COMMENT_GROUP FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), #{reviewNo}),
+      CASE
+        WHEN #{parentCommentNo} IS NULL THEN 0
+        ELSE NVL((SELECT COMMENT_DEPTH + 1 FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), 1)
+      END,
+      CASE WHEN #{isPrivate} = 1 THEN 'Y' ELSE 'N' END
+    )
+  </insert>
+
+  <!-- 댓글 수정 -->
+  <update id="updateReview" parameterType="kr.co.iei.store.model.vo.StoreReview">
+    UPDATE BOARD_COMMENT_TBL
+    SET BOARD_COMMENT_CONTENT = #{reviewContent},
+      IS_SECRET = CASE WHEN #{isPrivate} = 1 THEN 'Y' ELSE 'N' END,
+      UPDATED_AT = SYSDATE
+    WHERE BOARD_COMMENT_NO = #{reviewNo}
+      AND BOARD_COMMENT_WRITER = #{memberId}
+  </update>
+
+  <!-- 댓글 삭제 (소프트) -->
+  <update id="deleteReview">
+    DELETE FROM BOARD_COMMENT_TBL
+    WHERE BOARD_COMMENT_NO = #{reviewNo}
+      AND BOARD_COMMENT_WRITER = #{memberId}
+  </update>
+  <!-- 전체 최신 댓글 N개 -->
+  <select id="selectLatestReviews" resultType="kr.co.iei.store.model.vo.StoreReview">
+    SELECT * FROM (
+      SELECT
+        C.BOARD_COMMENT_NO      AS REVIEW_NO,
+        S.MARKET_NO             AS MARKET_NO,
+        C.BOARD_COMMENT_WRITER  AS MEMBER_ID,
+        C.MEMBER_NICKNAME       AS MEMBER_NICKNAME,
+        C.BOARD_COMMENT_CONTENT AS REVIEW_CONTENT,
+        C.PARENT_COMMENT_NO     AS PARENT_COMMENT_NO,
+        C.COMMENT_GROUP         AS COMMENT_GROUP,
+        C.COMMENT_DEPTH         AS COMMENT_DEPTH,
+        CASE WHEN C.IS_SECRET = 'Y' THEN 1 ELSE 0 END AS IS_PRIVATE,
+        C.BOARD_COMMENT_DATE    AS CREATED_AT,
+        C.UPDATED_AT            AS UPDATED_AT,
+        0                       AS IS_DELETED
+      FROM BOARD_COMMENT_TBL C
+      JOIN STORE_BOARD_TBL S
+        ON C.BOARD_NO = S.BOARD_NO
+      WHERE C.IS_SECRET = 'N'
+      ORDER BY C.BOARD_COMMENT_NO DESC
+    )
+    WHERE ROWNUM &lt;= #{limit}
+  </select>
+
+  <select id="selectRatingsByTrade" resultType="kr.co.iei.store.model.vo.StoreRating">
+    SELECT
+      REVIEW_NO,
+      TRADE_NO,
+      MARKET_NO,
+      SELLER_ID,
+      BUYER_ID,
+      MEMBER_NICKNAME AS BUYER_NICKNAME,
+      RATING,
+      REVIEW_CONT AS REVIEW_CONTENT,
+      REVIEW_THUMB,
+      NVL(CREATED_AT, CAST(REVIEW_DATE AS TIMESTAMP)) AS CREATED_AT,
+      IS_DELETED,
+      IS_PRIVATE
+    FROM STORE_REVIEW_TBL
+    WHERE TRADE_NO = #{tradeNo}
+      AND IS_DELETED = 0
+    ORDER BY REVIEW_NO DESC
+  </select>
+
+  <select id="selectRatingsByMarket" resultType="kr.co.iei.store.model.vo.StoreRating">
+    SELECT
+      REVIEW_NO,
+      TRADE_NO,
+      MARKET_NO,
+      SELLER_ID,
+      BUYER_ID,
+      MEMBER_NICKNAME AS BUYER_NICKNAME,
+      RATING,
+      REVIEW_CONT AS REVIEW_CONTENT,
+      REVIEW_THUMB,
+      NVL(CREATED_AT, CAST(REVIEW_DATE AS TIMESTAMP)) AS CREATED_AT,
+      IS_DELETED,
+      IS_PRIVATE
+    FROM STORE_REVIEW_TBL
+    WHERE MARKET_NO = #{marketNo}
+      AND IS_DELETED = 0
+    ORDER BY REVIEW_NO DESC
+  </select>
+
+  <select id="selectRatingByTradeAndBuyer" resultType="kr.co.iei.store.model.vo.StoreRating">
+    SELECT
+      REVIEW_NO,
+      TRADE_NO,
+      MARKET_NO,
+      SELLER_ID,
+      BUYER_ID,
+      MEMBER_NICKNAME AS BUYER_NICKNAME,
+      RATING,
+      REVIEW_CONT AS REVIEW_CONTENT,
+      REVIEW_THUMB,
+      NVL(CREATED_AT, CAST(REVIEW_DATE AS TIMESTAMP)) AS CREATED_AT,
+      IS_DELETED,
+      IS_PRIVATE
+    FROM STORE_REVIEW_TBL
+    WHERE TRADE_NO = #{tradeNo}
+      AND BUYER_ID = #{buyerId}
+      AND IS_DELETED = 0
+      AND ROWNUM = 1
+  </select>
+
+  <select id="selectRatingByMarketAndBuyer" resultType="kr.co.iei.store.model.vo.StoreRating">
+    SELECT
+      REVIEW_NO,
+      TRADE_NO,
+      MARKET_NO,
+      SELLER_ID,
+      BUYER_ID,
+      MEMBER_NICKNAME AS BUYER_NICKNAME,
+      RATING,
+      REVIEW_CONT AS REVIEW_CONTENT,
+      REVIEW_THUMB,
+      NVL(CREATED_AT, CAST(REVIEW_DATE AS TIMESTAMP)) AS CREATED_AT,
+      IS_DELETED,
+      IS_PRIVATE
+    FROM STORE_REVIEW_TBL
+    WHERE MARKET_NO = #{marketNo}
+      AND BUYER_ID = #{buyerId}
+      AND IS_DELETED = 0
+      AND ROWNUM = 1
+  </select>
+
+  <insert id="insertRating"
+          parameterType="kr.co.iei.store.model.vo.StoreRating"
+          useGeneratedKeys="true"
+          keyProperty="reviewNo"
+          keyColumn="REVIEW_NO">
+    INSERT INTO STORE_REVIEW_TBL
     (
       TRADE_NO,
+      MARKET_NO,
+      SELLER_ID,
+      BUYER_ID,
+      RATING,
+      REVIEW_CONT,
+      REVIEW_THUMB,
+      REVIEW_DATE,
+      IS_DELETED,
+      IS_PRIVATE,
+      CREATED_AT,
+      MEMBER_ID,
+      MEMBER_NICKNAME,
+      REVIEW_CONTENT
+    )
+    VALUES
+    (
+      #{tradeNo},
+      #{marketNo},
+      #{sellerId},
+      #{buyerId},
+      #{rating},
+      #{reviewContent},
+      #{reviewThumb},
+      SYSDATE,
+      0,
+      0,
+      SYSTIMESTAMP,
+      #{buyerId},
+      #{buyerNickname},
+      #{reviewContent}
+    )
+  </insert>
+
+  <update id="updateRating" parameterType="kr.co.iei.store.model.vo.StoreRating">
+    UPDATE STORE_REVIEW_TBL
+    SET RATING = #{rating},
+        REVIEW_CONT = #{reviewContent},
+        REVIEW_THUMB = #{reviewThumb},
+        REVIEW_CONTENT = #{reviewContent},
+        MEMBER_NICKNAME = #{buyerNickname}
+    WHERE REVIEW_NO = #{reviewNo}
+      AND BUYER_ID = #{buyerId}
+  </update>
+
+  <update id="deleteRating">
+    UPDATE STORE_REVIEW_TBL
+    SET IS_DELETED = 1
+    WHERE REVIEW_NO = #{reviewNo}
+      AND BUYER_ID = #{buyerId}
+  </update>
+
+  <select id="selectTradeInfoByMarketNo" resultType="kr.co.iei.store.model.vo.StoreTradeInfo">
+    SELECT
+      TRADE_NO AS tradeNo,
+      MARKET_NO AS marketNo,
+      SELLER_ID AS sellerId,
+      BUYER_ID AS buyerId,
+      CTPVSGG_ID AS ctpvsggId,
+      TRADE_PRICE AS tradePrice,
+      TRADE_STATUS AS tradeStatus,
+      TRADE_TYPE AS tradeType,
+      CREATED_AT AS createdAt,
+      COMPLETED_AT AS completedAt,
+      REVIEW_YN AS reviewYn,
+      CANCLE_REASON AS cancleReason,
+      RECEIVER_NAME AS receiverName,
+      BUYER_NAME AS buyerName,
+      BUYER_PHONE AS buyerPhone,
+      ZIP_CODE AS zipCode,
+      ADDRESS AS address,
+      ADDRESS_DETAIL AS addressDetail,
+      DELIVERY_MEMO AS deliveryMemo,
+      INVOICE_NUMBER AS invoiceNumber,
+      COURIER_CODE AS courierCode,
+      SHIPPING_STATUS AS shippingStatus
+    FROM STORE_BOARD_TRADEINFO_TBL
+    WHERE MARKET_NO = #{marketNo}
+  </select>
+
+  <select id="selectTradeInfoByMarketNoAndBuyerId" resultType="kr.co.iei.store.model.vo.StoreTradeInfo">
+    SELECT
+      TRADE_NO AS tradeNo,
+      MARKET_NO AS marketNo,
+      SELLER_ID AS sellerId,
+      BUYER_ID AS buyerId,
+      CTPVSGG_ID AS ctpvsggId,
+      TRADE_PRICE AS tradePrice,
+      TRADE_STATUS AS tradeStatus,
+      TRADE_TYPE AS tradeType,
+      CREATED_AT AS createdAt,
+      COMPLETED_AT AS completedAt,
+      REVIEW_YN AS reviewYn,
+      CANCLE_REASON AS cancleReason,
+      RECEIVER_NAME AS receiverName,
+      BUYER_NAME AS buyerName,
+      BUYER_PHONE AS buyerPhone,
+      ZIP_CODE AS zipCode,
+      ADDRESS AS address,
+      ADDRESS_DETAIL AS addressDetail,
+      DELIVERY_MEMO AS deliveryMemo,
+      INVOICE_NUMBER AS invoiceNumber,
+      COURIER_CODE AS courierCode,
+      SHIPPING_STATUS AS shippingStatus
+    FROM STORE_BOARD_TRADEINFO_TBL
+    WHERE MARKET_NO = #{marketNo}
+      AND BUYER_ID = #{buyerId}
+  </select>
+
+  <insert id="insertTradeInfo" parameterType="kr.co.iei.store.model.vo.StoreTradeInfo">
+    INSERT INTO STORE_BOARD_TRADEINFO_TBL
+    (
       MARKET_NO,
       SELLER_ID,
       BUYER_ID,
@@ -130,21 +496,51 @@
       TRADE_STATUS,
       TRADE_TYPE,
       CREATED_AT,
-      REVIEW_YN
+      COMPLETED_AT,
+      REVIEW_YN,
+      RECEIVER_NAME,
+      BUYER_NAME,
+      BUYER_PHONE,
+      ZIP_CODE,
+      ADDRESS,
+      ADDRESS_DETAIL,
+      DELIVERY_MEMO,
+      INVOICE_NUMBER,
+      COURIER_CODE,
+      SHIPPING_STATUS
     )
     VALUES
     (
-      STORE_BOARD_TRADE_SEQ.NEXTVAL,
       #{marketNo},
       #{sellerId},
       #{buyerId},
       #{ctpvsggId},
       #{tradePrice},
-      0,
+      #{tradeStatus},
       #{tradeType},
       SYSDATE,
-      'N'
+      SYSDATE,
+      'N',
+      #{receiverName},
+      #{buyerName},
+      #{buyerPhone},
+      #{zipCode},
+      #{address},
+      #{addressDetail},
+      #{deliveryMemo},
+      #{invoiceNumber},
+      #{courierCode},
+      #{shippingStatus}
     )
   </insert>
+
+  <update id="updateTradeInfo" parameterType="kr.co.iei.store.model.vo.StoreTradeInfo">
+    UPDATE STORE_BOARD_TRADEINFO_TBL
+    SET TRADE_STATUS = #{tradeStatus},
+        INVOICE_NUMBER = #{invoiceNumber},
+        COURIER_CODE = #{courierCode},
+        SHIPPING_STATUS = #{shippingStatus}
+    WHERE TRADE_NO = #{tradeNo}
+  </update>
 
 </mapper>

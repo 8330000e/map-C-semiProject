@@ -1,25 +1,60 @@
 // 서비스 메인 화면 컴포넌트입니다.
 // 실시간 댓글, 메뉴, 중고거래 요약 리스트 등 메인 대시보드 UI를 렌더링합니다.
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import HelpIcon from "@mui/icons-material/Help";
-import { dummyData, storeDummyData } from "../components/mock/dummyData";
 import useAuthStore from "../store/useAuthStore";
 import Map from "../components/mainpage/Map";
 import Bestpostlist from "../components/mainpage/Bestpostlist";
 
-const STORE_STATUS_KEY = "storeSaleStatusMap";
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-const getSaleStatusMap = () => {
-  try {
-    const raw = localStorage.getItem(STORE_STATUS_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
+const getSaleStatusLabel = (productStatus) => {
+  if (
+    productStatus === "예약중" ||
+    productStatus === 1 ||
+    productStatus === "1"
+  )
+    return "예약중";
+  if (
+    productStatus === "판매완료" ||
+    productStatus === 2 ||
+    productStatus === "2"
+  )
+    return "판매완료";
+  return "판매중";
 };
 
-const getSaleStatusById = (id, map) => map[id] || "판매중";
+const getImageUrl = (thumb) => {
+  // thumb가 서버에서 여러 모양으로 들어올 수 있어요.
+  // 그래서 여기서 브라우저가 바로 쓸 수 있는 주소로 정리해줍니다.
+  if (!thumb) return null;
+  if (typeof thumb !== "string") return null;
+  let trimmed = thumb.trim();
+  if (!trimmed) return null;
+
+  trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
+  if (driveMatch) {
+    const boardIndex = trimmed.indexOf("/board/editor/");
+    if (boardIndex !== -1) {
+      const suffix = trimmed.substring(boardIndex);
+      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
+    }
+    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
+  }
+
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
+  return `${BACKSERVER}/board/editor/${trimmed}`;
+};
 
 const Main = () => {
   // 중고거래 리스트 가로 스크롤 영역 DOM에 접근하기 위한 ref
@@ -28,43 +63,43 @@ const Main = () => {
   const realtimeViewportRef = useRef(null);
   // 실시간 댓글 "실제 텍스트" DOM
   const realtimeTextRef = useRef(null);
-  const [saleStatusMap, setSaleStatusMap] = useState(() => getSaleStatusMap());
+  // 중고거래 API 데이터
+  const [goods, setGoods] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const syncSaleStatus = () => setSaleStatusMap(getSaleStatusMap());
-    window.addEventListener("storage", syncSaleStatus);
-    window.addEventListener("store-status-updated", syncSaleStatus);
-
-    return () => {
-      window.removeEventListener("storage", syncSaleStatus);
-      window.removeEventListener("store-status-updated", syncSaleStatus);
-    };
+    axios
+      .get(`${BACKSERVER}/api/store/boards`)
+      .then((res) => {
+        const items = Array.isArray(res.data)
+          ? res.data
+          : Array.isArray(res.data?.items)
+          ? res.data.items
+          : [];
+        setGoods(items);
+      })
+      .catch((err) => console.error("중고장터 목록 조회 실패", err));
   }, []);
 
-  // 중고거래 리스트(조회수 기준 상위 10개)
-  // useMemo: 렌더링마다 정렬/슬라이스를 반복하지 않도록 결과를 메모이징
+  // 중고거래 리스트(조회수 기준 상위 10개, 판매중인 항목만)
   const usedGoods = useMemo(() => {
-    return [...storeDummyData]
-      .map((item) => ({
-        ...item,
-        saleStatus: getSaleStatusById(item.id, saleStatusMap),
-      }))
-      .filter((item) => item.saleStatus === "판매중")
-      .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
+    return goods
+      .filter((item) => getSaleStatusLabel(item.productStatus) === "판매중")
+      .sort((a, b) => (b.readCount || 0) - (a.readCount || 0))
       .slice(0, 10);
-  }, [saleStatusMap]);
+  }, [goods]);
 
-  // 게시글의 댓글들을 "실시간 댓글용" 형태로 평탄화
-  // 예) { user, text, region } 형태로 변환
-  const realtimeComments = useMemo(() => {
-    return dummyData.flatMap((post) =>
-      (post.comments || []).map((comment) => ({
-        id: comment.id,
-        user: comment.user,
-        text: comment.text,
-        region: post.locationName,
-      })),
-    );
+  // 실시간 댓글 - 최신 리뷰 30개를 API에서 가져옴
+  const [realtimeComments, setRealtimeComments] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`${BACKSERVER}/api/store/reviews/latest?limit=30`)
+      .then((res) =>
+        setRealtimeComments(Array.isArray(res.data) ? res.data : []),
+      )
+      .catch((err) => console.error("실시간 댓글 조회 실패", err));
   }, []);
 
   // 화면에 현재 보여줄 댓글 1개
@@ -82,19 +117,15 @@ const Main = () => {
   const [realtimeTransition, setRealtimeTransition] = useState("none");
 
   // 20초마다 댓글 1개를 랜덤으로 교체
+  // 댓글 목록이 로드되면 20초마다 순서대로 교체
   useEffect(() => {
     if (!realtimeComments.length) return;
-
-    setVisibleRealtimeComment(
-      realtimeComments[Math.floor(Math.random() * realtimeComments.length)],
-    );
-
+    let idx = 0;
+    setVisibleRealtimeComment(realtimeComments[0]);
     const timer = setInterval(() => {
-      setVisibleRealtimeComment(
-        realtimeComments[Math.floor(Math.random() * realtimeComments.length)],
-      );
+      idx = (idx + 1) % realtimeComments.length;
+      setVisibleRealtimeComment(realtimeComments[idx]);
     }, 20000);
-
     return () => clearInterval(timer);
   }, [realtimeComments]);
 
@@ -210,14 +241,16 @@ const Main = () => {
             </span>
             <p>고객센터 운영시간</p>
             <p>10:00 ~ 18:00</p>
-            <button className="btn">문의하기 ▶</button>
+            <button className="btn" onClick={() => navigate("/support")}>
+              문의하기 ▶
+            </button>
           </div>
         </div>
 
         <div className="main_map roundBorder">
           {/* <p>Map</p> */}
           {/*위치설명*/}
-          {/* <Map /> */}
+          <Map />
         </div>
 
         <div className="main_content_one">
@@ -252,7 +285,7 @@ const Main = () => {
                 }}
               >
                 {visibleRealtimeComment
-                  ? `${visibleRealtimeComment.user} : ${visibleRealtimeComment.text} ${visibleRealtimeComment.region}`
+                  ? `${visibleRealtimeComment.memberNickname || visibleRealtimeComment.memberId} : ${visibleRealtimeComment.reviewContent}`
                   : "실시간 댓글이 없습니다."}
               </p>
             </div>
@@ -269,29 +302,47 @@ const Main = () => {
         <div className="used_list roundBorder">
           <div className="used_list_scroll" ref={usedListRef}>
             <ul>
-              {usedGoods.map((item) => (
-                <li key={item.id}>
-                  <Link to={`/store/${item.id}`}>
-                    <div className="used_item_image" aria-hidden="true" />
-                    <div className="used_item_info">
-                      <strong>
-                        [{item.saleStatus}] {item.title}
-                      </strong>
-                      <p className="used_item_price">{item.price}</p>
-                      <div className="used_item_meta">
-                        <span>{item.author}</span>
-                        <span>|</span>
-                        <span>💬 {item.comments || 0}</span>
-                        <span>|</span>
-                        <span>{item.date}</span>
+              {usedGoods.map((item, index) => {
+                const imageUrl = getImageUrl(item.productThumb);
+                return (
+                  <li key={item.marketNo ?? item.boardNo ?? index}>
+                    <Link to={`/store/${item.marketNo}`}>
+                      <div className="used_item_image" aria-hidden="true">
+                        {imageUrl ? (
+                          <img src={imageUrl} alt={item.marketTitle || "상품 이미지"} />
+                        ) : null}
                       </div>
-                      <span className="used_item_view">
-                        👀 {item.viewCount || 0}
-                      </span>
-                    </div>
-                  </Link>
-                </li>
-              ))}
+                      <div className="used_item_info">
+                        <strong>
+                          [{getSaleStatusLabel(item.productStatus)}]{" "}
+                          {item.marketTitle}
+                        </strong>
+                        <p className="used_item_price">
+                          {item.productPrice
+                            ? `${Number(item.productPrice).toLocaleString("ko-KR")}원`
+                            : ""}
+                        </p>
+                        <div className="used_item_meta">
+                          <span>{item.memberNickname || item.memberId}</span>
+                          <span>|</span>
+                          <span>💬 {item.commentCount ?? 0}</span>
+                          <span>|</span>
+                          <span>
+                            {item.createdAt
+                              ? new Date(item.createdAt).toLocaleDateString(
+                                  "ko-KR",
+                                )
+                              : ""}
+                          </span>
+                        </div>
+                        <span className="used_item_view">
+                          👀 {Number(item.readCount ?? 0).toLocaleString("ko-KR")}
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>

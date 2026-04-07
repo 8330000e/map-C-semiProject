@@ -20,15 +20,11 @@ import PaymentSuccess from "./pages/payment/PaymentSuccess";
 import PaymentFail from "./pages/payment/PaymentFail";
 import JoinPage from "./pages/member/JoinPage";
 
-import LoginPage from "./pages/member/LoginPage";
-import FindId from "./pages/member/findId";
-import FindPw from "./pages/member/FindPw";
-import ResetPw from "./pages/member/ResetPw";
-
-import useAuthStore from "./store/useAuthStore";
 import { useEffect } from "react";
+import useAuthStore from "./store/useAuthStore";
 
 import axios from "axios";
+import SupportPage from "./pages/support/SupportPage";
 
 import MapCommunity from "./pages/MapCommunityPage/MapCommunityPage";
 import TreeGrowMainPage from "./pages/TreeGrowMainPage/TreeGrowMainPage";
@@ -49,9 +45,13 @@ import PurchaseDetail from "./components/mypage/PurchaseDetail";
 import SaleDetail from "./components/mypage/SaleDetail";
 */
 import AdminPage from "./pages/admin/AdminPage";
-import ChangePw from "./pages/member/ResetPw";
+import ChangePw from "./components/mypage/ChangePw";
 import UpdateMyInfo from "./components/mypage/UpdateMyInfo";
 import Mypage from "./pages/member/MyPage";
+import Login from "./pages/member/LoginPage";
+import FindId from "./pages/member/FindId";
+import FindPw from "./pages/member/FindPw";
+import MapCommunityPage from "./pages/MapCommunityPage/MapCommunityPage";
 
 function App() {
   const location = useLocation();
@@ -98,16 +98,17 @@ function App() {
           <Route path="/Store" element={<Navigate to="/store" replace />} />
           <Route path="/join" element={<JoinPage />}></Route>
 
-          <Route path="/members/login" element={<LoginPage />}></Route>
+          <Route path="/members/login" element={<Login />}></Route>
           <Route path="/members/find-id" element={<FindId />}></Route>
           <Route path="/members/find-pw" element={<FindPw />}></Route>
           <Route path="/map-community" element={<MapCommunity />} />
           <Route path="/tree-grow" element={<TreeGrowMainPage />} />
           <Route path="/mission" element={<MissionListPage />} />
-          <Route path="/members/Reset-pw" element={<ResetPw />} />
+          <Route path="/community" element={<MapCommunityPage />} />
 
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/support/*" element={<SupportPage />} />
         </Routes>
       </main>
       {!isAdmin && <Footer />}

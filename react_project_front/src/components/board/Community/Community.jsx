@@ -1,19 +1,57 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom"; // URL 쿼리값으로 mode(write/list)를 판단하므로 꼭 import 필요
 import styles from "./Community.module.css";
 import axios from "axios";
 import TextEditor from "./TextEditor";
+import CommunityDetail from "./CommunityDetail";
 import useAuthStore from "../../../store/useAuthStore";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ChatIcon from "@mui/icons-material/Chat";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Swal from "sweetalert2";
 
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+
+// 이미지 src는 서버에서 여러 형태로 내려올 수 있습니다.
+// 예: 이미지 전체 URL, /upload/ 경로, /board/editor/ 경로, 파일명만 전달되는 경우.
+// 여기서 브라우저가 바로 요청 가능한 URL로 변환해 줍니다.
+const getImageUrl = (thumb) => {
+  if (!thumb) return null;
+  if (typeof thumb !== "string") return null;
+  let trimmed = thumb.trim();
+  if (!trimmed) return null;
+
+  trimmed = trimmed.replace(/\\/g, "/").replace(/\\/g, "/");
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
+  if (driveMatch) {
+    const boardIndex = trimmed.indexOf("/board/editor/");
+    if (boardIndex !== -1) {
+      const suffix = trimmed.substring(boardIndex);
+      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
+    }
+    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
+  }
+
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
+  return `${BACKSERVER}/board/editor/${trimmed}`;
+};
+
 const Community = () => {
-  const { memberId } = useAuthStore();
+  const { memberId, memberNickname } = useAuthStore();
   const isLogin = !!memberId;
+  const mapDivRef = useRef(null);
 
   const [mode, setMode] = useState("list");
+
   const [boardList, setBoardList] = useState([]);
+  const [expandedBoardNo, setExpandedBoardNo] = useState(null);
 
   const [type, setType] = useState(1);
   const [keyword, setKeyword] = useState("");
@@ -31,6 +69,42 @@ const Community = () => {
 
   const [attachedFiles, setAttachedFiles] = useState([]);
 
+  const location = useLocation();
+  const [missionType, setMissionType] = useState(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const modeParam = params.get("mode");
+    const missionParam = params.get("mission");
+
+    if (modeParam === "write") {
+      setMode("write");
+    } else {
+      setMode("list");
+    }
+
+    setMissionType(missionParam || null);
+  }, [location.search]);
+
+  const [addr, setAddr] = useState("선택된 위치 없음");
+  const [lnglat, setLnglat] = useState({
+    lat: 37.5665 - 0.001,
+    lng: 126.978,
+  });
+  const [ctpvsgg, setCtpvsgg] = useState({
+    ctpv: "",
+    sgg: "",
+  });
+  const [selectAddr, setSelectAddr] = useState("선택된 위치 없음");
+  const [selectLnglat, setSelectLnglat] = useState({
+    lat: 0,
+    lng: 0,
+  });
+  const [selectCtpvSgg, setSelectCtpvSgg] = useState({
+    ctpv: "",
+    sgg: "",
+  });
+
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/boards`, {
@@ -44,13 +118,66 @@ const Community = () => {
       })
       .then((res) => {
         console.log("게시글 목록 응답:", res.data);
-        setBoardList(res.data.items || []);
+        const items = Array.isArray(res.data.items)
+          ? res.data.items
+          : Array.isArray(res.data)
+            ? res.data
+            : [];
+        setBoardList(items);
       })
       .catch((err) => {
         console.error("게시글 조회 실패:", err);
         setBoardList([]);
       });
   }, [searchType, searchKeyword, sido, sigungu]);
+
+  useEffect(() => {
+    if (!mapDivRef.current || !window.naver) {
+      return;
+    }
+    const map = new naver.maps.Map(mapDivRef.current, {
+      center: new window.naver.maps.LatLng(`${lnglat.lat}`, `${lnglat.lng}`),
+      zoom: 15,
+    });
+
+    const defaultMarker = new naver.maps.Marker({
+      position: new window.naver.maps.LatLng(`${lnglat.lat}`, `${lnglat.lng}`),
+      map: map,
+      icon: {
+        content:
+          '<img src="src/assets/img/marker.png" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">',
+        size: new naver.maps.Size(22, 35),
+        anchor: new naver.maps.Point(11, 35),
+      },
+    });
+
+    defaultMarker.setTitle("Default Marker");
+    defaultMarker.setDraggable(true);
+
+    naver.maps.Event.addListener(map, "click", function (e) {
+      defaultMarker.setPosition(e.coord);
+      naver.maps.Service.reverseGeocode(
+        {
+          location: e.coord,
+        },
+        (status, response) => {
+          if (status != naver.maps.Service.Status.OK) {
+            alert("주소를 찾을 수 없습니다.");
+            return;
+          }
+          setAddr(response.result.items[0].address);
+          setLnglat({
+            lat: e.coord.lat(),
+            lng: e.coord.lng(),
+          });
+          setCtpvsgg({
+            ctpv: response.result.items[0].addrdetail.sido,
+            sgg: response.result.items[0].addrdetail.sigugun,
+          });
+        },
+      );
+    });
+  }, [mode, addr, lnglat, ctpvsgg]);
 
   const submitSearch = (e) => {
     e.preventDefault();
@@ -88,13 +215,15 @@ const Community = () => {
       const thumbnailUrl = extractFirstImageSrc(content);
       const requestData = {
         writerId: memberId,
-        memberNickname: memberId,
+        memberNickname: memberNickname,
         boardTitle: title,
         boardContent: content,
         boardThumb: thumbnailUrl,
         boardStatus: 0,
-        boardLat: null,
-        boardLng: null,
+        boardLat: lnglat.lat,
+        boardLng: lnglat.lng,
+        ctpv: ctpvsgg.ctpv,
+        sgg: ctpvsgg.sgg,
       };
 
       const res = await axios.post(
@@ -125,12 +254,25 @@ const Community = () => {
             },
           );
         }
-        await Swal.fire({
-          icon: "success",
-          title: "게시글이 등록되었습니다!",
-          text: "작성한 게시글이 정상적으로 등록되었습니다.",
-          confirmButtonText: "확인",
-        });
+
+        if (missionType === "board-write") {
+          localStorage.setItem("mission_board_write_completed", "true");
+          localStorage.setItem("mission_board_write_point", "5");
+
+          await Swal.fire({
+            icon: "success",
+            title: "게시글 등록 완료",
+            text: "게시글이 등록되었고, 미션 완료로 5포인트가 지급되었습니다.",
+            confirmButtonText: "확인",
+          });
+        } else {
+          await Swal.fire({
+            icon: "success",
+            title: "게시글이 등록되었습니다!",
+            text: "작성한 게시글이 정상적으로 등록되었습니다.",
+            confirmButtonText: "확인",
+          });
+        }
 
         // 초기화
         setTitle("");
@@ -206,6 +348,7 @@ const Community = () => {
       const res = await axios.patch(
         `${import.meta.env.VITE_BACKSERVER}/boards/${selectedBoard.boardNo}`,
         requestData,
+        { params: { memberId } },
       );
 
       if (res.data > 0) {
@@ -251,6 +394,9 @@ const Community = () => {
       });
     }
   };
+  // 게시글 삭제 확인 처리
+  // 이전에는 삭제 확인창이 없거나 버튼 순서가 뒤집혀 있을 수 있었습니다.
+  // 지금은 삭제 버튼이 왼쪽에, 취소 버튼이 오른쪽에 표시됩니다.
   const deleteBoard = async (boardNo) => {
     const result = await Swal.fire({
       icon: "warning",
@@ -259,7 +405,6 @@ const Community = () => {
       showCancelButton: true,
       confirmButtonText: "삭제",
       cancelButtonText: "취소",
-      reverseButtons: true,
     });
 
     if (!result.isConfirmed) {
@@ -269,7 +414,10 @@ const Community = () => {
     try {
       const res = await axios.delete(
         `${import.meta.env.VITE_BACKSERVER}/boards/${boardNo}`,
-        { timeout: 5000 },
+        {
+          timeout: 5000,
+          params: { memberId },
+        },
       );
 
       if (res.data > 0) {
@@ -298,6 +446,17 @@ const Community = () => {
         text: "삭제 중 오류가 발생했습니다.",
       });
     }
+  };
+  const insertSpot = () => {
+    setSelectLnglat({
+      lat: lnglat.lat,
+      lng: lnglat.lng,
+    });
+    setSelectAddr(addr);
+    setSelectCtpvSgg({
+      ctpv: ctpvsgg.ctpv,
+      sgg: ctpvsgg.sgg,
+    });
   };
 
   return (
@@ -383,79 +542,130 @@ const Community = () => {
 
               <div className={styles.boardListBox}>
                 {boardList.length > 0 ? (
-                  boardList.map((board) => (
-                    <div
-                      className={styles.boardItem}
-                      key={board.boardNo}
-                      /* onClick={() => moveToDetail(board.boardNo)} //상세보기 기능 */
-                    >
-                      <div className={styles.boardItemTop}>
-                        <div className={styles.boardWriter}>
-                          <span className={styles.writerIcon}>👤</span>
-                          <span>{board.writerNickname}</span>
-                        </div>
-                        <div className={styles.boardDate}>
-                          {board.createDate}
-                        </div>
-                      </div>
+                  boardList.map((board, index) => {
+                    const isExpanded = expandedBoardNo === board.boardNo;
+                    return (
+                      <div
+                        className={styles.boardItem}
+                        key={
+                          board.boardNo ??
+                          `${board.boardTitle}-${board.createDate}-${index}`
+                        }
+                        onClick={async () => {
+                          if (!board?.boardNo) {
+                            console.warn(
+                              "boardNo is undefined, skipping read count update.",
+                              board,
+                            );
+                            return;
+                          }
 
-                      <div className={styles.boardTitle}>
-                        {board.boardTitle}
-                      </div>
+                          if (!isExpanded) {
+                            try {
+                              await axios.get(
+                                `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/read`,
+                              );
+                              setBoardList((prev) =>
+                                prev.map((item) =>
+                                  item.boardNo === board.boardNo
+                                    ? {
+                                        ...item,
+                                        readCount: (item.readCount ?? 0) + 1,
+                                      }
+                                    : item,
+                                ),
+                              );
+                            } catch (err) {
+                              console.error("조회수 증가 실패", err);
+                            }
+                          }
+                          setExpandedBoardNo(isExpanded ? null : board.boardNo);
+                        }}
+                      >
+                        <div className={styles.boardItemTop}>
+                          <div className={styles.boardWriter}>
+                            <span className={styles.writerIcon}>👤</span>
+                            <span>{board.writerNickname}</span>
+                          </div>
+                          <div className={styles.boardDate}>
+                            {board.createDate}
+                          </div>
+                        </div>
+                        <div className={styles.boardTitle}>
+                          {board.boardTitle}
+                        </div>
 
-                      {memberId === board.writerId && (
-                        <div className={styles.boardActionBox}>
-                          <button
-                            type="button"
-                            className={styles.mapCommunityBtn}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              startEdit(board);
+                        {memberId === board.writerId && (
+                          <div className={styles.boardActionBox}>
+                            <button
+                              type="button"
+                              className={styles.mapCommunityBtn}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                startEdit(board);
+                              }}
+                            >
+                              수정
+                            </button>
+
+                            <button
+                              type="button"
+                              className={`${styles.mapCommunityBtn} ${styles.deleteBtn}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteBoard(board.boardNo);
+                              }}
+                            >
+                              삭제
+                            </button>
+                          </div>
+                        )}
+                        {(board.thumbnailUrl || board.boardThumb) && (
+                          <div className={styles.boardThumbnailBox}>
+                            <img
+                              src={getImageUrl(board.thumbnailUrl || board.boardThumb)}
+                              alt="썸네일"
+                              className={styles.boardThumbnail}
+                            />
+                          </div>
+                        )}
+                        <div className={styles.boardItemBottom}>
+                          <span className={styles.iconItem}>
+                            <VisibilityIcon fontSize="small" />
+                            <span>{board.readCount ?? 0}</span>
+                          </span>
+                          <span className={styles.iconItem}>
+                            <FavoriteBorderIcon fontSize="small" />
+                            <span>{board.likeCount ?? 0}</span>
+                          </span>
+
+                          <span className={styles.iconItem}>
+                            <ChatIcon fontSize="small" />
+                            <span>{board.commentCount ?? 0}</span>
+                          </span>
+                        </div>
+                        {isExpanded && (
+                          <CommunityDetail
+                            board={board}
+                            onEdit={(boardItem) => {
+                              setSelectedBoard(boardItem);
+                              startEdit(boardItem);
                             }}
-                          >
-                            수정
-                          </button>
-
-                          <button
-                            type="button"
-                            className={styles.deleteBtn}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              deleteBoard(board.boardNo);
+                            onDelete={(boardNo) => deleteBoard(boardNo)}
+                            onLikeChange={(boardNo, newLikeCount) => {
+                              setBoardList((prev) =>
+                                prev.map((item) =>
+                                  item.boardNo === boardNo
+                                    ? { ...item, likeCount: newLikeCount }
+                                    : item,
+                                ),
+                              );
                             }}
-                          >
-                            삭제
-                          </button>
-                        </div>
-                      )}
-
-                      {board.thumbnailUrl && (
-                        <div className={styles.boardThumbnailBox}>
-                          <img
-                            src={board.thumbnailUrl}
-                            alt="썸네일"
-                            className={styles.boardThumbnail}
                           />
-                        </div>
-                      )}
-
-                      <div className={styles.boardItemBottom}>
-                        <span className={styles.iconItem}>
-                          <VisibilityIcon fontSize="small" />
-                          <span>{board.readCount ?? 0}</span>
-                        </span>
-                        <span className={styles.iconItem}>
-                          <FavoriteBorderIcon fontSize="small" />
-                          <span>{board.likeCount ?? 0}</span>
-                        </span>
-
-                        <span className={styles.iconItem}>
-                          <ChatIcon fontSize="small" />
-                          <span>{board.commentCount ?? 0}</span>
-                        </span>
+                        )}
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 ) : (
                   <div className={styles.emptyBoard}>
                     등록된 게시글이 없습니다.
@@ -512,7 +722,24 @@ const Community = () => {
                 <div className={styles.boardWriteGroup}>
                   <label>장소</label>
                   {/* 장소 기능 들어갈 자리*/}
-                  <div className={styles.writeMapBox}>MAP</div>
+                  <div className={styles.map_div}>
+                    <div className={styles.spot_box}>
+                      <p>선택된 위치</p>
+                      <p>{addr}</p>
+                    </div>
+                    <div className={styles.spotSelectBtn} onClick={insertSpot}>
+                      {addr === selectAddr ? "선택완료" : "장소선택"}
+                    </div>
+                    <div className={styles.lnglat}>
+                      <p>lng: {lnglat.lat}</p>
+                      <p>lat: {lnglat.lng}</p>
+                    </div>
+                    <div
+                      id="map"
+                      className={styles.writeMapBox}
+                      ref={mapDivRef}
+                    ></div>
+                  </div>
                 </div>
 
                 <div className={styles.boardWriteNotice}>

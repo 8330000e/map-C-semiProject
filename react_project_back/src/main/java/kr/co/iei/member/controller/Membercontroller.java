@@ -35,7 +35,8 @@ import lombok.Getter;
 
 import kr.co.iei.utils.FileUtils;
 
-@CrossOrigin(value = "*")
+
+@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
 @RestController
 @RequestMapping(value = "/members")
 
@@ -207,7 +208,7 @@ public class Membercontroller {
 	@PatchMapping(value = "/{memberId}")
 	public ResponseEntity<?> updateMemberInfo(@PathVariable String memberId, @RequestBody Member form) {
 		form.setMemberId(memberId);
-
+		System.out.println(form);
 		int result = memberService.updateMemberInfo(form);
 		return ResponseEntity.ok(result);
 	}

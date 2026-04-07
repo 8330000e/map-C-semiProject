@@ -205,6 +205,32 @@
   color: #666;
 }
 
+.boardDetail {
+  margin-top: 14px;
+  padding: 14px;
+  border-top: 1px solid #ececec;
+  background-color: #fafaf8;
+  border-radius: 0 0 12px 12px;
+}
+
+.boardDetailContent {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #424842;
+  margin-bottom: 12px;
+}
+
+.boardDetailImageWrap {
+  margin-top: 10px;
+}
+
+.boardDetailImage {
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+  max-height: 260px;
+}
+
 .emptyBoard {
   border: 1px dashed #d8d8d8;
   border-radius: 12px;
@@ -213,6 +239,298 @@
   text-align: center;
   padding: 40px 20px;
   font-size: 14px;
+}
+
+.boardDetailContainer {
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 14px;
+  background-color: #fafbf5;
+  border: 1px solid #e7eddd;
+}
+
+.detailTopArea {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.detailTitle {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #1f2e1f;
+  letter-spacing: -0.02em;
+}
+
+.detailMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+  color: #6c7768;
+}
+
+.detailButtonsTop {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.smallButton {
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid #d1ddcd;
+  border-radius: 999px;
+  background-color: #fff;
+  color: #3d4a38;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.smallButton:hover {
+  background-color: #f3f7ef;
+  border-color: #a4b58c;
+}
+
+.reportButton {
+  border-color: #e4b6b6;
+  color: #a13131;
+}
+
+.activeButton {
+  border-color: #7fa45b;
+  background-color: #edf5e6;
+}
+
+.detailContentBox {
+  padding: 18px;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #e7ede2;
+  margin-bottom: 14px;
+}
+
+.detailContent {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #414a41;
+  white-space: pre-wrap;
+}
+
+.detailContent img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0.8em 0;
+  border-radius: 14px;
+}
+
+.detailImageWrap {
+  margin-top: 14px;
+}
+
+.detailImage {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.detailInfoBar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 13px;
+  color: #56644f;
+  margin-bottom: 12px;
+}
+
+.detailInfoPanel {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(110px, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #fbfdf8;
+  border: 1px solid #e6ede2;
+  color: #46523e;
+  font-size: 13px;
+}
+
+.statLabel {
+  color: #7e8974;
+  font-size: 12px;
+}
+
+.statValue {
+  font-weight: 700;
+}
+
+.detailSectionHeader {
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #3b462f;
+}
+
+.activeButton {
+  border-color: #8fbf5a;
+  background-color: #eef6e6;
+}
+
+.reportButton {
+  border-color: #d63d3d;
+  color: #a62d2d;
+}
+
+.detailActionsRow {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.commentActionBtn {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #d2d8ca;
+  background: #fff;
+  color: #4b563f;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.detailActionBtn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #bcc6b2;
+  background: #fff;
+  color: #464d3e;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.commentSection {
+  border-top: 1px solid #e7eddd;
+  padding-top: 16px;
+}
+
+.commentWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.commentEmpty {
+  color: #75826d;
+  font-size: 14px;
+}
+
+.commentItem {
+  border: 1px solid #e4e9df;
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #fff;
+}
+
+.commentMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: #6d7768;
+  margin-bottom: 8px;
+}
+
+.commentBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #edf5e5;
+  color: #5b6b55;
+  font-size: 11px;
+}
+
+.commentEditBox {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.commentText {
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: #424842;
+  background: #f6f9f1;
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+
+.commentActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.commentForm {
+  border-top: 1px solid #e7eddd;
+  padding-top: 14px;
+}
+
+.replyNote {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #f5f8f1;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: #505d4e;
+}
+
+.commentFormRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.commentInput {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid #cfd7c5;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+}
+
+.privateCheck {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
 }
 
 /* 글쓰기 */
@@ -290,7 +608,7 @@
 .carbonBox,
 .writeMapBox {
   width: 100%;
-  height: 200px;
+  height: 300px;
   border: none;
   border-radius: 6px;
   background-color: #b8d676;
@@ -451,4 +769,64 @@
 .editor-file-right small {
   color: #7a8668;
   margin-top: 2px;
+}
+
+.map_div {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  color: var(--color1);
+}
+.spot_box {
+  position: absolute;
+  margin: 14px;
+  width: 210px;
+  height: 90px;
+  border-radius: 10px;
+  border: var(--border);
+  z-index: 1;
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: 800;
+  background-color: var(--gray8);
+}
+.spot_box > p:last-child {
+  font-weight: 500;
+  padding: 5px;
+}
+.spotSelectBtn {
+  position: absolute;
+  top: 80%;
+  left: 80%;
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: none;
+  background-color: var(--color1);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 2;
+  transition: all 0.2s ease;
+}
+.spotSelectBtn:hover {
+}
+.spotSelected:active {
+}
+.lnglat {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color1);
+  z-index: 2;
+}
+.map {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 10px;
 }

@@ -12,7 +12,22 @@ import useAuthStore from "../../store/useAuthStore";
 import CloseIcon from "@mui/icons-material/Close";
 import Swal from "sweetalert2";
 
-const TreeGrowMain = ({ selectedRegionNo }) => {
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+
+const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
+  const GRAPH_MAX = 10000;
+  const BAR_MAX_HEIGHT = 180;
+  const BAR_MIN_HEIGHT = 14;
+
+  const getBarHeight = (value) => {
+    if (value <= 0) return BAR_MIN_HEIGHT;
+
+    const ratio = value / GRAPH_MAX;
+    const adjustedRatio = Math.sqrt(ratio);
+
+    return Math.max(adjustedRatio * BAR_MAX_HEIGHT, BAR_MIN_HEIGHT);
+  };
+
   const defaultMultiplier = [
     { name: "서울", value: "x1.2" },
     { name: "경기", value: "x1.0" },
@@ -138,6 +153,10 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
   const currentStageStartWater = getStageStartWater(regionWater);
   const currentTreeScale = getTreeScale(currentStage);
   const MAX_WATER = 100;
+
+  const TREE_COMPLETE_WATER = 10000;
+  const isTreeComplete = regionWater >= TREE_COMPLETE_WATER;
+
   const fetchTreeData = async () => {
     try {
       Swal.fire({
@@ -149,7 +168,7 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
         },
       });
 
-      const regionsRes = await axios.get("http://localhost:9999/regions");
+      const regionsRes = await axios.get(`${BACKSERVER}/regions`);
       const regions = regionsRes.data;
 
       setRegionList(regions);
@@ -179,7 +198,7 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
 
       if (memberId) {
         const pointRes = await axios.get(
-          `http://localhost:9999/members/${memberId}/point`,
+          `${BACKSERVER}/members/${memberId}/point`,
         );
         setOwnedPoint(pointRes.data);
       }
@@ -203,7 +222,7 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
     setWaterAmount((prev) => Math.max(0, Math.min(prev + amount, MAX_WATER)));
   };
   const handleConfirmWater = async () => {
-    if (waterAmount <= 0) return;
+    if (waterAmount <= 0 || isTreeComplete) return;
 
     try {
       Swal.fire({
@@ -214,7 +233,7 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
         },
       });
 
-      await axios.post("http://localhost:9999/regions/contribute", {
+      await axios.post(`${BACKSERVER}/regions/contribute`, {
         memberId: memberId,
         regionNo: selectedRegion.regionNo,
         point: waterAmount,
@@ -234,6 +253,14 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
         targetWater: updatedTargetWater,
         remainPoint: updatedPoint,
       });
+      try {
+        onAddNotice?.(
+          `💧 ${memberId}님이 ${selectedRegion.name}에 ${waterAmount}h2O를 주었습니다 `,
+          "user",
+        );
+      } catch (e) {
+        console.error("공지 실패:", e);
+      }
 
       Swal.close();
 
@@ -328,9 +355,12 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
             {isLogin ? (
               <button
                 className={styles.waterButton}
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => {
+                  if (!isTreeComplete) setIsModalOpen(true);
+                }}
+                disabled={isTreeComplete}
               >
-                물 주기(포인트 기여)
+                {isTreeComplete ? "성장 완료" : "물 주기(포인트 기여)"}
               </button>
             ) : (
               <span className={styles.loginGuide}>
@@ -362,7 +392,9 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
                 <span className={styles.barValue}>{item.value}</span>
                 <div
                   className={`${styles.bar} ${getBarColorClass()}`}
-                  style={{ height: `${(item.value / maxValue) * 90 + 18}px` }}
+                  style={{
+                    height: `${getBarHeight(item.value)}px`,
+                  }}
                 ></div>
                 <span className={styles.barLabel}>{item.name}</span>
               </div>

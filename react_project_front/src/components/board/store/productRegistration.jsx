@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import useAuthStore from "../../../store/useAuthStore";
 import styles from "./productRegistration.module.css";
@@ -8,6 +8,8 @@ const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
 const ProductRegistration = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const editItem = location.state?.editItem || null;
     const { memberId, memberNickname } = useAuthStore();
 
     const [title, setTitle] = useState("");
@@ -17,20 +19,11 @@ const ProductRegistration = () => {
     const [displayPrice, setDisplayPrice] = useState("");
     const [description, setDescription] = useState("");
     const [imageName, setImageName] = useState("");
+    const [productThumb, setProductThumb] = useState("");
+    const [regionLabel, setRegionLabel] = useState("");
     const [region, setRegion] = useState("");
-
-    const regions = [
-        "서울 강남구",
-        "서울 마포구",
-        "서울 송파구",
-        "서울 영등포구",
-        "서울 성동구",
-        "서울 용산구",
-        "서울 서초구",
-        "서울 동작구",
-        "서울 은평구",
-        "서울 강동구",
-    ];
+    const [regions, setRegions] = useState([]);
+    const [showRegionList, setShowRegionList] = useState(false);
 
     const handlePriceChange = (e) => {
         const raw = e.target.value.replace(/[^0-9]/g, "");
@@ -44,10 +37,146 @@ const ProductRegistration = () => {
 - 하자 여부
 * 실제 촬영한 사진과 함께 상세 정보를 입력해주세요.`;
 
-    const handleImageUpload = (e) => {
+    const handleImageUpload = async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
         setImageName(file.name);
+
+        const formData = new FormData();
+        formData.append("upfile", file);
+
+        try {
+            const response = await axios.post(`${BACKSERVER}/boards/editor/upload`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            const uploadResult = response.data;
+            // 업로드 API가 파일명만 반환할 수 있어, /board/editor/ 경로로 보정합니다.
+            // 이렇게 하면 프리뷰가 깨지는 경우를 방지할 수 있습니다.
+            setProductThumb(
+                typeof uploadResult === "string" && !uploadResult.startsWith("/") && !uploadResult.startsWith("http")
+                    ? `/board/editor/${uploadResult}`
+                    : uploadResult,
+            );
+        } catch (error) {
+            console.error("상품 이미지 업로드 실패", error);
+            alert("상품 이미지 업로드에 실패했습니다.");
+            setImageName("");
+            setProductThumb("");
+        }
+    };
+
+    const normalizeTradeType = (tradeType) => {
+        if (tradeType === 0 || tradeType === "0" || tradeType === "직거래/택배" || String(tradeType).trim() === "직거래/택배") return "직거래/택배";
+        if (tradeType === 1 || tradeType === "1" || tradeType === "직거래" || String(tradeType).trim() === "직거래") return "직거래";
+        if (tradeType === 2 || tradeType === "2" || tradeType === "택배" || String(tradeType).trim() === "택배") return "택배";
+        return "";
+    };
+
+    const getImageUrl = (thumb) => {
+        // 상품 등록에서도 thumb가 여러 형태로 들어올 수 있어요.
+        // 여기서 브라우저가 바로 쓸 수 있는 URL로 바꿔줍니다.
+        if (!thumb) return null;
+        if (typeof thumb !== "string") return null;
+        let trimmed = thumb.trim();
+        if (!trimmed) return null;
+
+        trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
+
+        if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+        if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+        const driveMatch = trimmed.match(/^[A-Za-z]:\//);
+        if (driveMatch) {
+          const boardIndex = trimmed.indexOf("/board/editor/");
+          if (boardIndex !== -1) {
+            const suffix = trimmed.substring(boardIndex);
+            return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
+          }
+          trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
+        }
+
+        if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+        if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+        if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+        if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
+        return `${BACKSERVER}/board/editor/${trimmed}`;
+    };
+
+    useEffect(() => {
+        const fetchRegions = async () => {
+            try {
+                const response = await axios.get(`${BACKSERVER}/api/regions`);
+                setRegions(Array.isArray(response.data) ? response.data : []);
+            } catch (error) {
+                console.error("지역 목록 조회 실패", error);
+                setRegions([]);
+            }
+        };
+
+        fetchRegions();
+    }, []);
+
+    const normalizeStoredProductThumb = (thumb) => {
+        if (!thumb || typeof thumb !== "string") return "";
+        let normalized = thumb.replace(/\\\\/g, "/").replace(/\\/g, "/").trim();
+        if (!normalized) return "";
+
+        if (normalized.startsWith("http://") || normalized.startsWith("https://") || normalized.startsWith("//")) {
+            return normalized;
+        }
+        if (normalized.startsWith("board/editor/")) {
+            return `/${normalized}`;
+        }
+        if (normalized.startsWith("/board/editor/") || normalized.startsWith("/upload/")) {
+            return normalized;
+        }
+
+        const fileName = normalized.split("/").pop();
+        if (fileName && fileName.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) {
+            return `/board/editor/${fileName}`;
+        }
+
+        return normalized;
+    };
+
+    useEffect(() => {
+        if (!editItem) return;
+        setTitle(editItem.marketTitle || "");
+        setTradeMethod(normalizeTradeType(editItem.tradeType) || "");
+        setProductState(editItem.productStatus === "1" ? "예약중" : editItem.productStatus === "2" ? "판매완료" : "");
+        setPrice(editItem.productPrice ? String(editItem.productPrice) : "");
+        setDisplayPrice(editItem.productPrice ? Number(editItem.productPrice).toLocaleString("ko-KR") : "");
+        setDescription(editItem.marketContent || "");
+        setImageName(editItem.productThumb ? editItem.productThumb.split("/").pop() : "");
+        setProductThumb(normalizeStoredProductThumb(editItem.productThumb));
+        setRegion(editItem.ctpvsggId || "");
+        setRegionLabel(editItem.regionName || editItem.ctpvsggId || "");
+    }, [editItem]);
+
+    const regionOptions = useMemo(
+        () =>
+            regions.map((regionOption) => ({
+                label: `${regionOption.ctpvNm || ""} ${regionOption.sggNm || ""}`.trim(),
+                id: regionOption.ctpvsggId,
+            })),
+        [regions],
+    );
+
+    const regionMap = useMemo(
+        () => new Map(regionOptions.map((item) => [item.label, item.id])),
+        [regionOptions],
+    );
+
+    const filteredRegions = useMemo(() => {
+        const query = regionLabel.trim().toLowerCase();
+        if (!query) return regionOptions;
+        return regionOptions.filter((regionOption) => regionOption.label.toLowerCase().includes(query));
+    }, [regionLabel, regionOptions]);
+
+    const handleRegionBlur = () => {
+        setTimeout(() => setShowRegionList(false), 150);
     };
 
     const handleSubmit = async (e) => {
@@ -59,39 +188,56 @@ const ProductRegistration = () => {
             return;
         }
 
-        if (!title || !tradeMethod || !productState || !price || !region) {
-            alert("필수 항목(제목, 거래방법, 상품상태, 가격, 거래지역)을 모두 입력해주세요.");
-            return;
-        }
-
         let tradeType;
-        if (tradeMethod === "직거래/택배") tradeType = 0;
-        else if (tradeMethod === "직거래") tradeType = 1;
-        else if (tradeMethod === "택배") tradeType = 2;
+        if (tradeMethod === "직거래/택배") tradeType = "직거래/택배";
+        else if (tradeMethod === "직거래") tradeType = "직거래";
+        else if (tradeMethod === "택배") tradeType = "택배";
         else {
             alert("거래방법을 정확히 선택해주세요.");
             return;
         }
 
+        const requiresRegion = tradeType !== "택배";
+        if (!title || !tradeMethod || !productState || !price || (requiresRegion && !region)) {
+            alert("필수 항목(제목, 거래방법, 상품상태, 가격, 거래지역)을 모두 입력해주세요.");
+            return;
+        }
+
+        let productStatus = "0";
+        if (productState === "예약중") productStatus = "1";
+        else if (productState === "판매완료") productStatus = "2";
+
         const payload = {
             marketTitle: title,
             marketContent: description,
-            ctpvsggId: region,
+            ctpvsggId: tradeType === "택배" ? null : region || null,
             productPrice: Number(price),
-            productStatus: productState,
-            productThumb: imageName || "",
-            tradeType: tradeType,
+            productStatus,
+            productThumb: productThumb || "",
+            tradeType,
             memberId,
             memberNickname,
         };
+        console.log("상품 등록 payload", payload);
 
         try {
-            await axios.post(`${BACKSERVER}/api/store/boards`, payload);
-            alert("등록이 완료되었습니다.");
-            navigate("/store");
+            if (editItem) {
+                await axios.put(`${BACKSERVER}/api/store/boards/${editItem.marketNo}`, {
+                    ...payload,
+                    marketNo: editItem.marketNo,
+                    boardNo: editItem.boardNo,
+                });
+                alert("수정이 완료되었습니다.");
+                navigate(`/store/${editItem.marketNo}`);
+            } else {
+                await axios.post(`${BACKSERVER}/api/store/boards`, payload);
+                alert("등록이 완료되었습니다.");
+                navigate("/store");
+            }
         } catch (error) {
             console.error("상품 등록 실패", error);
-            alert("상품 등록 중 오류가 발생했습니다.");
+            const serverMessage = error?.response?.data || error?.message || "상품 등록 중 오류가 발생했습니다.";
+            alert(`상품 등록 중 오류가 발생했습니다.\n${serverMessage}`);
         }
     };
 
@@ -111,14 +257,28 @@ const ProductRegistration = () => {
 
                 <div className={styles.content_grid}>
                     <div className={styles.left_panel}>
-                        <div className={styles.image_box}>{imageName || "이미지"}</div>
+                        <div className={styles.image_box}>
+                            {(() => {
+                                const url = getImageUrl(productThumb);
+                                if (url) {
+                                    return <img src={url} alt={imageName || "상품 이미지"} className={styles.uploaded_image} />;
+                                }
+                                return imageName || "이미지";
+                            })()}
+                        </div>
                         <div className={styles.left_actions}>
                             <label className={styles.action_btn}>
                                 업로드
                                 <input type="file" accept="image/*" onChange={handleImageUpload} hidden />
                             </label>
-                            <button type="button" className={styles.action_btn} onClick={() => setImageName("")}>
-                                수정하기
+                            <button
+                                type="button"
+                                className={styles.action_btn}
+                                onClick={() => {
+                                    setImageName("");
+                                    setProductThumb("");
+                                }}
+                            > 수정하기
                             </button>
                         </div>
                     </div>
@@ -153,19 +313,46 @@ const ProductRegistration = () => {
                                 </select>
                             </div>
 
-                            <div className={styles.meta_item}>
+                            <div className={`${styles.meta_item} ${styles.region_meta_item}`}>
                                 <span className={styles.meta_label}>거래지역</span>
                                 <span className={styles.meta_divider}>:</span>
-                                <select value={region} onChange={(e) => setRegion(e.target.value)}>
-                                    <option value="" disabled>
-                                        선택
-                                    </option>
-                                    {regions.map((r) => (
-                                        <option key={r} value={r}>
-                                            {r}
-                                        </option>
-                                    ))}
-                                </select>
+                                <div className={styles.region_select_box}>
+                                    <input
+                                        type="text"
+                                        placeholder="시/군 검색"
+                                        value={regionLabel}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            setRegionLabel(value);
+                                            setRegion(regionMap.get(value) || "");
+                                            setShowRegionList(true);
+                                        }}
+                                        onFocus={() => setShowRegionList(true)}
+                                        onBlur={handleRegionBlur}
+                                        className={styles.region_search}
+                                    />
+                                    {showRegionList && (
+                                        <ul className={styles.region_option_list}>
+                                            {filteredRegions.length > 0 ? (
+                                                filteredRegions.slice(0, 8).map((regionOption) => (
+                                                    <li
+                                                        key={regionOption.id}
+                                                        className={styles.region_option_item}
+                                                        onMouseDown={() => {
+                                                            setRegionLabel(regionOption.label);
+                                                            setRegion(regionOption.id);
+                                                            setShowRegionList(false);
+                                                        }}
+                                                    >
+                                                        {regionOption.label}
+                                                    </li>
+                                                ))
+                                            ) : (
+                                                <li className={styles.noRegions}>검색 결과가 없습니다.</li>
+                                            )}
+                                        </ul>
+                                    )}
+                                </div>
                             </div>
 
                             <div className={styles.meta_item}>
@@ -195,7 +382,7 @@ const ProductRegistration = () => {
 
                 <div className={styles.bottom_actions}>
                     <button type="submit" className={styles.primary_btn}>
-                        등록하기
+                        {editItem ? "수정하기" : "등록하기"}
                     </button>
                     <button type="button" className={styles.primary_btn} onClick={() => navigate(-1)}>
                         뒤로가기

@@ -6,6 +6,7 @@ import java.util.List;
 
 
 import kr.co.iei.board.model.vo.Board;
+import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
 
@@ -22,14 +23,35 @@ public interface BoardDao {
 	int insertBoard(Board board);
 
 	int updateBoard(Board board);
+	int incrementReadCount(@Param("boardNo") int boardNo);
+
+	int insertBoardLike(@Param("boardNo") int boardNo, @Param("memberId") String memberId);
+
+	int deleteBoardLike(@Param("boardNo") int boardNo, @Param("memberId") String memberId);
+
+	int selectBoardLikeByMember(@Param("boardNo") int boardNo, @Param("memberId") String memberId);
+
+	int selectBoardAuthor(@Param("boardNo") int boardNo, @Param("writerId") String writerId);
 
 	int deleteBoard(@Param("boardNo") int boardNo);
 
 	int insertBoardFile(BoardFile boardFile);
 
+	List<BoardComment> selectBoardComments(@Param("boardNo") int boardNo);
+
+	int insertBoardComment(BoardComment comment);
+
+	int updateBoardComment(BoardComment comment);
+
+	int deleteBoardComment(@Param("commentNo") long commentNo, @Param("memberId") String memberId);
+
 	List<BoardLike> bestBoardList();
 	
-	List<Board> selectMemberIdBoard(HashMap<String, String> map);
+	List<Board> selectMemberIdBoard(HashMap<String, Object> map);
+
+	List<Integer> selectLikeBoard(String memberId);
+
+	List<Integer> selectTipBoard(String memberId);
     
 
 }
