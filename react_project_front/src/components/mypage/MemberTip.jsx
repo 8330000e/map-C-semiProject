@@ -26,12 +26,12 @@ const MemberTip = () => {
       });
   }, [searchBoard, filter]);
   return (
-    <div className={styles.membertip_wrap}>
-      <div className={styles.membertip_title_wrap}>
+    <div className={styles.board_main_wrap}>
+      <div className={styles.board_title_wrap}>
         <h3>팁 스크랩</h3>
       </div>
-      <div className={styles.membertip_content_wrap}>
-        <div className={styles.membertip_search_wrap}>
+      <div className={styles.board_content_wrap}>
+        <div className={styles.board_search_wrap}>
           <label
             htmlFor="memberTipSearch"
             onClick={() => {
@@ -60,19 +60,21 @@ const MemberTip = () => {
             <option value={4}>최소조회수</option>
           </select>
         </div>
-        <div className={styles.membertip_list_wrap}>
-          {tipBoardList.map((tip, index) => {
-            return (
-              <ul key={tip.boardTitle}>
-                <li>{"글번호:" + tip.boardNo}</li>
-                <li>{"게시자:" + tip.writerId}</li>
-                <li>{"등록일:" + tip.boardDate}</li>
-                <li>{"제목:" + tip.boardTitle}</li>
-                <li>{"조회수:" + tip.readCount}</li>
-              </ul>
-            );
-          })}
-        </div>
+        {tipBoardList && (
+          <div className={styles.board_list_wrap}>
+            {tipBoardList.map((tip, index) => {
+              return (
+                <ul key={tip.boardTitle} className={styles.one_board}>
+                  <li>{"글번호:" + tip.boardNo}</li>
+                  <li>{"게시자:" + tip.writerId}</li>
+                  <li>{"등록일:" + tip.boardDate}</li>
+                  <li>{"제목:" + tip.boardTitle}</li>
+                  <li>{"조회수:" + tip.readCount}</li>
+                </ul>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

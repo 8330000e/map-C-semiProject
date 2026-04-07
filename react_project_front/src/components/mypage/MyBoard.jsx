@@ -27,10 +27,10 @@ const MyBoard = () => {
       });
   }, [searchBoard, filter]);
   return (
-    <div className={styles.myboard_wrap}>
+    <div className={styles.board_main_wrap}>
       <h3>나의 게시물</h3>
-      <div className={styles.myboard_content_wrap}>
-        <div className={styles.myboard_search_wrap}>
+      <div className={styles.board_content_wrap}>
+        <div className={styles.board_search_wrap}>
           <label
             htmlFor="boardSearch"
             onClick={() => {
@@ -60,20 +60,21 @@ const MyBoard = () => {
             <option value={4}>최대조회수</option>
           </select>
         </div>
-
-        <div className={styles.myboard_list_wrap}>
-          {boardList.map((board, index) => {
-            return (
-              <ul key={board.boardNo}>
-                <li>{"글번호" + board.boardNo}</li>
-                <li>{memberId}</li>
-                <li>{"게시일" + board.boardDate}</li>
-                <li>{"제목" + board.boardTitle}</li>
-                <li>{"조회수" + board.readCount}</li>
-              </ul>
-            );
-          })}
-        </div>
+        {boardList && (
+          <div className={styles.board_list_wrap}>
+            {boardList.map((board, index) => {
+              return (
+                <ul key={board.boardNo} className={styles.one_board}>
+                  <li>{"글번호" + board.boardNo}</li>
+                  <li>{memberId}</li>
+                  <li>{"게시일" + board.boardDate}</li>
+                  <li>{"제목" + board.boardTitle}</li>
+                  <li>{"조회수" + board.readCount}</li>
+                </ul>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
