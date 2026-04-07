@@ -38,6 +38,7 @@ const StoreDetail = () => {
   const [loadError, setLoadError] = useState("");
 
   const [comments, setComments] = useState([]);
+  const [transactionReviews, setTransactionReviews] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [newCommentPrivate, setNewCommentPrivate] = useState(false);
   const [replyTarget, setReplyTarget] = useState(null);
@@ -79,6 +80,17 @@ const StoreDetail = () => {
   }, [itemId]);
 
   useEffect(() => {
+    if (!itemId) return;
+    axios
+      .get(`${BACKSERVER}/api/store/markets/${itemId}/ratings`)
+      .then((res) => setTransactionReviews(Array.isArray(res.data) ? res.data : []))
+      .catch((error) => {
+        console.error("거래 후기 조회 실패", error);
+        setTransactionReviews([]);
+      });
+  }, [itemId]);
+
+  useEffect(() => {
     if (!item) return;
     setSaleStatus(getSaleStatusLabel(item.productStatus));
   }, [item]);
@@ -91,6 +103,18 @@ const StoreDetail = () => {
     if (normalizedTradeType === "택배") return { direct: false, delivery: true };
     return { direct: true, delivery: true };
   }, [item]);
+
+  const getImageUrl = (thumb) => {
+    if (!thumb) return null;
+    if (typeof thumb !== "string") return null;
+    const trimmed = thumb.trim();
+    if (!trimmed) return null;
+    if (trimmed.startsWith("http")) return trimmed;
+    if (trimmed.startsWith("//")) return `https:${trimmed}`;
+    if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+    if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+    return `${BACKSERVER}/board/editor/${trimmed}`;
+  };
 
   const [supportDirect, setSupportDirect] = useState(true);
   const [supportDelivery, setSupportDelivery] = useState(true);
@@ -349,11 +373,16 @@ const StoreDetail = () => {
     navigate("/payment/order", {
       state: {
         itemId,
+        marketNo: item.marketNo,
         orderName: item.marketTitle,
         amount: finalAmount,
         deliveryMethod,
         baseAmount,
         deliveryFee: deliveryMethod === "delivery" ? DELIVERY_FEE : 0,
+        sellerId: item.memberId,
+        sellerNickname: item.memberNickname,
+        tradeType: item.tradeType,
+        productThumb: item.productThumb,
       },
     });
   };
@@ -417,7 +446,24 @@ const StoreDetail = () => {
 
       <div className={styles.detail_top}>
         <div className={styles.detail_image_box}>
-          <div className={styles.image}>{item.productThumb || "상품 이미지"}</div>
+          <div className={styles.image}>
+            {(() => {
+              const imageUrl = getImageUrl(item.productThumb);
+              if (imageUrl) {
+                return (
+                  <img
+                    src={imageUrl}
+                    alt={item.marketTitle || "상품 이미지"}
+                    className={styles.product_image}
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                );
+              }
+              return item.productThumb || "상품 이미지";
+            })()}
+          </div>
         </div>
 
         <div className={styles.detail_summary}>
@@ -512,19 +558,73 @@ const StoreDetail = () => {
         <h3>가게 정보</h3>
         <p>상점명 : {item.memberNickname || item.memberId} 상점</p>
         <p>신뢰지수 : 624</p>
-        <p>거래후기 : 1</p>
+        <p>거래후기 : {transactionReviews.length}</p>
       </div>
+
+      {saleStatus === "판매완료" && (
+        <div className={styles.comment_section}>
+          <h3>거래 후기</h3>
+          <div className={styles.comment_list}>
+            {transactionReviews.length === 0 && <p>등록된 거래 후기가 없습니다.</p>}
+            {transactionReviews.map((comment) => {
+              const imageUrl = getImageUrl(comment.reviewThumb);
+              return (
+                <div
+                  key={comment.reviewNo}
+                  className={styles.comment_item}
+                  style={{ marginLeft: `${(comment.commentDepth || 0) * 20}px` }}
+                >
+                  <div className={styles.review_header}>
+                    <span className={styles.review_author}>{comment.buyerNickname || comment.memberNickname || comment.buyerId || comment.memberId}</span>
+                    <span className={styles.review_score}>★ {comment.rating ?? 0}점</span>
+                  </div>
+                  <p className={styles.comment_meta}>{formatCommentDate(comment.createdAt)}</p>
+                  <p className={styles.comment_text}>{comment.reviewContent}</p>
+                  {imageUrl && (
+                    <div className={styles.review_image_wrap}>
+                      <img
+                        className={styles.review_image}
+                        src={imageUrl}
+                        alt="거래 후기 이미지"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className={styles.same_items_section}>
         <h3>같은 상품 더보기</h3>
         <div className={styles.same_items_wrapper}>
-          {displaySame.map((same) => (
-            <Link key={same.marketNo} to={`/store/${same.marketNo}`} className={styles.same_item}>
-              <div className={styles.image}>{same.productThumb || "이미지"}</div>
-              <div className={styles.same_item_title}>{same.marketTitle}</div>
-              <div className={styles.same_item_price}>{formatPrice(same.productPrice)}</div>
-            </Link>
-          ))}
+          {displaySame.map((same) => {
+            const imageUrl = getImageUrl(same.productThumb || same.thumb);
+            return (
+              <Link key={same.marketNo} to={`/store/${same.marketNo}`} className={styles.same_item}>
+                <div className={styles.image}>
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt={same.marketTitle || "상품 이미지"}
+                      className={styles.product_image}
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+                  ) : (
+                    "이미지"
+                  )}
+                </div>
+                <div className={styles.same_item_title}>{same.marketTitle}</div>
+                <div className={styles.same_item_price}>{formatPrice(same.productPrice)}</div>
+              </Link>
+            );
+          })}
         </div>
       </div>
 

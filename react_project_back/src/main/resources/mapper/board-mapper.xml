@@ -5,7 +5,7 @@
 <mapper namespace="kr.co.iei.board.model.dao.BoardDao">
 
     <!-- 게시글 리스트 -->
-    <select id="selectBoardList" parameterType="map" resultType="board">
+    <select id="selectBoardList" parameterType="map" resultType="kr.co.iei.board.model.vo.Board">
         SELECT
             b.BOARD_NO AS boardNo,
             b.WRITER_ID AS writerId,
@@ -171,7 +171,7 @@
     </select>
 
     <!-- 내가 쓴 글 -->
-    <select id="selectMemberIdBoard" resultType="board">
+    <select id="selectMemberIdBoard" resultType="kr.co.iei.board.model.vo.Board">
         SELECT 
             board_no,
             writer_id,

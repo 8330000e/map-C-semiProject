@@ -4,18 +4,30 @@ package kr.co.iei.admin.model.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.iei.admin.model.dao.AdminDao;
 import kr.co.iei.admin.model.vo.DashData;
 import kr.co.iei.admin.model.vo.Faq;
+import kr.co.iei.admin.model.vo.ListItem;
+import kr.co.iei.admin.model.vo.ListResponse;
 import kr.co.iei.admin.model.vo.Notice;
+import kr.co.iei.admin.model.vo.Qna;
+import kr.co.iei.utils.FileUtils;
 
 @Service
 public class AdminService {
 	@Autowired
 	private AdminDao adminDao;
+	
+	@Autowired
+	private FileUtils fileUtils;
+	
+	@Value("${file.root}")
+	private String root;
+	
 
 	@Transactional
 	public int insertNotice(Notice notice) {
@@ -51,5 +63,35 @@ public class AdminService {
 	public List<Faq> selectFaqList() {
 		List<Faq> faqList = adminDao.selectFaqList();
 		return faqList;
+	}
+
+	@Transactional
+	public int insertFaq(Faq faq) {
+		int result = adminDao.insertFaq(faq);
+		return result;
+	}
+
+	@Transactional
+	public int editFaq(Faq faq) {
+		int result = adminDao.editFaq(faq);
+		return result;
+	}
+
+	public ListResponse selectQnaList(ListItem listItem) {
+		int totalCount = adminDao.getTotalCount();
+		int totalPage = (int)Math.ceil((double)totalCount / listItem.getSize());
+		
+		List<Qna> qnaList = adminDao.selectQnaList(listItem);
+		ListResponse response = new ListResponse(qnaList, totalPage);
+		return response;
+	}
+
+	@Transactional
+	public int qnaAnswer(Qna qna) {
+		if (qna.getQnaImage() != null) {
+			String filepath = fileUtils.upload(root + "qna/", qna.getQnaImage());
+			qna.setQnaImagePath(filepath);
+		}
+		return adminDao.qnaAnswer(qna);
 	}
 }

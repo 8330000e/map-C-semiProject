@@ -9,9 +9,22 @@ const parseJson = (value, fallback) => {
   }
 };
 
-export const getCompletedPurchases = () => {
+export const getCompletedPurchases = (buyerId) => {
   if (typeof window === "undefined") return [];
-  return parseJson(window.localStorage.getItem(COMPLETED_PURCHASES_KEY), []);
+  const purchases = parseJson(window.localStorage.getItem(COMPLETED_PURCHASES_KEY), []);
+  if (buyerId == null) return purchases;
+  return purchases.filter((item) => item.buyerId === buyerId);
+};
+
+export const getCompletedSales = (sellerId) => {
+  if (typeof window === "undefined") return [];
+  const purchases = parseJson(window.localStorage.getItem(COMPLETED_PURCHASES_KEY), []);
+  if (sellerId == null) return purchases;
+  return purchases.filter((item) => item.sellerId === sellerId);
+};
+
+export const getCompletedSaleByMarketNo = (marketNo, sellerId) => {
+  return getCompletedSales(sellerId).find((item) => String(item.marketNo) === String(marketNo)) || null;
 };
 
 export const saveCompletedPurchases = (items) => {
@@ -26,8 +39,24 @@ export const addCompletedPurchase = (purchase) => {
   return next;
 };
 
-export const getCompletedPurchaseById = (id) => {
-  return getCompletedPurchases().find((item) => String(item.id) === String(id)) || null;
+export const removeCompletedPurchase = (id) => {
+  if (typeof window === "undefined") return [];
+  const current = getCompletedPurchases();
+  const next = current.filter((item) => String(item.id) !== String(id));
+  saveCompletedPurchases(next);
+  return next;
+};
+
+export const removeCompletedPurchaseByMarketNo = (marketNo) => {
+  if (typeof window === "undefined") return [];
+  const current = getCompletedPurchases();
+  const next = current.filter((item) => String(item.marketNo) !== String(marketNo));
+  saveCompletedPurchases(next);
+  return next;
+};
+
+export const getCompletedPurchaseById = (id, buyerId) => {
+  return getCompletedPurchases(buyerId).find((item) => String(item.id) === String(id)) || null;
 };
 
 export const setPendingPurchase = (orderId, payload) => {

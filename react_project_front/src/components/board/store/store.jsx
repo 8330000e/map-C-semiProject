@@ -25,6 +25,13 @@ const getSaleStatusLabel = (productStatus) => {
     return "판매중";
 };
 
+const getImageUrl = (thumb) => {
+    if (!thumb) return null;
+    if (thumb.startsWith("http://") || thumb.startsWith("https://")) return thumb;
+    if (thumb.startsWith("/")) return `${BACKSERVER}${thumb}`;
+    return `${BACKSERVER}/${thumb}`;
+};
+
 const Store = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 16;
@@ -40,7 +47,12 @@ const Store = () => {
             try {
                 setIsLoading(true);
                 const response = await axios.get(`${BACKSERVER}/api/store/boards`);
-                setGoods(Array.isArray(response.data) ? response.data : []);
+                const items = Array.isArray(response.data)
+                    ? response.data
+                    : Array.isArray(response.data?.items)
+                    ? response.data.items
+                    : [];
+                setGoods(items);
                 setLoadError("");
             } catch (error) {
                 console.error("중고장터 목록 조회 실패", error);
@@ -170,11 +182,18 @@ const Store = () => {
                     {!isLoading && loadError && <p>{loadError}</p>}
                     {visibleGoods.map((item, index) => {
                         const tradeMethodLabel = getTradeTypeLabel(item.tradeType);
+                        const imageUrl = getImageUrl(item.productThumb);
 
                         return (
                             <Link key={item.marketNo ?? item.boardNo ?? index} to={`/store/${item.marketNo}`} className={styles.cardLink}>
                                 <article className={styles.card}>
-                                    <div className={styles.image}>{item.productThumb || "이미지"}</div>
+                                    <div className={styles.image}>
+                                        {imageUrl ? (
+                                            <img src={imageUrl} alt={item.marketTitle || "상품 이미지"} />
+                                        ) : (
+                                            "이미지"
+                                        )}
+                                    </div>
                                     <h3>{item.displayTitle}</h3>
                                     <p className={styles.price}>{formatPrice(item.productPrice)}</p>
                                     <div className={styles.region_badge}>{item.regionName || item.ctpvsggId || "지역 미등록"}</div>
@@ -183,11 +202,11 @@ const Store = () => {
                                     <div className={styles.metaRow}>
                                         <span className={styles.author}>{item.memberId}</span>
                                         <span className={styles.metaDivider}>|</span>
-                                        <span className={styles.commentCount}>💬 0</span>
+                                        <span className={styles.commentCount}>💬 {item.commentCount ?? 0}</span>
                                         <span className={styles.metaDivider}>|</span>
                                         <span className={styles.dateLine}>{formatDate(item.createdAt)}</span>
                                     </div>
-                                    <p className={styles.viewCount}>👀 조회수 {item.readCount || 0}</p>
+                                    <p className={styles.viewCount}>👀 조회수 {Number(item.readCount ?? 0).toLocaleString("ko-KR")}</p>
                                 </article>
                             </Link>
                         );
