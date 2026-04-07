@@ -155,6 +155,7 @@ const TossTestPayment = () => {
 				buyerId: memberId,
 				buyerNickname: memberNickname || memberId,
 				orderInfo,
+				productThumb: location.state?.productThumb,
 				date: new Date().toISOString(),
 			});
 			const customerMobilePhone = orderInfo?.phone?.toString().replace(/[^0-9]/g, "");
