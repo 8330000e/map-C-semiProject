@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import useAuthStore from "../../store/useAuthStore";
 import styles from "./PurchaseHistory.module.css";
 import { getCompletedPurchases } from "./orderHistoryStorage";
 
@@ -7,12 +8,13 @@ const PAGE_SIZE = 9;
 const getStatusPrefix = (status) => (status ? `[${status}] ` : "");
 
 const PurchaseHistory = () => {
+  const { memberId } = useAuthStore();
   const [purchaseHistory, setPurchaseHistory] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    setPurchaseHistory(getCompletedPurchases());
-  }, []);
+    setPurchaseHistory(getCompletedPurchases(memberId));
+  }, [memberId]);
 
   const pageCount = Math.max(1, Math.ceil(purchaseHistory.length / PAGE_SIZE));
 

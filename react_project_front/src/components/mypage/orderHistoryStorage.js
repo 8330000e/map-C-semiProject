@@ -9,9 +9,11 @@ const parseJson = (value, fallback) => {
   }
 };
 
-export const getCompletedPurchases = () => {
+export const getCompletedPurchases = (buyerId) => {
   if (typeof window === "undefined") return [];
-  return parseJson(window.localStorage.getItem(COMPLETED_PURCHASES_KEY), []);
+  const purchases = parseJson(window.localStorage.getItem(COMPLETED_PURCHASES_KEY), []);
+  if (buyerId == null) return purchases;
+  return purchases.filter((item) => item.buyerId === buyerId);
 };
 
 export const saveCompletedPurchases = (items) => {
@@ -26,8 +28,8 @@ export const addCompletedPurchase = (purchase) => {
   return next;
 };
 
-export const getCompletedPurchaseById = (id) => {
-  return getCompletedPurchases().find((item) => String(item.id) === String(id)) || null;
+export const getCompletedPurchaseById = (id, buyerId) => {
+  return getCompletedPurchases(buyerId).find((item) => String(item.id) === String(id)) || null;
 };
 
 export const setPendingPurchase = (orderId, payload) => {
