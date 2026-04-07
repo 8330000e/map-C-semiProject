@@ -61,12 +61,55 @@
 	
 	<select id="selectFaqList" resultType="faq">
 		select 
+			faq_no,
 			faq_title,
 			faq_content,
 			faq_category
 		from faq_tbl
 	</select>
 	
+	<insert id="insertFaq">
+		insert into faq_tbl values(
+			faq_seq.nextval,
+			#{faqTitle},
+			#{faqContent},
+			#{faqCategory}
+		)
+	</insert>
+	
+	<update id="editFaq">
+		update faq_tbl set 
+			faq_title = #{faqTitle},
+			faq_content = #{faqContent},
+			faq_category = #{faqCategory}
+		where faq_no = #{faqNo}
+	</update>
+	
+	
+	<select id="selectQnaList" resultType="qna">
+		select 
+			qna_no,
+			member_id as qnaMemberId,
+			qna_title,
+			qna_content,
+			qna_status,
+			qna_date
+		from qna_tbl
+		order by qna_status asc, qna_date desc
+		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
+	</select>
+	
+	<select id="getTotalCount">
+		select count(*) from qna_tbl
+	</select>
+	
+	<update id="qnaAnswer">
+		update qna_tbl set
+			qna_answer = #{qnaAnswer},
+			qna_image_path = #{qnaImagePath},
+			qna_status = 1
+		where qna_no = #{qnaNo}
+	</update>
 	
 	
 	

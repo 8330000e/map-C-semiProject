@@ -5,11 +5,20 @@
 /* Header.jsx */
 .header {
   position: relative;
+}
+.header > a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   cursor: pointer;
 }
-
-header > h1 > a {
-  font-size: 30px;
+.header > a > img {
+  width: 36px;
+  height: 36px;
+}
+.header > a > h1 {
+  font-size: 32px;
+  font-family: "NanumGothicExtraBold", sans-serif;
   font-weight: 800;
   color: #464d3e;
 }

@@ -20,6 +20,7 @@ public class StoreBoard {
     private String productThumb;
     private String tradeType;
     private Integer readCount;
+    private Integer commentCount;
     private String regionName;
 
     private Date createdAt;
@@ -28,6 +29,10 @@ public class StoreBoard {
     // Lombok should generate this, but add explicitly for build stability
     public String getProductStatus() {
         return productStatus;
+    }
+
+    public void setProductStatus(String productStatus) {
+        this.productStatus = productStatus;
     }
 
 }

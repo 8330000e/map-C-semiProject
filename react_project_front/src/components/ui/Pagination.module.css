@@ -1,0 +1,35 @@
+.pagination_wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 0;
+}
+
+.pagination_wrap button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--admin-stroke);
+  background-color: var(--admin-panel-2);
+  color: var(--admin-text);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.15s;
+}
+
+.pagination_wrap button:hover:not(:disabled) {
+  background-color: var(--admin-highlight);
+}
+
+.pagination_wrap button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.active {
+  background-color: var(--admin-accent);
+  border-color: var(--admin-accent);
+  color: #fff;
+  font-weight: bold;
+}
