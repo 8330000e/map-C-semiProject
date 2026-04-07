@@ -652,8 +652,17 @@ const StoreDetail = () => {
           {comments.length === 0 && <p>등록된 댓글이 없습니다.</p>}
           {comments.map((comment) => {
             const isOwn = comment.memberId && memberId === comment.memberId;
+            const isBoardAuthor = memberId && item?.memberId === memberId;
+            const parentAuthorId = comment.parentCommentNo
+              ? comments.find((c) => c.reviewNo === comment.parentCommentNo)?.memberId
+              : null;
+            const canViewSecret =
+              comment.isPrivate !== 1 ||
+              isOwn ||
+              isBoardAuthor ||
+              parentAuthorId === memberId;
             const isSecret = comment.isPrivate === 1;
-            const displayContent = isSecret && !isOwn ? "비공개 댓글입니다." : comment.reviewContent;
+            const displayContent = isSecret && !canViewSecret ? "비공개 댓글입니다." : comment.reviewContent;
             return (
               <div
                 key={comment.reviewNo}

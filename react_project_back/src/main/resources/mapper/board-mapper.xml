@@ -166,14 +166,14 @@
             C.PARENT_COMMENT_NO AS parentCommentNo,
             C.COMMENT_GROUP AS commentGroup,
             C.COMMENT_DEPTH AS commentDepth,
-            C.IS_SECRET AS isSecret
+            CASE WHEN C.IS_SECRET = 'Y' THEN 1 ELSE 0 END AS isSecret
         FROM BOARD_COMMENT_TBL C
         WHERE C.BOARD_NO = #{boardNo}
         ORDER BY C.COMMENT_GROUP ASC, C.COMMENT_DEPTH ASC, C.BOARD_COMMENT_NO ASC
     </select>
 
     <insert id="insertBoardComment" parameterType="boardComment">
-        <selectKey keyProperty="commentNo" resultType="int" order="BEFORE">
+        <selectKey keyProperty="commentNo" resultType="java.lang.Long" order="BEFORE">
             SELECT SEQ_BOARD_COMMENT_NO.NEXTVAL FROM DUAL
         </selectKey>
 
@@ -200,7 +200,7 @@
             #{parentCommentNo},
             NVL((SELECT COMMENT_GROUP FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), #{commentNo}),
             NVL((SELECT COMMENT_DEPTH + 1 FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), 1),
-            #{isSecret}
+            CASE WHEN #{isSecret} = 1 THEN 'Y' ELSE 'N' END
         )
     </insert>
 
@@ -208,7 +208,7 @@
         UPDATE BOARD_COMMENT_TBL
         SET BOARD_COMMENT_CONTENT = #{content},
             UPDATED_AT = SYSDATE,
-            IS_SECRET = #{isSecret}
+            IS_SECRET = CASE WHEN #{isSecret} = 1 THEN 'Y' ELSE 'N' END
         WHERE BOARD_COMMENT_NO = #{commentNo}
           AND BOARD_COMMENT_WRITER = #{memberId}
     </update>

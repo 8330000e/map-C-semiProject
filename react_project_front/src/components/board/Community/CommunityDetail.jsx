@@ -52,6 +52,13 @@ const getImageUrl = (thumb) => {
   return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
+const hasImageInContent = (html) => {
+  if (!html) return false;
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  return doc.querySelector("img") !== null;
+};
+
 const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
   const { memberId } = useAuthStore();
   const [comments, setComments] = useState([]);
@@ -285,16 +292,37 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
   const handleDeleteComment = async (comment) => {
     if (memberId !== comment.memberId) return;
 
+    const result = await Swal.fire({
+      icon: "warning",
+      title: "댓글을 삭제하시겠습니까?",
+      text: "삭제된 댓글은 복구할 수 없습니다.",
+      showCancelButton: true,
+      confirmButtonText: "삭제",
+      cancelButtonText: "취소",
+      confirmButtonColor: "#d33",
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       await axios.delete(`${BACKSERVER}/boards/${board.boardNo}/comments/${comment.id}`, {
         params: { memberId },
       });
       setComments((prev) => prev.filter((item) => item.id !== comment.id));
+      Swal.fire({ icon: "success", title: "댓글이 삭제되었습니다." });
     } catch (err) {
       console.error("댓글 삭제 실패", err);
       Swal.fire({ icon: "error", title: "댓글 삭제 실패", text: "댓글 삭제 중 오류가 발생했습니다." });
     }
   };
+
+  const commentMap = useMemo(() => {
+    const map = {};
+    comments.forEach((comment) => {
+      map[comment.id] = comment;
+    });
+    return map;
+  }, [comments]);
 
   const commentTree = useMemo(() => {
     const root = [];
@@ -315,12 +343,22 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
     return root;
   }, [comments]);
 
+  const canViewSecretComment = (comment) => {
+    if (comment.isPrivate !== 1) return true;
+    const isOwn = comment.memberId === memberId;
+    const isBoardAuthor = memberId && board.writerId === memberId;
+    const parentAuthorId = comment.parentId ? commentMap[comment.parentId]?.memberId : null;
+    return Boolean(isOwn || isBoardAuthor || parentAuthorId === memberId);
+  };
+
   const renderComments = (items) =>
     items.map((comment) => {
       const isOwn = comment.memberId === memberId;
       const isSecret = comment.isPrivate === 1;
       const displayText =
-        isSecret && !isOwn ? "비공개 댓글입니다." : comment.content;
+        isSecret && !canViewSecretComment(comment)
+          ? "비공개 댓글입니다."
+          : comment.content;
       return (
         <div
           key={comment.id}
@@ -469,7 +507,7 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
             __html: board.boardContent || "<p>내용 없음</p>",
           }}
         />
-        {board.boardThumb && (
+        {!hasImageInContent(board.boardContent) && board.boardThumb && (
           <div className={styles.detailImageWrap}>
             {/* board.boardThumb가 파일명으로 와도 /upload/로 바꿔서 보여줘요. */}
             <img
