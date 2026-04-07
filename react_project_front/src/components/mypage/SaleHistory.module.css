@@ -21,8 +21,47 @@
 
 .sale_list {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+}
+
+.sale_status_section {
+  background: #f7fbf2;
+  border: 1px solid rgba(79, 109, 53, 0.16);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.status_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.status_header h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #34452c;
+}
+
+.status_header span {
+  color: #5e6a56;
+  font-size: 0.92rem;
+}
+
+.status_card_list {
+  display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
+}
+
+.empty_section {
+  margin: 0;
+  padding: 14px 0;
+  color: #5e6a56;
 }
 
 .sale_card {

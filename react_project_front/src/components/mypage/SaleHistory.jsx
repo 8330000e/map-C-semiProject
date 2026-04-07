@@ -97,6 +97,50 @@ const SaleHistory = () => {
     return salesHistory.slice(start, start + PAGE_SIZE);
   }, [currentPage, salesHistory]);
 
+  const sellingItems = useMemo(
+    () => currentItems.filter((item) => getSaleStatusLabel(item.status) !== "판매완료"),
+    [currentItems],
+  );
+
+  const completedItems = useMemo(
+    () => currentItems.filter((item) => getSaleStatusLabel(item.status) === "판매완료"),
+    [currentItems],
+  );
+
+  const renderSaleCard = (item) => {
+    const marketNo = item.marketNo ?? item.id;
+    const tradeInfo = marketNo ? tradeInfoMap[marketNo] : null;
+    const displayShippingStatus = tradeInfo?.shippingStatus ?? item.shippingStatus;
+    const displayCourierCode = tradeInfo?.courierCode ?? item.courierCode;
+    const displayInvoiceNumber = tradeInfo?.invoiceNumber ?? item.invoiceNumber;
+    const address = item.orderInfo?.address || item.address || "";
+    const displayTradeType = resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod, address);
+    const hasDelivery = displayTradeType === "택배" || displayTradeType === "직거래/택배";
+
+    return (
+      <Link
+        key={item.id}
+        to={`/mypage/history/sale/${item.marketNo}`}
+        className={styles.sale_card}
+      >
+        <div className={styles.sale_card_title}>[{getSaleStatusLabel(item.status)}] {item.title}</div>
+        <div className={styles.sale_card_meta}>{item.date ? new Date(item.date).toLocaleDateString("ko-KR") : "-"} · {getSaleStatusLabel(item.status)}</div>
+        <div>{Number(item.amount || 0).toLocaleString("ko-KR")}원</div>
+        <div>거래방법: {displayTradeType}</div>
+        {item.buyerId || item.buyerNickname ? (
+          <div className={styles.sale_card_buyer}>구매자: {item.buyerNickname || item.buyerId}</div>
+        ) : null}
+        {hasDelivery && (
+          <>
+            <div>배송 상태: {getShippingStatusLabel(displayShippingStatus)}</div>
+            <div>택배사: {getCourierLabel(displayCourierCode)}</div>
+            {displayInvoiceNumber ? <div>송장번호: {displayInvoiceNumber}</div> : null}
+          </>
+        )}
+      </Link>
+    );
+  };
+
   const changePage = (page) => {
     if (page < 1 || page > pageCount) return;
     setCurrentPage(page);
@@ -107,39 +151,33 @@ const SaleHistory = () => {
       <h3 className={styles.sale_title}>판매내역</h3>
       <div className={styles.sale_list}>
         {salesHistory.length === 0 && <p>등록된 판매내역이 없습니다.</p>}
-        {currentItems.map((item) => {
-          const marketNo = item.marketNo ?? item.id;
-          const tradeInfo = marketNo ? tradeInfoMap[marketNo] : null;
-          const displayShippingStatus = tradeInfo?.shippingStatus ?? item.shippingStatus;
-          const displayCourierCode = tradeInfo?.courierCode ?? item.courierCode;
-          const displayInvoiceNumber = tradeInfo?.invoiceNumber ?? item.invoiceNumber;
-          const address = item.orderInfo?.address || item.address || "";
-          const displayTradeType = resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod, address);
-          const hasDelivery = displayTradeType === "택배" || displayTradeType === "직거래/택배";
-
-          return (
-            <Link
-              key={item.id}
-              to={`/mypage/history/sale/${item.marketNo}`}
-              className={styles.sale_card}
-            >
-              <div className={styles.sale_card_title}>[{getSaleStatusLabel(item.status)}] {item.title}</div>
-              <div className={styles.sale_card_meta}>{item.date ? new Date(item.date).toLocaleDateString("ko-KR") : "-"} · {getSaleStatusLabel(item.status)}</div>
-              <div>{Number(item.amount || 0).toLocaleString("ko-KR")}원</div>
-              <div>거래방법: {displayTradeType}</div>
-              {item.buyerId || item.buyerNickname ? (
-                <div className={styles.sale_card_buyer}>구매자: {item.buyerNickname || item.buyerId}</div>
-              ) : null}
-              {hasDelivery && (
-                <>
-                  <div>배송 상태: {getShippingStatusLabel(displayShippingStatus)}</div>
-                  <div>택배사: {getCourierLabel(displayCourierCode)}</div>
-                  {displayInvoiceNumber ? <div>송장번호: {displayInvoiceNumber}</div> : null}
-                </>
+        {salesHistory.length > 0 && (
+          <>
+            <section className={styles.sale_status_section}>
+              <div className={styles.status_header}>
+                <h4>판매중</h4>
+                <span>{sellingItems.length}건</span>
+              </div>
+              {sellingItems.length > 0 ? (
+                <div className={styles.status_card_list}>{sellingItems.map(renderSaleCard)}</div>
+              ) : (
+                <p className={styles.empty_section}>판매중인 거래가 없습니다.</p>
               )}
-            </Link>
-          );
-        })}
+            </section>
+
+            <section className={styles.sale_status_section}>
+              <div className={styles.status_header}>
+                <h4>판매완료</h4>
+                <span>{completedItems.length}건</span>
+              </div>
+              {completedItems.length > 0 ? (
+                <div className={styles.status_card_list}>{completedItems.map(renderSaleCard)}</div>
+              ) : (
+                <p className={styles.empty_section}>판매완료 내역이 없습니다.</p>
+              )}
+            </section>
+          </>
+        )}
       </div>
       {pageCount > 1 && (
         <div className={styles.pagination}>
