@@ -41,6 +41,10 @@ public interface StoreBoardService {
 
     StoreTradeInfo getTradeInfoByMarketNoAndBuyerId(Long marketNo, String buyerId);
 
+    void updateTradeInfo(StoreTradeInfo tradeInfo);
+
+    void updateTradeInfoByMarketNo(StoreTradeInfo tradeInfo);
+
     List<StoreRating> getRatingsByTrade(Long tradeNo);
 
     List<StoreRating> getRatingsByMarket(Long marketNo);

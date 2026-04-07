@@ -448,7 +448,10 @@
       ZIP_CODE AS zipCode,
       ADDRESS AS address,
       ADDRESS_DETAIL AS addressDetail,
-      DELIVERY_MEMO AS deliveryMemo
+      DELIVERY_MEMO AS deliveryMemo,
+      INVOICE_NUMBER AS invoiceNumber,
+      COURIER_CODE AS courierCode,
+      SHIPPING_STATUS AS shippingStatus
     FROM STORE_BOARD_TRADEINFO_TBL
     WHERE MARKET_NO = #{marketNo}
   </select>
@@ -473,7 +476,10 @@
       ZIP_CODE AS zipCode,
       ADDRESS AS address,
       ADDRESS_DETAIL AS addressDetail,
-      DELIVERY_MEMO AS deliveryMemo
+      DELIVERY_MEMO AS deliveryMemo,
+      INVOICE_NUMBER AS invoiceNumber,
+      COURIER_CODE AS courierCode,
+      SHIPPING_STATUS AS shippingStatus
     FROM STORE_BOARD_TRADEINFO_TBL
     WHERE MARKET_NO = #{marketNo}
       AND BUYER_ID = #{buyerId}
@@ -485,6 +491,7 @@
       MARKET_NO,
       SELLER_ID,
       BUYER_ID,
+      CTPVSGG_ID,
       TRADE_PRICE,
       TRADE_STATUS,
       TRADE_TYPE,
@@ -497,13 +504,17 @@
       ZIP_CODE,
       ADDRESS,
       ADDRESS_DETAIL,
-      DELIVERY_MEMO
+      DELIVERY_MEMO,
+      INVOICE_NUMBER,
+      COURIER_CODE,
+      SHIPPING_STATUS
     )
     VALUES
     (
       #{marketNo},
       #{sellerId},
       #{buyerId},
+      #{ctpvsggId},
       #{tradePrice},
       #{tradeStatus},
       #{tradeType},
@@ -516,8 +527,20 @@
       #{zipCode},
       #{address},
       #{addressDetail},
-      #{deliveryMemo}
+      #{deliveryMemo},
+      #{invoiceNumber},
+      #{courierCode},
+      #{shippingStatus}
     )
   </insert>
+
+  <update id="updateTradeInfo" parameterType="kr.co.iei.store.model.vo.StoreTradeInfo">
+    UPDATE STORE_BOARD_TRADEINFO_TBL
+    SET TRADE_STATUS = #{tradeStatus},
+        INVOICE_NUMBER = #{invoiceNumber},
+        COURIER_CODE = #{courierCode},
+        SHIPPING_STATUS = #{shippingStatus}
+    WHERE TRADE_NO = #{tradeNo}
+  </update>
 
 </mapper>

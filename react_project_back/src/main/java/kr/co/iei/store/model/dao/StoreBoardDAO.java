@@ -59,6 +59,8 @@ public interface StoreBoardDAO {
 
     int insertTradeInfo(StoreTradeInfo tradeInfo);
 
+    int updateTradeInfo(StoreTradeInfo tradeInfo);
+
     int insertRating(StoreRating rating);
 
     int updateRating(StoreRating rating);

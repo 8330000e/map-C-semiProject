@@ -23,6 +23,9 @@ public class StoreTradeInfo {
     private String address;
     private String addressDetail;
     private String deliveryMemo;
+    private String invoiceNumber;
+    private Integer courierCode;
+    private Integer shippingStatus;
 
     public Long getTradeNo() {
         return tradeNo;
@@ -174,5 +177,29 @@ public class StoreTradeInfo {
 
     public void setDeliveryMemo(String deliveryMemo) {
         this.deliveryMemo = deliveryMemo;
+    }
+
+    public String getInvoiceNumber() {
+        return invoiceNumber;
+    }
+
+    public void setInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
+
+    public Integer getCourierCode() {
+        return courierCode;
+    }
+
+    public void setCourierCode(Integer courierCode) {
+        this.courierCode = courierCode;
+    }
+
+    public Integer getShippingStatus() {
+        return shippingStatus;
+    }
+
+    public void setShippingStatus(Integer shippingStatus) {
+        this.shippingStatus = shippingStatus;
     }
 }

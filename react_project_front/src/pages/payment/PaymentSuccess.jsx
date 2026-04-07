@@ -35,7 +35,7 @@ const saveTradeInfo = async (order) => {
 			buyerId: order.buyerId,
 			buyerName: order.buyerNickname || order.buyerId,
 			tradePrice: Number(order.amount || 0),
-			tradeStatus: 2,
+			tradeStatus: 1,
 			tradeType: order.tradeType,
 			receiverName: order.orderInfo?.receiverName,
 			buyerPhone: order.orderInfo?.phone,
@@ -43,6 +43,9 @@ const saveTradeInfo = async (order) => {
 			address: order.orderInfo?.address,
 			addressDetail: order.orderInfo?.addressDetail,
 			deliveryMemo: order.orderInfo?.deliveryMemo,
+			invoiceNumber: order.orderInfo?.invoiceNumber || null,
+			courierCode: order.orderInfo?.courierCode || null,
+			shippingStatus: 0,
 		});
 	} catch (error) {
 		console.error("거래 정보 저장 실패:", error);
