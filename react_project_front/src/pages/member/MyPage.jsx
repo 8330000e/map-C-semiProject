@@ -3,8 +3,8 @@
 import { Link, Route, Routes } from "react-router-dom";
 import UpdateMyInfo from "../../components/mypage/UpdateMyInfo";
 import MyBoard from "../../components/mypage/MyBoard.jsx";
-// import MyLikeBoard from "../../components/mypage/MyLikeBoard";
-// import MemberTip from "../../components/mypage/MemberTip";
+import MyLikeBoard from "../../components/mypage/MyLikeBoard";
+import MemberTip from "../../components/mypage/MemberTip";
 import LeaveMember from "../../components/mypage/LeaveMember";
 // import MyPoint from "../../components/mypage/MyPoint";
 import ChangePw from "../../components/mypage/ChangePw";
@@ -36,36 +36,38 @@ const Mypage = () => {
   }
 
   return (
-    <section className={styles.mypage_wrap}>
-      <h1>마이페이지</h1>
-      <div className={styles.mypage_content_wrap}>
-        <MyInformation />
-        <div className={styles.history_pane}>
-          <Routes>
-            <Route
-              index
-              element={
-                <p className={styles.emptyText}>
-                  보고 싶은 항목을 왼쪽에서 선택하세요.
-                </p>
-              }
-            />
-            <Route path="updateMyInfo" element={<UpdateMyInfo />} />
-            <Route path="myBoard" element={<MyBoard />} />
-            <Route path="changePw" element={<ChangePw />} />
-            {/* 
-            <Route path="myLikeBoard" element={<MyLikeBoard />} />
-            <Route path="tipScrap" element={<MemberTip />} />
+    memberId && (
+      <section className={styles.mypage_wrap}>
+        <h1>마이페이지</h1>
+        <div className={styles.mypage_content_wrap}>
+          <MyInformation />
+          <div className={styles.history_pane}>
+            <Routes>
+              <Route
+                index
+                element={
+                  <p className={styles.emptyText}>
+                    보고 싶은 항목을 왼쪽에서 선택하세요.
+                  </p>
+                }
+              />
+              <Route path="updateMyInfo" element={<UpdateMyInfo />} />
+              <Route path="myBoard" element={<MyBoard />} />
+              <Route path="changePw" element={<ChangePw />} />
+              <Route path="myLikeBoard" element={<MyLikeBoard />} />
+              <Route path="tipScrap" element={<MemberTip />} />
+              {/* 
             <Route path="myPoint" element={<MyPoint />} /> */}
-            <Route path="leaveMember" element={<LeaveMember />} />
-            <Route path="history/purchase" element={<PurchaseHistory />} />
-            <Route path="history/purchase/:id" element={<PurchaseDetail />} />
-            <Route path="history/sale" element={<SaleHistory />} />
-            <Route path="history/sale/:id" element={<SaleDetail />} />
-          </Routes>
+              <Route path="leaveMember" element={<LeaveMember />} />
+              <Route path="history/purchase" element={<PurchaseHistory />} />
+              <Route path="history/purchase/:id" element={<PurchaseDetail />} />
+              <Route path="history/sale" element={<SaleHistory />} />
+              <Route path="history/sale/:id" element={<SaleDetail />} />
+            </Routes>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    )
   );
 };
 

@@ -81,14 +81,14 @@ const Header = () => {
               >
                 로그아웃
               </button>
-              <button
+              {/* <button
                 onClick={() => setDrawer((prev) => !prev)}
                 className={`${styles.btn} ${styles.outline}`}
                 aria-expanded={drawer}
                 aria-controls="header-drawer"
               >
                 메뉴 열기
-              </button>
+              </button> */}
 
               <div
                 id="header-drawer"
