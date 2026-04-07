@@ -306,7 +306,7 @@ const SaleHistory = () => {
                   {deliveryWaitingPageCount > 1 && renderPagination(deliveryWaitingPage, deliveryWaitingPageCount, setDeliveryWaitingPage)}
                 </>
               ) : (
-                <p className={styles.empty_section}>배송대기 거래가 없습니다.</p>
+                <p className={styles.empty_section}>배송대기 상태 상품 없습니다.</p>
               )}
             </section>
 
