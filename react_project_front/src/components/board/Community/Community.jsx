@@ -10,6 +10,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatIcon from "@mui/icons-material/Chat";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Swal from "sweetalert2";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -48,14 +49,7 @@ const getImageUrl = (thumb) => {
   return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
-const Community = ({
-  addr,
-  lnglat,
-  ctpvsgg,
-  setAddr,
-  setLnglat,
-  setCtpvsgg,
-}) => {
+const Community = ({}) => {
   const { memberId, memberNickname } = useAuthStore();
   const isLogin = !!memberId;
   const mapDivRef = useRef(null);
@@ -107,6 +101,7 @@ const Community = ({
     ctpv: "",
     sgg: "",
   });
+
   const [selectAddr, setSelectAddr] = useState("선택된 위치 없음");
   const [selectLnglat, setSelectLnglat] = useState({
     lat: 0,
@@ -455,7 +450,7 @@ const Community = ({
         });
       }
     } catch (err) {
-      console.error(err);
+      console.error(err.response?.data);
 
       Swal.fire({
         icon: "error",
@@ -685,32 +680,7 @@ const Community = ({
                           {board.boardTitle}
                         </div>
 
-                        {memberId === board.writerId && (
-                          <div className={styles.boardActionBox}>
-                            <button
-                              type="button"
-                              className={styles.mapCommunityBtn}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                startEdit(board);
-                              }}
-                            >
-                              수정
-                            </button>
-
-                            <button
-                              type="button"
-                              className={`${styles.mapCommunityBtn} ${styles.deleteBtn}`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deleteBoard(board.boardNo);
-                              }}
-                            >
-                              삭제
-                            </button>
-                          </div>
-                        )}
-                        {(board.thumbnailUrl || board.boardThumb) && (
+                        {board.thumbnailUrl && (
                           <div className={styles.boardThumbnailBox}>
                             <img
                               src={getImageUrl(
@@ -803,7 +773,7 @@ const Community = ({
                     setAttachedFiles([]);
                   }}
                 >
-                  ‹
+                  <ArrowBackIosIcon />
                 </button>
                 <h3>{mode === "edit" ? "게시글 수정" : "게시글 작성"}</h3>
               </div>
@@ -872,7 +842,7 @@ const Community = ({
                   </p>
 
                   <p>
-                    submitWrite 아래는 핵심 요약 사항이며, 게시물 작성 전 반드시
+                    아래는 핵심 요약 사항이며, 게시물 작성 전 반드시
                     확인해주세요.
                   </p>
 

@@ -302,7 +302,38 @@
     <select id="selectTipBoard" resultType="Integer">
     	select board_no from tip_tbl where member_id=#{memberId}
     </select>
-	<select id="selectMarkers" resultType="Board">
-		select b.board_no, b.board_title, b.board_content, b.board_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg, count(l.board_no) as likeCount from board_tbl b join board_like_tbl l on (b.board_no = l.board_no) where l.board_no = l.board_no group by l.board_no, b.board_title, b.board_no, b.board_content, b.board_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg
+    
+    <select id="existsTodayBasicMission" resultType="int">
+    SELECT COUNT(*)
+    FROM MEMBER_MISSION_TBL
+    WHERE MEMBER_ID = #{memberId}
+      AND MISSION_NO = (
+          SELECT MISSION_NO
+          FROM MISSION_TBL
+          WHERE MISSION_TYPE = 'BASIC'
+      )
+      AND TRUNC(CREATED_AT) = TRUNC(SYSDATE)
 	</select>
+	
+	<insert id="insertBasicMission" parameterType="string">
+	    INSERT INTO MEMBER_MISSION_TBL (
+	        MEMBER_MISSION_NO,
+	        MEMBER_ID,
+	        MISSION_NO,
+	        CREATED_AT
+	    )
+	    VALUES (
+	        MEMBER_MISSION_SEQ.NEXTVAL,
+	        #{memberId},
+	        (SELECT MISSION_NO FROM MISSION_TBL WHERE MISSION_TYPE = 'BASIC'),
+	        SYSDATE
+	    )
+	</insert>
+	
+	<update id="addBasicMissionPoint" parameterType="string">
+	    UPDATE MEMBER_POINT_TBL
+	    SET TOTAL_POINT = TOTAL_POINT + 5
+	    WHERE MEMBER_ID = #{memberId}
+	</update>
+
 </mapper>

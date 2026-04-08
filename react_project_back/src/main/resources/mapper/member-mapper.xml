@@ -17,7 +17,16 @@
 	#{memberEmail}, #{memberThumb}, SYSDATE, 1,
 	0, 0)
 </insert>
+
+<!--회원가입 시 포인트 테이블 자동 생성 -->
+<insert id="insertMemberPoint" parameterType="string">
+    INSERT INTO MEMBER_POINT_TBL (MEMBER_ID, TOTAL_POINT)
+    VALUES (#{memberId}, 0)
+</insert>
+
+
 <!--김경건-->
+
 <select id="selectOneMember" resultType="member">
 	select * from member_tbl1
 	where member_id =#{memberId}

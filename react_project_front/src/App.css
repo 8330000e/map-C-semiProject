@@ -305,3 +305,47 @@ header {
   align-items: center;
   height: 100%;
 }
+/*랜덤 미션 패널*/
+.main_top {
+  position: relative;
+}
+
+.floating_mission_box {
+  position: absolute;
+  right: 16px;
+  bottom: -10px;
+  width: 138px;
+  height: 76px;
+  border-radius: 22px;
+  background-color: #4b5344;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.14);
+  cursor: pointer;
+  z-index: 30;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.floating_mission_box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.18);
+}
+
+.floating_mission_icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
