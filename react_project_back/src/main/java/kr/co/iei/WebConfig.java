@@ -30,16 +30,19 @@ public class WebConfig implements WebMvcConfigurer {//MVC 관련 설정
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		// 정적 파일 매핑을 운영체제 경로에 맞게 생성합니다.
+		// 파일 시스템 경로를 URL로 매핑합니다.
+		// file.root에 설정된 루트 폴더 아래의 실제 파일을 /member/thumb/**, /board/editor/** 경로로 제공.
 		registry
 			.addResourceHandler("/member/thumb/**")
 			.addResourceLocations(getFileUri(new File(root, "member")));
 
-		// 에디터 이미지 매핑도 동일한 파일 루트를 사용합니다.
+		// 게시글 에디터에서 업로드한 이미지도 같은 루트 아래 board/editor 폴더에서 제공합니다.
+		// 프론트에서는 /board/editor/{fileName} 형태의 URL로 접근합니다.
 		registry.addResourceHandler("/board/editor/**")
 			.addResourceLocations(getFileUri(new File(root, "board/editor")));
 
-		// 사용자 홈 디렉터리 upload 폴더를 /upload/**로 매핑합니다.
+		// 추가로 사용자 홈 디렉터리의 upload 폴더를 /upload/**로 제공하도록 설정합니다.
+		// 이 매핑은 file.root와는 별개로, 사용자 홈에 있는 legacy upload 파일을 서빙할 때 사용됩니다.
 		String uploadPath = System.getProperty("user.home") + File.separator + "upload" + File.separator;
 		registry.addResourceHandler("/upload/**")
 			.addResourceLocations(new File(uploadPath).toURI().toString());
