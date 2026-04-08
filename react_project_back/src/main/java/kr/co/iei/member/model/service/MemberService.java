@@ -34,6 +34,15 @@ public class MemberService {
 		member.setMemberPw(encPw);
 
 		int result = memberDao.insertMember(member);
+
+		if (result > 0) {
+			int pointResult = memberDao.insertMemberPoint(member.getMemberId());
+
+			if (pointResult == 0) {
+				throw new RuntimeException("회원 포인트 정보 생성 실패");
+			}
+		}
+
 		return result;
 	}
 

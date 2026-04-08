@@ -45,12 +45,13 @@ import PurchaseDetail from "./components/mypage/PurchaseDetail";
 import SaleDetail from "./components/mypage/SaleDetail";
 */
 import AdminPage from "./pages/admin/AdminPage";
-import ChangePw from "./components/mypage/ChangePw";
+
 import UpdateMyInfo from "./components/mypage/UpdateMyInfo";
 import Mypage from "./pages/member/MyPage";
 import Login from "./pages/member/LoginPage";
-import FindId from "./pages/member/FindId";
+import FindId from "./pages/member/findId";
 import FindPw from "./pages/member/FindPw";
+import ResetPw from "./pages/member/ResetPw";
 import MapCommunityPage from "./pages/MapCommunityPage/MapCommunityPage";
 import CampaignMainPage from "./pages/campaign/CampaignMainPage";
 import CampaignDetailPage from "./pages/campaign/CampaignDetailPage";
@@ -103,6 +104,7 @@ function App() {
           <Route path="/members/login" element={<Login />}></Route>
           <Route path="/members/find-id" element={<FindId />}></Route>
           <Route path="/members/find-pw" element={<FindPw />}></Route>
+          <Route path="/members/reset-pw" element={<ResetPw />}></Route>
           <Route path="/map-community" element={<MapCommunity />} />
           <Route path="/tree-grow" element={<TreeGrowMainPage />} />
           <Route path="/mission" element={<MissionListPage />} />

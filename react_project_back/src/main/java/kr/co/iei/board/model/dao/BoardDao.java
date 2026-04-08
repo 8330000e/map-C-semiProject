@@ -52,6 +52,8 @@ public interface BoardDao {
 	List<Integer> selectLikeBoard(String memberId);
 
 	List<Integer> selectTipBoard(String memberId);
+
+	List<Board> selectMarkers();
     
 
 }

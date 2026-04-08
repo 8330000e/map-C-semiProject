@@ -7,6 +7,7 @@ import HelpIcon from "@mui/icons-material/Help";
 import useAuthStore from "../store/useAuthStore";
 import Map from "../components/mainpage/Map";
 import Bestpostlist from "../components/mainpage/Bestpostlist";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import Swal from "sweetalert2";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
@@ -76,6 +77,11 @@ const Main = () => {
   const navigate = useNavigate();
   const { memberId } = useAuthStore();
   const isLogin = !!memberId;
+
+  //랜덤 미션 패널
+  const [todayRandomMission, setTodayRandomMission] = useState(null);
+  const [showMissionBubble, setShowMissionBubble] = useState(false);
+  const [randomMissionCompleted, setRandomMissionCompleted] = useState(false);
 
   useEffect(() => {
     axios
@@ -207,6 +213,73 @@ const Main = () => {
     };
   }, [visibleRealtimeComment]);
 
+  //랜덤 미션 패널
+  useEffect(() => {
+    if (!isLogin) return;
+
+    let timer;
+
+    const fetchRandomMissionBubble = async () => {
+      try {
+        // 1. 오늘의 랜덤 미션 조회
+        const missionRes = await axios.get(`${BACKSERVER}/missions/random`, {
+          params: { memberId },
+        });
+
+        if (!missionRes.data) return;
+
+        const mission = missionRes.data;
+        setTodayRandomMission(mission);
+
+        // 2. 오늘 랜덤 미션 완료 여부 조회
+        const completedRes = await axios.get(
+          `${BACKSERVER}/missions/random/today/completed`,
+          {
+            params: {
+              memberId,
+              missionNo: mission.missionNo,
+            },
+          },
+        );
+
+        const completed = completedRes.data.completed === true;
+        setRandomMissionCompleted(completed);
+
+        // 3. 이미 완료했으면 안 띄움
+        if (completed) {
+          setShowMissionBubble(false);
+          return;
+        }
+
+        // 4. 오늘 이미 한 번 띄운 적 있으면 안 띄움
+        const today = new Date().toISOString().slice(0, 10);
+        const missionPopupKey = `randomMissionPopup_${memberId}_${today}`;
+
+        if (localStorage.getItem(missionPopupKey) === "shown") {
+          setShowMissionBubble(false);
+          return;
+        }
+
+        // 5. 처음 보는 경우만 5초간 노출
+        setShowMissionBubble(true);
+        localStorage.setItem(missionPopupKey, "shown");
+
+        timer = setTimeout(() => {
+          setShowMissionBubble(false);
+        }, 3500);
+      } catch (err) {
+        console.error("오늘의 랜덤 미션 패널 처리 실패", err);
+      }
+    };
+
+    fetchRandomMissionBubble();
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [isLogin, memberId]);
+
+  //미션버튼 클릭-> 로그인으로 이동
   const handleMissionClick = async () => {
     if (!isLogin) {
       const result = await Swal.fire({
@@ -343,6 +416,15 @@ const Main = () => {
             {/*위치설명*/}
           </div>
         </div>
+        {/*랜덤 미션*/}
+        {showMissionBubble && todayRandomMission && !randomMissionCompleted && (
+          <div className="floating_mission_box" onClick={handleMissionClick}>
+            <div className="floating_mission_icon">
+              <ConfirmationNumberIcon />
+            </div>
+            <span>랜덤 미션</span>
+          </div>
+        )}
       </div>
 
       <div className="main_btm">

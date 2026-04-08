@@ -10,6 +10,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatIcon from "@mui/icons-material/Chat";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Swal from "sweetalert2";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -48,7 +49,14 @@ const getImageUrl = (thumb) => {
   return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
-const Community = () => {
+const Community = ({
+  addr,
+  lnglat,
+  ctpvsgg,
+  setAddr,
+  setLnglat,
+  setCtpvsgg,
+}) => {
   const { memberId, memberNickname } = useAuthStore();
   const isLogin = !!memberId;
   const mapDivRef = useRef(null);
@@ -132,9 +140,14 @@ const Community = () => {
               )
             : Promise.resolve({ data: false });
 
-          const [commentRes, likeRes] = await Promise.all([commentRequest, likeRequest]);
+          const [commentRes, likeRes] = await Promise.all([
+            commentRequest,
+            likeRequest,
+          ]);
 
-          const comments = Array.isArray(commentRes.data) ? commentRes.data : [];
+          const comments = Array.isArray(commentRes.data)
+            ? commentRes.data
+            : [];
           const isLiked = likeRes?.data === true;
 
           return {
@@ -443,7 +456,7 @@ const Community = () => {
         });
       }
     } catch (err) {
-      console.error(err);
+      console.error(err.response?.data);
 
       Swal.fire({
         icon: "error",
@@ -590,7 +603,27 @@ const Community = () => {
                     <button
                       type="button"
                       className={`${styles.mapCommunityBtn} ${styles.writeBtn}`}
-                      onClick={() => setMode("write")}
+                      onClick={() => {
+                        setMode("write");
+                        setAddr("선택된 위치 없음");
+                        setSelectLnglat({
+                          lat: 0,
+                          lng: 0,
+                        });
+                        setCtpvsgg({
+                          ctpv: "",
+                          sgg: "",
+                        });
+                        setSelectAddr("");
+                        setSelectLnglat({
+                          lat: 0,
+                          lng: 0,
+                        });
+                        setSelectCtpvSgg({
+                          ctpv: "",
+                          sgg: "",
+                        });
+                      }}
                     >
                       게시글 작성
                     </button>
@@ -653,32 +686,7 @@ const Community = () => {
                           {board.boardTitle}
                         </div>
 
-                        {memberId === board.writerId && (
-                          <div className={styles.boardActionBox}>
-                            <button
-                              type="button"
-                              className={styles.mapCommunityBtn}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                startEdit(board);
-                              }}
-                            >
-                              수정
-                            </button>
-
-                            <button
-                              type="button"
-                              className={`${styles.mapCommunityBtn} ${styles.deleteBtn}`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deleteBoard(board.boardNo);
-                              }}
-                            >
-                              삭제
-                            </button>
-                          </div>
-                        )}
-                        {(board.thumbnailUrl || board.boardThumb) && (
+                        {board.thumbnailUrl && (
                           <div className={styles.boardThumbnailBox}>
                             <img
                               src={getImageUrl(
@@ -722,12 +730,19 @@ const Community = () => {
                               setBoardList((prev) =>
                                 prev.map((item) =>
                                   item.boardNo === boardNo
-                                    ? { ...item, likeCount: newLikeCount, liked }
+                                    ? {
+                                        ...item,
+                                        likeCount: newLikeCount,
+                                        liked,
+                                      }
                                     : item,
                                 ),
                               );
                             }}
-                            onCommentCountChange={(boardNo, newCommentCount) => {
+                            onCommentCountChange={(
+                              boardNo,
+                              newCommentCount,
+                            ) => {
                               // 상세보기에서 댓글이 추가/삭제되면
                               // 목록 상단의 댓글 수를 동기화합니다.
                               setBoardList((prev) =>
@@ -764,7 +779,7 @@ const Community = () => {
                     setAttachedFiles([]);
                   }}
                 >
-                  ‹
+                  <ArrowBackIosIcon />
                 </button>
                 <h3>{mode === "edit" ? "게시글 수정" : "게시글 작성"}</h3>
               </div>
@@ -798,13 +813,15 @@ const Community = () => {
 
                 <div className={styles.boardWriteGroup}>
                   <label>장소</label>
-                  {/* 장소 기능 들어갈 자리*/}
                   <div className={styles.map_div}>
                     <div className={styles.spot_box}>
                       <p>선택된 위치</p>
                       <p>{addr}</p>
                     </div>
-                    <div className={styles.spotSelectBtn} onClick={insertSpot}>
+                    <div
+                      className={`${styles.spotSelectBtn} ${addr === selectAddr ? styles.selectedBtn : ""}`}
+                      onClick={insertSpot}
+                    >
                       {addr === selectAddr ? "선택완료" : "장소선택"}
                     </div>
                     <div className={styles.lnglat}>
@@ -831,7 +848,7 @@ const Community = () => {
                   </p>
 
                   <p>
-                    submitWrite 아래는 핵심 요약 사항이며, 게시물 작성 전 반드시
+                    아래는 핵심 요약 사항이며, 게시물 작성 전 반드시
                     확인해주세요.
                   </p>
 
