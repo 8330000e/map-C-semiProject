@@ -19,7 +19,9 @@ public class CampaignService {
 	}
 
 	public Campaign selectOneCampaign(Integer campaignNo) {
+		System.out.println(campaignNo);
 		Campaign result = campaignDao.selectOneCampaign(campaignNo);
+		System.out.println(result.getMemberCount());
 		return result;
 	}
 }

@@ -9,27 +9,36 @@ const CampaignDetailPage = () => {
   const { memberId } = useAuthStore();
   const params = useParams();
   const campaignNo = params.campaignNo;
+  const [readComplete, setReadComplete] = useState(false);
   const [campaignDetail, setCampaignDetail] = useState();
+
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNo}`)
       .then((res) => {
         console.log(res);
         setCampaignDetail({ ...res.data });
-        console.log(campaignDetail);
+        setReadComplete(true);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
   return (
-    memberId && (
+    memberId &&
+    readComplete && (
       <div className={styles.campdetailpage_wrap}>
         <div className={styles.campdetailpage_title}>
           <h2>캠페인 상세보기</h2>
         </div>
         <div className={styles.campdetailpage_content_wrap}>
-          <div></div>
+          <div>{campaignNo}</div>
+          <div>{campaignDetail.campaignTitle}</div>
+          <div>{campaignDetail.campaignExplanation}</div>
+          <div>{campaignDetail.campaignStatus}</div>
+          <div>{campaignDetail.campaignGoalMember}</div>
+          <div>{campaignDetail.campaignStartDate}</div>
+          <div>{campaignDetail.memberCount}</div>
         </div>
       </div>
     )

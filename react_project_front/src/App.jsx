@@ -54,6 +54,7 @@ import FindPw from "./pages/member/FindPw";
 import MapCommunityPage from "./pages/MapCommunityPage/MapCommunityPage";
 import CampaignMainPage from "./pages/campaign/CampaignMainPage";
 import CampaignDetailPage from "./pages/campaign/CampaignDetailPage";
+import CreateCampaignPage from "./pages/campaign/CreateCampaignPage";
 
 function App() {
   const location = useLocation();
@@ -110,6 +111,10 @@ function App() {
           <Route
             path="/campaign/detail/:campaignNo"
             element={<CampaignDetailPage />}
+          ></Route>
+          <Route
+            path="/campaign/create"
+            element={<CreateCampaignPage />}
           ></Route>
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

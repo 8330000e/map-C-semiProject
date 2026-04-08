@@ -15,7 +15,14 @@
 			   </if>
 	</select>
 	<select id="selectOneCampaign" resultType="camp">
-		select * from create_campaign_tbl 
-		where campaign_no = #{campaignNo}
+		select 
+			   campaign_title,
+			   campaign_status,
+			   campaign_goal_member,
+			   campaign_start_date,
+			   campaign_expire_date,
+               (select count(*) from campaign_member_tbl where campaign_no=#{campaignNo})as member_count
+               from create_campaign_tbl ct
+               where campaign_no = #{campaignNo} 
 	</select>
 </mapper>

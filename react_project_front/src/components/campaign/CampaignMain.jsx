@@ -84,7 +84,13 @@ const CampaignMain = () => {
           );
         })}
         <div className={styles.campaignmain_btn_wrap}>
-          <Button>챌린지 생성하기</Button>
+          <Button
+            onClick={() => {
+              navigate("/campaign/create");
+            }}
+          >
+            챌린지 생성하기
+          </Button>
         </div>
       </div>
     </div>

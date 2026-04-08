@@ -18,4 +18,5 @@ public class Campaign {
 	private String campaignExpireDate;
 	private String campaignStartDate;
 	private String memberId;
+	private Integer memberCount;
 }

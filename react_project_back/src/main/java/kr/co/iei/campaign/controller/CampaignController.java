@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,9 +37,14 @@ public class CampaignController {
 		List<Campaign> list = campaignService.selectAllCampaign(campaignTitle);
 		return ResponseEntity.ok(list);
 	}
-	@GetMapping(value="{campaignNo}")
+	@GetMapping(value="/{campaignNo}")
 	public ResponseEntity<?> selectOneCampaign(@PathVariable Integer campaignNo){
 		Campaign result = campaignService.selectOneCampaign(campaignNo);
 		return ResponseEntity.ok(result);
 	}
+//	@PostMapping(value="/{memberId}")
+//	public ResponseEntity<?> createCampaign(@PathVariable String memberId,@RequestBody Campaign camp){
+//		System.out.println(camp);
+//		return ResponseEntity.ok(null);
+//	}
 }
