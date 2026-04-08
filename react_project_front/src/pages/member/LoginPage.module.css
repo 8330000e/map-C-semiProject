@@ -17,6 +17,14 @@
   border: 3px solid lightgreen;
 }
 
+/*로그인 제목 설정*/
+.page_title {
+  padding: 10px;
+  margin-top: -20px;
+  margin-bottom: 10px;
+}
+
+/*로그인 이미지 설정*/
 .login_img {
   position: absolute; /* 절대 위치 설정 */
   bottom: 0; /* 바닥에 밀착 */
