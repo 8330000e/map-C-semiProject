@@ -9,6 +9,8 @@ import kr.co.iei.campaign.model.vo.Campaign;
 @Mapper
 public interface CampaignDao {
 
-	List<Campaign> selectAllCampaign();
+	List<Campaign> selectAllCampaign(String campaignTitle);
+
+	Campaign selectOneCampaign(Integer campaignNo);
 
 }

@@ -93,6 +93,7 @@ const LeaveMember = () => {
             <label htmlFor="inputPw">기존 비밀번호 입력</label>
             <Input
               id="inputPw"
+              autocomplete="current-password"
               type="password"
               value={lastInput}
               onChange={(e) => {

@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.iei.campaign.model.service.CampaignService;
@@ -29,8 +31,13 @@ public class CampaignController {
 	
 	
 	@GetMapping
-	public ResponseEntity<?> selectAllCampaign(){
-		List<Campaign> list = campaignService.selectAllCampaign();
+	public ResponseEntity<?> selectAllCampaign(@RequestParam(defaultValue="") String campaignTitle){
+		List<Campaign> list = campaignService.selectAllCampaign(campaignTitle);
 		return ResponseEntity.ok(list);
+	}
+	@GetMapping(value="{campaignNo}")
+	public ResponseEntity<?> selectOneCampaign(@PathVariable Integer campaignNo){
+		Campaign result = campaignService.selectOneCampaign(campaignNo);
+		return ResponseEntity.ok(result);
 	}
 }

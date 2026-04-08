@@ -6,9 +6,16 @@
 			   campaign_title,
 			   campaign_status,
 			   campaign_goal_member,
-			   campaign_start_date,
-			   campaign_expire_date
+			   to_char(campaign_start_date,'yyyy-mm-dd') as campaign_start_date,
+			   to_char(campaign_expire_date,'yyyy-mm-dd') as campaign_expire_date
 			   from create_campaign_tbl
-			   where campaign_status=2
+			   where campaign_status in (2,3,4)
+			   <if test="campaignTitle != null and campaignTitle != ''">
+			   		and campaign_title like '%' || #{campaignTitle} || '%'
+			   </if>
+	</select>
+	<select id="selectOneCampaign" resultType="camp">
+		select * from create_campaign_tbl 
+		where campaign_no = #{campaignNo}
 	</select>
 </mapper>

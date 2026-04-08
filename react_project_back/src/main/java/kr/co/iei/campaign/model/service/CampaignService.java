@@ -13,8 +13,13 @@ public class CampaignService {
 	@Autowired
 	private CampaignDao campaignDao;
 
-	public List<Campaign> selectAllCampaign() {
-		List<Campaign> list = campaignDao.selectAllCampaign();
+	public List<Campaign> selectAllCampaign(String campaignTitle) {
+		List<Campaign> list = campaignDao.selectAllCampaign(campaignTitle);
 		return list;
+	}
+
+	public Campaign selectOneCampaign(Integer campaignNo) {
+		Campaign result = campaignDao.selectOneCampaign(campaignNo);
+		return result;
 	}
 }
