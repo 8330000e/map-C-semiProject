@@ -42,9 +42,9 @@ public class CampaignController {
 		Campaign result = campaignService.selectOneCampaign(campaignNo);
 		return ResponseEntity.ok(result);
 	}
-//	@PostMapping(value="/{memberId}")
-//	public ResponseEntity<?> createCampaign(@PathVariable String memberId,@RequestBody Campaign camp){
-//		System.out.println(camp);
-//		return ResponseEntity.ok(null);
-//	}
+	@PostMapping(value="/{memberId}")
+	public ResponseEntity<?> createCampaign(@PathVariable String memberId,@RequestBody Campaign camp){
+		System.out.println(camp);
+		return ResponseEntity.ok(null);
+	}
 }

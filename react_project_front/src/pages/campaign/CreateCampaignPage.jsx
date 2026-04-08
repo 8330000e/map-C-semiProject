@@ -16,29 +16,29 @@ const CreateCampaignPage = () => {
     campaignTitle: "",
     campaignExplanation: "",
   });
-  //   const createChallenge = () => {
-  //     console.log(sendInfo);
-  //     console.log(memberId);
-  //     if (
-  //       (sendInfo !== null,
-  //       sendInfo.campaignTitle !== "",
-  //       sendInfo.campaignExpireDate !== "",
-  //       sendInfo.campaignExplanation !== "",
-  //       sendInfo.campaignGoalMember !== "")
-  //     ) {
-  //       axios
-  //         .post(
-  //           `${import.meta.env.VITEBACKSERVER}/campaigns/${memberId}`,
-  //           sendInfo,
-  //         )
-  //         .then((res) => {
-  //           console.log(res.data);
-  //         })
-  //         .catch((err) => {
-  //           console.log(err);
-  //         });
-  //     }
-  //   };
+  const createChallenge = () => {
+    console.log(sendInfo);
+    console.log(memberId);
+    if (
+      (sendInfo !== null,
+      sendInfo.campaignTitle !== "",
+      sendInfo.campaignExpireDate !== "",
+      sendInfo.campaignExplanation !== "",
+      sendInfo.campaignGoalMember !== "")
+    ) {
+      axios
+        .post(
+          `${import.meta.env.VITEBACKSERVER}/campaigns/${memberId}`,
+          sendInfo,
+        )
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
   return (
     memberId && (
       <div className={styles.createcampaign_wrap}>
