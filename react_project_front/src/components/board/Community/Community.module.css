@@ -301,6 +301,19 @@
   border-color: #a4b58c;
 }
 
+.smallButton svg {
+  color: #3d4a38;
+}
+
+.activeButton {
+  border-color: #7fa45b;
+  background-color: #edf5e6;
+}
+
+.activeButton svg {
+  color: #d63d3d;
+}
+
 .reportButton {
   border-color: #e4b6b6;
   color: #a13131;

@@ -1,14 +1,13 @@
 .treeGrowMainPage {
   width: 100%;
-  padding: 24px 0 36px;
+  padding: 10px 20px;
   box-sizing: border-box;
 }
 
 .topSection {
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto 18px;
-  padding: 0 24px;
+  width: 1200px;
+  margin: 0 auto 12px;
+  padding: 0;
   box-sizing: border-box;
 
   display: flex;
@@ -65,6 +64,7 @@
   font-weight: 600;
   color: #2e342b;
 }
+
 .noticeViewport {
   flex: 1;
   overflow: hidden;
@@ -88,29 +88,24 @@
 }
 
 .container {
-  width: 100%;
-  max-width: 1280px;
+  width: 1200px;
   margin: 0 auto;
-  padding: 0 24px;
-  box-sizing: border-box;
-
-  display: grid;
-  grid-template-columns: minmax(300px, 1fr) minmax(360px, 1fr);
-  gap: 20px;
-  align-items: start;
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
 }
 
 .left,
 .right {
-  width: 100%;
+  flex: 1 1 0;
   min-width: 0;
 }
 
 .mapBox {
   position: relative;
   width: 100%;
-  height: clamp(500px, 60vw, 700px);
-  border-radius: 24px;
+  height: 700px;
+  border-radius: 20px;
   overflow: hidden;
   background: linear-gradient(180deg, #dde7f5 0%, #dbe8e3 100%);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
@@ -122,6 +117,7 @@
   font-size: 22px;
   font-weight: 700;
   box-sizing: border-box;
+  border: 1.3px solid #464d3e;
 }
 
 .mapBackground {
@@ -157,94 +153,4 @@
 .activePin {
   background-color: #9cc63b;
   color: #111;
-}
-
-@media (max-width: 1240px) {
-  .treeGrowMainPage {
-    padding: 20px 0 32px;
-  }
-
-  .topSection {
-    padding: 0 20px;
-  }
-
-  .container {
-    padding: 0 20px;
-    grid-template-columns: minmax(280px, 1fr) minmax(320px, 1fr);
-    gap: 16px;
-  }
-
-  .mapBox {
-    height: clamp(460px, 56vw, 620px);
-  }
-}
-
-@media (max-width: 1100px) {
-  .container {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-
-  .mapBox {
-    height: 420px;
-  }
-}
-
-@media (max-width: 768px) {
-  .treeGrowMainPage {
-    padding: 16px 0 24px;
-  }
-
-  .topSection {
-    padding: 0 16px;
-    margin-bottom: 14px;
-    flex-wrap: wrap;
-  }
-
-  .backButton {
-    font-size: 13px;
-    padding: 7px 12px;
-  }
-
-  .noticeBox {
-    min-height: 46px;
-    padding: 0 12px;
-    gap: 8px;
-  }
-
-  .noticeLabel {
-    font-size: 12px;
-    padding: 5px 8px;
-  }
-
-  .noticeText {
-    font-size: 13px;
-  }
-
-  .container {
-    padding: 0 16px;
-    gap: 14px;
-  }
-
-  .mapBox {
-    height: 320px;
-    border-radius: 22px;
-    font-size: 18px;
-  }
-}
-
-@media (max-width: 480px) {
-  .topSection {
-    padding: 0 12px;
-  }
-
-  .container {
-    padding: 0 12px;
-  }
-
-  .mapBox {
-    height: 260px;
-    border-radius: 18px;
-    font-size: 16px;
-  }
 }
