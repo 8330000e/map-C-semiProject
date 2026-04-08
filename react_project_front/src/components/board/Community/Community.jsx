@@ -49,14 +49,7 @@ const getImageUrl = (thumb) => {
   return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
-const Community = ({
-  addr,
-  lnglat,
-  ctpvsgg,
-  setAddr,
-  setLnglat,
-  setCtpvsgg,
-}) => {
+const Community = ({}) => {
   const { memberId, memberNickname } = useAuthStore();
   const isLogin = !!memberId;
   const mapDivRef = useRef(null);
