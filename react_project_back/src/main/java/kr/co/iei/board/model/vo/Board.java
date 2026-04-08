@@ -53,11 +53,9 @@ public class Board {
 		public void setBoardThumb(String boardThumb)
 		{ this.boardThumb = boardThumb; }
 		*/
-	    
-	    /*이거는 마이페이지 작업을 위한 거니 신경 안 쓰셔도 됩니다.*/
-	    private String searchBoard;
-	    private int filter;
-}
 
-	
+    /*이거는 마이페이지 작업을 위한 거니 신경 안 쓰셔도 됩니다.*/
+    private String searchBoard;
+    private Integer filter;
+}
 

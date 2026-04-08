@@ -44,20 +44,16 @@ public class Membercontroller {
 
 	@Autowired
 	private MemberService memberService;
-	
-	
 
 	@Autowired
 	private EmailSender emailSender;
-
-	// 회원가입 로직
 
 	private FileUtils fileUtil;
 
 	@Value("${file.root}")
 	private String root;
 
-	// 회원가입
+	// 회원가입(김경건)
 
 	@PostMapping
 	public ResponseEntity<?> joinMember(@RequestBody Member member) {
@@ -65,7 +61,7 @@ public class Membercontroller {
 		return ResponseEntity.ok(result);
 	}
 
-	// 아이디 중복 체크 설정
+	// 아이디 중복 체크 설정 (김경건)
 	@GetMapping(value = "/exists")
 	public ResponseEntity<?> dupCheckId(@RequestParam String memberId) {
 		Member m = memberService.selectOneMember(memberId);
@@ -76,6 +72,7 @@ public class Membercontroller {
 		return ResponseEntity.ok(m == null);
 	}
 
+	// 이메일 검증 로직 (김경건)
 	@PostMapping(value = "/email-verification")
 	public ResponseEntity<?> sendMail(@RequestBody Member m) {
 
@@ -108,7 +105,7 @@ public class Membercontroller {
 		return ResponseEntity.ok(authCode);
 	}
 
-	// 로그인 로직
+	// 로그인 로직(김경건)
 	@PostMapping(value = "/login")
 	public ResponseEntity<?> loginMember(@RequestBody Member member) {
 
@@ -125,7 +122,7 @@ public class Membercontroller {
 
 	}
 
-	// 아이디 찾기 설정
+	// 아이디 찾기 설정(김경건)
 	@PostMapping(value = "/find-id")
 	public ResponseEntity<?> findId(@RequestBody Member member) {
 		// 아이디 하나로 회원 전체 정보를 가져오는게 아니기떄문에
@@ -154,7 +151,7 @@ public class Membercontroller {
 		}
 	}
 
-	// 비밀번호 찾기 로직
+	// 비밀번호 찾기 로직(김경건)
 	@PostMapping(value = "/find-pw")
 	public ResponseEntity<?> findPw(@RequestBody Member member) {
 		// JSON에서 자동으로 매핑된 memberId와 memberEmail 가져오기
@@ -176,6 +173,7 @@ public class Membercontroller {
 
 			// 링크 방식 (프런트 reset 페이지로 이동)
 			String content = "<h3>비밀번호를 재설정하려면 아래 링크를 클릭하세요</h3>"
+					//아래 링크를 클릭하면 해당 페이지로 이동
 					+ "<a href='http://localhost:5173/members/reset-pw?memberId=" + member.getMemberId()
 					+ "'>비밀번호 재설정하기</a>";
 			// 이메일 전송
@@ -190,9 +188,21 @@ public class Membercontroller {
 			return ResponseEntity.status(404).body("아이디와 이메일이 일치하지 않습니다.");
 		}
 
-
-		
 	}
+
+	//비밀번호 변경창 설정 로직(로그인 시 비밀번호 찾기 버튼을 눌렀을 때 실행되는 로직)
+	//지원씨가 작성해 논 updatePw를 사용해서 memberId로 비밀번호 변경 요청하기 
+	@PostMapping (value = "reset-pw")
+	public ResponseEntity<?> resetPw(@RequestBody Member member ){
+		int result = memberService.resetPw(member);
+		
+		return ResponseEntity.ok(result);
+	}
+	
+	
+	////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////
 
 	// 회원정보 수정
 	@PatchMapping(value = "/{memberId}")
@@ -224,12 +234,9 @@ public class Membercontroller {
 		return ResponseEntity.ok(result);
 	}
 
-
-	
-	
-	//썸네일 변경
-	@PatchMapping(value="/{memberId}/thumb")
-	public ResponseEntity<?> updateThumb(@PathVariable String memberId,@ModelAttribute MultipartFile file){
+	// 썸네일 변경
+	@PatchMapping(value = "/{memberId}/thumb")
+	public ResponseEntity<?> updateThumb(@PathVariable String memberId, @ModelAttribute MultipartFile file) {
 		String savepath = root + "member/";
 		String memberThumb = fileUtil.upload(savepath, file);
 		Member mem = new Member();
@@ -238,38 +245,29 @@ public class Membercontroller {
 		int result = memberService.updateMemberThumb(mem);
 		return ResponseEntity.ok(memberThumb);
 	}
-	
-	
-	
+
 	@GetMapping
 	public ResponseEntity<?> selectMemberList() {
 		List<Member> memberList = memberService.selectMemberList();
 		return ResponseEntity.ok(memberList);
 	}
-	
-	
-	
-	
-	
-	
-	
-/*
-		Member mem = new Member();
-		mem.setMemberId(memberId);
-		mem.setMemberThumb(memberThumb);
 
-		int result = memberService.updateMemberThumb(mem);
-		return ResponseEntity.ok(memberThumb);
-	}
-	*/
-	//포인트 조회
+	/*
+	 * Member mem = new Member(); mem.setMemberId(memberId);
+	 * mem.setMemberThumb(memberThumb);
+	 * 
+	 * int result = memberService.updateMemberThumb(mem); return
+	 * ResponseEntity.ok(memberThumb); }
+	 */
+	// 포인트 조회
 	@GetMapping(value = "/{memberId}/point")
 	public ResponseEntity<?> selectMemberPoint(@PathVariable String memberId) {
 		int totalPoint = memberService.selectMemberPoint(memberId);
 		return ResponseEntity.ok(totalPoint);
 	}
-	@PatchMapping(value="/{memberId}/leave")
-	public ResponseEntity<?> leaveMember(@PathVariable String memberId){
+
+	@PatchMapping(value = "/{memberId}/leave")
+	public ResponseEntity<?> leaveMember(@PathVariable String memberId) {
 		int result = memberService.leaveMember(memberId);
 		return ResponseEntity.ok(result);
 	}

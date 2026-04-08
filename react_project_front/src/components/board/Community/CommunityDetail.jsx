@@ -9,6 +9,8 @@ import FlagIcon from "@mui/icons-material/Flag";
 import styles from "./Community.module.css";
 import Swal from "sweetalert2";
 
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+
 const formatTime = (rawDate) => {
   if (!rawDate) return "방금 전";
   const date = new Date(rawDate);
@@ -20,6 +22,41 @@ const formatTime = (rawDate) => {
   if (hour < 24) return `${hour}시간 전`;
   const day = Math.floor(hour / 24);
   return `${day}일 전`;
+};
+
+const getImageUrl = (thumb) => {
+  if (!thumb) return null;
+  if (typeof thumb !== "string") return null;
+  let trimmed = thumb.trim();
+  if (!trimmed) return null;
+
+  trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
+  if (driveMatch) {
+    const boardIndex = trimmed.indexOf("/board/editor/");
+    if (boardIndex !== -1) {
+      const suffix = trimmed.substring(boardIndex);
+      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
+    }
+    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
+  }
+
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
+  return `${BACKSERVER}/board/editor/${trimmed}`;
+};
+
+const hasImageInContent = (html) => {
+  if (!html) return false;
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  return doc.querySelector("img") !== null;
 };
 
 const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
@@ -63,13 +100,38 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
   }, [board.boardNo, board.likeCount, memberId]);
 
   useEffect(() => {
+    if (!board?.boardNo) {
+      setComments([]);
+      return;
+    }
+
+    axios
+      .get(`${BACKSERVER}/boards/${board.boardNo}/comments`)
+      .then((res) => {
+        const loaded = Array.isArray(res.data) ? res.data : [];
+        setComments(
+          loaded.map((item) => ({
+            ...item,
+            id: item.commentNo,
+            parentId: item.parentCommentNo,
+            depth: item.commentDepth,
+            isPrivate: item.isSecret,
+            content: item.content,
+            memberNickname: item.memberNickname || item.memberId,
+          })),
+        );
+      })
+      .catch((err) => console.error("댓글 목록 조회 실패", err));
+  }, [board.boardNo]);
+
+  useEffect(() => {
     commentsEndRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "nearest",
     });
   }, [comments]);
 
-  const handleAddComment = () => {
+  const handleAddComment = async () => {
     if (!memberId) {
       Swal.fire({ icon: "warning", title: "로그인 후 댓글 작성 가능합니다." });
       return;
@@ -81,21 +143,34 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
       return;
     }
 
-    const nextComment = {
-      id: Date.now(),
-      memberId,
-      memberNickname: memberId,
-      content: text,
-      isPrivate: newPrivate ? 1 : 0,
-      edited: false,
-      createdAt: new Date().toISOString(),
-      depth: replyTarget ? (replyTarget.depth || 0) + 1 : 0,
-      parentId: replyTarget ? replyTarget.id : null,
-    };
-    setComments((prev) => [...prev, nextComment]);
-    setNewComment("");
-    setNewPrivate(false);
-    setReplyTarget(null);
+    try {
+      const payload = {
+        memberId,
+        memberNickname: memberId,
+        content: text,
+        isSecret: newPrivate ? 1 : 0,
+        parentCommentNo: replyTarget ? replyTarget.id : null,
+      };
+
+      const res = await axios.post(`${BACKSERVER}/boards/${board.boardNo}/comments`, payload);
+      const saved = res.data;
+      const addedComment = {
+        ...saved,
+        id: saved.commentNo,
+        parentId: saved.parentCommentNo,
+        depth: saved.commentDepth,
+        isPrivate: saved.isSecret,
+        content: saved.content,
+      };
+
+      setComments((prev) => [...prev, addedComment]);
+      setNewComment("");
+      setNewPrivate(false);
+      setReplyTarget(null);
+    } catch (err) {
+      console.error("댓글 등록 실패", err);
+      Swal.fire({ icon: "error", title: "댓글 등록 실패", text: "댓글 등록 중 오류가 발생했습니다." });
+    }
   };
 
   const toggleLike = async () => {
@@ -181,31 +256,81 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
     setEditPrivate(comment.isPrivate === 1);
   };
 
-  const handleSaveEdit = () => {
+  // 댓글 수정 처리
+  // 이전에는 수정 버튼 클릭 시 바로 내용을 저장하는 흐름만 있었을 수 있습니다.
+  // 지금은 수정 내용을 서버에 업데이트하고, 로컬 댓글 목록도 즉시 반영합니다.
+  const handleSaveEdit = async () => {
     if (!editTarget) return;
     const text = editText.trim();
     if (!text) return;
-    setComments((prev) =>
-      prev.map((item) =>
-        item.id === editTarget.id
-          ? {
-              ...item,
-              content: text,
-              isPrivate: editPrivate ? 1 : 0,
-              edited: true,
-            }
-          : item,
-      ),
-    );
-    setEditTarget(null);
-    setEditText("");
-    setEditPrivate(false);
+
+    try {
+      await axios.put(`${BACKSERVER}/boards/${board.boardNo}/comments/${editTarget.id}`, {
+        memberId,
+        content: text,
+        isSecret: editPrivate ? 1 : 0,
+      });
+
+      setComments((prev) =>
+        prev.map((item) =>
+          item.id === editTarget.id
+            ? {
+                ...item,
+                content: text,
+                isPrivate: editPrivate ? 1 : 0,
+                edited: true,
+              }
+            : item,
+        ),
+      );
+      setEditTarget(null);
+      setEditText("");
+      setEditPrivate(false);
+    } catch (err) {
+      console.error("댓글 수정 실패", err);
+      Swal.fire({ icon: "error", title: "댓글 수정 실패", text: "댓글 수정 중 오류가 발생했습니다." });
+    }
   };
 
-  const handleDeleteComment = (comment) => {
+  // 댓글 삭제 처리
+  // 이전에는 삭제가 바로 실행되거나 버튼 순서가 뒤집혔을 수 있으므로,
+  // 확인창을 띄워 사용자에게 삭제 의사를 다시 묻고, 순서를 "삭제 / 취소"로 고정합니다.
+  const handleDeleteComment = async (comment) => {
     if (memberId !== comment.memberId) return;
-    setComments((prev) => prev.filter((item) => item.id !== comment.id));
+
+    const result = await Swal.fire({
+      icon: "warning",
+      title: "댓글을 삭제하시겠습니까?",
+      text: "삭제된 댓글은 복구할 수 없습니다.",
+      showCancelButton: true,
+      confirmButtonText: "삭제",
+      cancelButtonText: "취소",
+      confirmButtonColor: "#d33",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await axios.delete(`${BACKSERVER}/boards/${board.boardNo}/comments/${comment.id}`, {
+        params: { memberId },
+      });
+      setComments((prev) => prev.filter((item) => item.id !== comment.id));
+      Swal.fire({ icon: "success", title: "댓글이 삭제되었습니다." });
+    } catch (err) {
+      console.error("댓글 삭제 실패", err);
+      Swal.fire({ icon: "error", title: "댓글 삭제 실패", text: "댓글 삭제 중 오류가 발생했습니다." });
+    }
   };
+
+  // 비공개 댓글 보기 권한 판별을 위해 댓글을 ID 맵으로 보관합니다.
+  // 이 맵은 대댓글이 비공개일 때 부모 댓글 작성자를 확인하는 용도로 사용됩니다.
+  const commentMap = useMemo(() => {
+    const map = {};
+    comments.forEach((comment) => {
+      map[comment.id] = comment;
+    });
+    return map;
+  }, [comments]);
 
   const commentTree = useMemo(() => {
     const root = [];
@@ -226,12 +351,24 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
     return root;
   }, [comments]);
 
+  // 비공개 댓글 접근 권한 조건
+  // 댓글 작성자, 게시글 작성자, 해당 비공개 댓글의 부모 댓글 작성자만 내용을 볼 수 있습니다.
+  const canViewSecretComment = (comment) => {
+    if (comment.isPrivate !== 1) return true;
+    const isOwn = comment.memberId === memberId;
+    const isBoardAuthor = memberId && board.writerId === memberId;
+    const parentAuthorId = comment.parentId ? commentMap[comment.parentId]?.memberId : null;
+    return Boolean(isOwn || isBoardAuthor || parentAuthorId === memberId);
+  };
+
   const renderComments = (items) =>
     items.map((comment) => {
       const isOwn = comment.memberId === memberId;
       const isSecret = comment.isPrivate === 1;
       const displayText =
-        isSecret && !isOwn ? "비공개 댓글입니다." : comment.content;
+        isSecret && !canViewSecretComment(comment)
+          ? "비공개 댓글입니다."
+          : comment.content;
       return (
         <div
           key={comment.id}
@@ -380,10 +517,11 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
             __html: board.boardContent || "<p>내용 없음</p>",
           }}
         />
-        {board.boardThumb && (
+        {!hasImageInContent(board.boardContent) && board.boardThumb && (
           <div className={styles.detailImageWrap}>
+            {/* board.boardThumb가 파일명으로 와도 /upload/로 바꿔서 보여줘요. */}
             <img
-              src={board.boardThumb}
+              src={getImageUrl(board.boardThumb)}
               alt="게시글 이미지"
               className={styles.detailImage}
             />

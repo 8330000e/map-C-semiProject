@@ -51,7 +51,14 @@ const ProductRegistration = () => {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            setProductThumb(response.data);
+            const uploadResult = response.data;
+            // 업로드 API가 파일명만 반환할 수 있어, /board/editor/ 경로로 보정합니다.
+            // 이렇게 하면 프리뷰가 깨지는 경우를 방지할 수 있습니다.
+            setProductThumb(
+                typeof uploadResult === "string" && !uploadResult.startsWith("/") && !uploadResult.startsWith("http")
+                    ? `/board/editor/${uploadResult}`
+                    : uploadResult,
+            );
         } catch (error) {
             console.error("상품 이미지 업로드 실패", error);
             alert("상품 이미지 업로드에 실패했습니다.");
@@ -68,6 +75,8 @@ const ProductRegistration = () => {
     };
 
     const getImageUrl = (thumb) => {
+        // 상품 등록에서도 thumb가 여러 형태로 들어올 수 있어요.
+        // 여기서 브라우저가 바로 쓸 수 있는 URL로 바꿔줍니다.
         if (!thumb) return null;
         if (typeof thumb !== "string") return null;
         let trimmed = thumb.trim();
@@ -89,7 +98,9 @@ const ProductRegistration = () => {
         }
 
         if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+        if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
         if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+        if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
         return `${BACKSERVER}/board/editor/${trimmed}`;
     };
 
@@ -107,6 +118,29 @@ const ProductRegistration = () => {
         fetchRegions();
     }, []);
 
+    const normalizeStoredProductThumb = (thumb) => {
+        if (!thumb || typeof thumb !== "string") return "";
+        let normalized = thumb.replace(/\\\\/g, "/").replace(/\\/g, "/").trim();
+        if (!normalized) return "";
+
+        if (normalized.startsWith("http://") || normalized.startsWith("https://") || normalized.startsWith("//")) {
+            return normalized;
+        }
+        if (normalized.startsWith("board/editor/")) {
+            return `/${normalized}`;
+        }
+        if (normalized.startsWith("/board/editor/") || normalized.startsWith("/upload/")) {
+            return normalized;
+        }
+
+        const fileName = normalized.split("/").pop();
+        if (fileName && fileName.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) {
+            return `/board/editor/${fileName}`;
+        }
+
+        return normalized;
+    };
+
     useEffect(() => {
         if (!editItem) return;
         setTitle(editItem.marketTitle || "");
@@ -116,7 +150,7 @@ const ProductRegistration = () => {
         setDisplayPrice(editItem.productPrice ? Number(editItem.productPrice).toLocaleString("ko-KR") : "");
         setDescription(editItem.marketContent || "");
         setImageName(editItem.productThumb ? editItem.productThumb.split("/").pop() : "");
-        setProductThumb(editItem.productThumb || "");
+        setProductThumb(normalizeStoredProductThumb(editItem.productThumb));
         setRegion(editItem.ctpvsggId || "");
         setRegionLabel(editItem.regionName || editItem.ctpvsggId || "");
     }, [editItem]);
