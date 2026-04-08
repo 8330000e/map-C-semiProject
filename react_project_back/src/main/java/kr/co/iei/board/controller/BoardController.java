@@ -60,20 +60,27 @@ public class BoardController {
 	    boardService.insertBoard(board);
 	    return board;
 	}
-	//이미지 저장
+	// 이미지 저장 엔드포인트
 	@PostMapping("/editor/upload")
 	public String uploadEditorImage(@RequestParam("upfile") MultipartFile upfile) {
+		// 업로드 파일이 없으면 예외 처리
 		if (upfile == null || upfile.isEmpty()) {
 			throw new RuntimeException("업로드할 파일이 없습니다.");
 		}
 
-		// root 설정값을 실제 OS 경로로 변환합니다. Windows, macOS 모두 정상 동작해야 합니다.
+		// application.properties에 설정된 root 경로 아래 board/editor 폴더로 저장합니다.
+		// 예: file.root=./upload/semiproject/ 인 경우 실제 저장 경로는
+		// react_project_back/upload/semiproject/board/editor 가 됩니다.
 		File saveDir = new File(new File(root), "board/editor");
 		if (!saveDir.exists()) {
 			saveDir.mkdirs();
 		}
 
+		// 업로드 파일을 실제 디스크에 저장하고, 저장된 파일명만 반환받습니다.
 		String fileName = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
+
+		// 프론트는 이 리턴 값을 기반으로 이미지 URL을 구성합니다.
+		// 예: http://localhost:9999/board/editor/{fileName}
 		return "/board/editor/" + fileName;
 	}
 	 
