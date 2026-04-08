@@ -29,7 +29,8 @@ const Login = () => {
       [name]: value, // 예: name이 memberId이면 memberId 값만 변경
     });
   };
-
+  
+  
   const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
   const handleLogin = () => {
