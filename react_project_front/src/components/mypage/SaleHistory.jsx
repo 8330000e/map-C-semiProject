@@ -257,16 +257,16 @@ const SaleHistory = () => {
       <Link key={`${marketNo}-${displayTitle}`} to={`/mypage/history/sale/${linkMarketNo}`} className={styles.sale_card}>
         <div className={styles.sale_card_title}>[{saleStatus}] {displayTitle}</div>
         <div className={styles.sale_card_meta}>{displayDate} · {saleStatus}</div>
-        <div>{displayAmount}원</div>
-        <div>거래방법: {displayTradeType}</div>
+        <div className={styles.sale_card_detail}>{displayAmount}원</div>
+        <div className={styles.sale_card_detail}>거래방법: {displayTradeType}</div>
         {item.buyerId || item.buyerNickname ? (
           <div className={styles.sale_card_buyer}>구매자: {item.buyerNickname || item.buyerId}</div>
         ) : null}
         {hasDelivery && (
           <>
-            <div>배송 상태: {getShippingStatusLabel(displayShippingStatus)}</div>
-            <div>택배사: {getCourierLabel(displayCourierCode)}</div>
-            {displayInvoiceNumber ? <div>송장번호: {displayInvoiceNumber}</div> : null}
+            <div className={styles.sale_card_detail}>배송 상태: {getShippingStatusLabel(displayShippingStatus)}</div>
+            <div className={styles.sale_card_detail}>택배사: {getCourierLabel(displayCourierCode)}</div>
+            {displayInvoiceNumber ? <div className={styles.sale_card_detail}>송장번호: {displayInvoiceNumber}</div> : null}
           </>
         )}
       </Link>
