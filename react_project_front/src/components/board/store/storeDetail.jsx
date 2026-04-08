@@ -27,6 +27,20 @@ const getSaleStatusLabel = (productStatus) => {
   return "판매중";
 };
 
+// 스토어 댓글 비공개 플래그를 일관되게 해석합니다.
+// 백엔드에서 숫자 1, 문자열 "1", 또는 true 같은 다양한 값이 올 수 있기 때문에,
+// 모두 비공개 댓글로 처리하도록 통일합니다.
+const isSecretComment = (comment) =>
+  comment?.isPrivate === 1 || comment?.isPrivate === "1" || comment?.isPrivate === true;
+
+// 댓글 목록을 받아서 비공개 여부 필드를 boolean으로 정규화합니다.
+// 이후 렌더링 시 항상 동일한 조건으로 비공개 댓글을 처리할 수 있습니다.
+const normalizeComments = (rawComments) =>
+  (Array.isArray(rawComments) ? rawComments : []).map((comment) => ({
+    ...comment,
+    isPrivate: isSecretComment(comment),
+  }));
+
 const StoreDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -61,7 +75,9 @@ const StoreDetail = () => {
         ]);
         setItem(detailResponse.data);
         setStoreList(Array.isArray(listResponse.data) ? listResponse.data : []);
-        setComments(Array.isArray(commentsResponse.data) ? commentsResponse.data : []);
+        // 댓글을 불러올 때마다 비공개 플래그를 정규화하여
+        // 렌더링 시 올바르게 "비공개 댓글" 처리가 되도록 합니다.
+        setComments(normalizeComments(commentsResponse.data));
         setLoadError("");
       } catch (error) {
         console.error("중고장터 상세 조회 실패", error);
@@ -184,7 +200,8 @@ const StoreDetail = () => {
   const refreshComments = async () => {
     try {
       const response = await axios.get(`${BACKSERVER}/api/store/boards/${itemId}/reviews`);
-      setComments(Array.isArray(response.data) ? response.data : []);
+      // 댓글 목록을 새로고침할 때에도 비공개 플래그를 일관되게 유지합니다.
+      setComments(normalizeComments(response.data));
     } catch (error) {
       console.error("댓글 목록 조회 실패", error);
     }
@@ -288,7 +305,9 @@ const StoreDetail = () => {
     if (!memberId || memberId !== comment.memberId) return;
     setEditingTarget(comment);
     setEditingText(comment.reviewContent || "");
-    setEditingPrivate(comment.isPrivate === 1);
+    // 수정 모드에서도 비공개 상태를 정확히 유지하기 위해
+    // 정규화된 isSecretComment() 값을 사용합니다.
+    setEditingPrivate(isSecretComment(comment));
   };
 
   const cancelEdit = () => {
@@ -681,12 +700,12 @@ const StoreDetail = () => {
             const parentAuthorId = comment.parentCommentNo
               ? comments.find((c) => c.reviewNo === comment.parentCommentNo)?.memberId
               : null;
+            const isSecret = isSecretComment(comment);
             const canViewSecret =
-              comment.isPrivate !== 1 ||
+              !isSecret ||
               isOwn ||
               isBoardAuthor ||
               parentAuthorId === memberId;
-            const isSecret = comment.isPrivate === 1;
             const displayContent = isSecret && !canViewSecret ? "비공개 댓글입니다." : comment.reviewContent;
             return (
               <div

@@ -97,7 +97,7 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
         .then((res) => {
           const likedStatus = res.data === true;
           setLiked(likedStatus);
-          // 상세 보기 진입 시 좋아요 여부를 확인하고 목록에 있는 liked 상태도 동기화합니다.
+          // 목록에서도 같은 게시글에 대한 liked 상태가 일치하도록 상위 컴포넌트에 전달합니다.
           onLikeChange?.(board.boardNo, likeCount, likedStatus);
         })
         .catch((err) => console.error("좋아요 여부 조회 실패", err));
@@ -125,7 +125,8 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
             id: item.commentNo,
             parentId: item.parentCommentNo,
             depth: item.commentDepth,
-            isPrivate: item.isSecret,
+            isPrivate:
+              item.isSecret === 1 || item.isSecret === "1" || item.isSecret === true,
             content: item.content,
             memberNickname: item.memberNickname || item.memberId,
           })),
@@ -173,11 +174,13 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
         id: saved.commentNo,
         parentId: saved.parentCommentNo,
         depth: saved.commentDepth,
-        isPrivate: saved.isSecret,
+        isPrivate:
+          saved.isSecret === 1 || saved.isSecret === "1" || saved.isSecret === true,
         content: saved.content,
       };
 
       // 댓글 등록 성공 시 댓글 리스트에 추가하고 카운트를 즉시 증가시킵니다.
+      // 상세 페이지에서 변경된 댓글 수는 목록으로 전달하여 제목 영역에도 반영합니다.
       setComments((prev) => [...prev, addedComment]);
       const nextCount = commentCount + 1;
       setCommentCount(nextCount);
@@ -207,6 +210,7 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
         const nextCount = (likeCount ?? 0) + 1;
         setLiked(true);
         setLikeCount(nextCount);
+        // 좋아요가 추가된 경우 목록에서도 즉시 반영하도록 상위 컴포넌트에 변경을 전달합니다.
         onLikeChange?.(board.boardNo, nextCount, true);
       } else {
         await axios.delete(
@@ -216,6 +220,7 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
         const nextCount = (likeCount ?? 0) - 1;
         setLiked(false);
         setLikeCount(nextCount);
+        // 좋아요 취소 후에도 목록 위치에서 상태가 일치하도록 변경을 전달합니다.
         onLikeChange?.(board.boardNo, nextCount, false);
       }
     } catch (err) {
@@ -373,10 +378,13 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
     return root;
   }, [comments]);
 
+  const isSecretComment = (comment) =>
+    comment.isPrivate === 1 || comment.isPrivate === true || comment.isPrivate === "1";
+
   // 비공개 댓글 접근 권한 조건
   // 댓글 작성자, 게시글 작성자, 해당 비공개 댓글의 부모 댓글 작성자만 내용을 볼 수 있습니다.
   const canViewSecretComment = (comment) => {
-    if (comment.isPrivate !== 1) return true;
+    if (!isSecretComment(comment)) return true;
     const isOwn = comment.memberId === memberId;
     const isBoardAuthor = memberId && board.writerId === memberId;
     const parentAuthorId = comment.parentId ? commentMap[comment.parentId]?.memberId : null;
@@ -386,7 +394,7 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
   const renderComments = (items) =>
     items.map((comment) => {
       const isOwn = comment.memberId === memberId;
-      const isSecret = comment.isPrivate === 1;
+      const isSecret = isSecretComment(comment);
       const displayText =
         isSecret && !canViewSecretComment(comment)
           ? "비공개 댓글입니다."
