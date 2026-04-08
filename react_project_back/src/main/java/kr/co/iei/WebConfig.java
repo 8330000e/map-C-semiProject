@@ -38,6 +38,11 @@ public class WebConfig implements WebMvcConfigurer {//MVC 관련 설정
 		// 에디터 이미지 매핑도 동일한 파일 루트를 사용합니다.
 		registry.addResourceHandler("/board/editor/**")
 			.addResourceLocations(getFileUri(new File(root, "board/editor")));
+
+		// 사용자 홈 디렉터리 upload 폴더를 /upload/**로 매핑합니다.
+		String uploadPath = System.getProperty("user.home") + File.separator + "upload" + File.separator;
+		registry.addResourceHandler("/upload/**")
+			.addResourceLocations(new File(uploadPath).toURI().toString());
 	}
 
 	/**

@@ -9,12 +9,12 @@ import kr.co.iei.member.model.vo.Member;
 
 @Mapper
 public interface MemberDao {
-
+	//김경건
 	int insertMember(Member member);
-
+	//김경건
 	Member selectOneMember(String memberId);
 
-
+	//김경건
 	String findIdByEmail(String memberEmail);
 	/*
 	 * @Mapper 어노테이션의 역할 원래라면 return sqlSession.selectOne("member.findIdByEmail",
@@ -22,9 +22,13 @@ public interface MemberDao {
 	 * 
 	 * 
 	 */
-
+	//김경건
 	public Integer existsByIdAndEmail(@Param("memberId") String memberId, @Param("memberEmail") String memberEmail);
-
+	
+	// 비밀번호 재설정 (김경건)
+	int resetPw( String memberId, @Param("memberPw") String encPw);
+	
+	/////////////////////////////////////////
 	List<Member> selectMemberList();
 
 	int updateMemberThumb(Member mem);

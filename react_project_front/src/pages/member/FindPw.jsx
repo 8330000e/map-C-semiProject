@@ -3,10 +3,10 @@ import { useState } from "react";
 import EmailAuth from "../../components/emailauth/EmailAuth";
 import Swal from "sweetalert2";
 import axios from "axios";
-//import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const FindPw = () => {
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
   const [memberId, setMemberId] = useState("");
   const [memberEmail, setMemberEmail] = useState("");
   const [emailVerified, setEmailVerified] = useState(false);
@@ -44,6 +44,9 @@ const FindPw = () => {
           title: "이메일을 확인해 주세요.",
           text: "비밀번호 재설정 링크가 이메일로 전송되었습니다.",
           icon: "success",
+        }).then(() => {
+          // 인증메시지 보낸 후 로그인 페이지로 이동
+          navigate("/members/login");
         });
       })
       .catch((err) => {

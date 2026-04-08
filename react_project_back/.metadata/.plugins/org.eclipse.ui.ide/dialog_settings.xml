@@ -52,14 +52,28 @@
 		<item key="WizardProjectsImportPage.STORE_CLOSE_CREATED_PROJECTS_ID" value="false"/>
 		<item key="WizardProjectsImportPage.STORE_HIDE_CONFLICTING_PROJECTS_ID" value="false"/>
 		<list key="WizardProjectsImportPage.STORE_DIRECTORIES">
+			<item value="C:\Users\user1\Desktop\CBproject\CBproject_react_back"/>
 			<item value="/Users/leebc/Documents/KH/git/react_project_back"/>
 		</list>
 		<list key="WizardProjectsImportPage.STORE_ARCHIVES">
 			<item value=""/>
 		</list>
 		<section name="ExternalProjectImportWizard.dialogBounds">
+
+			<item key="DIALOG_X_ORIGIN" value="250"/>
+			<item key="DIALOG_Y_ORIGIN" value="47"/>
+			<item key="DIALOG_WIDTH" value="525"/>
+			<item key="DIALOG_HEIGHT" value="710"/>
+			<item key="DIALOG_FONT_NAME" value="1|맑은 고딕|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|맑은 고딕"/>
+		</section>
+	</section>
+
+			<item key="DIALOG_X_ORIGIN" value="199"/>
+			<item key="DIALOG_Y_ORIGIN" value="61"/>
+
 			<item key="DIALOG_X_ORIGIN" value="587"/>
 			<item key="DIALOG_Y_ORIGIN" value="201"/>
+
 			<item key="DIALOG_WIDTH" value="626"/>
 			<item key="DIALOG_HEIGHT" value="687"/>
 			<item key="DIALOG_FONT_NAME" value="1|.AppleSystemUIFont|11.0|0|COCOA|1|.AppleSystemUIFont"/>
@@ -73,4 +87,5 @@
 		<list key="ENABLED_TRANSFERS">
 		</list>
 	</section>
+
 </section>
