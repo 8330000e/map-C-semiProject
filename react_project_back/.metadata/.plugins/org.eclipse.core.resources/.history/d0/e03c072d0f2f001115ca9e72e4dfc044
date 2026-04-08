@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="kr.co.iei.member.model.dao.MemberDao">
+
+	<insert id="insertMember">
+    insert into member_tbl (
+        member_id,
+        member_pw,
+        member_name,
+        member_nickname,
+        member_grade,
+        member_email,
+        member_thumb,
+        enroll_date,
+        member_status,
+        manner_score,
+        trade_count
+    )
+    values (
+        #{memberId},
+        #{memberPw},
+        #{memberName},
+        #{memberNickname},
+        #{memberGrade},
+        #{memberEmail},
+        #{memberThumb},
+        NVL(#{enrollDate}, SYSDATE),
+        NVL(#{memberStatus}, 1),
+        NVL(#{mannerScore}, 0),
+        NVL(#{tradeCount}, 0)
+    )
+</insert>
+
+	<select id="selectOneMember" resultType="member">
+		select * from member_tbl
+		where member_id =#{memberId}
+
+		<!-- 암호화 과정 떄문에 기존 비밀번호 조회는 의미없고 비교도 안돼. 암호화 하지 않았을 떄는 필요했지만 지금은 제거! and 
+			member_pw =#{memberPw} -->
+	</select>
+	<!-- 탈퇴/정지 회원이 있는 경우 and member_status = 1 -> 이 로직 사용 -->
+</mapper>

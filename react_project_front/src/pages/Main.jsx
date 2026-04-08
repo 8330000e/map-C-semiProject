@@ -7,6 +7,7 @@ import HelpIcon from "@mui/icons-material/Help";
 import useAuthStore from "../store/useAuthStore";
 import Map from "../components/mainpage/Map";
 import Bestpostlist from "../components/mainpage/Bestpostlist";
+import Swal from "sweetalert2";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -57,6 +58,8 @@ const getImageUrl = (thumb) => {
     return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
   if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
     return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
+  if (trimmed.includes("/board/editor/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
   return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
@@ -71,6 +74,8 @@ const Main = () => {
   const [goods, setGoods] = useState([]);
 
   const navigate = useNavigate();
+  const { memberId } = useAuthStore();
+  const isLogin = !!memberId;
 
   useEffect(() => {
     axios
@@ -202,6 +207,28 @@ const Main = () => {
     };
   }, [visibleRealtimeComment]);
 
+  const handleMissionClick = async () => {
+    if (!isLogin) {
+      const result = await Swal.fire({
+        icon: "warning",
+        title: "로그인이 필요합니다",
+        text: "미션(출석체크)은 로그인 후 이용할 수 있습니다. 로그인 페이지로 이동하시겠습니까?",
+        showCancelButton: true,
+        confirmButtonText: "로그인",
+        cancelButtonText: "취소",
+        confirmButtonColor: "#464d3e",
+        cancelButtonColor: "#b0b0b0",
+      });
+
+      if (result.isConfirmed) {
+        navigate("/members/login", { state: { from: "/mission" } });
+      }
+      return;
+    }
+
+    navigate("/mission");
+  };
+
   return (
     <main className="main_wrap">
       <div className="main_top">
@@ -220,7 +247,17 @@ const Main = () => {
               <Link to="/store">중고거래</Link>
             </li>
             <li>
-              <Link to="/mission">미션(출석체크)</Link>
+              <Link
+                to="/mission"
+                onClick={(e) => {
+                  if (!isLogin) {
+                    e.preventDefault(); // 이동 막기
+                    handleMissionClick();
+                  }
+                }}
+              >
+                미션(출석체크)
+              </Link>
             </li>
             <li>
               <Link to="/tree-grow" className="treeGrow">
