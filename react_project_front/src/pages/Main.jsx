@@ -28,6 +28,8 @@ const getSaleStatusLabel = (productStatus) => {
 };
 
 const getImageUrl = (thumb) => {
+  // thumb가 서버에서 여러 모양으로 들어올 수 있어요.
+  // 그래서 여기서 브라우저가 바로 쓸 수 있는 주소로 정리해줍니다.
   if (!thumb) return null;
   if (typeof thumb !== "string") return null;
   let trimmed = thumb.trim();

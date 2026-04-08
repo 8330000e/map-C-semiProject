@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom"; // URL 쿼리값으로 mode(write/list)를 판단하므로 꼭 import 필요
 import styles from "./Community.module.css";
 import axios from "axios";
 import TextEditor from "./TextEditor";
@@ -9,6 +10,39 @@ import ChatIcon from "@mui/icons-material/Chat";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Swal from "sweetalert2";
 import { useLocation } from "react-router-dom";
+
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+
+// 이미지 src는 서버에서 여러 형태로 내려올 수 있습니다.
+// 예: 이미지 전체 URL, /upload/ 경로, /board/editor/ 경로, 파일명만 전달되는 경우.
+// 여기서 브라우저가 바로 요청 가능한 URL로 변환해 줍니다.
+const getImageUrl = (thumb) => {
+  if (!thumb) return null;
+  if (typeof thumb !== "string") return null;
+  let trimmed = thumb.trim();
+  if (!trimmed) return null;
+
+  trimmed = trimmed.replace(/\\/g, "/").replace(/\\/g, "/");
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
+  if (driveMatch) {
+    const boardIndex = trimmed.indexOf("/board/editor/");
+    if (boardIndex !== -1) {
+      const suffix = trimmed.substring(boardIndex);
+      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
+    }
+    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
+  }
+
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
+  return `${BACKSERVER}/board/editor/${trimmed}`;
+};
 
 const Community = () => {
   const { memberId, memberNickname } = useAuthStore();
@@ -361,6 +395,9 @@ const Community = () => {
       });
     }
   };
+  // 게시글 삭제 확인 처리
+  // 이전에는 삭제 확인창이 없거나 버튼 순서가 뒤집혀 있을 수 있었습니다.
+  // 지금은 삭제 버튼이 왼쪽에, 취소 버튼이 오른쪽에 표시됩니다.
   const deleteBoard = async (boardNo) => {
     const result = await Swal.fire({
       icon: "warning",
@@ -369,7 +406,6 @@ const Community = () => {
       showCancelButton: true,
       confirmButtonText: "삭제",
       cancelButtonText: "취소",
-      reverseButtons: true,
     });
 
     if (!result.isConfirmed) {
@@ -585,10 +621,10 @@ const Community = () => {
                             </button>
                           </div>
                         )}
-                        {board.thumbnailUrl && (
+                        {(board.thumbnailUrl || board.boardThumb) && (
                           <div className={styles.boardThumbnailBox}>
                             <img
-                              src={board.thumbnailUrl}
+                              src={getImageUrl(board.thumbnailUrl || board.boardThumb)}
                               alt="썸네일"
                               className={styles.boardThumbnail}
                             />

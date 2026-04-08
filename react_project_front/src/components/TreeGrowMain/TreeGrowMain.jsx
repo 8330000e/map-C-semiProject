@@ -12,6 +12,8 @@ import useAuthStore from "../../store/useAuthStore";
 import CloseIcon from "@mui/icons-material/Close";
 import Swal from "sweetalert2";
 
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+
 const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
   const GRAPH_MAX = 10000;
   const BAR_MAX_HEIGHT = 180;
@@ -166,7 +168,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
         },
       });
 
-      const regionsRes = await axios.get("http://localhost:9999/regions");
+      const regionsRes = await axios.get(`${BACKSERVER}/regions`);
       const regions = regionsRes.data;
 
       setRegionList(regions);
@@ -196,7 +198,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
 
       if (memberId) {
         const pointRes = await axios.get(
-          `http://localhost:9999/members/${memberId}/point`,
+          `${BACKSERVER}/members/${memberId}/point`,
         );
         setOwnedPoint(pointRes.data);
       }
@@ -231,7 +233,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
         },
       });
 
-      await axios.post("http://localhost:9999/regions/contribute", {
+      await axios.post(`${BACKSERVER}/regions/contribute`, {
         memberId: memberId,
         regionNo: selectedRegion.regionNo,
         point: waterAmount,

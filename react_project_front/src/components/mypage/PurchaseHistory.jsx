@@ -9,6 +9,8 @@ const PAGE_SIZE = 6;
 const getStatusPrefix = (status) => (status ? `[${status}] ` : "");
 
 const getImageUrl = (thumb) => {
+  // thumb가 서버에서 여러 형태로 들어오기 때문에,
+  // 여기서 브라우저가 바로 쓸 수 있는 주소로 바꿔줘요.
   if (!thumb) return null;
   if (typeof thumb !== "string") return null;
   let trimmed = thumb.trim();
@@ -30,7 +32,9 @@ const getImageUrl = (thumb) => {
   }
 
   if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
   if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
   return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
