@@ -1,5 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="kr.co.iei.model.support.dao.SupportDao">
+<mapper namespace="kr.co.iei.support.model.dao.SupportDao">
+
+	<select id="selectFaqList" resultType="faq">
+		select
+			faq_no,
+			faq_title,
+			faq_content,
+			faq_category
+		from faq_tbl
+		<if test="category != null">
+			where faq_category = #{category}
+		</if>
+		order by faq_no desc
+	</select> 
 	
+	<select id="selectNoticeList" resultType="notice">
+		select * from notice_tbl 
+		<where>
+			notice_public = 1
+			<if test="category != null">
+				and notice_category = #{noticeCategory}
+			</if>
+		</where>
+		order by notice_fixed desc, notice_date desc
+	</select>
+	
+	<select id="selectNoticeDetail" resultType="notice">
+		select 
+			notice_no,
+			notice_title,
+			notice_content,
+			notice_date,
+			notice_view,
+			notice_category,
+			notice_image_path
+		from notice_tbl
+		where notice_no = #{noticeNo}
+	</select>
 </mapper>

@@ -40,6 +40,10 @@ public class WebConfig implements WebMvcConfigurer {//MVC 관련 설정
 		// 프론트에서는 /board/editor/{fileName} 형태의 URL로 접근합니다.
 		registry.addResourceHandler("/board/editor/**")
 			.addResourceLocations(getFileUri(new File(root, "board/editor")));
+		
+		// /notice/... .jpg로 요청하면 upload/semiproject/notice/... .jpg 파일을 찾아줌 
+		registry.addResourceHandler("/notice/**")
+	    .addResourceLocations(getFileUri(new File(root, "notice")));
 
 		// 추가로 사용자 홈 디렉터리의 upload 폴더를 /upload/**로 제공하도록 설정합니다.
 		// 이 매핑은 file.root와는 별개로, 사용자 홈에 있는 legacy upload 파일을 서빙할 때 사용됩니다.
