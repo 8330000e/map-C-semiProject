@@ -1,8 +1,10 @@
 package kr.co.iei.admin.controller;
 
+import java.io.File;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.iei.admin.model.service.AdminService;
 import kr.co.iei.admin.model.vo.DashData;
@@ -32,12 +35,30 @@ public class AdminController {
 	@Autowired
 	private AdminService adminService;
 	
+	@Value("${file.root}")
+	private String root;
+	
+	@Autowired
+	private FileUtils fileUtils;
+	
 	
 	
 	@PostMapping(value="notice")
-	public ResponseEntity<?> insertNotice(@RequestBody Notice notice) {
+	public ResponseEntity<?> insertNotice(@ModelAttribute Notice notice, @RequestParam(value = "upfile", required = false) MultipartFile upfile) {
+		if (upfile != null && !upfile.isEmpty()) {
+			
+			// 이미지 저장할 경로 
+			File saveDir = new File(new File(root), "notice");
+			
+			// 폴더 없으면 만들어
+			if (!saveDir.exists()) {
+				saveDir.mkdir();
+			}
+			String fileName = fileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
+			System.out.println("경로: " + saveDir.getAbsolutePath());
+			notice.setNoticeImagePath("/notice/" + fileName);
+		}
 		int result = adminService.insertNotice(notice);
-		
 		return ResponseEntity.ok(result);
 	}
 	
@@ -48,7 +69,17 @@ public class AdminController {
 	}
 	
 	@PatchMapping(value="notice")
-	public ResponseEntity<?> editNotice(@RequestBody Notice notice) {
+	public ResponseEntity<?> editNotice(@ModelAttribute Notice notice, @RequestParam(value = "upfile", required = false) MultipartFile upfile) {
+	
+		if (upfile != null && !upfile.isEmpty()) {
+			File saveDir = new File(new File(root), "notice");
+			if (!saveDir.exists()) {
+				saveDir.mkdir();
+			}
+			String fileName = fileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
+			notice.setNoticeImagePath("/notice/" + fileName);
+		}
+		
 		int result = adminService.editNotice(notice);
 		return ResponseEntity.ok(result);
 	}

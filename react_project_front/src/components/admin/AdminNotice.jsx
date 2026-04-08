@@ -12,6 +12,7 @@ const AdminNotice = ({
 
   setNotice,
   deleteNotice,
+  setImageFile,
 }) => {
   return (
     <>
@@ -64,6 +65,30 @@ const AdminNotice = ({
                 <option value={0}>비고정</option>
                 <option value={1}>고정</option>
               </select>
+              <div className={styles.notice_category}>
+                <label htmlFor="noticeCategory">카테고리</label>
+                <select
+                  id="noticeCategory"
+                  className={styles.select}
+                  name="noticeCategory"
+                  value={notice.noticeCategory}
+                  onChange={changeNotice}
+                >
+                  <option value="이벤트">이벤트</option>
+                  <option value="점검">점검</option>
+                  <option value="업데이트">업데이트</option>
+                  <option value="안내">안내</option>
+                </select>
+              </div>
+              <div className={styles.notice_image}>
+                <label htmlFor="noticeImage">대표 이미지</label>
+                <input
+                  type="file"
+                  id="noticeImage"
+                  accept="image/*"
+                  onChange={(e) => setImageFile(e.target.files[0])}
+                />
+              </div>
             </div>
             <Button className="btn admin" type="submit">
               {isEdit ? "수정하기" : "등록하기"}
@@ -120,6 +145,7 @@ const AdminNotice = ({
                             noticeContent: item.noticeContent,
                             noticePublic: item.noticePublic,
                             noticeFixed: item.noticeFixed,
+                            noticeCategory: item.noticeCategory,
                           });
                         }}
                       >

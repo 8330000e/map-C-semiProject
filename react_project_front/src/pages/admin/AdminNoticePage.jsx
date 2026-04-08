@@ -6,13 +6,14 @@ import AdminNotice from "../../components/admin/AdminNotice";
 
 const AdminNoticePage = () => {
   const [isEdit, setIsEdit] = useState(false);
-
+  const [imageFile, setImageFile] = useState(null);
   const [notice, setNotice] = useState({
     noticeNo: 0,
     noticeTitle: "",
     noticeContent: "",
     noticePublic: 0,
     noticeFixed: 0,
+    noticeCategory: "이벤트",
   });
   const [noticeList, setNoticeList] = useState([]);
   const changeNotice = (e) => {
@@ -64,8 +65,24 @@ const AdminNoticePage = () => {
         cancelButtonText: "취소",
       }).then((result) => {
         if (result.isConfirmed) {
+          const formData = new FormData();
+          formData.append("noticeNo", notice.noticeNo);
+          formData.append("noticeTitle", notice.noticeTitle);
+          formData.append("noticeContent", notice.noticeContent);
+          formData.append("noticePublic", notice.noticePublic);
+          formData.append("noticeFixed", notice.noticeFixed);
+          formData.append("noticeCategory", notice.noticeCategory);
+          if (imageFile) {
+            formData.append("upfile", imageFile);
+          }
           axios
-            .patch(`${import.meta.env.VITE_BACKSERVER}/admins/notice`, notice)
+            .patch(
+              `${import.meta.env.VITE_BACKSERVER}/admins/notice`,
+              formData,
+              {
+                headers: { "Content-Type": "multipart/form-data" },
+              },
+            )
             .then((res) => {
               console.log(res);
               if (res.data === 1) {
@@ -91,14 +108,30 @@ const AdminNoticePage = () => {
         cancelButtonText: "취소",
       }).then((result) => {
         if (result.isConfirmed) {
+          const formData = new FormData();
+          formData.append("noticeTitle", notice.noticeTitle);
+          formData.append("noticeContent", notice.noticeContent);
+          formData.append("noticePublic", notice.noticePublic);
+          formData.append("noticeFixed", notice.noticeFixed);
+          formData.append("noticeCategory", notice.noticeCategory);
+          if (imageFile) {
+            formData.append("upfile", imageFile);
+          }
           axios
-            .post(`${import.meta.env.VITE_BACKSERVER}/admins/notice`, notice)
+            .post(
+              `${import.meta.env.VITE_BACKSERVER}/admins/notice`,
+              formData,
+              {
+                headers: { "Content-Type": "multipart/form-data" },
+              },
+            )
             .then((res) => {
               console.log(res);
 
               setIsEdit(false);
               if (res.data === 1) {
                 selectNoticeList();
+                setImageFile(null);
                 Swal.fire("공지사항이 등록되었습니다.");
               }
             })
@@ -135,6 +168,7 @@ const AdminNoticePage = () => {
       setIsEdit={setIsEdit}
       setNotice={setNotice}
       deleteNotice={deleteNotice}
+      setImageFile={setImageFile}
     />
   );
 };

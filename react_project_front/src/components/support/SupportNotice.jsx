@@ -35,8 +35,11 @@ const SupportNotice = ({ noticeList, setCategory, category }) => {
               </span>
               {/* 이미지 */}
               <div className={styles.image_box}>
-                {notice.noticeImage ? (
-                  <img src={notice.noticeImage} alt="공지 이미지" />
+                {notice.noticeImagePath ? (
+                  <img
+                    src={`${import.meta.env.VITE_BACKSERVER}${notice.noticeImagePath}`}
+                    alt="공지 이미지"
+                  />
                 ) : (
                   <div className={styles.no_image}>탄소커넥트</div>
                 )}
