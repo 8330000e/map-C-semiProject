@@ -108,6 +108,15 @@ const Community = ({
   //   ctpv: "",
   //   sgg: "",
   // });
+  setAddr("선택된 위치 없음");
+  setLnglat({
+    lat: 37.5665 - 0.001,
+    lng: 126.978,
+  });
+  setCtpvsgg({
+    ctpv: "",
+    sgg: "",
+  });
 
   const [selectAddr, setSelectAddr] = useState("선택된 위치 없음");
   const [selectLnglat, setSelectLnglat] = useState({
