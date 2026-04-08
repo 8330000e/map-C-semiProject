@@ -49,7 +49,14 @@ const getImageUrl = (thumb) => {
   return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
-const Community = ({}) => {
+const Community = ({
+  addr,
+  lnglat,
+  ctpvsgg,
+  setAddr,
+  setLnglat,
+  setCtpvsgg,
+}) => {
   const { memberId, memberNickname } = useAuthStore();
   const isLogin = !!memberId;
   const mapDivRef = useRef(null);
@@ -102,11 +109,7 @@ const Community = ({}) => {
     ctpv: "",
     sgg: "",
   });
-<<<<<<< Updated upstream
-=======
   */
-
->>>>>>> Stashed changes
   const [selectAddr, setSelectAddr] = useState("선택된 위치 없음");
   const [selectLnglat, setSelectLnglat] = useState({
     lat: 0,
