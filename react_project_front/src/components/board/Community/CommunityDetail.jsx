@@ -32,7 +32,8 @@ const getImageUrl = (thumb) => {
 
   trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
 
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
+    return trimmed;
   if (trimmed.startsWith("//")) return `https:${trimmed}`;
 
   const driveMatch = trimmed.match(/^[A-Za-z]:\//);
@@ -46,9 +47,12 @@ const getImageUrl = (thumb) => {
   }
 
   if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
+  if (trimmed.includes("/upload/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
+    return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
   return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
@@ -59,7 +63,13 @@ const hasImageInContent = (html) => {
   return doc.querySelector("img") !== null;
 };
 
-const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCountChange }) => {
+const CommunityDetail = ({
+  board,
+  onEdit,
+  onDelete,
+  onLikeChange,
+  onCommentCountChange,
+}) => {
   const { memberId } = useAuthStore();
   const [comments, setComments] = useState([]);
   // 상세페이지에서 보여줄 댓글 개수를 별도 상태로 관리합니다.
@@ -103,7 +113,10 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
         .catch((err) => console.error("좋아요 여부 조회 실패", err));
     } else {
       if (memberId && !board?.boardNo) {
-        console.warn("boardNo is undefined, skipping like status fetch.", board);
+        console.warn(
+          "boardNo is undefined, skipping like status fetch.",
+          board,
+        );
       }
       setLiked(false);
     }
@@ -126,7 +139,9 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
             parentId: item.parentCommentNo,
             depth: item.commentDepth,
             isPrivate:
-              item.isSecret === 1 || item.isSecret === "1" || item.isSecret === true,
+              item.isSecret === 1 ||
+              item.isSecret === "1" ||
+              item.isSecret === true,
             content: item.content,
             memberNickname: item.memberNickname || item.memberId,
           })),
@@ -167,7 +182,10 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
         parentCommentNo: replyTarget ? replyTarget.id : null,
       };
 
-      const res = await axios.post(`${BACKSERVER}/boards/${board.boardNo}/comments`, payload);
+      const res = await axios.post(
+        `${BACKSERVER}/boards/${board.boardNo}/comments`,
+        payload,
+      );
       const saved = res.data;
       const addedComment = {
         ...saved,
@@ -175,7 +193,9 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
         parentId: saved.parentCommentNo,
         depth: saved.commentDepth,
         isPrivate:
-          saved.isSecret === 1 || saved.isSecret === "1" || saved.isSecret === true,
+          saved.isSecret === 1 ||
+          saved.isSecret === "1" ||
+          saved.isSecret === true,
         content: saved.content,
       };
 
@@ -190,7 +210,11 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
       setReplyTarget(null);
     } catch (err) {
       console.error("댓글 등록 실패", err);
-      Swal.fire({ icon: "error", title: "댓글 등록 실패", text: "댓글 등록 중 오류가 발생했습니다." });
+      Swal.fire({
+        icon: "error",
+        title: "댓글 등록 실패",
+        text: "댓글 등록 중 오류가 발생했습니다.",
+      });
     }
   };
 
@@ -288,11 +312,14 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
     if (!text) return;
 
     try {
-      await axios.put(`${BACKSERVER}/boards/${board.boardNo}/comments/${editTarget.id}`, {
-        memberId,
-        content: text,
-        isSecret: editPrivate ? 1 : 0,
-      });
+      await axios.put(
+        `${BACKSERVER}/boards/${board.boardNo}/comments/${editTarget.id}`,
+        {
+          memberId,
+          content: text,
+          isSecret: editPrivate ? 1 : 0,
+        },
+      );
 
       setComments((prev) =>
         prev.map((item) =>
@@ -311,7 +338,11 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
       setEditPrivate(false);
     } catch (err) {
       console.error("댓글 수정 실패", err);
-      Swal.fire({ icon: "error", title: "댓글 수정 실패", text: "댓글 수정 중 오류가 발생했습니다." });
+      Swal.fire({
+        icon: "error",
+        title: "댓글 수정 실패",
+        text: "댓글 수정 중 오류가 발생했습니다.",
+      });
     }
   };
 
@@ -334,9 +365,12 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
     if (!result.isConfirmed) return;
 
     try {
-      await axios.delete(`${BACKSERVER}/boards/${board.boardNo}/comments/${comment.id}`, {
-        params: { memberId },
-      });
+      await axios.delete(
+        `${BACKSERVER}/boards/${board.boardNo}/comments/${comment.id}`,
+        {
+          params: { memberId },
+        },
+      );
       // 댓글 삭제 성공 시 화면에서 해당 댓글을 제거하고 카운트를 감소시킵니다.
       setComments((prev) => prev.filter((item) => item.id !== comment.id));
       const nextCount = Math.max(0, commentCount - 1);
@@ -345,7 +379,11 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
       Swal.fire({ icon: "success", title: "댓글이 삭제되었습니다." });
     } catch (err) {
       console.error("댓글 삭제 실패", err);
-      Swal.fire({ icon: "error", title: "댓글 삭제 실패", text: "댓글 삭제 중 오류가 발생했습니다." });
+      Swal.fire({
+        icon: "error",
+        title: "댓글 삭제 실패",
+        text: "댓글 삭제 중 오류가 발생했습니다.",
+      });
     }
   };
 
@@ -379,7 +417,9 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
   }, [comments]);
 
   const isSecretComment = (comment) =>
-    comment.isPrivate === 1 || comment.isPrivate === true || comment.isPrivate === "1";
+    comment.isPrivate === 1 ||
+    comment.isPrivate === true ||
+    comment.isPrivate === "1";
 
   // 비공개 댓글 접근 권한 조건
   // 댓글 작성자, 게시글 작성자, 해당 비공개 댓글의 부모 댓글 작성자만 내용을 볼 수 있습니다.
@@ -387,7 +427,9 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
     if (!isSecretComment(comment)) return true;
     const isOwn = comment.memberId === memberId;
     const isBoardAuthor = memberId && board.writerId === memberId;
-    const parentAuthorId = comment.parentId ? commentMap[comment.parentId]?.memberId : null;
+    const parentAuthorId = comment.parentId
+      ? commentMap[comment.parentId]?.memberId
+      : null;
     return Boolean(isOwn || isBoardAuthor || parentAuthorId === memberId);
   };
 
