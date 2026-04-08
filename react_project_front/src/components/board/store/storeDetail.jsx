@@ -39,6 +39,7 @@ const StoreDetail = () => {
 
   const [comments, setComments] = useState([]);
   const [transactionReviews, setTransactionReviews] = useState([]);
+  const [sellerRatings, setSellerRatings] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [newCommentPrivate, setNewCommentPrivate] = useState(false);
   const [replyTarget, setReplyTarget] = useState(null);
@@ -94,6 +95,23 @@ const StoreDetail = () => {
     if (!item) return;
     setSaleStatus(getSaleStatusLabel(item.productStatus));
   }, [item]);
+
+  useEffect(() => {
+    const sellerId = item?.memberId || item?.sellerId;
+    if (!sellerId) return;
+
+    axios
+      .get(`${BACKSERVER}/api/store/sellers/${sellerId}/ratings`)
+      .then((res) => setSellerRatings(Array.isArray(res.data) ? res.data : []))
+      .catch((error) => {
+        console.error("판매자 평점 조회 실패", error);
+        setSellerRatings([]);
+      });
+  }, [item]);
+
+  const totalSellerRatingScore = useMemo(() => {
+    return sellerRatings.reduce((sum, rating) => sum + Number(rating.rating || 0), 0);
+  }, [sellerRatings]);
 
   const itemTradeSetting = useMemo(() => {
     if (!item) return { direct: true, delivery: true };
@@ -580,8 +598,8 @@ const StoreDetail = () => {
       <div className={styles.section_box}>
         <h3>가게 정보</h3>
         <p>상점명 : {item.memberNickname || item.memberId} 상점</p>
-        <p>신뢰지수 : 624</p>
-        <p>거래후기 : {transactionReviews.length}</p>
+        <p>신뢰지수 : {totalSellerRatingScore}점</p>
+        <p>거래후기 : {sellerRatings.length}</p>
       </div>
 
       {saleStatus === "판매완료" && (
