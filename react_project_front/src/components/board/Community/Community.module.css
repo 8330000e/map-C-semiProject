@@ -326,6 +326,14 @@
   white-space: pre-wrap;
 }
 
+.detailContent img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0.8em 0;
+  border-radius: 14px;
+}
+
 .detailImageWrap {
   margin-top: 14px;
 }

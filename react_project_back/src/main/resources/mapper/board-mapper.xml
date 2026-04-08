@@ -153,6 +153,84 @@
         )
     </insert>
 
+    <!-- 댓글 조회 -->
+    <!--
+      비공개 댓글은 DB에서 'Y'/'N'로 저장됩니다.
+      프론트엔드에서는 1/0 형태로 사용하므로 조회 시 변환합니다.
+    -->
+    <select id="selectBoardComments" resultType="kr.co.iei.board.model.vo.BoardComment">
+        SELECT
+            C.BOARD_COMMENT_NO AS commentNo,
+            C.BOARD_NO AS boardNo,
+            C.BOARD_COMMENT_WRITER AS memberId,
+            C.MEMBER_NICKNAME AS memberNickname,
+            C.BOARD_COMMENT_CONTENT AS content,
+            TO_CHAR(C.BOARD_COMMENT_DATE, 'YYYY-MM-DD"T"HH24:MI:SS') AS createdAt,
+            TO_CHAR(C.UPDATED_AT, 'YYYY-MM-DD"T"HH24:MI:SS') AS updatedAt,
+            C.PARENT_COMMENT_NO AS parentCommentNo,
+            C.COMMENT_GROUP AS commentGroup,
+            C.COMMENT_DEPTH AS commentDepth,
+            CASE WHEN C.IS_SECRET = 'Y' THEN 1 ELSE 0 END AS isSecret
+        FROM BOARD_COMMENT_TBL C
+        WHERE C.BOARD_NO = #{boardNo}
+        ORDER BY C.COMMENT_GROUP ASC, C.COMMENT_DEPTH ASC, C.BOARD_COMMENT_NO ASC
+    </select>
+
+    <insert id="insertBoardComment" parameterType="boardComment">
+        <!--
+          댓글 PK는 LONG 타입으로 처리합니다.
+          MyBatis에서 selectKey 결과를 Long으로 매핑해야 올바르게 commentNo가 설정됩니다.
+        -->
+        <selectKey keyProperty="commentNo" resultType="java.lang.Long" order="BEFORE">
+            SELECT SEQ_BOARD_COMMENT_NO.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO BOARD_COMMENT_TBL (
+            BOARD_COMMENT_NO,
+            BOARD_COMMENT_WRITER,
+            BOARD_NO,
+            BOARD_COMMENT_CONTENT,
+            BOARD_COMMENT_DATE,
+            UPDATED_AT,
+            MEMBER_NICKNAME,
+            PARENT_COMMENT_NO,
+            COMMENT_GROUP,
+            COMMENT_DEPTH,
+            IS_SECRET
+        ) VALUES (
+            #{commentNo},
+            #{memberId},
+            #{boardNo},
+            #{content},
+            SYSDATE,
+            SYSDATE,
+            #{memberNickname},
+            #{parentCommentNo},
+            NVL((SELECT COMMENT_GROUP FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), #{commentNo}),
+            NVL((SELECT COMMENT_DEPTH + 1 FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), 1),
+            CASE WHEN #{isSecret} = 1 THEN 'Y' ELSE 'N' END
+        )
+    </insert>
+
+    <update id="updateBoardComment" parameterType="boardComment">
+        <!--
+          비공개 여부는 프론트에서 1/0으로 전달됩니다.
+          DB 저장은 'Y'/'N'로 처리해야 제약 조건에 맞습니다.
+        -->
+        UPDATE BOARD_COMMENT_TBL
+        SET BOARD_COMMENT_CONTENT = #{content},
+            UPDATED_AT = SYSDATE,
+            IS_SECRET = CASE WHEN #{isSecret} = 1 THEN 'Y' ELSE 'N' END
+        WHERE BOARD_COMMENT_NO = #{commentNo}
+          AND BOARD_COMMENT_WRITER = #{memberId}
+    </update>
+
+    <delete id="deleteBoardComment" parameterType="map">
+        DELETE FROM BOARD_COMMENT_TBL
+        WHERE BOARD_COMMENT_NO = #{commentNo}
+          AND BOARD_COMMENT_WRITER = #{memberId}
+    </delete>
+
     <!-- 인기 게시글 -->
     <select id="bestBoardList" resultType="kr.co.iei.board.model.vo.BoardLike">
         SELECT 
