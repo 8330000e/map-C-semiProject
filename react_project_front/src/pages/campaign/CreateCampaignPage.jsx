@@ -23,7 +23,9 @@ const CreateCampaignPage = () => {
       writeInfo.campaignTitle !== "" &&
       writeInfo.campaignExpireDate !== "" &&
       writeInfo.campaignExplanation !== "" &&
-      writeInfo.campaignGoalMember !== ""
+      writeInfo.campaignGoalMember !== "" &&
+      isFinite(writeInfo.campaignGoalMember) && //숫자면 true,아니면 false/반대는 isNaN
+      writeInfo.campaignGoalMember >= 100
     ) {
       axios
         .post(
@@ -90,6 +92,7 @@ const CreateCampaignPage = () => {
                 id="cGoalMember"
                 name="campaignGoalMember"
                 value={writeInfo.campaignGoalMember}
+                placeholder="최소 인원은 100명부터입니다."
                 onChange={(e) => {
                   setWriteInfo({
                     ...writeInfo,

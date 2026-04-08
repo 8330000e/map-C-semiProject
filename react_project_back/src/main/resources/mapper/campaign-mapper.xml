@@ -18,6 +18,7 @@
 		select 
 			   campaign_title,
 			   campaign_status,
+			   campaign_explanation,
 			   campaign_goal_member,
 			   campaign_start_date,
 			   campaign_expire_date,
