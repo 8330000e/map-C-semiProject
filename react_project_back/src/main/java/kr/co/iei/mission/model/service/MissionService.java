@@ -47,4 +47,26 @@ public class MissionService {
 		return randomMission;
 	}
 
+	public int checkAttendance(String memberId) {
+		int count = missionDao.existsTodayAttendance(memberId);
+
+	    if (count > 0) {
+	        return -1;
+	    }
+
+	    int result1 = missionDao.insertAttendance(memberId);
+	    int result2 = missionDao.updateMemberPoint(memberId);
+
+	    if (result1 == 0 || result2 == 0) {
+	        throw new RuntimeException("출석 처리 실패");
+	    }
+
+	    return 1;
+	}
+
+	public boolean isTodayAttendance(String memberId) {
+		 int count = missionDao.existsTodayAttendance(memberId);
+		    return count > 0;
+	}
+
 }

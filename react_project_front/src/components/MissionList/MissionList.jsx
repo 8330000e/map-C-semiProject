@@ -4,6 +4,7 @@ import axios from "axios";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import styles from "./MissionList.module.css";
 import useAuthStore from "../../store/useAuthStore";
+import Swal from "sweetalert2";
 
 const MissionList = () => {
   const { memberId } = useAuthStore();
@@ -13,13 +14,17 @@ const MissionList = () => {
   const [randomMission, setRandomMission] = useState(null);
   const [bonusMission, setBonusMission] = useState(null);
 
-  useEffect(() => {
-    loadMissions();
-  }, []);
+  const [attendanceChecked, setAttendanceChecked] = useState(false);
+  const [attendanceLoading, setAttendanceLoading] = useState(false);
 
+  useEffect(() => {
+    if (!memberId) return;
+
+    loadMissions();
+    loadAttendanceStatus();
+  }, [memberId]);
   const loadMissions = async () => {
     try {
-      // 1. 전체 미션 조회 (기본/보너스용)
       const missionRes = await axios.get(
         `${import.meta.env.VITE_BACKSERVER}/missions`,
       );
@@ -28,7 +33,6 @@ const MissionList = () => {
       const basic = list.find((mission) => mission.missionType === "BASIC");
       const bonus = list.find((mission) => mission.missionType === "BONUS");
 
-      // 2. 오늘의 랜덤 미션 조회
       const randomRes = await axios.get(
         `${import.meta.env.VITE_BACKSERVER}/missions/random`,
         {
@@ -43,6 +47,66 @@ const MissionList = () => {
       setBonusMission(bonus || null);
     } catch (err) {
       console.error("미션 조회 실패", err);
+    }
+  };
+
+  const handleAttendanceCheck = async () => {
+    if (!memberId) {
+      await Swal.fire({
+        icon: "warning",
+        title: "로그인이 필요합니다",
+        text: "로그인 후 출석체크를 진행해주세요.",
+        confirmButtonText: "확인",
+        confirmButtonColor: "#89a93f",
+        background: "#f8fbf1",
+      });
+      return;
+    }
+
+    if (attendanceLoading || attendanceChecked) return;
+
+    try {
+      setAttendanceLoading(true);
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKSERVER}/missions/attendance/check`,
+        {
+          memberId,
+        },
+      );
+
+      setAttendanceChecked(true);
+
+      await Swal.fire({
+        icon: "success",
+        title: "출석 완료!",
+        html: `
+          <div style="line-height:1.7;">
+            오늘도 탄소 실천에 참여해주셨네요.<br/>
+            <strong style="font-size:18px; color:#89a93f;">+1 포인트 지급</strong>
+          </div>
+        `,
+        confirmButtonText: "확인",
+        confirmButtonColor: "#89a93f",
+      });
+    } catch (err) {
+      console.error("출석체크 실패", err);
+    }
+  };
+  const loadAttendanceStatus = async () => {
+    if (!memberId) return;
+
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKSERVER}/missions/attendance/today`,
+        {
+          params: { memberId },
+        },
+      );
+
+      setAttendanceChecked(res.data.checked);
+    } catch (err) {
+      console.error("출석 상태 조회 실패", err);
     }
   };
 
@@ -109,8 +173,17 @@ const MissionList = () => {
           </span>
         </div>
 
-        <button className={styles.attendanceButton} type="button">
-          출석체크(1포인트)
+        <button
+          className={styles.attendanceButton}
+          type="button"
+          onClick={handleAttendanceCheck}
+          disabled={attendanceLoading || attendanceChecked}
+        >
+          {attendanceLoading
+            ? "처리 중..."
+            : attendanceChecked
+              ? "출석완료"
+              : "출석체크(1포인트)"}
         </button>
       </div>
 

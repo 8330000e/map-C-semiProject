@@ -18,4 +18,10 @@ public interface MissionDao {
 
 	void insertMemberMission(MemberMission memberMission);
 
+	int existsTodayAttendance(String memberId);
+
+	int insertAttendance(String memberId);
+
+	int updateMemberPoint(String memberId);
+
 }

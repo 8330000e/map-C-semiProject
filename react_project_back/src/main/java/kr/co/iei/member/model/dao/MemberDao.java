@@ -42,4 +42,6 @@ public interface MemberDao {
 	int decreasePoint(String memberId, int point);
 
 	int leaveMember(String memberId);
+
+	int insertMemberPoint(String memberId);
 }

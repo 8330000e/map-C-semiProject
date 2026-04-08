@@ -82,5 +82,34 @@
             #{certImageUrl}
         )
     </insert>
+    <!-- 출석여부 확인 -->
+    <select id="existsTodayAttendance" resultType="int">
+    SELECT COUNT(*)
+    FROM ATTENDANCE_TBL
+    WHERE MEMBER_ID = #{memberId}
+      AND ATTEND_YMD = TRUNC(SYSDATE)
+	</select>
+	<!-- 출석 기록  -->
+    <insert id="insertAttendance" parameterType="string">
+    INSERT INTO ATTENDANCE_TBL (
+        ATTENDANCE_NO,
+        MEMBER_ID,
+        ATTEND_YMD,
+        REWARD_POINT
+    )
+    VALUES (
+        attendance_seq.NEXTVAL,
+        #{memberId},
+        TRUNC(SYSDATE),
+        1
+    )
+	</insert>
+	<!-- 포인트 지급 -->
+	<update id="updateMemberPoint" parameterType="string">
+    UPDATE MEMBER_POINT_TBL
+    SET TOTAL_POINT = TOTAL_POINT + 1
+    WHERE MEMBER_ID = #{memberId}
+	</update>
+    
 
 </mapper>
