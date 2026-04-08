@@ -19,8 +19,8 @@ public class SupportService {
 		return faqList;
 	}
 
-	public List<Notice> selectNoticeList() {
-		List<Notice> noticeList = supportDao.selectNoticeList();
+	public List<Notice> selectNoticeList(String category) {
+		List<Notice> noticeList = supportDao.selectNoticeList(category);
 		return noticeList;
 	}
 }

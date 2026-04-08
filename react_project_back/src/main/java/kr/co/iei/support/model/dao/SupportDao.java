@@ -13,6 +13,6 @@ public interface SupportDao {
 
 	List<Faq> selectFaqList(String category);
 
-	List<Notice> selectNoticeList();
+	List<Notice> selectNoticeList(String category);
 
 }

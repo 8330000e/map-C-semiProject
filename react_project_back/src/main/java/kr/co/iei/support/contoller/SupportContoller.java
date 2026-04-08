@@ -29,8 +29,8 @@ public class SupportContoller {
 	}
 	
 	@GetMapping(value="notice")
-	public ResponseEntity<?> selectNoticeList() {
-		List<Notice> noticeList = supportService.selectNoticeList();
+	public ResponseEntity<?> selectNoticeList(@RequestParam (required = false) String category) {
+		List<Notice> noticeList = supportService.selectNoticeList(category);
 		return ResponseEntity.ok(noticeList);
 	}
 	
