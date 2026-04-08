@@ -18,4 +18,6 @@ public class Notice {
 	private Integer noticeView;
 	private Integer noticePublic;
 	private Integer noticeFixed;
+	private String noticeCategory;
+	private String noticeImagePath;
 }

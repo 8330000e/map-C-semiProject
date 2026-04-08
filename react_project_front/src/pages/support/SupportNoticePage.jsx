@@ -4,10 +4,15 @@ import styles from "./SupportNoticePage.module.css";
 import { useEffect, useState } from "react";
 const SupportNoticePage = () => {
   const [noticeList, setNoticeList] = useState([]);
-  const [openId, setOpenId] = useState(null);
+  const [category, setCategory] = useState("전체");
+
   const selectNoticeList = () => {
+    const params = {};
+    if (category !== "전체") {
+      params.category = category;
+    }
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/supports/notice`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/supports/notice`, { params })
       .then((res) => {
         console.log(res);
         setNoticeList(res.data);
@@ -18,13 +23,13 @@ const SupportNoticePage = () => {
   };
   useEffect(() => {
     selectNoticeList();
-  }, []);
+  }, [category]);
   return (
     <>
       <SupportNotice
-        openId={openId}
-        setOpenId={setOpenId}
         noticeList={noticeList}
+        setCategory={setCategory}
+        category={category}
       />
     </>
   );
