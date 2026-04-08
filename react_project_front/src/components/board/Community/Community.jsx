@@ -9,6 +9,7 @@ import ChatIcon from "@mui/icons-material/Chat";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Swal from "sweetalert2";
 import { useLocation } from "react-router-dom";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 const Community = () => {
   const { memberId, memberNickname } = useAuthStore();
@@ -352,7 +353,7 @@ const Community = () => {
         });
       }
     } catch (err) {
-      console.error(err);
+      console.error(err.response?.data);
 
       Swal.fire({
         icon: "error",
@@ -560,31 +561,6 @@ const Community = () => {
                           {board.boardTitle}
                         </div>
 
-                        {memberId === board.writerId && (
-                          <div className={styles.boardActionBox}>
-                            <button
-                              type="button"
-                              className={styles.mapCommunityBtn}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                startEdit(board);
-                              }}
-                            >
-                              수정
-                            </button>
-
-                            <button
-                              type="button"
-                              className={`${styles.mapCommunityBtn} ${styles.deleteBtn}`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deleteBoard(board.boardNo);
-                              }}
-                            >
-                              삭제
-                            </button>
-                          </div>
-                        )}
                         {board.thumbnailUrl && (
                           <div className={styles.boardThumbnailBox}>
                             <img
@@ -612,11 +588,8 @@ const Community = () => {
                         {isExpanded && (
                           <CommunityDetail
                             board={board}
-                            onEdit={(boardItem) => {
-                              setSelectedBoard(boardItem);
-                              startEdit(boardItem);
-                            }}
-                            onDelete={(boardNo) => deleteBoard(boardNo)}
+                            onEdit={startEdit}
+                            onDelete={deleteBoard}
                             onLikeChange={(boardNo, newLikeCount) => {
                               setBoardList((prev) =>
                                 prev.map((item) =>
@@ -652,7 +625,7 @@ const Community = () => {
                     setAttachedFiles([]);
                   }}
                 >
-                  ‹
+                  <ArrowBackIosIcon />
                 </button>
                 <h3>{mode === "edit" ? "게시글 수정" : "게시글 작성"}</h3>
               </div>
@@ -719,7 +692,7 @@ const Community = () => {
                   </p>
 
                   <p>
-                    submitWrite 아래는 핵심 요약 사항이며, 게시물 작성 전 반드시
+                    아래는 핵심 요약 사항이며, 게시물 작성 전 반드시
                     확인해주세요.
                   </p>
 
