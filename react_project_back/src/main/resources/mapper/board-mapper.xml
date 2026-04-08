@@ -246,6 +246,7 @@
         )
         GROUP BY t.board_no, b.board_title, b.ctpv, b.sgg
         ORDER BY count DESC
+        offset 0 rows fetch next 10 rows only
     </select>
 
     <!-- 내가 쓴 글 -->

@@ -164,5 +164,9 @@ public class BoardService {
 			return null;
 		}
 	}
+	public List<Board> selectMarkers() {
+		List<Board> list = boardDao.selectMarkers();
+		return list;
+	}
 }
 

@@ -1,6 +1,10 @@
 package kr.co.iei.board.model.vo;
 
+import java.beans.JavaBean;
+
 import org.apache.ibatis.type.Alias;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import kr.co.iei.member.model.vo.Member;
 import lombok.AllArgsConstructor;
@@ -11,6 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Alias(value="board")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Board {
 
 	private Integer boardNo;
@@ -24,6 +29,10 @@ public class Board {
 	    private Double boardLat;
 	    private Double boardLng;
 	    private Integer readCount;
+	    private String ctpv;
+	    private String sgg;
+	    
+	 
 	    
 	    
 	 // 프론트에서 바로 쓰기 위한 응답용 필드

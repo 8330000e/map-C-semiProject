@@ -49,7 +49,14 @@ const getImageUrl = (thumb) => {
   return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
-const Community = () => {
+const Community = ({
+  addr,
+  lnglat,
+  ctpvsgg,
+  setAddr,
+  setLnglat,
+  setCtpvsgg,
+}) => {
   const { memberId, memberNickname } = useAuthStore();
   const isLogin = !!memberId;
   const mapDivRef = useRef(null);
@@ -596,7 +603,27 @@ const Community = () => {
                     <button
                       type="button"
                       className={`${styles.mapCommunityBtn} ${styles.writeBtn}`}
-                      onClick={() => setMode("write")}
+                      onClick={() => {
+                        setMode("write");
+                        setAddr("선택된 위치 없음");
+                        setSelectLnglat({
+                          lat: 0,
+                          lng: 0,
+                        });
+                        setCtpvsgg({
+                          ctpv: "",
+                          sgg: "",
+                        });
+                        setSelectAddr("");
+                        setSelectLnglat({
+                          lat: 0,
+                          lng: 0,
+                        });
+                        setSelectCtpvSgg({
+                          ctpv: "",
+                          sgg: "",
+                        });
+                      }}
                     >
                       게시글 작성
                     </button>
@@ -786,13 +813,15 @@ const Community = () => {
 
                 <div className={styles.boardWriteGroup}>
                   <label>장소</label>
-                  {/* 장소 기능 들어갈 자리*/}
                   <div className={styles.map_div}>
                     <div className={styles.spot_box}>
                       <p>선택된 위치</p>
                       <p>{addr}</p>
                     </div>
-                    <div className={styles.spotSelectBtn} onClick={insertSpot}>
+                    <div
+                      className={`${styles.spotSelectBtn} ${addr === selectAddr ? styles.selectedBtn : ""}`}
+                      onClick={insertSpot}
+                    >
                       {addr === selectAddr ? "선택완료" : "장소선택"}
                     </div>
                     <div className={styles.lnglat}>

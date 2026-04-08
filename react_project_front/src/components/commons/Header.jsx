@@ -37,14 +37,6 @@ const Header = () => {
                   로그인
                 </button>
               </Link>
-              <Link to="/join">
-                <button
-                  type="button"
-                  className={`btn ${styles.btn} ${styles.outline}`}
-                >
-                  회원가입
-                </button>
-              </Link>
             </div>
           ) : (
             <div className={`${styles.profile_bar_wrap}`}>
