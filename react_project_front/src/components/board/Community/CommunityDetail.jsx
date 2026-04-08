@@ -59,9 +59,12 @@ const hasImageInContent = (html) => {
   return doc.querySelector("img") !== null;
 };
 
-const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
+const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCountChange }) => {
   const { memberId } = useAuthStore();
   const [comments, setComments] = useState([]);
+  // 상세페이지에서 보여줄 댓글 개수를 별도 상태로 관리합니다.
+  // board.commentCount가 있으면 초기값으로 사용하지만, 실제 로드된 댓글 개수로 동기화합니다.
+  const [commentCount, setCommentCount] = useState(board.commentCount ?? 0);
   const [newComment, setNewComment] = useState("");
   const [newPrivate, setNewPrivate] = useState(false);
   const [replyTarget, setReplyTarget] = useState(null);
@@ -85,11 +88,18 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
     setScrapped(localStorage.getItem(`scrap_board_${board.boardNo}`) === "1");
 
     if (memberId && board?.boardNo) {
+      // 상세보기 진입 시 로그인 사용자의 좋아요 여부를 서버에서 확인합니다.
+      // 이 값은 새로고침 후에도 하트 내부 채우기 상태를 일관되게 유지하는 데 사용됩니다.
       axios
         .get(
           `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes/${memberId}`,
         )
-        .then((res) => setLiked(res.data === true))
+        .then((res) => {
+          const likedStatus = res.data === true;
+          setLiked(likedStatus);
+          // 목록에서도 같은 게시글에 대한 liked 상태가 일치하도록 상위 컴포넌트에 전달합니다.
+          onLikeChange?.(board.boardNo, likeCount, likedStatus);
+        })
         .catch((err) => console.error("좋아요 여부 조회 실패", err));
     } else {
       if (memberId && !board?.boardNo) {
@@ -115,11 +125,16 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
             id: item.commentNo,
             parentId: item.parentCommentNo,
             depth: item.commentDepth,
-            isPrivate: item.isSecret,
+            isPrivate:
+              item.isSecret === 1 || item.isSecret === "1" || item.isSecret === true,
             content: item.content,
             memberNickname: item.memberNickname || item.memberId,
           })),
         );
+        // 서버에서 실제 댓글 목록을 받아오면 댓글 수를 동기화하고,
+        // 리스트 상단에 표시되는 댓글 수가 새로고침 후에도 정확히 보이도록 합니다.
+        setCommentCount(loaded.length);
+        onCommentCountChange?.(board.boardNo, loaded.length);
       })
       .catch((err) => console.error("댓글 목록 조회 실패", err));
   }, [board.boardNo]);
@@ -159,11 +174,17 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
         id: saved.commentNo,
         parentId: saved.parentCommentNo,
         depth: saved.commentDepth,
-        isPrivate: saved.isSecret,
+        isPrivate:
+          saved.isSecret === 1 || saved.isSecret === "1" || saved.isSecret === true,
         content: saved.content,
       };
 
+      // 댓글 등록 성공 시 댓글 리스트에 추가하고 카운트를 즉시 증가시킵니다.
+      // 상세 페이지에서 변경된 댓글 수는 목록으로 전달하여 제목 영역에도 반영합니다.
       setComments((prev) => [...prev, addedComment]);
+      const nextCount = commentCount + 1;
+      setCommentCount(nextCount);
+      onCommentCountChange?.(board.boardNo, nextCount);
       setNewComment("");
       setNewPrivate(false);
       setReplyTarget(null);
@@ -189,7 +210,8 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
         const nextCount = (likeCount ?? 0) + 1;
         setLiked(true);
         setLikeCount(nextCount);
-        onLikeChange?.(board.boardNo, nextCount);
+        // 좋아요가 추가된 경우 목록에서도 즉시 반영하도록 상위 컴포넌트에 변경을 전달합니다.
+        onLikeChange?.(board.boardNo, nextCount, true);
       } else {
         await axios.delete(
           `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes`,
@@ -198,7 +220,8 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
         const nextCount = (likeCount ?? 0) - 1;
         setLiked(false);
         setLikeCount(nextCount);
-        onLikeChange?.(board.boardNo, nextCount);
+        // 좋아요 취소 후에도 목록 위치에서 상태가 일치하도록 변경을 전달합니다.
+        onLikeChange?.(board.boardNo, nextCount, false);
       }
     } catch (err) {
       console.error("좋아요 처리 실패", err);
@@ -314,7 +337,11 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
       await axios.delete(`${BACKSERVER}/boards/${board.boardNo}/comments/${comment.id}`, {
         params: { memberId },
       });
+      // 댓글 삭제 성공 시 화면에서 해당 댓글을 제거하고 카운트를 감소시킵니다.
       setComments((prev) => prev.filter((item) => item.id !== comment.id));
+      const nextCount = Math.max(0, commentCount - 1);
+      setCommentCount(nextCount);
+      onCommentCountChange?.(board.boardNo, nextCount);
       Swal.fire({ icon: "success", title: "댓글이 삭제되었습니다." });
     } catch (err) {
       console.error("댓글 삭제 실패", err);
@@ -351,10 +378,13 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
     return root;
   }, [comments]);
 
+  const isSecretComment = (comment) =>
+    comment.isPrivate === 1 || comment.isPrivate === true || comment.isPrivate === "1";
+
   // 비공개 댓글 접근 권한 조건
   // 댓글 작성자, 게시글 작성자, 해당 비공개 댓글의 부모 댓글 작성자만 내용을 볼 수 있습니다.
   const canViewSecretComment = (comment) => {
-    if (comment.isPrivate !== 1) return true;
+    if (!isSecretComment(comment)) return true;
     const isOwn = comment.memberId === memberId;
     const isBoardAuthor = memberId && board.writerId === memberId;
     const parentAuthorId = comment.parentId ? commentMap[comment.parentId]?.memberId : null;
@@ -364,7 +394,7 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
   const renderComments = (items) =>
     items.map((comment) => {
       const isOwn = comment.memberId === memberId;
-      const isSecret = comment.isPrivate === 1;
+      const isSecret = isSecretComment(comment);
       const displayText =
         isSecret && !canViewSecretComment(comment)
           ? "비공개 댓글입니다."
@@ -497,9 +527,7 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange }) => {
         </div>
         <div className={styles.statItem}>
           <span className={styles.statLabel}>댓글</span>
-          <span className={styles.statValue}>
-            {board.commentCount ?? comments.length}
-          </span>
+          <span className={styles.statValue}>{commentCount}</span>
         </div>
         <div className={styles.statItem}>
           <span className={styles.statLabel}>작성자</span>

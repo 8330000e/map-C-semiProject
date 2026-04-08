@@ -123,6 +123,11 @@ public class StoreBoardServiceImpl implements StoreBoardService {
     }
 
     @Override
+    public List<StoreRating> getRatingsBySeller(String sellerId) {
+        return storeBoardDAO.selectRatingsBySeller(sellerId);
+    }
+
+    @Override
     public StoreRating addRating(StoreRating rating) {
         storeBoardDAO.insertRating(rating);
         return rating;

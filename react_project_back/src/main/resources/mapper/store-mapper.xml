@@ -327,6 +327,26 @@
     ORDER BY REVIEW_NO DESC
   </select>
 
+  <select id="selectRatingsBySeller" resultType="kr.co.iei.store.model.vo.StoreRating">
+    SELECT
+      REVIEW_NO,
+      TRADE_NO,
+      MARKET_NO,
+      SELLER_ID,
+      BUYER_ID,
+      MEMBER_NICKNAME AS BUYER_NICKNAME,
+      RATING,
+      REVIEW_CONT AS REVIEW_CONTENT,
+      REVIEW_THUMB,
+      NVL(CREATED_AT, CAST(REVIEW_DATE AS TIMESTAMP)) AS CREATED_AT,
+      IS_DELETED,
+      IS_PRIVATE
+    FROM STORE_REVIEW_TBL
+    WHERE SELLER_ID = #{sellerId}
+      AND IS_DELETED = 0
+    ORDER BY REVIEW_NO DESC
+  </select>
+
   <select id="selectRatingByTradeAndBuyer" resultType="kr.co.iei.store.model.vo.StoreRating">
     SELECT
       REVIEW_NO,

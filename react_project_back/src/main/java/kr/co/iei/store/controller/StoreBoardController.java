@@ -192,6 +192,18 @@ public class StoreBoardController {
         }
     }
 
+    @GetMapping("/sellers/{sellerId}/ratings")
+    public ResponseEntity<?> getRatingsBySeller(@PathVariable String sellerId) {
+        try {
+            return ResponseEntity.ok(storeBoardService.getRatingsBySeller(sellerId));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            log.error("평가 조회 실패 sellerId={}", sellerId, e);
+            return ResponseEntity.internalServerError().body("평가 조회 실패: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/markets/{marketNo}/ratings")
     public ResponseEntity<?> addRatingByMarket(@PathVariable Long marketNo, @RequestBody StoreRating rating) {
         try {
