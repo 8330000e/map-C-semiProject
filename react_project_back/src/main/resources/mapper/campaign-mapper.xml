@@ -25,4 +25,16 @@
                from create_campaign_tbl ct
                where campaign_no = #{campaignNo} 
 	</select>
+	<insert id="createCampaign">
+		insert into create_campaign_tbl values (
+			campaign_no_seq.nextval,
+			#{campaignTitle},
+			#{campaignExplanation},
+			0,
+			#{campaignGoalMember},
+			#{campaignExpireDate},
+			#{memberId},
+			null
+		)
+	</insert>
 </mapper>

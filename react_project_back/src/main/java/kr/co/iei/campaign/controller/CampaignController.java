@@ -1,5 +1,6 @@
 package kr.co.iei.campaign.controller;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,8 @@ public class CampaignController {
 	}
 	@PostMapping(value="/{memberId}")
 	public ResponseEntity<?> createCampaign(@PathVariable String memberId,@RequestBody Campaign camp){
-		System.out.println(camp);
-		return ResponseEntity.ok(null);
+		camp.setMemberId(memberId);
+		int result = campaignService.createCampaign(camp);
+		return ResponseEntity.ok(result);
 	}
 }

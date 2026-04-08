@@ -13,4 +13,6 @@ public interface CampaignDao {
 
 	Campaign selectOneCampaign(Integer campaignNo);
 
+	int createCampaign(Campaign camp);
+
 }

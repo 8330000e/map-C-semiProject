@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.iei.campaign.model.dao.CampaignDao;
 import kr.co.iei.campaign.model.vo.Campaign;
@@ -22,6 +23,11 @@ public class CampaignService {
 		System.out.println(campaignNo);
 		Campaign result = campaignDao.selectOneCampaign(campaignNo);
 		System.out.println(result.getMemberCount());
+		return result;
+	}
+	@Transactional
+	public int createCampaign(Campaign camp) {
+		int result = campaignDao.createCampaign(camp);
 		return result;
 	}
 }
