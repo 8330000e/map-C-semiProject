@@ -692,9 +692,14 @@ const Community = () => {
                         {isExpanded && (
                           <CommunityDetail
                             board={board}
-                            onEdit={startEdit}
-                            onDelete={deleteBoard}
-                            onLikeChange={(boardNo, newLikeCount) => {
+                            onEdit={(boardItem) => {
+                              setSelectedBoard(boardItem);
+                              startEdit(boardItem);
+                            }}
+                            onDelete={(boardNo) => deleteBoard(boardNo)}
+                            onLikeChange={(boardNo, newLikeCount, liked) => {
+                              // 상세보기에서 좋아요 상태가 변경되면
+                              // 목록 상단의 좋아요 개수와 하트 아이콘 상태도 함께 업데이트합니다.
                               setBoardList((prev) =>
                                 prev.map((item) =>
                                   item.boardNo === boardNo

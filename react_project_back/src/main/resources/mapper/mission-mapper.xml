@@ -157,32 +157,32 @@
 	</update>
 	
 	<!-- 오늘 특정 랜덤 미션을 완료했는지 확인 (중복 완료 방지용) -->
-<select id="existsTodayRandomMissionComplete" resultType="int">
-    SELECT COUNT(*)
-    FROM MEMBER_MISSION_TBL
-    WHERE MEMBER_ID = #{memberId}
-      AND MISSION_NO = #{missionNo}
-      AND COMPLETED_YMD = TRUNC(SYSDATE)
-</select>
-
-
-<!-- 랜덤 미션 인증 처리 (이미지 저장 + 완료 날짜 기록) -->
-<update id="updateRandomMissionCertification">
-    UPDATE MEMBER_MISSION_TBL
-    SET CERT_IMAGE_URL = #{certImageUrl},
-        COMPLETED_YMD = TRUNC(SYSDATE)
-    WHERE MEMBER_ID = #{memberId}
-      AND MISSION_NO = #{missionNo}
-      AND COMPLETED_YMD IS NULL
-</update>
-
-
-<!-- 랜덤 미션 완료 시 회원 포인트 지급 -->
-<update id="updateMemberPointForRandom" parameterType="string">
-    UPDATE MEMBER_POINT_TBL
-    SET TOTAL_POINT = TOTAL_POINT + 10
-    WHERE MEMBER_ID = #{memberId}
-</update>
+	<select id="existsTodayRandomMissionComplete" resultType="int">
+	    SELECT COUNT(*)
+	    FROM MEMBER_MISSION_TBL
+	    WHERE MEMBER_ID = #{memberId}
+	      AND MISSION_NO = #{missionNo}
+	      AND COMPLETED_YMD = TRUNC(SYSDATE)
+	</select>
+	
+	
+	<!-- 랜덤 미션 인증 처리 (이미지 저장 + 완료 날짜 기록) -->
+	<update id="updateRandomMissionCertification">
+	    UPDATE MEMBER_MISSION_TBL
+	    SET CERT_IMAGE_URL = #{certImageUrl},
+	        COMPLETED_YMD = TRUNC(SYSDATE)
+	    WHERE MEMBER_ID = #{memberId}
+	      AND MISSION_NO = #{missionNo}
+	      AND COMPLETED_YMD IS NULL
+	</update>
+	
+	
+	<!-- 랜덤 미션 완료 시 회원 포인트 지급 -->
+	<update id="updateMemberPointForRandom" parameterType="string">
+	    UPDATE MEMBER_POINT_TBL
+	    SET TOTAL_POINT = TOTAL_POINT + 10
+	    WHERE MEMBER_ID = #{memberId}
+	</update>
 	
 		<!-- 오늘 보너스 미션 완료 여부 -->
 	<select id="existsTodayBonusMission" resultType="int">
