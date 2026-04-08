@@ -3,6 +3,8 @@
 <mapper namespace="kr.co.iei.member.model.dao.MemberDao">
 
 
+<!--김경건-->
+
 <insert id="insertMember"
 	parameterType="kr.co.iei.member.model.vo.Member">
 	INSERT INTO member_tbl1
@@ -15,7 +17,7 @@
 	#{memberEmail}, #{memberThumb}, SYSDATE, 1,
 	0, 0)
 </insert>
-
+<!--김경건-->
 <select id="selectOneMember" resultType="member">
 	select * from member_tbl1
 	where member_id =#{memberId}
@@ -28,6 +30,7 @@
 <select id="findIdByEmail" parameterType="string" resultType="string">
 
 <!--원래라면  
+김경건
 		select memberId
 		from member_tbl
 		where member_email = ?
@@ -52,7 +55,7 @@ fetch first 1 row only
 
 </select>
 
-<!--아이디와 이메일 조회해오기-->
+<!--아이디와 이메일 조회해와서 비밀번호 페이지 열기김경건-->
 <select id="existsByIdAndEmail"  resultType="Integer">
 	SELECT 1
 	FROM member_tbl1
@@ -60,7 +63,19 @@ fetch first 1 row only
 	AND member_email = #{memberEmail}
 </select>
 
+ 
 
+	
+	
+<update id="resetPw">
+	update member_tbl1
+	set member_pw =#{memberPw}
+	where member_id = #{memberId}
+</update>
+
+
+
+	<!--..............................................................-->
 
 <select id="selectMemberList" resultType="member">
 		select
@@ -88,7 +103,7 @@ fetch first 1 row only
 	<update id="updateMemberThumb">
 		update member_tbl1 set member_thumb=#{memberThumb} where member_id = #{memberId}
 	</update>
-	
+
 	<!-- 포인트 조회 -->
 	<select id="selectMemberPoint" parameterType="string" resultType="int">
 	SELECT TOTAL_POINT

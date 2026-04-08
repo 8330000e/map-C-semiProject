@@ -49,6 +49,8 @@ public interface StoreBoardService {
 
     List<StoreRating> getRatingsByMarket(Long marketNo);
 
+    List<StoreRating> getRatingsBySeller(String sellerId);
+
     StoreRating addRating(StoreRating rating);
 
     void editRating(StoreRating rating);
