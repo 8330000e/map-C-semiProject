@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import useAuthStore from "../../../store/useAuthStore";
 import styles from "./storeDetail.module.css";
+import storeStyles from "./store.module.css";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 const DELIVERY_FEE = 5000;
@@ -665,23 +666,38 @@ const StoreDetail = () => {
           {displaySame.map((same) => {
             const imageUrl = getImageUrl(same.productThumb || same.thumb);
             return (
-              <Link key={same.marketNo} to={`/store/${same.marketNo}`} className={styles.same_item}>
-                <div className={styles.image}>
-                  {imageUrl ? (
-                    <img
-                      src={imageUrl}
-                      alt={same.marketTitle || "상품 이미지"}
-                      className={styles.product_image}
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none";
-                      }}
-                    />
-                  ) : (
-                    "이미지"
-                  )}
-                </div>
-                <div className={styles.same_item_title}>{same.marketTitle}</div>
-                <div className={styles.same_item_price}>{formatPrice(same.productPrice)}</div>
+              <Link
+                key={same.marketNo}
+                to={`/store/${same.marketNo}`}
+                className={storeStyles.cardLink}
+              >
+                <article className={`${storeStyles.card} ${styles.same_item}`}>
+                  <div className={storeStyles.image}>
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt={same.marketTitle || "상품 이미지"}
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      "이미지"
+                    )}
+                  </div>
+                  <h3>{same.marketTitle}</h3>
+                  <p className={storeStyles.price}>{formatPrice(same.productPrice)}</p>
+                  <div className={storeStyles.region_badge}>{same.regionName || same.ctpvsggId || "지역 미등록"}</div>
+                  <p className={storeStyles.tradeType}>거래방법 : {getTradeTypeLabel(same.tradeType)}</p>
+                  <div className={storeStyles.metaRow}>
+                    <span className={storeStyles.author}>{same.memberId}</span>
+                    <span className={storeStyles.metaDivider}>|</span>
+                    <span className={storeStyles.commentCount}>💬 {same.commentCount ?? 0}</span>
+                    <span className={storeStyles.metaDivider}>|</span>
+                    <span className={storeStyles.dateLine}>{same.createdAt ? formatCommentDate(same.createdAt) : ""}</span>
+                  </div>
+                  <p className={storeStyles.viewCount}>👀 조회수 {Number(same.readCount ?? 0).toLocaleString("ko-KR")}</p>
+                </article>
               </Link>
             );
           })}
