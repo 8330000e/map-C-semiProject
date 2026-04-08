@@ -138,6 +138,8 @@ const Login = () => {
         <Link to="/members/find-id">아이디 찾기</Link>
         {" || "}
         <Link to="/members/find-pw">비밀번호 찾기</Link>
+        {" || "}
+        <Link to="/join">회원가입</Link>
       </div>
     </div>
   );
