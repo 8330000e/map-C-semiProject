@@ -6,6 +6,7 @@ import TextEditor from "./TextEditor";
 import CommunityDetail from "./CommunityDetail";
 import useAuthStore from "../../../store/useAuthStore";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatIcon from "@mui/icons-material/Chat";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Swal from "sweetalert2";
@@ -105,6 +106,43 @@ const Community = () => {
     sgg: "",
   });
 
+  const loadBoardMeta = async (boards) => {
+    if (!boards || boards.length === 0) return boards;
+
+    try {
+      const results = await Promise.all(
+        boards.map(async (board) => {
+          if (!board?.boardNo) return board;
+
+          const commentRequest = axios.get(
+            `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/comments`,
+          );
+
+          const likeRequest = memberId
+            ? axios.get(
+                `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes/${memberId}`,
+              )
+            : Promise.resolve({ data: false });
+
+          const [commentRes, likeRes] = await Promise.all([commentRequest, likeRequest]);
+
+          const comments = Array.isArray(commentRes.data) ? commentRes.data : [];
+          const isLiked = likeRes?.data === true;
+
+          return {
+            ...board,
+            commentCount: comments.length,
+            liked: isLiked,
+          };
+        }),
+      );
+      return results;
+    } catch (err) {
+      console.error("게시글 메타 로드 실패:", err);
+      return boards;
+    }
+  };
+
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/boards`, {
@@ -116,20 +154,21 @@ const Community = () => {
           sigungu,
         },
       })
-      .then((res) => {
+      .then(async (res) => {
         console.log("게시글 목록 응답:", res.data);
         const items = Array.isArray(res.data.items)
           ? res.data.items
           : Array.isArray(res.data)
             ? res.data
             : [];
-        setBoardList(items);
+        const itemsWithMeta = await loadBoardMeta(items);
+        setBoardList(itemsWithMeta);
       })
       .catch((err) => {
         console.error("게시글 조회 실패:", err);
         setBoardList([]);
       });
-  }, [searchType, searchKeyword, sido, sigungu]);
+  }, [searchType, searchKeyword, sido, sigungu, memberId]);
 
   useEffect(() => {
     if (!mapDivRef.current || !window.naver) {
@@ -295,7 +334,12 @@ const Community = () => {
           },
         );
 
-        setBoardList(listRes.data.items || []);
+        const items = Array.isArray(listRes.data.items)
+          ? listRes.data.items
+          : Array.isArray(listRes.data)
+            ? listRes.data
+            : [];
+        setBoardList(await loadBoardCommentCounts(items));
       } else {
         Swal.fire({
           icon: "error",
@@ -376,7 +420,12 @@ const Community = () => {
           },
         );
 
-        setBoardList(listRes.data.items || []);
+        const items = Array.isArray(listRes.data.items)
+          ? listRes.data.items
+          : Array.isArray(listRes.data)
+            ? listRes.data
+            : [];
+        setBoardList(await loadBoardCommentCounts(items));
       } else {
         Swal.fire({
           icon: "error",
@@ -635,7 +684,11 @@ const Community = () => {
                             <span>{board.readCount ?? 0}</span>
                           </span>
                           <span className={styles.iconItem}>
-                            <FavoriteBorderIcon fontSize="small" />
+                            {board.liked ? (
+                              <FavoriteIcon fontSize="small" />
+                            ) : (
+                              <FavoriteBorderIcon fontSize="small" />
+                            )}
                             <span>{board.likeCount ?? 0}</span>
                           </span>
 
@@ -652,11 +705,24 @@ const Community = () => {
                               startEdit(boardItem);
                             }}
                             onDelete={(boardNo) => deleteBoard(boardNo)}
-                            onLikeChange={(boardNo, newLikeCount) => {
+                            onLikeChange={(boardNo, newLikeCount, liked) => {
+                              // 상세보기에서 좋아요 상태가 변경되면
+                              // 목록 상단의 좋아요 개수와 하트 아이콘 상태도 함께 업데이트합니다.
                               setBoardList((prev) =>
                                 prev.map((item) =>
                                   item.boardNo === boardNo
-                                    ? { ...item, likeCount: newLikeCount }
+                                    ? { ...item, likeCount: newLikeCount, liked }
+                                    : item,
+                                ),
+                              );
+                            }}
+                            onCommentCountChange={(boardNo, newCommentCount) => {
+                              // 상세보기에서 댓글이 추가/삭제되면
+                              // 목록 상단의 댓글 수를 동기화합니다.
+                              setBoardList((prev) =>
+                                prev.map((item) =>
+                                  item.boardNo === boardNo
+                                    ? { ...item, commentCount: newCommentCount }
                                     : item,
                                 ),
                               );
