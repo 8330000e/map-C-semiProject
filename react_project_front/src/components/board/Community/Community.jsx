@@ -106,6 +106,10 @@ const Community = () => {
     sgg: "",
   });
 
+  // 목록 로딩 시 각 게시물의 추가 메타 정보를 채웁니다.
+  // 1) 댓글 개수(commentCount)
+  // 2) 현재 사용자가 좋아요를 눌렀는지 여부(liked)
+  // 이렇게 하면 목록 제목 영역에서도 새로고침 후 좋아요/댓글 상태를 유지할 수 있습니다.
   const loadBoardMeta = async (boards) => {
     if (!boards || boards.length === 0) return boards;
 
@@ -161,6 +165,7 @@ const Community = () => {
           : Array.isArray(res.data)
             ? res.data
             : [];
+        // 목록 데이터를 불러온 후, 댓글 개수와 좋아요 상태를 채워서 화면에 반영합니다.
         const itemsWithMeta = await loadBoardMeta(items);
         setBoardList(itemsWithMeta);
       })
@@ -339,7 +344,7 @@ const Community = () => {
           : Array.isArray(listRes.data)
             ? listRes.data
             : [];
-        setBoardList(await loadBoardCommentCounts(items));
+        setBoardList(await loadBoardMeta(items));
       } else {
         Swal.fire({
           icon: "error",
@@ -425,7 +430,7 @@ const Community = () => {
           : Array.isArray(listRes.data)
             ? listRes.data
             : [];
-        setBoardList(await loadBoardCommentCounts(items));
+        setBoardList(await loadBoardMeta(items));
       } else {
         Swal.fire({
           icon: "error",

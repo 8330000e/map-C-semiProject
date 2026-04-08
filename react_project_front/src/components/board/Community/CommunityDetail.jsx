@@ -88,11 +88,18 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
     setScrapped(localStorage.getItem(`scrap_board_${board.boardNo}`) === "1");
 
     if (memberId && board?.boardNo) {
+      // 상세보기 진입 시 로그인 사용자의 좋아요 여부를 서버에서 확인합니다.
+      // 이 값은 새로고침 후에도 하트 내부 채우기 상태를 일관되게 유지하는 데 사용됩니다.
       axios
         .get(
           `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes/${memberId}`,
         )
-        .then((res) => setLiked(res.data === true))
+        .then((res) => {
+          const likedStatus = res.data === true;
+          setLiked(likedStatus);
+          // 상세 보기 진입 시 좋아요 여부를 확인하고 목록에 있는 liked 상태도 동기화합니다.
+          onLikeChange?.(board.boardNo, likeCount, likedStatus);
+        })
         .catch((err) => console.error("좋아요 여부 조회 실패", err));
     } else {
       if (memberId && !board?.boardNo) {
@@ -123,8 +130,10 @@ const CommunityDetail = ({ board, onEdit, onDelete, onLikeChange, onCommentCount
             memberNickname: item.memberNickname || item.memberId,
           })),
         );
-        // 서버에서 실제 댓글 목록을 받아오면 댓글 수를 동기화합니다.
+        // 서버에서 실제 댓글 목록을 받아오면 댓글 수를 동기화하고,
+        // 리스트 상단에 표시되는 댓글 수가 새로고침 후에도 정확히 보이도록 합니다.
         setCommentCount(loaded.length);
+        onCommentCountChange?.(board.boardNo, loaded.length);
       })
       .catch((err) => console.error("댓글 목록 조회 실패", err));
   }, [board.boardNo]);
