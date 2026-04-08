@@ -102,7 +102,11 @@ const Community = ({}) => {
     ctpv: "",
     sgg: "",
   });
+<<<<<<< Updated upstream
+=======
   */
+
+>>>>>>> Stashed changes
   const [selectAddr, setSelectAddr] = useState("선택된 위치 없음");
   const [selectLnglat, setSelectLnglat] = useState({
     lat: 0,
