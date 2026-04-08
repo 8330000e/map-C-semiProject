@@ -7,6 +7,7 @@ import HelpIcon from "@mui/icons-material/Help";
 import useAuthStore from "../store/useAuthStore";
 import Map from "../components/mainpage/Map";
 import Bestpostlist from "../components/mainpage/Bestpostlist";
+import Swal from "sweetalert2";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -29,10 +30,28 @@ const getSaleStatusLabel = (productStatus) => {
 const getImageUrl = (thumb) => {
   if (!thumb) return null;
   if (typeof thumb !== "string") return null;
-  const trimmed = thumb.trim();
+  let trimmed = thumb.trim();
   if (!trimmed) return null;
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+
+  trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
+    return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
+  if (driveMatch) {
+    const boardIndex = trimmed.indexOf("/board/editor/");
+    if (boardIndex !== -1) {
+      const suffix = trimmed.substring(boardIndex);
+      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
+    }
+    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
+  }
+
   if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/board/editor/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
   return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
@@ -47,6 +66,8 @@ const Main = () => {
   const [goods, setGoods] = useState([]);
 
   const navigate = useNavigate();
+  const { memberId } = useAuthStore();
+  const isLogin = !!memberId;
 
   useEffect(() => {
     axios
@@ -55,8 +76,8 @@ const Main = () => {
         const items = Array.isArray(res.data)
           ? res.data
           : Array.isArray(res.data?.items)
-          ? res.data.items
-          : [];
+            ? res.data.items
+            : [];
         setGoods(items);
       })
       .catch((err) => console.error("중고장터 목록 조회 실패", err));
@@ -178,6 +199,28 @@ const Main = () => {
     };
   }, [visibleRealtimeComment]);
 
+  const handleMissionClick = async () => {
+    if (!isLogin) {
+      const result = await Swal.fire({
+        icon: "warning",
+        title: "로그인이 필요합니다",
+        text: "미션(출석체크)은 로그인 후 이용할 수 있습니다. 로그인 페이지로 이동하시겠습니까?",
+        showCancelButton: true,
+        confirmButtonText: "로그인",
+        cancelButtonText: "취소",
+        confirmButtonColor: "#464d3e",
+        cancelButtonColor: "#b0b0b0",
+      });
+
+      if (result.isConfirmed) {
+        navigate("/members/login", { state: { from: "/mission" } });
+      }
+      return;
+    }
+
+    navigate("/mission");
+  };
+
   return (
     <main className="main_wrap">
       <div className="main_top">
@@ -196,7 +239,17 @@ const Main = () => {
               <Link to="/store">중고거래</Link>
             </li>
             <li>
-              <Link to="/mission">미션(출석체크)</Link>
+              <Link
+                to="/mission"
+                onClick={(e) => {
+                  if (!isLogin) {
+                    e.preventDefault(); // 이동 막기
+                    handleMissionClick();
+                  }
+                }}
+              >
+                미션(출석체크)
+              </Link>
             </li>
             <li>
               <Link to="/tree-grow" className="treeGrow">
@@ -289,7 +342,10 @@ const Main = () => {
                     <Link to={`/store/${item.marketNo}`}>
                       <div className="used_item_image" aria-hidden="true">
                         {imageUrl ? (
-                          <img src={imageUrl} alt={item.marketTitle || "상품 이미지"} />
+                          <img
+                            src={imageUrl}
+                            alt={item.marketTitle || "상품 이미지"}
+                          />
                         ) : null}
                       </div>
                       <div className="used_item_info">
@@ -316,7 +372,8 @@ const Main = () => {
                           </span>
                         </div>
                         <span className="used_item_view">
-                          👀 {Number(item.readCount ?? 0).toLocaleString("ko-KR")}
+                          👀{" "}
+                          {Number(item.readCount ?? 0).toLocaleString("ko-KR")}
                         </span>
                       </div>
                     </Link>
