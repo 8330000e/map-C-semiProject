@@ -189,3 +189,182 @@
   border-color: #c8c8c8;
   cursor: not-allowed;
 }
+.completedCard {
+  background: #f3f8e8;
+  border: 1px solid #b8cf7a;
+  box-shadow: 0 8px 20px rgba(141, 179, 63, 0.12);
+}
+
+.completedCard h3,
+.completedCard h4,
+.completedCard strong {
+  color: #5f7f1f;
+}
+
+.completedButton {
+  background: #dbe8b8 !important;
+  color: #5f6f3a;
+  cursor: not-allowed;
+}
+
+.card button:disabled {
+  cursor: not-allowed;
+  opacity: 1;
+}
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 32, 24, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.certModal {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 30px 28px 24px;
+  box-sizing: border-box;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+  border: 1px solid #e8eddc;
+}
+
+.modalCloseButton {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  border: none;
+  background: none;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  color: #777;
+}
+
+.modalCloseButton:hover {
+  color: #333;
+}
+
+.modalHeader {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.modalHeader h3 {
+  margin: 0 0 8px;
+  font-size: 32px;
+  font-weight: 800;
+  color: #1c1c1c;
+}
+
+.modalHeader p {
+  margin: 0;
+  font-size: 15px;
+  color: #666;
+}
+
+.uploadBox {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 1.5px dashed #c8d7a0;
+  border-radius: 18px;
+  background: #f8fbf1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.uploadBox:hover {
+  border-color: #a9c957;
+  background: #f4f8ea;
+}
+
+.uploadPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #5f6a4d;
+  text-align: center;
+}
+
+.placeholderIcon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #e7efd2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploadPlaceholder strong {
+  font-size: 17px;
+  color: #2d2d2d;
+}
+
+.uploadPlaceholder span {
+  font-size: 13px;
+  color: #777;
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #f5f5f5;
+}
+
+.fileGuide {
+  margin-bottom: 18px;
+  font-size: 13px;
+  color: #7a7a7a;
+  text-align: left;
+}
+
+.modalButtonGroup {
+  display: flex;
+  gap: 12px;
+}
+
+.certSubmitButton {
+  flex: 1;
+  height: 48px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.certSubmitButton {
+  border: none;
+  background: #a9c957;
+  color: #1f2a08;
+}
+
+.certSubmitButton:hover {
+  background: #9cc14b;
+}
+.disabledButton {
+  background-color: #ddd !important;
+  color: #999 !important;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.disabledButton:hover {
+  transform: none;
+}

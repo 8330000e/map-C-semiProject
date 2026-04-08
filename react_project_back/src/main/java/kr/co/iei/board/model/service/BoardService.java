@@ -15,15 +15,21 @@ import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
+import kr.co.iei.mission.model.service.MissionService;
 import kr.co.iei.utils.FileUtils;
 
 @Service
 public class BoardService {
 	@Autowired
 	private BoardDao boardDao;
+	
+	@Autowired
+	private MissionService missionService;
 
 	@Value("${file.root}")
 	private String root;
+	
+	
 	//게시글 조회
 	public List<Board> selectBoardList(int status, int searchType, String searchKeyword) {
 		HashMap<String, Object> param = new HashMap<>();
@@ -35,10 +41,18 @@ public class BoardService {
 		
 	}
 	//게시글 작성
+	@Transactional
 	public int insertBoard(Board board) {
 		int result = boardDao.insertBoard(board);
+
+		if (result > 0) {
+			missionService.completeBasicMission(board.getWriterId());
+		}
+
 		return result;
 	}
+	
+
 
 	//게시글 수정
 	public int updateBoard(Board board) {

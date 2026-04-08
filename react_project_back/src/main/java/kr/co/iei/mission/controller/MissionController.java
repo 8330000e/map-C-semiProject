@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.iei.mission.model.service.MissionService;
 import kr.co.iei.mission.model.vo.Mission;
@@ -57,5 +58,69 @@ public class MissionController {
         boolean checked = missionService.isTodayAttendance(memberId);
         return Map.of("checked", checked);
     }
+    @GetMapping("/basic/today")
+    public Map<String, Boolean> getTodayBasicMission(@RequestParam String memberId) {
+        boolean completed = missionService.isTodayBasicMission(memberId);
+        return Map.of("completed", completed);
+    }
+    
+    @GetMapping("/random/today/completed")
+    public Map<String, Boolean> getTodayRandomMissionCompleted(
+            @RequestParam String memberId,
+            @RequestParam int missionNo
+    ) {
+        boolean completed = missionService.isTodayRandomMissionCompleted(memberId, missionNo);
+        return Map.of("completed", completed);
+    }
+    
+    
+    
+    @PostMapping("/random/certify")
+    public ResponseEntity<String> certifyRandomMission(
+            @RequestParam("memberId") String memberId,
+            @RequestParam("missionNo") int missionNo,
+            @RequestParam("certImage") MultipartFile certImage
+    ) {
+        int result = missionService.certifyRandomMission(memberId, missionNo, certImage);
+
+        if (result == -1) {
+            return ResponseEntity.badRequest().body("이미 오늘 랜덤 미션을 완료했습니다.");
+        }
+
+        return ResponseEntity.ok("랜덤 미션 인증 완료! 10포인트 지급");
+    }
 	
+    @GetMapping("/bonus/today")
+    public Map<String, Boolean> getTodayBonusMission(@RequestParam String memberId) {
+        boolean completed = missionService.isTodayBonusMission(memberId);
+        return Map.of("completed", completed);
+    }
+
+    @PostMapping("/bonus/claim")
+    public ResponseEntity<Map<String, String>> claimBonusMission(
+            @RequestBody Map<String, Object> param
+    ) {
+        String memberId = (String)param.get("memberId");
+        int missionNo = Integer.parseInt(param.get("missionNo").toString());
+
+        int result = missionService.claimBonusMission(memberId, missionNo);
+
+        if (result == -1) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "message", "기본 미션과 랜덤 미션을 모두 완료해야 합니다."
+            ));
+        } else if (result == -2) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "message", "오늘 보너스 미션은 이미 수령했습니다."
+            ));
+        } else if (result == -3) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "message", "보너스 미션 정보가 올바르지 않습니다."
+            ));
+        }
+
+        return ResponseEntity.ok(Map.of(
+            "message", "보너스 미션 완료! 포인트 지급"
+        ));
+    }
 }

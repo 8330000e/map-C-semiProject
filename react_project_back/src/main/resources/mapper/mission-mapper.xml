@@ -27,61 +27,64 @@
     </select>
 
     <!-- 오늘 이미 배정된 랜덤 미션 조회 -->
-    <select id="selectTodayAssignedRandomMission"
-            parameterType="string"
-            resultMap="missionResultMap">
-        SELECT
-            M.MISSION_NO,
-            M.MISSION_TITLE,
-            M.REWARD_POINT,
-            M.MISSION_IMAGE_URL,
-            M.MISSION_TYPE
-        FROM MEMBER_MISSION_TBL MM
-        JOIN MISSION_TBL M
-          ON MM.MISSION_NO = M.MISSION_NO
-        WHERE MM.MEMBER_ID = #{memberId}
-          AND M.MISSION_TYPE = 'RANDOM'
-          AND MM.COMPLETED_YMD = TRUNC(SYSDATE)
-    </select>
+   <select id="selectTodayAssignedRandomMission"
+        	parameterType="string"
+	        resultMap="missionResultMap">
+	    SELECT
+	        M.MISSION_NO,
+	        M.MISSION_TITLE,
+	        M.REWARD_POINT,
+	        M.MISSION_IMAGE_URL,
+	        M.MISSION_TYPE
+	    FROM MEMBER_MISSION_TBL MM
+	    JOIN MISSION_TBL M
+	      ON MM.MISSION_NO = M.MISSION_NO
+	    WHERE MM.MEMBER_ID = #{memberId}
+	      AND M.MISSION_TYPE = 'RANDOM'
+	      AND MM.ASSIGNED_YMD = TRUNC(SYSDATE)
+	</select>
 
     <!-- 랜덤 미션 하나 뽑기 -->
     <select id="selectRandomMission" resultMap="missionResultMap">
-        SELECT
-            MISSION_NO,
-            MISSION_TITLE,
-            REWARD_POINT,
-            MISSION_IMAGE_URL,
-            MISSION_TYPE
-        FROM (
-            SELECT
-                MISSION_NO,
-                MISSION_TITLE,
-                REWARD_POINT,
-                MISSION_IMAGE_URL,
-                MISSION_TYPE
-            FROM MISSION_TBL
-            WHERE MISSION_TYPE = 'RANDOM'
-            ORDER BY DBMS_RANDOM.VALUE
-        )
-        WHERE ROWNUM = 1
-    </select>
+	    SELECT
+	        MISSION_NO,
+	        MISSION_TITLE,
+	        REWARD_POINT,
+	        MISSION_IMAGE_URL,
+	        MISSION_TYPE
+	    FROM (
+	        SELECT
+	            MISSION_NO,
+	            MISSION_TITLE,
+	            REWARD_POINT,
+	            MISSION_IMAGE_URL,
+	            MISSION_TYPE
+	        FROM MISSION_TBL
+	        WHERE MISSION_TYPE = 'RANDOM'
+	        ORDER BY DBMS_RANDOM.VALUE
+	    )
+	    WHERE ROWNUM = 1
+	</select>
+
 
     <!-- 회원에게 오늘 랜덤 미션 배정 -->
-    <insert id="insertMemberMission" parameterType="memberMission">
-        INSERT INTO MEMBER_MISSION_TBL (
-            USER_MISSION_NO,
-            MISSION_NO,
-            MEMBER_ID,
-            COMPLETED_YMD,
-            CERT_IMAGE_URL
-        ) VALUES (
-            USER_MISSION_SEQ.NEXTVAL,
-            #{missionNo},
-            #{memberId},
-            TRUNC(SYSDATE),
-            #{certImageUrl}
-        )
-    </insert>
+	<insert id="insertMemberMission" parameterType="memberMission">
+	    INSERT INTO MEMBER_MISSION_TBL (
+	        USER_MISSION_NO,
+	        MISSION_NO,
+	        MEMBER_ID,
+	        ASSIGNED_YMD,
+	        COMPLETED_YMD,
+	        CERT_IMAGE_URL
+	    ) VALUES (
+	        USER_MISSION_SEQ.NEXTVAL,
+	        #{missionNo},
+	        #{memberId},
+	        TRUNC(SYSDATE),
+	        NULL,
+	        NULL
+	    )
+	</insert>
     <!-- 출석여부 확인 -->
     <select id="existsTodayAttendance" resultType="int">
     SELECT COUNT(*)
@@ -110,6 +113,138 @@
     SET TOTAL_POINT = TOTAL_POINT + 1
     WHERE MEMBER_ID = #{memberId}
 	</update>
-    
+	
+	
+		<!-- 오늘 기본 미션 했는지 -->
+	<select id="existsTodayBasicMission" resultType="int">
+    SELECT COUNT(*)
+    FROM MEMBER_MISSION_TBL
+    WHERE MEMBER_ID = #{memberId}
+      AND MISSION_NO = (
+          SELECT MISSION_NO
+          FROM MISSION_TBL
+          WHERE MISSION_TYPE = 'BASIC'
+      )
+      AND COMPLETED_YMD = TRUNC(SYSDATE)
+	</select>
+	
+	<!-- 미션 완료 기록 -->
+	<insert id="insertBasicMission" parameterType="string">
+    INSERT INTO MEMBER_MISSION_TBL (
+        USER_MISSION_NO,
+        MISSION_NO,
+        MEMBER_ID,
+        COMPLETED_YMD,
+        CERT_IMAGE_URL
+    )
+    VALUES (
+        USER_MISSION_SEQ.NEXTVAL,
+        (
+            SELECT MISSION_NO
+            FROM MISSION_TBL
+            WHERE MISSION_TYPE = 'BASIC'
+        ),
+        #{memberId},
+        TRUNC(SYSDATE),
+        NULL
+    )
+	</insert>
+	<!-- 포인트 지급 -->
+	<update id="updateMemberPointForBasic" parameterType="string">
+    UPDATE MEMBER_POINT_TBL
+    SET TOTAL_POINT = TOTAL_POINT + 5
+    WHERE MEMBER_ID = #{memberId}
+	</update>
+	
+	<!-- 오늘 특정 랜덤 미션을 완료했는지 확인 (중복 완료 방지용) -->
+<select id="existsTodayRandomMissionComplete" resultType="int">
+    SELECT COUNT(*)
+    FROM MEMBER_MISSION_TBL
+    WHERE MEMBER_ID = #{memberId}
+      AND MISSION_NO = #{missionNo}
+      AND COMPLETED_YMD = TRUNC(SYSDATE)
+</select>
+
+
+<!-- 랜덤 미션 인증 처리 (이미지 저장 + 완료 날짜 기록) -->
+<update id="updateRandomMissionCertification">
+    UPDATE MEMBER_MISSION_TBL
+    SET CERT_IMAGE_URL = #{certImageUrl},
+        COMPLETED_YMD = TRUNC(SYSDATE)
+    WHERE MEMBER_ID = #{memberId}
+      AND MISSION_NO = #{missionNo}
+      AND COMPLETED_YMD IS NULL
+</update>
+
+
+<!-- 랜덤 미션 완료 시 회원 포인트 지급 -->
+<update id="updateMemberPointForRandom" parameterType="string">
+    UPDATE MEMBER_POINT_TBL
+    SET TOTAL_POINT = TOTAL_POINT + 10
+    WHERE MEMBER_ID = #{memberId}
+</update>
+	
+		<!-- 오늘 보너스 미션 완료 여부 -->
+	<select id="existsTodayBonusMission" resultType="int">
+	    SELECT COUNT(*)
+	    FROM MEMBER_MISSION_TBL MM
+	    JOIN MISSION_TBL M
+	      ON MM.MISSION_NO = M.MISSION_NO
+	    WHERE MM.MEMBER_ID = #{memberId}
+	      AND M.MISSION_TYPE = 'BONUS'
+	      AND MM.COMPLETED_YMD = TRUNC(SYSDATE)
+	</select>
+	
+	
+	<!-- 오늘 랜덤 미션 완료 여부 (보너스용) -->
+	<select id="existsTodayCompletedRandomMission" resultType="int">
+	    SELECT COUNT(*)
+	    FROM MEMBER_MISSION_TBL MM
+	    JOIN MISSION_TBL M
+	      ON MM.MISSION_NO = M.MISSION_NO
+	    WHERE MM.MEMBER_ID = #{memberId}
+	      AND M.MISSION_TYPE = 'RANDOM'
+	      AND MM.COMPLETED_YMD = TRUNC(SYSDATE)
+	</select>
+	
+	
+	<!-- 미션 번호로 미션 조회 -->
+	<select id="selectMissionByMissionNo" resultMap="missionResultMap">
+	    SELECT
+	        MISSION_NO,
+	        MISSION_TITLE,
+	        REWARD_POINT,
+	        MISSION_IMAGE_URL,
+	        MISSION_TYPE
+	    FROM MISSION_TBL
+	    WHERE MISSION_NO = #{missionNo}
+	</select>
+	
+	
+	<!-- 보너스 미션 완료 insert -->
+	<insert id="insertBonusMission">
+	    INSERT INTO MEMBER_MISSION_TBL (
+	        USER_MISSION_NO,
+	        MISSION_NO,
+	        MEMBER_ID,
+	        COMPLETED_YMD,
+	        CERT_IMAGE_URL
+	    )
+	    VALUES (
+	        USER_MISSION_SEQ.NEXTVAL,
+	        #{missionNo},
+	        #{memberId},
+	        TRUNC(SYSDATE),
+	        NULL
+	    )
+	</insert>
+	
+	
+	<!-- 보너스 포인트 지급 -->
+	<update id="updateMemberPointForBonus">
+	    UPDATE MEMBER_POINT_TBL
+	    SET TOTAL_POINT = TOTAL_POINT + #{rewardPoint}
+	    WHERE MEMBER_ID = #{memberId}
+	</update>
 
 </mapper>
