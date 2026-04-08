@@ -17,7 +17,12 @@
 	
 	<select id="selectNoticeList" resultType="notice">
 		select * from notice_tbl 
-		where notice_public = 1
+		<where>
+			notice_public = 1
+			<if test="category != null">
+				and category = #{category}
+			</if>
+		</where>
 		order by notice_fixed desc, notice_date desc
 	</select>
 </mapper>
