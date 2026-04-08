@@ -5,6 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import SupportFaqPage from "./SupportFaqPage";
 import SupportNoticePage from "./SupportNoticePage";
 import SupportNoticeDetailPage from "./SupportNoticeDetailPage";
+import SupportQnaPage from "./SupportQnaPage";
 
 const SupportPage = () => {
   useEffect(() => {
@@ -22,6 +23,7 @@ const SupportPage = () => {
         <Route path="faq" element={<SupportFaqPage />} />
         <Route path="notice" element={<SupportNoticePage />} />
         <Route path="notice/:noticeNo" element={<SupportNoticeDetailPage />} />
+        <Route path="qna" element={<SupportQnaPage />} />
       </Routes>
     </section>
   );

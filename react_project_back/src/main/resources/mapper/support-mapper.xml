@@ -38,4 +38,34 @@
 		from notice_tbl
 		where notice_no = #{noticeNo}
 	</select>
+	
+	<select id="selectQnaList" resultType="qna">
+		select 
+			qna_title,
+			qna_content,
+			qna_answer,
+			qna_status,
+			qna_date,
+			qna_answer_image,
+			qna_question_image,
+			qna_category
+		from qna_tbl
+		where member_id = #{memberId}
+		order by qna_status desc, qna_date desc
+	</select>
+	
+	<insert id="insertQna">
+		insert into qna_tbl values(
+			qna_seq.nextval,
+			#{memberId},
+			#{qnaTitle},
+			#{qnaContent},
+        	null,
+        	0,
+          	sysdate,
+        	null,
+         	#{qnaQuestionImage},
+          	#{qnaCategory}
+		)
+	</insert>
 </mapper>

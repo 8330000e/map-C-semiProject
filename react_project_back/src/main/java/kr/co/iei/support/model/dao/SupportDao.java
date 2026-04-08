@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import kr.co.iei.admin.model.vo.Faq;
 import kr.co.iei.admin.model.vo.Notice;
+import kr.co.iei.admin.model.vo.Qna;
 
 @Mapper
 public interface SupportDao {
@@ -16,5 +17,9 @@ public interface SupportDao {
 	List<Notice> selectNoticeList(String category);
 
 	Notice selectNoticeDetail(Integer noticeNo);
+
+	List<Qna> selectQnaList(String memberId);
+
+	int insertQna(Qna qna);
 
 }

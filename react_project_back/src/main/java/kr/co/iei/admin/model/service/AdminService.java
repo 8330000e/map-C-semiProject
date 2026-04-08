@@ -90,7 +90,7 @@ public class AdminService {
 	public int qnaAnswer(Qna qna) {
 		if (qna.getQnaImage() != null) {
 			String filepath = fileUtils.upload(root + "qna/", qna.getQnaImage());
-			qna.setQnaImagePath(filepath);
+			qna.setQnaAnswerImage(filepath);
 		}
 		return adminDao.qnaAnswer(qna);
 	}
