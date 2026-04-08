@@ -23,4 +23,9 @@ public class SupportService {
 		List<Notice> noticeList = supportDao.selectNoticeList(category);
 		return noticeList;
 	}
+
+	public Notice selectNoticeDetail(Integer noticeNo) {
+		Notice notice = supportDao.selectNoticeDetail(noticeNo);
+		return notice;
+	}
 }

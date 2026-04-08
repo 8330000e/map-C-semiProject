@@ -1,7 +1,10 @@
+import { useNavigate } from "react-router-dom";
 import styles from "./SupportNotice.module.css";
+import NoticeCardList from "./NoticeCardList";
 
 const SupportNotice = ({ noticeList, setCategory, category }) => {
   const categories = ["전체", "이벤트", "점검", "업데이트", "안내"];
+  const navigate = useNavigate();
   return (
     <div className={styles.wrap}>
       {/* 타이틀 */}
@@ -26,37 +29,7 @@ const SupportNotice = ({ noticeList, setCategory, category }) => {
       </div>
 
       {/* 카드 리스트 */}
-      <div className={styles.notice_list}>
-        {noticeList.map((notice) => {
-          return (
-            <div key={notice.noticeNo} className={styles.card}>
-              <span className={styles.category_tag}>
-                {notice.noticeCategory}
-              </span>
-              {/* 이미지 */}
-              <div className={styles.image_box}>
-                {notice.noticeImagePath ? (
-                  <img
-                    src={`${import.meta.env.VITE_BACKSERVER}${notice.noticeImagePath}`}
-                    alt="공지 이미지"
-                  />
-                ) : (
-                  <div className={styles.no_image}>탄소커넥트</div>
-                )}
-              </div>
-
-              {/* 텍스트 */}
-              <div className={styles.text_box}>
-                <div className={styles.notice_title}>{notice.noticeTitle}</div>
-
-                <div className={styles.notice_date}>{notice.noticeDate}</div>
-
-                <div className={styles.notice_view}>{notice.noticeView}</div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <NoticeCardList noticeList={noticeList} />
     </div>
   );
 };

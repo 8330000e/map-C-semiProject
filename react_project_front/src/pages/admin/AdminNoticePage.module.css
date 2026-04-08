@@ -17,6 +17,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-height: 0;
 }
 
 .notice_write_title,
@@ -24,6 +25,11 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.notice_write_content {
+  flex: 1;
+  min-height: 0;
 }
 
 .notice_write_title label,
@@ -53,8 +59,9 @@
 }
 
 .notice_write_content textarea {
-  min-height: 160px;
-  resize: vertical;
+  flex: 1;
+  min-height: 220px;
+  resize: none;
 }
 
 .select {
@@ -69,10 +76,56 @@
 }
 
 .notice_public,
-.notice_fixed {
+.notice_fixed,
+.notice_category,
+.notice_image {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.file_input_wrap {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid var(--admin-stroke);
+  border-radius: 10px;
+  background-color: var(--admin-input-bg);
+  padding: 6px 8px;
+}
+
+.file_input {
+  display: none;
+}
+
+.file_btn {
+  border: 1px solid var(--admin-stroke-strong);
+  border-radius: 8px;
+  background-color: var(--admin-panel);
+  color: var(--admin-text);
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.file_btn:hover {
+  background-color: var(--admin-accent-soft);
+}
+
+.file_name {
+  flex: 1;
+  font-size: 13px;
+  color: var(--admin-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file_name_active {
+  color: var(--admin-text);
 }
 
 .notice_option_wrap > button {

@@ -15,4 +15,6 @@ public interface SupportDao {
 
 	List<Notice> selectNoticeList(String category);
 
+	Notice selectNoticeDetail(Integer noticeNo);
+
 }

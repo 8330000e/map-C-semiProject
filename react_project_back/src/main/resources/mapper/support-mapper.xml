@@ -25,4 +25,17 @@
 		</where>
 		order by notice_fixed desc, notice_date desc
 	</select>
+	
+	<select id="selectNoticeDetail" resultType="notice">
+		select 
+			notice_no,
+			notice_title,
+			notice_content,
+			notice_date,
+			notice_view,
+			notice_category,
+			notice_image_path
+		from notice_tbl
+		where notice_no = #{noticeNo}
+	</select>
 </mapper>
