@@ -23,7 +23,8 @@ const getImageUrl = (thumb) => {
 
   trimmed = trimmed.replace(/\\/g, "/").replace(/\\/g, "/");
 
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
+    return trimmed;
   if (trimmed.startsWith("//")) return `https:${trimmed}`;
 
   const driveMatch = trimmed.match(/^[A-Za-z]:\//);
@@ -37,13 +38,23 @@ const getImageUrl = (thumb) => {
   }
 
   if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
+  if (trimmed.includes("/upload/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
+    return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
   return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
-const Community = () => {
+const Community = ({
+  addr,
+  lnglat,
+  ctpvsgg,
+  setAddr,
+  setLnglat,
+  setCtpvsgg,
+}) => {
   const { memberId, memberNickname } = useAuthStore();
   const isLogin = !!memberId;
   const mapDivRef = useRef(null);
@@ -72,6 +83,16 @@ const Community = () => {
   const location = useLocation();
   const [missionType, setMissionType] = useState(null);
 
+  const [selectAddr, setSelectAddr] = useState("선택된 위치 없음");
+  const [selectLnglat, setSelectLnglat] = useState({
+    lat: 0,
+    lng: 0,
+  });
+  const [selectCtpvSgg, setSelectCtpvSgg] = useState({
+    ctpv: "",
+    sgg: "",
+  });
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const modeParam = params.get("mode");
@@ -85,25 +106,6 @@ const Community = () => {
 
     setMissionType(missionParam || null);
   }, [location.search]);
-
-  const [addr, setAddr] = useState("선택된 위치 없음");
-  const [lnglat, setLnglat] = useState({
-    lat: 37.5665 - 0.001,
-    lng: 126.978,
-  });
-  const [ctpvsgg, setCtpvsgg] = useState({
-    ctpv: "",
-    sgg: "",
-  });
-  const [selectAddr, setSelectAddr] = useState("선택된 위치 없음");
-  const [selectLnglat, setSelectLnglat] = useState({
-    lat: 0,
-    lng: 0,
-  });
-  const [selectCtpvSgg, setSelectCtpvSgg] = useState({
-    ctpv: "",
-    sgg: "",
-  });
 
   useEffect(() => {
     axios
@@ -532,7 +534,27 @@ const Community = () => {
                     <button
                       type="button"
                       className={`${styles.mapCommunityBtn} ${styles.writeBtn}`}
-                      onClick={() => setMode("write")}
+                      onClick={() => {
+                        setMode("write");
+                        setAddr("선택된 위치 없음");
+                        setSelectLnglat({
+                          lat: 0,
+                          lng: 0,
+                        });
+                        setCtpvsgg({
+                          ctpv: "",
+                          sgg: "",
+                        });
+                        setSelectAddr("");
+                        setSelectLnglat({
+                          lat: 0,
+                          lng: 0,
+                        });
+                        setSelectCtpvSgg({
+                          ctpv: "",
+                          sgg: "",
+                        });
+                      }}
                     >
                       게시글 작성
                     </button>
@@ -623,7 +645,9 @@ const Community = () => {
                         {(board.thumbnailUrl || board.boardThumb) && (
                           <div className={styles.boardThumbnailBox}>
                             <img
-                              src={getImageUrl(board.thumbnailUrl || board.boardThumb)}
+                              src={getImageUrl(
+                                board.thumbnailUrl || board.boardThumb,
+                              )}
                               alt="썸네일"
                               className={styles.boardThumbnail}
                             />
@@ -721,13 +745,15 @@ const Community = () => {
 
                 <div className={styles.boardWriteGroup}>
                   <label>장소</label>
-                  {/* 장소 기능 들어갈 자리*/}
                   <div className={styles.map_div}>
                     <div className={styles.spot_box}>
                       <p>선택된 위치</p>
                       <p>{addr}</p>
                     </div>
-                    <div className={styles.spotSelectBtn} onClick={insertSpot}>
+                    <div
+                      className={`${styles.spotSelectBtn} ${addr === selectAddr ? styles.selectedBtn : ""}`}
+                      onClick={insertSpot}
+                    >
                       {addr === selectAddr ? "선택완료" : "장소선택"}
                     </div>
                     <div className={styles.lnglat}>

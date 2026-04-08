@@ -204,5 +204,10 @@ public class BoardController {
 		 return ResponseEntity.ok(list);
 	 }
 	 
+	@GetMapping(value="/markers")
+	public ResponseEntity<?> selectMarkers() {
+		List<Board> list = boardService.selectMarkers();
+		return ResponseEntity.ok(list);
+	}
 	 
 }

@@ -809,7 +809,8 @@
   z-index: 2;
   transition: all 0.2s ease;
 }
-.spotSelectBtn:hover {
+.selectedBtn {
+  background-color: var(--gray4);
 }
 .spotSelected:active {
 }
