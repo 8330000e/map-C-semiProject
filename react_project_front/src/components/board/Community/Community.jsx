@@ -24,7 +24,8 @@ const getImageUrl = (thumb) => {
 
   trimmed = trimmed.replace(/\\/g, "/").replace(/\\/g, "/");
 
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
+    return trimmed;
   if (trimmed.startsWith("//")) return `https:${trimmed}`;
 
   const driveMatch = trimmed.match(/^[A-Za-z]:\//);
@@ -38,9 +39,12 @@ const getImageUrl = (thumb) => {
   }
 
   if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
+  if (trimmed.includes("/upload/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
+    return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
   return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
@@ -677,7 +681,9 @@ const Community = () => {
                         {(board.thumbnailUrl || board.boardThumb) && (
                           <div className={styles.boardThumbnailBox}>
                             <img
-                              src={getImageUrl(board.thumbnailUrl || board.boardThumb)}
+                              src={getImageUrl(
+                                board.thumbnailUrl || board.boardThumb,
+                              )}
                               alt="썸네일"
                               className={styles.boardThumbnail}
                             />
