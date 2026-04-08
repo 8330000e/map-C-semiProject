@@ -335,5 +335,7 @@
 	    SET TOTAL_POINT = TOTAL_POINT + 5
 	    WHERE MEMBER_ID = #{memberId}
 	</update>
-
+	<select id="selectMarkers" resultType="Board">
+		select b.board_no, b.board_title, b.board_content, b.board_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg, count(l.board_no) as likeCount from board_tbl b join board_like_tbl l on (b.board_no = l.board_no) where l.board_no = l.board_no group by b.board_no, b.board_title, b.board_content, b.board_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg
+	</select>
 </mapper>
