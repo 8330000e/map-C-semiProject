@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import useAuthStore from "../../../store/useAuthStore";
 import styles from "./storeDetail.module.css";
+import storeStyles from "./store.module.css";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 const DELIVERY_FEE = 5000;
@@ -27,6 +28,20 @@ const getSaleStatusLabel = (productStatus) => {
   return "판매중";
 };
 
+// 스토어 댓글 비공개 플래그를 일관되게 해석합니다.
+// 백엔드에서 숫자 1, 문자열 "1", 또는 true 같은 다양한 값이 올 수 있기 때문에,
+// 모두 비공개 댓글로 처리하도록 통일합니다.
+const isSecretComment = (comment) =>
+  comment?.isPrivate === 1 || comment?.isPrivate === "1" || comment?.isPrivate === true;
+
+// 댓글 목록을 받아서 비공개 여부 필드를 boolean으로 정규화합니다.
+// 이후 렌더링 시 항상 동일한 조건으로 비공개 댓글을 처리할 수 있습니다.
+const normalizeComments = (rawComments) =>
+  (Array.isArray(rawComments) ? rawComments : []).map((comment) => ({
+    ...comment,
+    isPrivate: isSecretComment(comment),
+  }));
+
 const StoreDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -39,6 +54,7 @@ const StoreDetail = () => {
 
   const [comments, setComments] = useState([]);
   const [transactionReviews, setTransactionReviews] = useState([]);
+  const [sellerRatings, setSellerRatings] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [newCommentPrivate, setNewCommentPrivate] = useState(false);
   const [replyTarget, setReplyTarget] = useState(null);
@@ -60,7 +76,9 @@ const StoreDetail = () => {
         ]);
         setItem(detailResponse.data);
         setStoreList(Array.isArray(listResponse.data) ? listResponse.data : []);
-        setComments(Array.isArray(commentsResponse.data) ? commentsResponse.data : []);
+        // 댓글을 불러올 때마다 비공개 플래그를 정규화하여
+        // 렌더링 시 올바르게 "비공개 댓글" 처리가 되도록 합니다.
+        setComments(normalizeComments(commentsResponse.data));
         setLoadError("");
       } catch (error) {
         console.error("중고장터 상세 조회 실패", error);
@@ -94,6 +112,23 @@ const StoreDetail = () => {
     if (!item) return;
     setSaleStatus(getSaleStatusLabel(item.productStatus));
   }, [item]);
+
+  useEffect(() => {
+    const sellerId = item?.memberId || item?.sellerId;
+    if (!sellerId) return;
+
+    axios
+      .get(`${BACKSERVER}/api/store/sellers/${sellerId}/ratings`)
+      .then((res) => setSellerRatings(Array.isArray(res.data) ? res.data : []))
+      .catch((error) => {
+        console.error("판매자 평점 조회 실패", error);
+        setSellerRatings([]);
+      });
+  }, [item]);
+
+  const totalSellerRatingScore = useMemo(() => {
+    return sellerRatings.reduce((sum, rating) => sum + Number(rating.rating || 0), 0);
+  }, [sellerRatings]);
 
   const itemTradeSetting = useMemo(() => {
     if (!item) return { direct: true, delivery: true };
@@ -166,7 +201,8 @@ const StoreDetail = () => {
   const refreshComments = async () => {
     try {
       const response = await axios.get(`${BACKSERVER}/api/store/boards/${itemId}/reviews`);
-      setComments(Array.isArray(response.data) ? response.data : []);
+      // 댓글 목록을 새로고침할 때에도 비공개 플래그를 일관되게 유지합니다.
+      setComments(normalizeComments(response.data));
     } catch (error) {
       console.error("댓글 목록 조회 실패", error);
     }
@@ -270,7 +306,9 @@ const StoreDetail = () => {
     if (!memberId || memberId !== comment.memberId) return;
     setEditingTarget(comment);
     setEditingText(comment.reviewContent || "");
-    setEditingPrivate(comment.isPrivate === 1);
+    // 수정 모드에서도 비공개 상태를 정확히 유지하기 위해
+    // 정규화된 isSecretComment() 값을 사용합니다.
+    setEditingPrivate(isSecretComment(comment));
   };
 
   const cancelEdit = () => {
@@ -580,8 +618,8 @@ const StoreDetail = () => {
       <div className={styles.section_box}>
         <h3>가게 정보</h3>
         <p>상점명 : {item.memberNickname || item.memberId} 상점</p>
-        <p>신뢰지수 : 624</p>
-        <p>거래후기 : {transactionReviews.length}</p>
+        <p>신뢰지수 : {totalSellerRatingScore}점</p>
+        <p>거래후기 : {sellerRatings.length}</p>
       </div>
 
       {saleStatus === "판매완료" && (
@@ -628,23 +666,38 @@ const StoreDetail = () => {
           {displaySame.map((same) => {
             const imageUrl = getImageUrl(same.productThumb || same.thumb);
             return (
-              <Link key={same.marketNo} to={`/store/${same.marketNo}`} className={styles.same_item}>
-                <div className={styles.image}>
-                  {imageUrl ? (
-                    <img
-                      src={imageUrl}
-                      alt={same.marketTitle || "상품 이미지"}
-                      className={styles.product_image}
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none";
-                      }}
-                    />
-                  ) : (
-                    "이미지"
-                  )}
-                </div>
-                <div className={styles.same_item_title}>{same.marketTitle}</div>
-                <div className={styles.same_item_price}>{formatPrice(same.productPrice)}</div>
+              <Link
+                key={same.marketNo}
+                to={`/store/${same.marketNo}`}
+                className={storeStyles.cardLink}
+              >
+                <article className={`${storeStyles.card} ${styles.same_item}`}>
+                  <div className={storeStyles.image}>
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt={same.marketTitle || "상품 이미지"}
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      "이미지"
+                    )}
+                  </div>
+                  <h3>{same.marketTitle}</h3>
+                  <p className={storeStyles.price}>{formatPrice(same.productPrice)}</p>
+                  <div className={storeStyles.region_badge}>{same.regionName || same.ctpvsggId || "지역 미등록"}</div>
+                  <p className={storeStyles.tradeType}>거래방법 : {getTradeTypeLabel(same.tradeType)}</p>
+                  <div className={storeStyles.metaRow}>
+                    <span className={storeStyles.author}>{same.memberId}</span>
+                    <span className={storeStyles.metaDivider}>|</span>
+                    <span className={storeStyles.commentCount}>💬 {same.commentCount ?? 0}</span>
+                    <span className={storeStyles.metaDivider}>|</span>
+                    <span className={storeStyles.dateLine}>{same.createdAt ? formatCommentDate(same.createdAt) : ""}</span>
+                  </div>
+                  <p className={storeStyles.viewCount}>👀 조회수 {Number(same.readCount ?? 0).toLocaleString("ko-KR")}</p>
+                </article>
               </Link>
             );
           })}
@@ -663,12 +716,12 @@ const StoreDetail = () => {
             const parentAuthorId = comment.parentCommentNo
               ? comments.find((c) => c.reviewNo === comment.parentCommentNo)?.memberId
               : null;
+            const isSecret = isSecretComment(comment);
             const canViewSecret =
-              comment.isPrivate !== 1 ||
+              !isSecret ||
               isOwn ||
               isBoardAuthor ||
               parentAuthorId === memberId;
-            const isSecret = comment.isPrivate === 1;
             const displayContent = isSecret && !canViewSecret ? "비공개 댓글입니다." : comment.reviewContent;
             return (
               <div

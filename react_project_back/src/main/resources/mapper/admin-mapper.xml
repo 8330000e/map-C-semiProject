@@ -9,17 +9,22 @@
 			sysdate,
 			0,
 			#{noticePublic},
-			#{noticeFixed}
+			#{noticeFixed},
+			#{noticeCategory},
+			#{noticeImagePath}
 		)
 	</insert>
 	
 	<select id="selectNoticeList" resultType="notice">
 		select
 			notice_no,
+			notice_public,
 			notice_fixed,
 			notice_title,
 			notice_content,
-			notice_date
+			notice_date,
+			notice_category,
+			notice_image_path
 		from notice_tbl
 		order by notice_fixed desc, notice_date desc
 	</select>
@@ -29,7 +34,9 @@
 			notice_title = #{noticeTitle},
 			notice_content = #{noticeContent},
 			notice_public = #{noticePublic},
-			notice_fixed = #{noticeFixed}
+			notice_fixed = #{noticeFixed},
+			notice_category = #{noticeCategory},
+			notice_image_path = #{noticeImagePath}
 		where notice_no = #{noticeNo}
 	</update>
 	

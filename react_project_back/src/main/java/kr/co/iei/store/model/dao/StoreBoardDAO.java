@@ -46,6 +46,8 @@ public interface StoreBoardDAO {
 
     List<StoreRating> selectRatingsByMarket(@Param("marketNo") Long marketNo);
 
+    List<StoreRating> selectRatingsBySeller(@Param("sellerId") String sellerId);
+
     StoreRating selectRatingByTradeAndBuyer(@Param("tradeNo") Long tradeNo,
                                             @Param("buyerId") String buyerId);
 
