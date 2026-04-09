@@ -30,6 +30,7 @@
   transition: all 0.2s ease;
   flex-shrink: 0;
 }
+
 .backButton:hover {
   background: #f3f6ee;
   transform: translateY(-1px);
@@ -60,44 +61,43 @@
   font-weight: 800;
 }
 
-.noticeText {
-  font-size: 15px;
-  font-weight: 600;
-  color: #2e342b;
-}
-
 .noticeViewport {
   flex: 1;
+  position: relative;
   overflow: hidden;
-  white-space: nowrap;
+  height: 24px;
+  display: flex;
+  align-items: center;
 }
 
-.noticeTrack {
-  display: inline-flex;
-  align-items: center;
-  white-space: nowrap;
-  will-change: transform;
-  animation-name: noticeMarqueeLoop;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
+.noticeSlide {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  transform: translateY(12px);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.active {
+  transform: translateY(-50%);
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .noticeText {
-  display: inline-block;
-  flex-shrink: 0;
-  padding-right: 80px;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 15px;
   font-weight: 600;
   color: #2e342b;
-}
-
-@keyframes noticeMarqueeLoop {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+  line-height: 1.4;
 }
 
 .container {
