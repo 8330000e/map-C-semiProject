@@ -24,6 +24,7 @@ public class StoreBoardController {
         this.storeBoardService = storeBoardService;
     }
 
+    // 중고상품 등록 기능임. 새 상품 정보를 서버에 저장하고 상품 번호를 리턴함.
     @PostMapping("/boards")
     public ResponseEntity<?> createStoreBoard(@RequestBody StoreBoard storeBoard) {
         try {
@@ -42,11 +43,15 @@ public class StoreBoardController {
         }
     }
 
+    // 중고거래 리스트 기능임. 판매 중인 상품 목록을 전체 조회함.
+    //  - 프론트는 이 데이터를 중고거래 메인 목록에 렌더링함.
+    //  - 필터나 검색은 프론트 쪽에서 추가로 처리될 수 있음.
     @GetMapping("/boards")
     public ResponseEntity<List<StoreBoard>> getStoreBoardList() {
         return ResponseEntity.ok(storeBoardService.getStoreBoardList());
     }
 
+    // 중고상품 상세보기 기능임. 상품 번호로 상세 정보를 가져옴.
     @GetMapping("/boards/{marketNo}")
     public ResponseEntity<StoreBoard> getStoreBoard(@PathVariable Long marketNo) {
         return ResponseEntity.ok(storeBoardService.getStoreBoard(marketNo));
@@ -108,20 +113,24 @@ public class StoreBoardController {
         }
     }
 
-    /** 전체 최신 공개 댓글 */
+    // 실시간 댓글 리스트 기능임. 최신 리뷰를 받아와서 메인 화면에 보여줌.
     @GetMapping("/reviews/latest")
     public ResponseEntity<List<StoreReview>> getLatestReviews(
             @RequestParam(defaultValue = "30") int limit) {
         return ResponseEntity.ok(storeBoardService.getLatestReviews(limit));
     }
 
-    /** 댓글 목록 */
+    // 상품 댓글 목록 기능임. 해당 상품에 달린 리뷰를 모두 조회함.
+    //  - 상품 상세 페이지에서 댓글 리스트를 렌더링할 때 사용됨.
+    //  - 최신 순 또는 정렬은 프론트에서 결정할 수 있음.
     @GetMapping("/boards/{marketNo}/reviews")
     public ResponseEntity<List<StoreReview>> getReviews(@PathVariable Long marketNo) {
         return ResponseEntity.ok(storeBoardService.getReviewList(marketNo));
     }
 
-    /** 댓글 등록 */
+    // 댓글 등록 기능임. 상품에 리뷰를 새로 추가함.
+    //  - review 객체에 marketNo를 설정한 뒤 DB에 저장함.
+    //  - 등록 성공 시 저장된 댓글 정보를 반환함.
     @PostMapping("/boards/{marketNo}/reviews")
     public ResponseEntity<?> addReview(@PathVariable Long marketNo, @RequestBody StoreReview review) {
         try {
@@ -263,6 +272,7 @@ public class StoreBoardController {
         }
     }
 
+    // 거래 정보 조회 기능임. 상품 번호와 구매자 정보로 거래 상태를 가져옴.
     @GetMapping("/markets/{marketNo}/trade-info")
     public ResponseEntity<?> getTradeInfo(@PathVariable Long marketNo,
                                           @RequestParam(required = false) String buyerId) {

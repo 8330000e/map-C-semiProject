@@ -34,8 +34,8 @@ public class BoardController {
 	@Autowired
 	private BoardService boardService;
 	
-	// application.properties의 file.root 값을 주입받아 파일 업로드/조회 경로를 결정합니다.
-	// Windows 와 macOS 모두에서 동작하도록 File 객체로 경로를 생성합니다.
+	// application.properties의 file.root 값을 읽어서 파일 업로드/조회 경로를 정함.
+	// Windows와 macOS 모두에서 잘 동작하도록 File 객체로 경로를 만듦.
 	@Value("${file.root}")
 	private String root;
 
@@ -60,7 +60,7 @@ public class BoardController {
 	    boardService.insertBoard(board);
 	    return board;
 	}
-	// 이미지 저장 엔드포인트
+	// 에디터 이미지 업로드 기능임. 업로드된 파일을 서버에 저장하고 URL 경로를 리턴함.
 	@PostMapping("/editor/upload")
 	public String uploadEditorImage(@RequestParam("upfile") MultipartFile upfile) {
 		// 업로드 파일이 없으면 예외 처리
@@ -68,7 +68,7 @@ public class BoardController {
 			throw new RuntimeException("업로드할 파일이 없습니다.");
 		}
 
-		// application.properties에 설정된 root 경로 아래 board/editor 폴더로 저장합니다.
+		// application.properties에 설정된 root 경로 아래 board/editor 폴더로 저장함.
 		// 예: file.root=./upload/semiproject/ 인 경우 실제 저장 경로는
 		// react_project_back/upload/semiproject/board/editor 가 됩니다.
 		File saveDir = new File(new File(root), "board/editor");
@@ -76,10 +76,10 @@ public class BoardController {
 			saveDir.mkdirs();
 		}
 
-		// 업로드 파일을 실제 디스크에 저장하고, 저장된 파일명만 반환받습니다.
+		// 업로드 파일을 실제 디스크에 저장하고, 저장된 파일명만 반환받음.
 		String fileName = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
 
-		// 프론트는 이 리턴 값을 기반으로 이미지 URL을 구성합니다.
+		// 프론트는 이 리턴 값을 기반으로 이미지 URL을 구성함.
 		// 예: http://localhost:9999/board/editor/{fileName}
 		return "/board/editor/" + fileName;
 	}
@@ -104,6 +104,7 @@ public class BoardController {
 	     int result = boardService.deleteBoard(boardNo);
 	     return ResponseEntity.ok(result);
 	 }
+	 // 게시글 첨부파일 업로드 기능임. 작성된 게시글에 여러 파일을 함께 저장함.
 	 @PostMapping("/{boardNo}/files")
 	 public int uploadBoardFiles(
 	         @PathVariable int boardNo,
@@ -113,11 +114,17 @@ public class BoardController {
 	     return boardService.insertBoardFiles(boardNo, memberId, files);
 	 }
 
+	// 게시글 상세 댓글 목록 조회 기능임. 게시글에 달린 댓글을 서버에서 받아옴.
+	//  - 댓글 목록은 BoardService.getBoardComments()에서 가져온다.
+	//  - 프론트는 이 데이터를 상세 페이지에서 댓글 리스트로 렌더링함.
 	@GetMapping("/{boardNo}/comments")
 	public ResponseEntity<?> getBoardComments(@PathVariable int boardNo) {
 		return ResponseEntity.ok(boardService.getBoardComments(boardNo));
 	}
 
+	// 댓글 등록 기능임. 프론트에서 보낸 댓글 내용을 서버에 저장함.
+	//  - replyTarget이 있는 경우 parentCommentNo를 함께 전달함.
+	//  - isSecret 값에 따라 공개/비공개 댓글이 저장됨.
 	@PostMapping("/{boardNo}/comments")
 	public ResponseEntity<?> addBoardComment(@PathVariable int boardNo, @RequestBody BoardComment comment) {
 		// 댓글 등록 요청 처리
@@ -127,6 +134,9 @@ public class BoardController {
 		return ResponseEntity.ok(saved);
 	}
 
+	// 댓글 수정 기능임. 게시글 댓글의 내용을 변경해서 서버에 저장함.
+	//  - editTarget이 있는 경우 해당 댓글 번호로 수정 요청을 보냄.
+	//  - 수정 시에도 작성자 확인을 서버에서 처리함.
 	@PutMapping("/{boardNo}/comments/{commentNo}")
 	public ResponseEntity<?> editBoardComment(@PathVariable int boardNo,
 	                                         @PathVariable long commentNo,
@@ -139,6 +149,8 @@ public class BoardController {
 		return ResponseEntity.ok().build();
 	}
 
+	// 댓글 삭제 기능임. 작성자 본인 댓글을 서버에서 제거함.
+	//  - 삭제 시 memberId 확인을 통해 본인 여부를 체크함.
 	@DeleteMapping("/{boardNo}/comments/{commentNo}")
 	public ResponseEntity<?> deleteBoardComment(@PathVariable int boardNo,
 	                                           @PathVariable long commentNo,
@@ -189,6 +201,52 @@ public class BoardController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.internalServerError().body("좋아요 취소 실패: " + e.getMessage());
+		}
+	}
+
+	// 스크랩 여부 조회 기능임. URL 경로에서 memberId를 받는 방식임.
+	@GetMapping("/{boardNo}/tips/{memberId}")
+	public ResponseEntity<Boolean> isTiped(@PathVariable int boardNo, @PathVariable String memberId) {
+		try {
+			return ResponseEntity.ok(boardService.isBoardTiped(boardNo, memberId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().build();
+		}
+	}
+
+	// 스크랩 여부 조회 기능임. query parameter 방식도 받아줌.
+	@GetMapping("/{boardNo}/tips")
+	public ResponseEntity<Boolean> isTipedByQuery(@PathVariable int boardNo, @RequestParam String memberId) {
+		try {
+			return ResponseEntity.ok(boardService.isBoardTiped(boardNo, memberId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().build();
+		}
+	}
+
+	// 스크랩 추가 기능임. 이미 스크랩한 내용이면 중복 저장 안 함.
+	@PostMapping("/{boardNo}/tips")
+	public ResponseEntity<?> tipBoard(@PathVariable int boardNo, @RequestParam String memberId) {
+		try {
+			boardService.addBoardTip(boardNo, memberId);
+			return ResponseEntity.ok().build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().body("스크랩 처리 실패: " + e.getMessage());
+		}
+	}
+
+	// 스크랩 취소 기능임. 해당 사용자의 스크랩 기록을 삭제함.
+	@DeleteMapping("/{boardNo}/tips")
+	public ResponseEntity<?> untipBoard(@PathVariable int boardNo, @RequestParam String memberId) {
+		try {
+			boardService.removeBoardTip(boardNo, memberId);
+			return ResponseEntity.ok().build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().body("스크랩 취소 실패: " + e.getMessage());
 		}
 	}
 	 
