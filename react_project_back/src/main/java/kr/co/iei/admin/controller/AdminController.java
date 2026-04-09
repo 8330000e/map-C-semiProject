@@ -1,6 +1,7 @@
 package kr.co.iei.admin.controller;
 
 import java.io.File;
+import java.lang.reflect.Member;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,4 +136,11 @@ public class AdminController {
 		int result = adminService.qnaAnswer(qna);
 		return ResponseEntity.ok(result);
 	}
+	
+	@GetMapping(value="member")
+	public ResponseEntity<?> selectMemberList() {
+		List<Member> memberList = adminService.selectMemberList();
+		return ResponseEntity.ok(memberList);
+	}
+	
 }

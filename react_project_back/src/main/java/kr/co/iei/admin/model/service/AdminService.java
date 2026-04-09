@@ -1,6 +1,7 @@
 package kr.co.iei.admin.model.service;
 
 
+import java.lang.reflect.Member;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,5 +91,10 @@ public class AdminService {
 	@Transactional
 	public int qnaAnswer(Qna qna) {
 		return adminDao.qnaAnswer(qna);
+	}
+
+	public List<Member> selectMemberList() {
+		List<Member> memberList = adminDao.selectMemberList();
+		return memberList;
 	}
 }

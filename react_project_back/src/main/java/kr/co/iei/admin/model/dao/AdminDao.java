@@ -1,5 +1,6 @@
 package kr.co.iei.admin.model.dao;
 
+import java.lang.reflect.Member;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -34,6 +35,8 @@ public interface AdminDao {
 	int qnaAnswer(Qna qna);
 
 	int getTotalCount();
+
+	List<Member> selectMemberList();
 
 
 

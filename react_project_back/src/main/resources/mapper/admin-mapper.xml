@@ -120,6 +120,24 @@
 		where qna_no = #{qnaNo}
 	</update>
 	
+	<select id="selectMemberList" resultType="member">
+		SELECT 
+   	 		m.member_id,
+    		m.member_name,
+    		m.member_nickname,
+    		m.member_email,
+    		m.member_grade,
+    		m.member_thumb,
+    		m.member_status,
+    		m.enroll_date,
+    	(SELECT COUNT(*) FROM board_tbl b WHERE b.writer_id = m.member_id) AS boardCount,
+    	(SELECT COUNT(*) FROM board_comment_tbl c WHERE c.board_comment_writer = m.member_id) AS commentCount,
+    	(SELECT COUNT(*) FROM board_report_tbl r 
+     	JOIN board_tbl b ON r.board_no = b.board_no 
+    	WHERE b.writer_id = m.member_id) AS reportCount
+		FROM member_tbl1 m
+		ORDER BY m.enroll_date DESC
+	</select>
 	
 	
 

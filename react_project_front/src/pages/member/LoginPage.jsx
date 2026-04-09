@@ -85,6 +85,14 @@ const Login = () => {
         navigate("/");
       })
       .catch((err) => {
+        if (err.response?.status === 403) {
+          Swal.fire({
+            title: "로그인 불가",
+            text: err.response.data,
+            icon: "error",
+          });
+          return;
+        }
         clearTimeout(timer); //실패시 타이머 초기화
         setIsLoading(false); //로딩 끝내기
         Swal.fire({
