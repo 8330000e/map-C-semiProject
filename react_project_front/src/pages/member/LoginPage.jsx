@@ -37,7 +37,10 @@ const Login = () => {
 
     // 1) 값 유효성 검사 (아이디/비밀번호 필수)
     if (!member.memberId || !member.memberPw) {
-      alert("아이디와 비밀번호를 입력하세요");
+      Swal.fire({
+        title: "아이디와 비밀번호를 입력하세요",
+        icon: "error",
+      });
       return;
     }
 
@@ -158,6 +161,7 @@ const Login = () => {
         {" || "}
         <Link to="/members/find-pw">비밀번호 찾기</Link>
         {" || "}
+
         <Link to="/join">회원가입</Link>
       </div>
 

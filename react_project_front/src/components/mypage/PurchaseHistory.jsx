@@ -72,6 +72,9 @@ const isDeliveryTrade = (item) => {
   return resolved === "택배" || resolved === "직거래/택배";
 };
 
+// 구매내역 페이지 기능임. 로그인한 사용자가 완료한 구매 내역을 보여줌.
+//  - 구매 상품 목록을 페이지 단위로 렌더링함.
+//  - 각 주문의 배송 정보는 추가 API 호출로 가져옴.
 const PurchaseHistory = () => {
   const { memberId } = useAuthStore();
   const [purchaseHistory, setPurchaseHistory] = useState([]);
@@ -172,13 +175,13 @@ const PurchaseHistory = () => {
               </div>
               <div className={styles.purchase_card_title}>{getStatusPrefix(item.status)}{itemTitle}</div>
               <div className={styles.purchase_card_meta}>{item.date} · {item.status}</div>
-              <div>{item.amount?.toLocaleString("ko-KR")}원</div>
-              <div>거래방법: {displayTradeType}</div>
+              <div className={styles.purchase_card_detail}>{item.amount?.toLocaleString("ko-KR")}원</div>
+              <div className={styles.purchase_card_detail}>거래방법: {displayTradeType}</div>
               {hasDelivery && (
                 <>
-                  <div>배송 상태: {getShippingStatusLabel(displayShippingStatus)}</div>
-                  <div>택배사: {getCourierLabel(displayCourierCode)}</div>
-                  {displayInvoiceNumber ? <div>송장번호: {displayInvoiceNumber}</div> : null}
+                  <div className={styles.purchase_card_detail}>배송 상태: {getShippingStatusLabel(displayShippingStatus)}</div>
+                  <div className={styles.purchase_card_detail}>택배사: {getCourierLabel(displayCourierCode)}</div>
+                  {displayInvoiceNumber ? <div className={styles.purchase_card_detail}>송장번호: {displayInvoiceNumber}</div> : null}
                 </>
               )}
             </Link>

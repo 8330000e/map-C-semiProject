@@ -155,6 +155,17 @@
     SET TOTAL_POINT = TOTAL_POINT + 5
     WHERE MEMBER_ID = #{memberId}
 	</update>
+
+	<!-- 회원 포인트 정보가 없으면 기본 0원 포인트 행 생성 -->
+	<!--
+		Board 등록 시 기본 미션을 완료하면 포인트 적립이 실행됨.
+		하지만 MEMBER_POINT_TBL에 해당 회원 정보가 없으면 UPDATE가 0건 처리되어 실패함.
+		따라서 기본 포인트 행을 미리 생성해서 업데이트가 정상 동작하도록 처리함.
+	-->
+	<insert id="insertMemberPoint" parameterType="string">
+    INSERT INTO MEMBER_POINT_TBL (MEMBER_ID, TOTAL_POINT)
+    VALUES (#{memberId}, 0)
+	</insert>
 	
 	<!-- 오늘 특정 랜덤 미션을 완료했는지 확인 (중복 완료 방지용) -->
 	<select id="existsTodayRandomMissionComplete" resultType="int">

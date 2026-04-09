@@ -1,5 +1,7 @@
-// 서비스 메인 화면 컴포넌트입니다.
-// 실시간 댓글, 메뉴, 중고거래 요약 리스트 등 메인 대시보드 UI를 렌더링합니다.
+// 서비스 메인 화면 기능임.
+// 실시간 댓글, 중고거래 요약 리스트, 메뉴 등 메인 대시보드 UI를 렌더링함.
+//  - 중고거래 리스트: 조회수 기준 상위 판매중 상품 10개를 보여줌.
+//  - 실시간 댓글: 최신 리뷰 30개를 순서대로 보여줌.
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -7,6 +9,7 @@ import HelpIcon from "@mui/icons-material/Help";
 import useAuthStore from "../store/useAuthStore";
 import Map from "../components/mainpage/Map";
 import Bestpostlist from "../components/mainpage/Bestpostlist";
+import HorizontalScrollList from "../components/commons/HorizontalScrollList";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import Swal from "sweetalert2";
 
@@ -59,8 +62,6 @@ const getImageUrl = (thumb) => {
 };
 
 const Main = () => {
-  // 중고거래 리스트 가로 스크롤 영역 DOM에 접근하기 위한 ref
-  const usedListRef = useRef(null);
   // 실시간 댓글 "보여지는 영역" DOM
   const realtimeViewportRef = useRef(null);
   // 실시간 댓글 "실제 텍스트" DOM
@@ -91,7 +92,9 @@ const Main = () => {
       .catch((err) => console.error("중고장터 목록 조회 실패", err));
   }, []);
 
-  // 중고거래 리스트(조회수 기준 상위 10개, 판매중인 항목만)
+  // 중고거래 리스트 기능임. 조회수 기준 상위 판매중 상품 10개를 화면에 보여줌.
+  //  - 서버에서 받은 상품 중 판매중인 것만 필터링함.
+  //  - 정렬 후 최대 10개만 화면에 노출함.
   const usedGoods = useMemo(() => {
     return goods
       .filter((item) => getSaleStatusLabel(item.productStatus) === "판매중")
@@ -99,7 +102,9 @@ const Main = () => {
       .slice(0, 10);
   }, [goods]);
 
-  // 실시간 댓글 - 최신 리뷰 30개를 API에서 가져옴
+  // 실시간 댓글 리스트 기능임. 최신 리뷰 30개를 API에서 가져와서 화면에 보여줌.
+  //  - 화면에 한 개씩 표시하고 20초마다 다음 댓글로 전환함.
+  //  - 긴 텍스트는 자동 스크롤 애니메이션 처리함.
   const [realtimeComments, setRealtimeComments] = useState([]);
 
   useEffect(() => {
@@ -417,7 +422,7 @@ const Main = () => {
 
       <div className="main_btm">
         <div className="used_list roundBorder">
-          <div className="used_list_scroll" ref={usedListRef}>
+          <HorizontalScrollList scrollClassName="used_list_scroll" showButtons={false}>
             <ul>
               {usedGoods.map((item, index) => {
                 const imageUrl = getImageUrl(item.productThumb);
@@ -465,7 +470,7 @@ const Main = () => {
                 );
               })}
             </ul>
-          </div>
+          </HorizontalScrollList>
         </div>
       </div>
     </main>
