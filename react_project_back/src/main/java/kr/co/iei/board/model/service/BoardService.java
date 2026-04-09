@@ -104,6 +104,9 @@ public class BoardService {
 	}
 
 	public int addBoardTip(int boardNo, String memberId) {
+		if (isBoardTiped(boardNo, memberId)) {
+			return 0;
+		}
 		return boardDao.insertBoardTip(boardNo, memberId);
 	}
 

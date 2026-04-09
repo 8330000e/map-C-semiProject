@@ -202,6 +202,16 @@ public class BoardController {
 		}
 	}
 
+	@GetMapping("/{boardNo}/tips")
+	public ResponseEntity<Boolean> isTipedByQuery(@PathVariable int boardNo, @RequestParam String memberId) {
+		try {
+			return ResponseEntity.ok(boardService.isBoardTiped(boardNo, memberId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().build();
+		}
+	}
+
 	@PostMapping("/{boardNo}/tips")
 	public ResponseEntity<?> tipBoard(@PathVariable int boardNo, @RequestParam String memberId) {
 		try {

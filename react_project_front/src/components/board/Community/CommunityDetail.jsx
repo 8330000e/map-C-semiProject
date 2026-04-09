@@ -116,6 +116,8 @@ const CommunityDetail = ({
           `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/tips/${memberId}`,
         )
         .then((res) => {
+          // 서버에서 이 사용자가 현재 게시글을 스크랩했는지 여부를 받아옵니다.
+          // 새로고침해도 현재 상태가 유지되도록 하기 위함입니다.
           setScrapped(res.data === true);
         })
         .catch((err) => console.error("스크랩 여부 조회 실패", err));
@@ -273,6 +275,8 @@ const CommunityDetail = ({
 
     try {
       if (!scrapped) {
+        // 사용자가 스크랩하지 않은 상태이면 서버에 스크랩 추가 요청을 보냅니다.
+        // 스크랩을 등록하면 버튼 UI는 활성화 상태로 바뀝니다.
         await axios.post(
           `${BACKSERVER}/boards/${board.boardNo}/tips`,
           null,
@@ -281,6 +285,8 @@ const CommunityDetail = ({
         setScrapped(true);
         Swal.fire({ icon: "success", title: "스크랩 되었습니다.", timer: 1000, showConfirmButton: false });
       } else {
+        // 이미 스크랩 상태이면 서버에 스크랩 취소 요청을 보냅니다.
+        // 취소 성공 시 버튼 UI도 비활성화 상태로 갱신됩니다.
         await axios.delete(`${BACKSERVER}/boards/${board.boardNo}/tips`, {
           params: { memberId },
         });
