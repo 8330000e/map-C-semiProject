@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import loginBg from "/images/login-background.png";
+//import joinbg1 from "/images/join2jpg.jpg";
 import useAuthStore from "../../store/useAuthStore";
 import Swal from "sweetalert2";
 import styles from "./LoginPage.module.css";

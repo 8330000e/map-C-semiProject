@@ -2,20 +2,17 @@
 /* JoinPage.module.css */
 
 .page_layout {
-  display: flex;
   width: 100%;
   min-height: 100vh; /* 화면 꽉 채우기 */
   overflow: visible; /* 레이아웃 밖으로 나가는 것 방지 */
 
-  /*
-    display: flex;
-    
-      justify-content: center;
-      align-items: flex-start;
-      gap: 40px;
-      padding: 50px 20px;
-      min-height: 100vh;
-      */
+  display: flex;
+
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  padding: 0px;
+  margin: 0px;
 }
 
 .left_section {
@@ -35,14 +32,14 @@
     255,
     255,
     255,
-    0.3
+    0.2
   ); /* 반투명 흰색 (0이면 완전 투명, 1이면 불투명) */
   pointer-events: none; /* 클릭을 방해하지 않도록 */
 }
 
 .right_section {
   flex: 1; /* 오른쪽 절반 차지 */
-  background-color: #f4f7f4;
+
   display: flex;
   justify-content: center; /* 가로 가운데 정렬 */
   align-items: flex-start; /* 세로 가운데 정렬 */
