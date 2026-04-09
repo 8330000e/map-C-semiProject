@@ -45,11 +45,33 @@
 
 .input_field {
   width: 100%;
-  padding: 14px;
-  margin-bottom: 10px; /* 입력창 간격 */
+  padding: 14px 16px;
+  margin-bottom: 14px; /* 입력창 간격 */
+  font-size: 15px;
+  color: #333;
   border: 1px solid #ddd;
   border-radius: 10px;
-  font-size: 1rem;
+  outline: none;
+  background-color: #f9fafc;
+  transition: all 0.2s ease;
+}
+
+/* placeholder 스타일 */
+.input_field::placeholder {
+  color: #aaa;
+  font-size: 14px;
+}
+
+/*input란 디자인 설정*/
+.input_field:focus {
+  border-color: #6a5cff;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(106, 92, 255, 0.2);
+}
+
+/*hover*/
+.input_field:hover {
+  border-color: #999;
 }
 
 .login_btn {
@@ -68,4 +90,66 @@
   margin-top: 20px;
   font-size: 0.85rem;
   color: #666;
+}
+
+/*버튼 클릭 효과*/
+
+.login_btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+
+  background: linear-gradient(135deg, lightgreen, #6a5cff); /*#5f9cff*/
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* hover */
+.login_btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(95, 156, 255, 0.6);
+}
+
+/* 클릭 */
+.login_btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 20px rgba(95, 156, 255, 0.9);
+}
+
+/* 비활성화 상태 */
+.login_btn:disabled {
+  background: #999;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* shine 효과 */
+.login_btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
+  transform: skewX(-20deg);
+}
+
+.login_btn:hover::after {
+  left: 125%;
+  transition: 0.6s;
 }

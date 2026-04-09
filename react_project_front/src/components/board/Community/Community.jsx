@@ -98,17 +98,6 @@ const Community = ({
 
     setMissionType(missionParam || null);
   }, [location.search]);
-  /*
-  const [addr, setAddr] = useState("선택된 위치 없음");
-  const [lnglat, setLnglat] = useState({
-    lat: 37.5665 - 0.001,
-    lng: 126.978,
-  });
-  const [ctpvsgg, setCtpvsgg] = useState({
-    ctpv: "",
-    sgg: "",
-  });
-*/
   const [selectAddr, setSelectAddr] = useState("선택된 위치 없음");
   const [selectLnglat, setSelectLnglat] = useState({
     lat: 0,
