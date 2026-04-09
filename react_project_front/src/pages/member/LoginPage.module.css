@@ -93,6 +93,18 @@
   color: #666;
 }
 
+.search_wrap a {
+  display: inline-block; /* scale 적용하려면 이게 안정적 */
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+.search_wrap a:hover {
+  transform: scale(1.15); /* 살짝 커짐 */
+  color: #000; /* 선택사항: 색도 진하게 */
+}
+
 /*버튼 클릭 효과*/
 
 .login_btn {
