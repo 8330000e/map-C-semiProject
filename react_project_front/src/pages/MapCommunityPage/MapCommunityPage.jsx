@@ -102,6 +102,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
     defaultMarker.setDraggable(false);
 
     markerList.map((marker, i) => {
+      marker;
       const markerName = new naver.maps.Marker({
         key: i,
         position: new window.naver.maps.LatLng(
@@ -112,15 +113,15 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
         icon: {
           content: `
           <div>
-      <img
+        <img
         src=${marker.boardThumb || defaultImg}
         style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
-      />
-      <img
+        />
+        <img
         src='src/assets/img/defaultthumbmarker.png'
         style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
-      />
-    </div>`,
+        />
+      </div>`,
           size: new naver.maps.Size(22, 35),
           anchor: new naver.maps.Point(11, 35),
         },
@@ -260,8 +261,21 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
               size: new naver.maps.Size(22, 35),
               anchor: new naver.maps.Point(11, 35),
             })
-          : "";
-        console.log(markerName.getIcon());
+          : markerName.setIcon({
+              content: `
+          <div>
+      <img
+        src=${marker.boardThumb || defaultImg}
+        style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
+      />
+      <img
+        src='src/assets/img/defaultthumbmarker.png'
+        style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
+      />
+    </div>`,
+              size: new naver.maps.Size(22, 35),
+              anchor: new naver.maps.Point(11, 35),
+            });
       });
     });
 
@@ -333,21 +347,6 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
         </div>
       </div>
       <div id="map" className={styles.map} ref={mapDivRef}></div>
-    </div>
-  );
-};
-
-const SpotBox = ({ marker, i }) => {
-  return (
-    <div>
-      <img
-        src={marker.boardThumb || "src/assets/img/defaultImg.png"}
-        style="width: 38px; height: 36px; object-fit: cover; margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
-      />
-      <img
-        src="src/assets/img/defaultthumbmarker.png"
-        style={`width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;`}
-      />
     </div>
   );
 };
