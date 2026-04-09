@@ -3,19 +3,61 @@
 
 .page_layout {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 40px;
-  padding: 50px 20px;
+  width: 100%;
+  min-height: 100vh; /* 화면 꽉 채우기 */
+  overflow: visible; /* 레이아웃 밖으로 나가는 것 방지 */
+
+  /*
+    display: flex;
+    
+      justify-content: center;
+      align-items: flex-start;
+      gap: 40px;
+      padding: 50px 20px;
+      min-height: 100vh;
+      */
+}
+
+.left_section {
+  flex: 1;
   min-height: 100vh;
+  position: relative;
+}
+
+.left_section::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(
+    255,
+    255,
+    255,
+    0.3
+  ); /* 반투명 흰색 (0이면 완전 투명, 1이면 불투명) */
+  pointer-events: none; /* 클릭을 방해하지 않도록 */
+}
+
+.right_section {
+  flex: 1; /* 오른쪽 절반 차지 */
+  background-color: #f4f7f4;
+  display: flex;
+  justify-content: center; /* 가로 가운데 정렬 */
+  align-items: flex-start; /* 세로 가운데 정렬 */
+  padding: 60px 40px;
+  overflow-y: auto; /* 내용이 많아지면 폼 영역만 스크롤 */
 }
 
 .join_wrap {
-  max-width: 500px;
+  width: 600px;
   margin: 0 auto;
   padding: 40px 20px;
-  background-color: #fff;
-  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(144, 238, 144, 0.3);
+  border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   position: relative;
   margin-top: 40px;

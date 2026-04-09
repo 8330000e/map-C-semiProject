@@ -34,7 +34,7 @@ public class WebConfig implements WebMvcConfigurer {//MVC 관련 설정
 		// file.root에 설정된 루트 폴더 아래의 실제 파일을 /member/thumb/**, /board/editor/** 경로로 제공.
 		registry
 			.addResourceHandler("/member/thumb/**")
-			.addResourceLocations(getFileUri(new File(root, "member")));
+			.addResourceLocations(getFileUri(new File(root, "member/thumb/")));
 
 		// 게시글 에디터에서 업로드한 이미지도 같은 루트 아래 board/editor 폴더에서 제공합니다.
 		// 프론트에서는 /board/editor/{fileName} 형태의 URL로 접근합니다.

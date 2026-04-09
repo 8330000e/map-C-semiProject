@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import EmailAuth from "../../components/emailauth/EmailAuth";
 import { useEffect } from "react";
-import joinBg from "/images/signup-background-rabbit.png";
+//import joinBg from "/images/signup-background-rabbit.png";
+import joinbg1 from "/images/join2jpg.jpg";
 
 const Join = () => {
   // 페이지 이동 함수 가져오기 (React Router)
@@ -137,119 +138,142 @@ const Join = () => {
 
   return (
     <div className={styles.page_layout}>
-      <div className={styles.join_wrap}>
-        <h3 className={styles.page_title}>회원가입</h3>
-        <form onSubmit={JoinMember}>
-          <div className={styles.input_wrap}>
-            <label htmlFor="memberId">아이디</label>
-            <input
-              type="text"
-              name="memberId"
-              id="memberId"
-              value={member.memberId}
-              onChange={inputMember}
-              className={styles.input_field}
-              onBlur={ipDupCheck}
-            ></input>
-            {checkId > 0 && (
-              <p
-                className={
-                  checkId === 2
-                    ? styles.check_msg
-                    : `${styles.check_msg} ${styles.invalid}`
-                }
-              >
-                {checkId === 2
-                  ? "사용 가능한 아이디입니다."
-                  : "이미 사용중인 아이디입니다."}
-              </p>
-            )}
-          </div>
+      <div
+        className={styles.left_section}
+        style={{
+          backgroundImage: `url(${joinbg1})`, // 작성자님의 배경 이미지 사용
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      ></div>
 
-          {/* 비밀번호 */}
-          <div className={styles.input_wrap}>
-            <label htmlFor="memberPw">비밀번호</label>
-            <input
-              type="password"
-              name="memberPw"
-              id="memberPw"
-              value={member.memberPw}
-              onChange={inputMember}
-              className={styles.input_field}
-            />
-          </div>
+      <div className={styles.right_section}>
+        <div className={styles.join_wrap}>
+          <h3 className={styles.page_title}>회원가입</h3>
+          <form onSubmit={JoinMember}>
+            <div className={styles.input_wrap}>
+              <label htmlFor="memberId">아이디</label>
+              <input
+                type="text"
+                name="memberId"
+                id="memberId"
+                value={member.memberId}
+                onChange={inputMember}
+                className={styles.input_field}
+                onBlur={ipDupCheck}
+              ></input>
+              {checkId > 0 && (
+                <p
+                  className={
+                    checkId === 2
+                      ? styles.check_msg
+                      : `${styles.check_msg} ${styles.invalid}`
+                  }
+                >
+                  {checkId === 2
+                    ? "사용 가능한 아이디입니다."
+                    : "이미 사용중인 아이디입니다."}
+                </p>
+              )}
+            </div>
 
-          {/* 비밀번호 확인 */}
-          <div className={styles.input_wrap}>
-            <label htmlFor="memberPwRe">비밀번호 확인</label>
-            <input
-              type="password"
-              name="memberPwRe"
-              id="memberPwRe"
-              value={memberPwRe}
-              onChange={(e) => setMemberPwRe(e.target.value)}
-              className={styles.input_field}
-            />
-            {checkPw > 0 && (
-              <p
-                className={
-                  checkPw === 1
-                    ? styles.check_msg
-                    : `${styles.check_msg} ${styles.invalid}`
-                }
-              >
-                {checkPw === 1
-                  ? "비밀번호가 일치합니다."
-                  : "비밀번호가 일치하지 않습니다."}
-              </p>
-            )}
-          </div>
+            {/* 비밀번호 */}
+            <div className={styles.input_wrap}>
+              <label htmlFor="memberPw">비밀번호</label>
+              <input
+                type="password"
+                name="memberPw"
+                id="memberPw"
+                value={member.memberPw}
+                onChange={inputMember}
+                className={styles.input_field}
+              />
+            </div>
 
-          <div className={styles.input_wrap}>
-            <label>이름</label>
-            <input
-              type="text"
-              name="memberName"
-              id="memberName"
-              value={member.memberName}
-              onChange={inputMember}
-              className={styles.input_field}
-            ></input>
-          </div>
+            {/* 비밀번호 확인 */}
+            <div className={styles.input_wrap}>
+              <label htmlFor="memberPwRe">비밀번호 확인</label>
+              <input
+                type="password"
+                name="memberPwRe"
+                id="memberPwRe"
+                value={memberPwRe}
+                onChange={(e) => setMemberPwRe(e.target.value)}
+                className={styles.input_field}
+              />
+              {checkPw > 0 && (
+                <p
+                  className={
+                    checkPw === 1
+                      ? styles.check_msg
+                      : `${styles.check_msg} ${styles.invalid}`
+                  }
+                >
+                  {checkPw === 1
+                    ? "비밀번호가 일치합니다."
+                    : "비밀번호가 일치하지 않습니다."}
+                </p>
+              )}
+            </div>
 
-          <div className={styles.input_wrap}>
-            <label>닉네임</label>
-            <input
-              type="text"
-              name="memberNickname"
-              id="memberNickname "
-              value={member.memberNickname}
-              onChange={inputMember}
-              className={styles.input_field}
-            ></input>
-          </div>
+            <div className={styles.input_wrap}>
+              <label>이름</label>
+              <input
+                type="text"
+                name="memberName"
+                id="memberName"
+                value={member.memberName}
+                onChange={inputMember}
+                className={styles.input_field}
+              ></input>
+            </div>
 
-          {/*이메일 인증 */}
-          {/*이메일 인증 컴포넌트에서 이메일 인증이 완료되면 
+            <div className={styles.input_wrap}>
+              <label>닉네임</label>
+              <input
+                type="text"
+                name="memberNickname"
+                id="memberNickname "
+                value={member.memberNickname}
+                onChange={inputMember}
+                className={styles.input_field}
+              ></input>
+            </div>
+
+            {/*이메일 인증 */}
+            {/*이메일 인증 컴포넌트에서 이메일 인증이 완료되면 
         setEmailVerified(true)로 상태 변경*/}
 
-          <EmailAuth
-            //배열 집어넣지 않도록 주의!!
-            memberEmail={member.memberEmail}
-            setMemberEmail={(email) =>
-              setMember({ ...member, memberEmail: email })
-            }
-            onVerified={setEmailVerified}
-          ></EmailAuth>
+            <EmailAuth
+              //배열 집어넣지 않도록 주의!!
+              memberEmail={member.memberEmail}
+              setMemberEmail={(email) =>
+                setMember({ ...member, memberEmail: email })
+              }
+              onVerified={setEmailVerified}
+            ></EmailAuth>
 
-          <div className={styles.member_button_wrap}>
-            <button type="submit" className={styles.join_btn}>
-              회원가입
-            </button>
-          </div>
-        </form>
+            <div className={styles.member_button_wrap}>
+              <button type="submit" className={styles.join_btn}>
+                회원가입
+              </button>
+            </div>
+          </form>
+        </div>
+        {/* join_wrap 끝 */}
       </div>
+      {/* right_section 끝 */}
+
       {/*
+       
+             <div className={styles.sidebar_wrap}>
+               <img
+                 src={joinbg1}
+                 className={styles.sidebar_img}
+                 alt="회원가입배경화면"
+               ></img>
+             </div>
        <div className={styles.sidebar_wrap}>
         <img
           src={joinBg}
@@ -257,6 +281,10 @@ const Join = () => {
           alt="회원가입사이드바 배경화면"
         ></img>
       </div>
+
+       
+
+
       */}
     </div> //페이지 레이아웃
   );

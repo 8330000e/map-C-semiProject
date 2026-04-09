@@ -1,0 +1,39 @@
+.campdetailpage_wrap {
+  width: 1200px;
+  margin: 30px auto;
+}
+.campdetailpage_title {
+  text-align: center;
+}
+.campdetailpage_content_wrap {
+  display: flex;
+  gap: 100px;
+  width: fit-content;
+}
+.campdetailpage_details_wrap {
+  width: 800px;
+  background-color: aqua;
+}
+.campdetailpage_sidebar {
+  width: 300px;
+  background-color: cadetblue;
+}
+.campdetailpage_board_wrap {
+  margin-top: 50px;
+  width: 1200px;
+  min-height: 900px;
+  background-color: #464d3e;
+  border-radius: 15px;
+  display: flex;
+  flex-wrap: wrap; /*컨텐츠 다음으로 넘기는 것*/
+  /* box-sizing: border-box; */
+}
+.board_max_wrap {
+  width: 320px;
+  height: 300px;
+  margin-top: 60px;
+  margin-left: 60px;
+  position: relative;
+  background-color: cadetblue;
+  overflow: visible;
+}
