@@ -227,6 +227,40 @@ header {
 .used_scroll_right {
   right: 6px;
 }
+.horizontal_scroll_wrap {
+  position: relative;
+  width: 100%;
+}
+.horizontal_scroll_area {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(70, 77, 62, 0.8) rgba(255, 255, 255, 0.2);
+  scroll-behavior: smooth;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+.horizontal_scroll_area::-webkit-scrollbar {
+  height: 12px;
+}
+.horizontal_scroll_area::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.2);
+}
+.horizontal_scroll_area::-webkit-scrollbar-thumb {
+  background: rgba(70, 77, 62, 0.8);
+  border-radius: 10px;
+}
+.horizontal_scroll_area::-webkit-scrollbar-thumb:hover {
+  background: rgba(70, 77, 62, 0.95);
+}
+.horizontal_scroll_area > ul {
+  display: flex;
+  list-style-type: none;
+  gap: 12px;
+  align-items: flex-start;
+  width: max-content;
+}
 .used_list_header {
   display: flex;
   justify-content: center;

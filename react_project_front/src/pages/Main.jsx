@@ -9,6 +9,7 @@ import HelpIcon from "@mui/icons-material/Help";
 import useAuthStore from "../store/useAuthStore";
 import Map from "../components/mainpage/Map";
 import Bestpostlist from "../components/mainpage/Bestpostlist";
+import HorizontalScrollList from "../components/commons/HorizontalScrollList";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import Swal from "sweetalert2";
 
@@ -61,14 +62,6 @@ const getImageUrl = (thumb) => {
 };
 
 const Main = () => {
-  // 중고거래 리스트 가로 스크롤 영역 DOM에 접근하기 위한 ref임.
-  // 다른 사람이 이 기능을 쓰려면 이 ref를 scroll 가능한 컨테이너에 붙이고,
-  // scrollUsedList(-1) / scrollUsedList(1) 호출로 좌우 버튼을 구현하면 됨.
-  const usedListRef = useRef(null);
-  // 중고거래 가로 스크롤 버튼 제어 상태임.
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-  const [hasHorizontalScroll, setHasHorizontalScroll] = useState(false);
   // 실시간 댓글 "보여지는 영역" DOM
   const realtimeViewportRef = useRef(null);
   // 실시간 댓글 "실제 텍스트" DOM
@@ -84,36 +77,6 @@ const Main = () => {
   const [todayRandomMission, setTodayRandomMission] = useState(null);
   const [showMissionBubble, setShowMissionBubble] = useState(false);
   const [randomMissionCompleted, setRandomMissionCompleted] = useState(false);
-
-  const updateUsedScrollButtons = () => {
-    const el = usedListRef.current;
-    if (!el) return;
-    setHasHorizontalScroll(el.scrollWidth > el.clientWidth + 1);
-    setCanScrollLeft(el.scrollLeft > 0);
-    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
-  };
-
-  // 가로 스크롤을 좌우 버튼으로 이동시키는 함수임.
-  // direction이 -1이면 왼쪽, 1이면 오른쪽으로 스크롤함.
-  const scrollUsedList = (direction) => {
-    const el = usedListRef.current;
-    if (!el) return;
-    const step = el.clientWidth * 0.7;
-    el.scrollBy({ left: direction * step, behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    const handleResize = () => updateUsedScrollButtons();
-    const el = usedListRef.current;
-    updateUsedScrollButtons();
-    window.addEventListener("resize", handleResize);
-    if (el) el.addEventListener("scroll", updateUsedScrollButtons);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      if (el) el.removeEventListener("scroll", updateUsedScrollButtons);
-    };
-  }, [goods]);
 
   useEffect(() => {
     axios
@@ -459,18 +422,7 @@ const Main = () => {
 
       <div className="main_btm">
         <div className="used_list roundBorder">
-          {hasHorizontalScroll && (
-            <button
-              type="button"
-              className="used_scroll_btn used_scroll_left"
-              onClick={() => scrollUsedList(-1)}
-              disabled={!canScrollLeft}
-            >
-              ◀
-            </button>
-          )}
-          {/* 가로 스크롤이 필요한 경우 버튼을 표시함. */}
-          <div className="used_list_scroll" ref={usedListRef}>
+          <HorizontalScrollList scrollClassName="used_list_scroll" showButtons={false}>
             <ul>
               {usedGoods.map((item, index) => {
                 const imageUrl = getImageUrl(item.productThumb);
@@ -518,17 +470,7 @@ const Main = () => {
                 );
               })}
             </ul>
-          </div>
-          {hasHorizontalScroll && (
-            <button
-              type="button"
-              className="used_scroll_btn used_scroll_right"
-              onClick={() => scrollUsedList(1)}
-              disabled={!canScrollRight}
-            >
-              ▶
-            </button>
-          )}
+          </HorizontalScrollList>
         </div>
       </div>
     </main>
