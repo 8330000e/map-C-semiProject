@@ -1,5 +1,5 @@
 import styles from "./commons.module.css";
-import { Link, useNavigate, NavLink } from "react-router-dom";
+import { Link, useNavigate, NavLink, useLocation } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MailIcon from "@mui/icons-material/Mail";
@@ -15,6 +15,12 @@ const Header = () => {
   const navigate = useNavigate();
   const [drawer, setDrawer] = useState(false);
   const { memberId, memberNickname, logout, memberGrade } = useAuthStore();
+
+  //location : 현재 나의 위치가 어느페이지에 있는지를 알려주는 일종의 네비게이션
+  const location = useLocation();
+  // 로그인페이지의 위치를 지정해주는것
+  //로그인페이지에서는 로그인 버튼을 안보이게 하기 위한 설정
+  const isLoginPage = location.pathname === "/members/login";
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -41,7 +47,7 @@ const Header = () => {
         </NavLink>
 
         <div className={styles.header_wrap}>
-          {!memberId ? (
+          {!memberId && !isLoginPage ? (
             <div className={styles.login}>
               <Link to="/members/login">
                 <button
