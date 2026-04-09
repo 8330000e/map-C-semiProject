@@ -196,7 +196,6 @@ public class BoardService {
 				return new ArrayList<>();
 			}
 			map.put("tipList", tipList);
-			System.out.println(tipList);
 			List<Board> list = boardDao.selectMemberIdBoard(map);
 			return list;
 		}

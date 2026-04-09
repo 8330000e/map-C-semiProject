@@ -5,6 +5,7 @@ import java.util.Random;
 
 import org.apache.ibatis.annotations.Param;
 
+import java.io.File;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,9 @@ public class Membercontroller {
 	@Autowired
 	private EmailSender emailSender;
 
-	private FileUtils fileUtil;
+	// 회원가입 로직
+//	@Autowired
+//	private FileUtils fileUtil;
 
 	@Value("${file.root}")
 	private String root;
@@ -238,14 +241,25 @@ public class Membercontroller {
 
 	// 썸네일 변경
 	@PatchMapping(value = "/{memberId}/thumb")
-	public ResponseEntity<?> updateThumb(@PathVariable String memberId, @ModelAttribute MultipartFile file) {
-		String savepath = root + "member/";
-		String memberThumb = fileUtil.upload(savepath, file);
+	public ResponseEntity<?> updateThumb(@PathVariable String memberId, @RequestParam("file") MultipartFile file) {
+		if(file == null||file.isEmpty()) {
+			throw new RuntimeException("이럴 경우는 없을거임");
+		}
+		File saveDirectoryPath = new File(new File(root),"member/thumb");
+		if(!saveDirectoryPath.exists()) {
+			saveDirectoryPath.mkdirs();
+		}
+		
+		String memberThumb = FileUtils.upload(saveDirectoryPath.getAbsolutePath(), file);
 		Member mem = new Member();
 		mem.setMemberId(memberId);
 		mem.setMemberThumb(memberThumb);
 		int result = memberService.updateMemberThumb(mem);
-		return ResponseEntity.ok(memberThumb);
+		if(result ==1) {
+			return ResponseEntity.ok(memberThumb);
+		}else {
+			return ResponseEntity.ok("파일업로드 안됨");
+		}
 	}
 
 	@GetMapping

@@ -101,7 +101,7 @@ fetch first 1 row only
 		where member_id=#{memberId}
 	</update>
 	<select id="getOneMemberInfo" resultType="member">
-		select member_name,member_email,enroll_date,member_status from member_tbl1 where member_id = #{memberId} 
+		select member_name,member_email,member_thumb,enroll_date,member_status from member_tbl1 where member_id = #{memberId} 
 	</select>
 	<select id="memberPw" resultType="member">
 		select member_pw from member_tbl1 where member_id =#{memberId}

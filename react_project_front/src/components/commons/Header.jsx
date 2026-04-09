@@ -102,6 +102,9 @@ const Header = () => {
               <div
                 id="header-drawer"
                 className={`${styles.header_drawer} ${drawer ? styles.drawer_open : ""}`}
+                onClick={() => {
+                  setDrawer(false);
+                }}
               >
                 <div className={styles.drawer_menu}>
                   <NavLink

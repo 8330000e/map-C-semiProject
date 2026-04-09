@@ -255,7 +255,7 @@
         offset 0 rows fetch next 10 rows only
     </select>
 
-    <!-- 내가 쓴 글 -->
+    <!-- 마이페이지용 -->
     <select id="selectMemberIdBoard" resultType="kr.co.iei.board.model.vo.Board">
         SELECT 
             board_no,

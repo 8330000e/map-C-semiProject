@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="kr.co.iei.campaign.model.dao.CampaignDao">
+	<select id="selectAllCampaign" resultType="camp">
+		select campaign_no,
+			   campaign_title,
+			   campaign_status,
+			   campaign_goal_member,
+			   to_char(campaign_start_date,'yyyy-mm-dd') as campaign_start_date,
+			   to_char(campaign_expire_date,'yyyy-mm-dd') as campaign_expire_date
+			   from create_campaign_tbl
+			   where campaign_status in (2,3,4)
+			   <if test="campaignTitle != null and campaignTitle != ''">
+			   		and campaign_title like '%' || #{campaignTitle} || '%'
+			   </if>
+	</select>
+	<select id="selectOneCampaign" resultType="camp">
+		select 
+			   campaign_title,
+			   campaign_status,
+			   campaign_explanation,
+			   campaign_goal_member,
+			   campaign_start_date,
+			   campaign_expire_date,
+			   member_id,
+               (select count(*) from campaign_member_tbl where campaign_no=#{campaignNo})as member_count
+               from create_campaign_tbl ct
+               where campaign_no = #{campaignNo} 
+	</select>
+	<insert id="createCampaign">
+		insert into create_campaign_tbl values (
+			campaign_no_seq.nextval,
+			#{campaignTitle},
+			#{campaignExplanation},
+			0,
+			#{campaignGoalMember},
+			to_date(#{campaignExpireDate},'yyyy-mm-dd')+1,
+			#{memberId},
+			null
+		)
+	</insert>
+	<select id="checkParticipanceMember" resultType="String">
+		select * from campaign_member_tbl cmt join create_campaign_tbl cct on cmt.campaign_no = cct.campaign_no where cct.campaign_no = #{campaignNo}
+	</select>
+</mapper>
