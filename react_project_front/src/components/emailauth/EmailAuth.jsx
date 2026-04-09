@@ -163,9 +163,9 @@ const EmailAuth = ({ memberEmail, setMemberEmail, onVerified }) => {
     setMemberEmail(e.target.value);
   };
 
-  <h1>이메일인증 컴포넌트</h1>;
   return (
-    <div className={styles.join_wrap}>
+    //<div className={styles.join_wrap}>
+    <>
       {/* 이메일 입력 */}
 
       <div className={styles.input_wrap}>
@@ -208,17 +208,16 @@ const EmailAuth = ({ memberEmail, setMemberEmail, onVerified }) => {
             id="mailAuthInput"
             onChange={(e) => setMailAuthInput(e.target.value)}
           ></input>
+          {/*버튼 선택:프론트 검증 */}
+          <button
+            type="button"
+            className={styles.join_btn}
+            onClick={verifyMailCode}
+            disabled={mailAuth !== 1} // 인증메일 보내야만 활성화
+          >
+            메일 인증하기
+          </button>
         </div>
-
-        {/*버튼 선택:프론트 검증 */}
-        <button
-          type="button"
-          className={styles.join_btn}
-          onClick={verifyMailCode}
-          disabled={mailAuth !== 1} // 인증메일 보내야만 활성화
-        >
-          인증하기
-        </button>
       </div>
 
       {mailAuth === 1 && !timeExpired && <p>남은시간:{showTime()}</p>}
@@ -228,7 +227,8 @@ const EmailAuth = ({ memberEmail, setMemberEmail, onVerified }) => {
           인증시간이 만료되었습니다.
         </p>
       )}
-    </div>
+    </>
+    //</div>
   );
 };
 export default EmailAuth;
