@@ -266,13 +266,15 @@
    			<if test="checker == 1">
         		writer_id = #{memberId}
    			</if>
-   			<if test="checker == 2 and boardNoList != null and boardNoList != ''">
+   			<if test="checker == 2 and boardNoList != null and boardNoList.size() > 0">
+   				<!-- 좋아요한 게시글 ID가 있을 때만 조건값을 넣음 -->
    				board_no in
    				<foreach collection="boardNoList" item="boardNo" open="(" close=")" separator=",">
    					#{boardNo}
    				</foreach>
    			</if>
-   			<if test="checker == 3 and tipList != null and tipList != ''">
+   			<if test="checker == 3 and tipList != null and tipList.size() > 0">
+   				<!-- 스크랩한 게시글 ID가 있을 때만 조건값을 넣음 -->
    				board_no in
    				<foreach collection="tipList" item="boardNo" open="(" close=")" separator=",">
    					#{boardNo}

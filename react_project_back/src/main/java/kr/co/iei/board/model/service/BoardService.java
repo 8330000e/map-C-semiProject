@@ -1,6 +1,7 @@
 package kr.co.iei.board.model.service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -172,16 +173,28 @@ public class BoardService {
 			return list;
 		}
 		if(checker == 2) {
-			String memberId=map.get("memberId").toString();
-			List <Integer> boardNoList =boardDao.selectLikeBoard(memberId);	
-			map.put("boardNoList",boardNoList );
+			String memberId = map.get("memberId").toString();
+			List<Integer> boardNoList = boardDao.selectLikeBoard(memberId);
+			// 좋아요한 게시글 ID 목록이 없으면
+			// 쿼리 조건에 넣을 값이 없어서 잘못된 조회가 될 수 있음.
+			// 그래서 빈 목록이면 바로 빈 결과를 반환함.
+			if (boardNoList == null || boardNoList.isEmpty()) {
+				return new ArrayList<>();
+			}
+			map.put("boardNoList", boardNoList);
 			System.out.println(boardNoList);
 			List<Board> list = boardDao.selectMemberIdBoard(map);
 			return list;
 		}
 		if(checker == 3) {
-			String memberId=map.get("memberId").toString();
-			List <Integer> tipList = boardDao.selectTipBoard(memberId);
+			String memberId = map.get("memberId").toString();
+			List<Integer> tipList = boardDao.selectTipBoard(memberId);
+			// 스크랩한 게시글 ID 목록이 없으면
+			// 조건에 들어갈 값이 없어서 잘못된 조회가 될 수 있음.
+			// 그래서 빈 목록이면 바로 빈 결과를 반환함.
+			if (tipList == null || tipList.isEmpty()) {
+				return new ArrayList<>();
+			}
 			map.put("tipList", tipList);
 			System.out.println(tipList);
 			List<Board> list = boardDao.selectMemberIdBoard(map);
