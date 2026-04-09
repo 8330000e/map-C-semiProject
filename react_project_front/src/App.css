@@ -198,13 +198,43 @@ header {
   flex-direction: column;
   padding: 6px 10px 4px;
   gap: 4px;
+  position: relative;
 }
-..used_list_header {
+.used_scroll_btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(70, 77, 62, 0.9);
+  color: #fff;
+  /* 좌우 버튼을 투명하게 눌림 상태로 보여주기 위한 설정임. */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+.used_scroll_btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.used_scroll_left {
+  left: 6px;
+}
+.used_scroll_right {
+  right: 6px;
+}
+.used_list_header {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-/* 상품 리스트 가로 스크롤 영역 스타일임. */
+/* 상품 리스트 가로 스크롤 영역 스타일임.
+   이 클래스는 Main.jsx의 중고거래 리스트 가로 스크롤에 사용함.
+   다른 곳에서 쓰려면 동일한 클래스명을 가진 컨테이너를 만들면 됨. */
 .used_list_scroll {
   overflow-x: scroll;
   overflow-y: hidden;
