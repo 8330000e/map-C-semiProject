@@ -43,12 +43,12 @@ public class CampaignController {
 		Campaign result = campaignService.selectOneCampaign(campaignNo);
 		return ResponseEntity.ok(result);
 	}
-//	@PostMapping(value="/{memberId}")
-//	public ResponseEntity<?> createCampaign(@PathVariable String memberId,@RequestBody Campaign camp){
-//		camp.setMemberId(memberId);
-//		int result = campaignService.createCampaign(camp);
-//		return ResponseEntity.ok(result);
-//	}
+	@PostMapping(value="/{memberId}")
+	public ResponseEntity<?> createCampaign(@PathVariable String memberId,@RequestBody Campaign camp){
+		camp.setMemberId(memberId);
+		int result = campaignService.createCampaign(camp);
+		return ResponseEntity.ok(result);
+	}
 	@GetMapping(value="/{memberId}/part")
 	public ResponseEntity<?> checkParticipanceMember(@PathVariable String memberId,@RequestParam Integer campaignNo){
 		Campaign c = new Campaign();

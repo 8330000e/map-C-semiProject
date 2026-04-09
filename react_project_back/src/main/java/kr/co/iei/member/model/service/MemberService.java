@@ -181,7 +181,7 @@ public class MemberService {
 		return result;
 	}
 
-	public int selectMemberPoint(String memberId) {
+	public Integer selectMemberPoint(String memberId) {
 		return memberDao.selectMemberPoint(memberId);
 	}
 	@Transactional

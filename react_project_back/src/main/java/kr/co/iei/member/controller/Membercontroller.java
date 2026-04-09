@@ -278,7 +278,7 @@ public class Membercontroller {
 	// 포인트 조회
 	@GetMapping(value = "/{memberId}/point")
 	public ResponseEntity<?> selectMemberPoint(@PathVariable String memberId) {
-		int totalPoint = memberService.selectMemberPoint(memberId);
+	Integer totalPoint = memberService.selectMemberPoint(memberId);
 		return ResponseEntity.ok(totalPoint);
 	}
 
