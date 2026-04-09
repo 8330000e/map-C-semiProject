@@ -35,4 +35,5 @@
   margin-left: 60px;
   position: relative;
   background-color: cadetblue;
+  overflow: visible;
 }

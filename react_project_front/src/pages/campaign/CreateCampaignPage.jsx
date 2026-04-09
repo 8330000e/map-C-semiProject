@@ -5,9 +5,11 @@ import { Input, TextArea } from "../../components/ui/Form";
 import Button from "../../components/ui/Button";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const CreateCampaignPage = () => {
   const goalRef = useRef();
+  const navigate = useNavigate();
   const { memberId } = useAuthStore();
   const [ready, setReady] = useState(false);
   const [writeInfo, setWriteInfo] = useState({
@@ -34,6 +36,17 @@ const CreateCampaignPage = () => {
         )
         .then((res) => {
           console.log(res.data);
+          if (res.data === 1) {
+            Swal.fire({
+              title: "캠페인 승인 요청을 관리자에게 보냈습니다.",
+              icon: "success",
+              text: "관리자가 승인할시에 챌린지가 시작됩니다.",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                navigate("/");
+              }
+            });
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -42,7 +55,8 @@ const CreateCampaignPage = () => {
       Swal.fire({
         icon: "error",
         text: "입력양식에 빠진 부분이 있어서는 안됩니다.",
-        title: "입력양식을 확인해 주세요",
+        title:
+          "입력양식을 확인해 주세요(목표인원수는 문자가 없고 100이상의 숫자여야 합니다.)",
       });
     }
   };

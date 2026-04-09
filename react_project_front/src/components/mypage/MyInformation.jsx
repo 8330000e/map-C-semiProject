@@ -54,9 +54,10 @@ const MyInformation = () => {
         <div className={styles.myinformation_img_wrap}>
           <img
             src={
-              memberThumb !== null
-                ? `${import.meta.env.VITE_BACKSERVER}/member/thumb/${memberThumb}`
-                : userImg
+              userImg
+              // memberThumb !== null
+              //   ? `${import.meta.env.VITE_BACKSERVER}/member/thumb/${memberThumb}`
+              //   : userImg
             }
           />
           <div

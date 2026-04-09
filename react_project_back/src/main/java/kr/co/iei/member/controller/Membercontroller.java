@@ -5,6 +5,7 @@ import java.util.Random;
 
 import org.apache.ibatis.annotations.Param;
 
+import java.io.File;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +50,8 @@ public class Membercontroller {
 	private EmailSender emailSender;
 
 	// 회원가입 로직
-	@Autowired
-	private FileUtils fileUtil;
+//	@Autowired
+//	private FileUtils fileUtil;
 
 	@Value("${file.root}")
 	private String root;
@@ -238,14 +239,16 @@ public class Membercontroller {
 
 	// 썸네일 변경
 	@PatchMapping(value = "/{memberId}/thumb")
-	public ResponseEntity<?> updateThumb(@PathVariable String memberId, @ModelAttribute MultipartFile file) {
-		String savepath = root + "member/";
-		String memberThumb = fileUtil.upload(savepath, file);
+	public ResponseEntity<?> updateThumb(@PathVariable String memberId, @RequestParam("file") MultipartFile file) {
+		String savepath = root+"member/thumb";
+		System.out.println(file);
+		String memberThumb = FileUtils.upload(savepath, file);
 		Member mem = new Member();
 		mem.setMemberId(memberId);
 		mem.setMemberThumb(memberThumb);
 		int result = memberService.updateMemberThumb(mem);
-		return ResponseEntity.ok(memberThumb);
+		String finalThumb = "/member/thumb/"+memberThumb;
+		return ResponseEntity.ok(finalThumb);
 	}
 
 	@GetMapping

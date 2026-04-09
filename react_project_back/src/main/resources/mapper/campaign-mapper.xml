@@ -22,6 +22,7 @@
 			   campaign_goal_member,
 			   campaign_start_date,
 			   campaign_expire_date,
+			   member_id,
                (select count(*) from campaign_member_tbl where campaign_no=#{campaignNo})as member_count
                from create_campaign_tbl ct
                where campaign_no = #{campaignNo} 
