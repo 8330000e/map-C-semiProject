@@ -6,6 +6,8 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 
 import useAuthStore from "../../store/useAuthStore.js";
+// 어드민 헤더 로고도 import 방식으로 로드함. 문자열 경로 대신 컴파일 타임에 처리되도록 수정함.
+import logo from "../../assets/logo/logo.svg";
 
 const AdminHeader = () => {
   const navigate = useNavigate();
@@ -22,7 +24,8 @@ const AdminHeader = () => {
       <header className={styles.admin_header}>
         <div className={styles.admin_header_inner}>
           <NavLink to="/" className={styles.logo}>
-            <img src="src\assets\logo\logo.svg" alt="logo" />
+            {/* import한 로고를 사용함. 브라우저가 문자열 경로를 불안정하게 처리하는 문제 해결임. */}
+            <img src={logo} alt="logo" />
             <h1>탄소커넥트</h1>
           </NavLink>
           <div className={styles.header_wrap}>

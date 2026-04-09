@@ -8,6 +8,8 @@ import Swal from "sweetalert2";
 
 import useAuthStore from "../../store/useAuthStore";
 import { useState } from "react";
+// 로고 이미지는 Vite 정상 로딩을 위해 import 방식으로 참조함.
+import logo from "../../assets/logo/logo.svg";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -33,7 +35,8 @@ const Header = () => {
     <>
       <header className={styles.header}>
         <NavLink to="/" className={styles.logo}>
-          <img src="src\assets\logo\logo.svg" alt="logo" />
+          {/* import된 로고를 src 속성으로 전달함. 백슬래시 경로 문자열 대신 안정적 로딩을 위해 수정함. */}
+          <img src={logo} alt="logo" />
           <h1>탄소커넥트</h1>
         </NavLink>
 
