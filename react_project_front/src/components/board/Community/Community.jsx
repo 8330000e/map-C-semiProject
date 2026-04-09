@@ -98,6 +98,17 @@ const Community = ({
 
     setMissionType(missionParam || null);
   }, [location.search]);
+  /*
+  const [addr, setAddr] = useState("선택된 위치 없음");
+  const [lnglat, setLnglat] = useState({
+    lat: 37.5665 - 0.001,
+    lng: 126.978,
+  });
+  const [ctpvsgg, setCtpvsgg] = useState({
+    ctpv: "",
+    sgg: "",
+  });
+  */
   const [selectAddr, setSelectAddr] = useState("선택된 위치 없음");
   const [selectLnglat, setSelectLnglat] = useState({
     lat: 0,
@@ -281,9 +292,9 @@ const Community = ({
         `${import.meta.env.VITE_BACKSERVER}/boards`,
         requestData,
       );
-
       const savedBoard = res.data;
       const boardNo = savedBoard.boardNo;
+      const pointAwarded = savedBoard.pointAwarded;
 
       if (boardNo > 0) {
         if (attachedFiles.length > 0) {
@@ -306,14 +317,14 @@ const Community = ({
           );
         }
 
-        if (missionType === "board-write") {
-          localStorage.setItem("mission_board_write_completed", "true");
-          localStorage.setItem("mission_board_write_point", "5");
+        // ⭐ 추가 (핵심)
+        const pointAwarded = savedBoard.pointAwarded;
 
+        if (pointAwarded) {
           await Swal.fire({
             icon: "success",
             title: "게시글 등록 완료",
-            text: "게시글이 등록되었고, 미션 완료로 5포인트가 지급되었습니다.",
+            text: "게시글이 등록되었고, 5포인트가 지급되었습니다.",
             confirmButtonText: "확인",
           });
         } else {

@@ -56,9 +56,8 @@ public class BoardController {
     }
 	//게시글 작성
 	@PostMapping
-	public Board insertBoard(@RequestBody Board board) {
-	    boardService.insertBoard(board);
-	    return board;
+	public HashMap<String, Object> insertBoard(@RequestBody Board board) {
+	    return boardService.insertBoard(board);
 	}
 	// 이미지 저장 엔드포인트
 	@PostMapping("/editor/upload")

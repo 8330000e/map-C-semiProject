@@ -28,6 +28,8 @@ const MissionList = () => {
   const [bonusMissionCompleted, setBonusMissionCompleted] = useState(false);
   const [bonusMissionAvailable, setBonusMissionAvailable] = useState(false);
 
+  const [randomMissionCertImage, setRandomMissionCertImage] = useState("");
+
   useEffect(() => {
     if (!memberId) return;
 
@@ -165,6 +167,7 @@ const MissionList = () => {
       );
 
       setRandomMissionCompleted(res.data.completed === true);
+      setRandomMissionCertImage(res.data.certImageUrl || "");
     } catch (err) {
       console.error("랜덤 미션 상태 조회 실패", err);
     }
@@ -188,6 +191,27 @@ const MissionList = () => {
     if (mission.missionType === "BONUS") {
       handleBonusMissionClaim();
     }
+  };
+
+  const getImageUrl = (value, type = "mission") => {
+    if (!value) return "";
+
+    // 이미 완전한 주소면 그대로 사용
+    if (value.startsWith("http://") || value.startsWith("https://")) {
+      return value;
+    }
+
+    // 이미 /uploads/... 처럼 경로가 들어있으면 서버 주소만 붙임
+    if (value.startsWith("/")) {
+      return `${import.meta.env.VITE_BACKSERVER}${value}`;
+    }
+
+    // 파일명만 저장된 경우
+    if (type === "cert") {
+      return `${import.meta.env.VITE_BACKSERVER}/uploads/mission/random/${value}`;
+    }
+
+    return `${import.meta.env.VITE_BACKSERVER}/uploads/mission/${value}`;
   };
 
   const renderMissionCard = (
@@ -214,7 +238,20 @@ const MissionList = () => {
         <h3>{cardTitle}</h3>
 
         <div className={styles.imageBox}>
-          <img src={mission.missionImageUrl} alt={mission.missionTitle} />
+          <img
+            src={
+              mission.missionType === "RANDOM"
+                ? completed && randomMissionCertImage
+                  ? randomMissionCertImage
+                  : mission.missionImageUrl
+                : mission.missionType === "BONUS"
+                  ? completed
+                    ? "/images/bonus-open.png"
+                    : "/images/bonus.png"
+                  : mission.missionImageUrl
+            }
+            alt={mission.missionTitle}
+          />
         </div>
 
         <h4>{mission.missionTitle}</h4>
@@ -279,6 +316,9 @@ const MissionList = () => {
         },
       );
 
+      setRandomMissionCompleted(true);
+      setRandomMissionCertImage(res.data.certImageUrl || "");
+
       await Swal.fire({
         icon: "success",
         title: "인증 완료!",
@@ -286,7 +326,6 @@ const MissionList = () => {
         confirmButtonColor: "#89a93f",
       });
 
-      setRandomMissionCompleted(true);
       handleCloseCertModal();
       await loadMissions();
       await loadBonusMissionStatus();
@@ -301,7 +340,6 @@ const MissionList = () => {
       });
     }
   };
-
   const updateBonusMissionState = (
     basicCompleted,
     randomCompleted,
