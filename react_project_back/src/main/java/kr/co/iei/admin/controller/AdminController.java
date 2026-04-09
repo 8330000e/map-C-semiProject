@@ -123,8 +123,15 @@ public class AdminController {
 	}
 	
 	@PatchMapping(value="qna")
-	public ResponseEntity<?> qnaAnswer(@ModelAttribute Qna qna) {
-		System.out.println(qna);
+	public ResponseEntity<?> qnaAnswer(@ModelAttribute Qna qna, @RequestParam(value="upfile", required = false) MultipartFile upfile) {
+		if (upfile != null && !upfile.isEmpty()) {
+			File saveDir = new File(new File(root), "qna");
+			if (!saveDir.exists()) {
+				saveDir.mkdir();
+			}
+			String fileName = fileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
+			qna.setQnaAnswerImage("/qna/" + fileName);
+		}
 		int result = adminService.qnaAnswer(qna);
 		return ResponseEntity.ok(result);
 	}

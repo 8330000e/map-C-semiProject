@@ -22,4 +22,6 @@ public interface SupportDao {
 
 	int insertQna(Qna qna);
 
+	Qna selectQnaDetail(Integer qnaNo);
+
 }

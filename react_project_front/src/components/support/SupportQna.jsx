@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import TextEditor from "../board/Community/TextEditor";
 import Button from "../ui/Button";
 import { Input, TextArea } from "../ui/Form";
@@ -12,6 +13,7 @@ const SupportQna = ({
   qna,
   changeQna,
 }) => {
+  const navigate = useNavigate();
   return (
     <>
       <section className={styles.page_header}>
@@ -98,7 +100,11 @@ const SupportQna = ({
           <>
             <div className={styles.qna_list}>
               {qnaList.map((qna) => (
-                <div key={qna.qnaNo} className={styles.qna_card}>
+                <div
+                  key={qna.qnaNo}
+                  className={styles.qna_card}
+                  onClick={() => navigate(`/support/qna/${qna.qnaNo}`)}
+                >
                   {/* 1줄: 뱃지 + 카테고리 + 날짜 */}
                   <div className={styles.qna_top}>
                     <div className={styles.qna_top_left}>

@@ -75,4 +75,10 @@ public class SupportContoller {
 		return ResponseEntity.ok(result);
 	}
 	
+	@GetMapping(value="qna/{qnaNo}")
+	public ResponseEntity<?> selectQanDetail(@PathVariable Integer qnaNo) {
+		Qna qna = supportService.selectQnaDetail(qnaNo);
+		return ResponseEntity.ok(qna);
+	}
+	
 }

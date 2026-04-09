@@ -83,15 +83,12 @@ public class AdminService {
 		
 		List<Qna> qnaList = adminDao.selectQnaList(listItem);
 		ListResponse response = new ListResponse(qnaList, totalPage);
+
 		return response;
 	}
 
 	@Transactional
 	public int qnaAnswer(Qna qna) {
-		if (qna.getQnaImage() != null) {
-			String filepath = fileUtils.upload(root + "qna/", qna.getQnaImage());
-			qna.setQnaAnswerImage(filepath);
-		}
 		return adminDao.qnaAnswer(qna);
 	}
 }

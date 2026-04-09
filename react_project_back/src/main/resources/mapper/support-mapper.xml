@@ -41,6 +41,8 @@
 	
 	<select id="selectQnaList" resultType="qna">
 		select 
+			member_id,
+			qna_no,
 			qna_title,
 			qna_content,
 			qna_answer,
@@ -68,4 +70,8 @@
           	#{qnaCategory}
 		)
 	</insert>
+	
+	<select id="selectQnaDetail" resultType="qna">
+		select * from qna_tbl where qna_no = #{qnaNo}
+	</select>
 </mapper>

@@ -41,4 +41,9 @@ public class SupportService {
 		int result = supportDao.insertQna(qna);
 		return result;
 	}
+
+	public Qna selectQnaDetail(Integer qnaNo) {
+		Qna qna = supportDao.selectQnaDetail(qnaNo);
+		return qna;
+	}
 }

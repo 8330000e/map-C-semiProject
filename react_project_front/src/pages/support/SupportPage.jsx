@@ -6,6 +6,7 @@ import SupportFaqPage from "./SupportFaqPage";
 import SupportNoticePage from "./SupportNoticePage";
 import SupportNoticeDetailPage from "./SupportNoticeDetailPage";
 import SupportQnaPage from "./SupportQnaPage";
+import SupportQnaDetailPage from "./SupportQnaDetailPage";
 
 const SupportPage = () => {
   useEffect(() => {
@@ -24,6 +25,7 @@ const SupportPage = () => {
         <Route path="notice" element={<SupportNoticePage />} />
         <Route path="notice/:noticeNo" element={<SupportNoticeDetailPage />} />
         <Route path="qna" element={<SupportQnaPage />} />
+        <Route path="qna/:qnaNo" element={<SupportQnaDetailPage />} />
       </Routes>
     </section>
   );

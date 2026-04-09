@@ -96,11 +96,13 @@
 	<select id="selectQnaList" resultType="qna">
 		select 
 			qna_no,
-			member_id as qnaMemberId,
+			member_id,
 			qna_title,
 			qna_content,
 			qna_status,
-			qna_date
+			qna_date,
+			qna_category,
+			qna_question_image
 		from qna_tbl
 		order by qna_status asc, qna_date desc
 		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
@@ -113,7 +115,7 @@
 	<update id="qnaAnswer">
 		update qna_tbl set
 			qna_answer = #{qnaAnswer},
-			qna_image_path = #{qnaImagePath},
+			qna_answer_image = #{qnaAnswerImage},
 			qna_status = 1
 		where qna_no = #{qnaNo}
 	</update>
