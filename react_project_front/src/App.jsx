@@ -57,6 +57,7 @@ import MapCommunityPage from "./pages/MapCommunityPage/MapCommunityPage";
 function App() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith("/admin");
+  const { memberGrade } = useAuthStore();
   {
     /*1. 로그인로직 
     2. 로그인 후 null이 아닌 memeber state를 useAthsore에 저장*/
@@ -108,7 +109,12 @@ function App() {
           <Route path="/mission" element={<MissionListPage />} />
           <Route path="/community" element={<MapCommunityPage />} />
 
-          <Route path="/admin/*" element={<AdminPage />} />
+          <Route
+            path="/admin/*"
+            element={
+              memberGrade === 1 ? <AdminPage /> : <Navigate to="/" replace />
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/support/*" element={<SupportPage />} />
         </Routes>

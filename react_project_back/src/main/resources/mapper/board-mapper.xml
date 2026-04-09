@@ -364,4 +364,22 @@
 	<select id="selectMarkers" resultType="Board">
 		select b.board_no, b.board_title, b.board_content, b.board_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg, count(l.board_no) as likeCount from board_tbl b join board_like_tbl l on (b.board_no = l.board_no) where l.board_no = l.board_no group by b.board_no, b.board_title, b.board_content, b.board_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg
 	</select>
+	
+	<insert id="insertBoardReport">
+		insert into board_report_tbl values (
+			report_seq.nextval,
+			#{boardNo},
+			#{reportId},
+			#{reportCategory},
+			#{reportContent},
+			sysdate,
+			0
+		)
+	</insert>
+	
+	<select id="checkReport">
+		select count(*) from board_report_tbl
+		where board_no = #{boardNo} and report_id = #{reportId}
+	</select>
+	
 </mapper>

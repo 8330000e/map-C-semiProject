@@ -9,6 +9,7 @@ import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
+import kr.co.iei.board.model.vo.BoardReport;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -60,6 +61,10 @@ public interface BoardDao {
 	List<Integer> selectTipBoard(String memberId);
 
 	List<Board> selectMarkers();
+
+	int insertBoardReport(BoardReport report);
+
+	int checkReport(BoardReport report);
     
 
 }

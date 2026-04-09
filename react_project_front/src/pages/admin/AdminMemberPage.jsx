@@ -12,10 +12,25 @@ const statusText = {
 const AdminMemberPage = () => {
   const [memberList, setMemberList] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null);
+  const [filter, setFilter] = useState({
+    status: "ALL",
+    grade: "ALL",
+    keyword: "",
+  });
+
+  const changeFilter = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setFilter({ ...filter, [name]: value });
+  };
 
   const selectMemberList = () => {
+    const params = {};
+    if (filter.status !== "ALL") params.status = filter.status;
+    if (filter.grade !== "ALL") params.grade = filter.grade;
+    if (filter.keyword.trim()) params.keyword = filter.keyword;
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/admins/member`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/admins/member`, { params })
       .then((res) => {
         console.log(res);
         setMemberList(res.data);
@@ -27,7 +42,7 @@ const AdminMemberPage = () => {
 
   useEffect(() => {
     selectMemberList();
-  }, []);
+  }, [filter]);
 
   return (
     <>
@@ -36,6 +51,8 @@ const AdminMemberPage = () => {
         selectedMember={selectedMember}
         setSelectedMember={setSelectedMember}
         statusText={statusText}
+        filter={filter}
+        changeFilter={changeFilter}
       />
     </>
   );

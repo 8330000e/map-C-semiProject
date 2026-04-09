@@ -16,6 +16,7 @@ import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
+import kr.co.iei.board.model.vo.BoardReport;
 import kr.co.iei.mission.model.service.MissionService;
 import kr.co.iei.utils.FileUtils;
 
@@ -207,6 +208,16 @@ public class BoardService {
 	public List<Board> selectMarkers() {
 		List<Board> list = boardDao.selectMarkers();
 		return list;
+	}
+	
+	@Transactional
+	public int insertBoardReport(BoardReport report) {
+		int check = boardDao.checkReport(report);
+		if (check > 0) {
+			return -1;
+		}
+		
+		return boardDao.insertBoardReport(report);
 	}
 }
 

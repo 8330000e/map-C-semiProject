@@ -5,13 +5,34 @@ const AdminMember = ({
   selectedMember,
   setSelectedMember,
   statusText,
+  filter,
+  changeFilter,
 }) => {
   return (
     <>
       <div className={styles.member_wrap}>
         {/* 왼쪽: 회원 목록 */}
         <section className={`${styles.panel} ${styles.member_left}`}>
-          <h2 className={styles.member_title}>회원관리</h2>
+          <div className={styles.filter_bar}>
+            <select name="status" value={filter.status} onChange={changeFilter}>
+              <option value="ALL">상태</option>
+              <option value={0}>정상</option>
+              <option value={1}>정지</option>
+              <option value={2}>탈퇴</option>
+            </select>
+            <select name="grade" value={filter.grade} onChange={changeFilter}>
+              <option value="ALL">권한</option>
+              <option value={0}>일반</option>
+              <option value={1}>관리자</option>
+            </select>
+            <input
+              type="text"
+              name="keyword"
+              value={filter.keyword}
+              onChange={changeFilter}
+              placeholder="아이디/이름 검색"
+            />
+          </div>
 
           <div className={styles.member_list}>
             {memberList.length === 0 ? (

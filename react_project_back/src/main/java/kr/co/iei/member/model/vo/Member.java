@@ -22,7 +22,7 @@ public class Member {
     private String memberNickname;          // NOT NULL
     private String memberEmail;
     private String memberThumb;
-    private Date enrollDate;                // SYSDATE 사용 예정
+    private String enrollDate;                // SYSDATE 사용 예정
 
     private Integer memberStatus = 0;     // 기본값 1 // 기본값 0임 
     private Integer mannerScore = 0;       // 기본값 0 // 기본값 36.5임 

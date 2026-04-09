@@ -36,7 +36,7 @@ public interface AdminDao {
 
 	int getTotalCount();
 
-	List<Member> selectMemberList();
+	List<Member> selectMemberList(Integer status, Integer grade, String keyword);
 
 
 

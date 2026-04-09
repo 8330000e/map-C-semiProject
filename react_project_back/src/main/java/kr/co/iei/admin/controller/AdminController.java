@@ -138,8 +138,11 @@ public class AdminController {
 	}
 	
 	@GetMapping(value="member")
-	public ResponseEntity<?> selectMemberList() {
-		List<Member> memberList = adminService.selectMemberList();
+	public ResponseEntity<?> selectMemberList(@RequestParam(required = false) Integer status,
+											  @RequestParam(required = false) Integer grade,
+											  @RequestParam(required = false) String keyword
+			) {
+		List<Member> memberList = adminService.selectMemberList(status, grade, keyword);
 		return ResponseEntity.ok(memberList);
 	}
 	

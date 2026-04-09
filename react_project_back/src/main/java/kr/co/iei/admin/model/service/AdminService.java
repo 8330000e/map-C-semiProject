@@ -93,8 +93,8 @@ public class AdminService {
 		return adminDao.qnaAnswer(qna);
 	}
 
-	public List<Member> selectMemberList() {
-		List<Member> memberList = adminDao.selectMemberList();
+	public List<Member> selectMemberList(Integer status, Integer grade, String keyword) {
+		List<Member> memberList = adminDao.selectMemberList(status, grade, keyword);
 		return memberList;
 	}
 }

@@ -25,6 +25,7 @@ import kr.co.iei.board.model.service.BoardService;
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardLike;
+import kr.co.iei.board.model.vo.BoardReport;
 import kr.co.iei.utils.FileUtils;
 
 @CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
@@ -273,6 +274,12 @@ public class BoardController {
 	public ResponseEntity<?> selectMarkers() {
 		List<Board> list = boardService.selectMarkers();
 		return ResponseEntity.ok(list);
+	}
+	
+	@PostMapping(value="report")
+	public ResponseEntity<?> insertBoardReport(@RequestBody BoardReport report) {
+		int result = boardService.insertBoardReport(report);
+		return ResponseEntity.ok(result);
 	}
 	 
 }
