@@ -280,7 +280,6 @@ const CommunityDetail = ({
         );
         setScrapped(true);
         Swal.fire({ icon: "success", title: "스크랩 되었습니다.", timer: 1000, showConfirmButton: false });
-        navigate("/mypage/tipScrap");
       } else {
         await axios.delete(`${BACKSERVER}/boards/${board.boardNo}/tips`, {
           params: { memberId },
