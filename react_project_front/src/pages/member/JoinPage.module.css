@@ -1,0 +1,149 @@
+/*회원가입 디자인 창*/
+/* JoinPage.module.css */
+
+.page_layout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  padding: 50px 20px;
+  min-height: 100vh;
+}
+
+.join_wrap {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.page_title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.input_wrap {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.input_wrap label {
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.input_field {
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.input_field:focus {
+  border-color: #6c63ff; /* 포커스 색상 */
+}
+
+.check_msg {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: green;
+}
+
+.invalid {
+  color: red;
+}
+
+.member_button_wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.join_btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #6c63ff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.join_btn:hover {
+  background-color: #5a52d4;
+}
+
+.sidebar_img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* EmailAuth 특화 CSS - JoinPage 공통 스타일 기반 */
+.input_item {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* input과 버튼 사이 간격 */
+  margin-top: 4px;
+}
+
+.input_item input {
+  flex: 1; /* 버튼과 함께 배치될 때 input이 넓게 차지 */
+  height: 40px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.join_btn {
+  height: 40px;
+  padding: 0 12px;
+  font-size: 1rem;
+}
+
+/* 인증 버튼 활성/비활성 상태 색상 */
+.join_btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  color: #666;
+}
+
+/* 남은시간 표시 */
+.join_wrap p {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* 인증 성공/실패 메시지 */
+.check_msg {
+  color: green;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.invalid {
+  color: red;
+}
+
+/* 필요 시 타이머 강조 */
+.timer {
+  font-weight: bold;
+  color: #6c63ff;
+}

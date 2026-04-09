@@ -7,10 +7,14 @@ import { useNavigate } from "react-router-dom";
 const ResetPw = () => {
   const navigate = useNavigate();
 
+  //props => 부모객체 member에게서 꺼내욤.
+  //-> memberId와 memberPw를
   const [member, setMember] = useState({
     memberId: "",
     memberPw: "",
   });
+  //useState-> 객체에게서 꺼네 온다기 보다는 버튼이나 input에서 입력으로
+  //변하는 값을 저장하고 변화를 주는 상태변화를 하게 하는 함수 지정
   const [memberPwRe, setMemberPwRe] = useState("");
   const [checkPw, setCheckPw] = useState(0); //비밀번호 일치 여부 상태
   //0: 초기 상태 (아무것도 입력되지 않음), 1: 비밀번호 일치, 2: 비밀번호 불일치
@@ -112,6 +116,7 @@ const ResetPw = () => {
             placeholder="비밀번호를 다시 입력하세요"
           />
         </div>
+      
         {/* 비밀번호 일치 여부 메시지 */}
 
         {checkPw === 1 && (

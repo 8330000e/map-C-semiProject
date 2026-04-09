@@ -31,6 +31,12 @@ public interface BoardDao {
 
 	int selectBoardLikeByMember(@Param("boardNo") int boardNo, @Param("memberId") String memberId);
 
+	int insertBoardTip(@Param("boardNo") int boardNo, @Param("memberId") String memberId);
+
+	int deleteBoardTip(@Param("boardNo") int boardNo, @Param("memberId") String memberId);
+
+	int selectBoardTipByMember(@Param("boardNo") int boardNo, @Param("memberId") String memberId);
+
 	int selectBoardAuthor(@Param("boardNo") int boardNo, @Param("writerId") String writerId);
 
 	int deleteBoard(@Param("boardNo") int boardNo);

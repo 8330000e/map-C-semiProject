@@ -87,6 +87,9 @@ const isBoardSelling = (item) => {
   return getSaleStatusLabel(item.productStatus) === "판매중";
 };
 
+// 판매내역 페이지 기능임. 로그인한 판매자의 판매 상품과 거래 상태를 보여줌.
+//  - 판매중, 배송대기, 판매완료 3가지 탭으로 구분함.
+//  - 각 목록의 거래 정보는 추가 API 호출로 가져옴.
 const SaleHistory = () => {
   const { memberId } = useAuthStore();
   const [salesHistory, setSalesHistory] = useState([]);
