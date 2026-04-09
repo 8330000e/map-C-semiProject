@@ -82,19 +82,27 @@ public class BoardService {
 		return boardDao.deleteBoardLike(boardNo, memberId);
 	}
 
+	// 댓글 목록 조회 기능임. 게시글 번호로 댓글 리스트를 가져옴.
+	//  - BoardDao.selectBoardComments()를 통해 DB에서 데이터를 읽어옴.
+	//  - 반환된 값은 상세 페이지에서 댓글 렌더링에 쓰임.
 	public List<BoardComment> getBoardComments(int boardNo) {
 		return boardDao.selectBoardComments(boardNo);
 	}
 
+	// 댓글 등록 기능임. 새 댓글을 DB에 저장하고 저장된 댓글 객체를 리턴함.
+	//  - 댓글 번호는 MyBatis selectKey로 자동 생성됨.
+	//  - 부모 댓글 번호가 있으면 대댓글로 저장됨.
 	public BoardComment addBoardComment(BoardComment comment) {
 		boardDao.insertBoardComment(comment);
 		return comment;
 	}
 
+	// 댓글 수정 기능임. 댓글 내용을 변경해서 DB에 반영함.
 	public int editBoardComment(BoardComment comment) {
 		return boardDao.updateBoardComment(comment);
 	}
 
+	// 댓글 삭제 기능임. 해당 사용자의 댓글을 DB에서 지움.
 	public int removeBoardComment(long commentNo, String memberId) {
 		return boardDao.deleteBoardComment(commentNo, memberId);
 	}
@@ -103,6 +111,7 @@ public class BoardService {
 		return boardDao.selectBoardLikeByMember(boardNo, memberId) > 0;
 	}
 
+	// 스크랩 추가 기능임. 이미 같은 사람이 스크랩했으면 또 추가 안 함.
 	public int addBoardTip(int boardNo, String memberId) {
 		if (isBoardTiped(boardNo, memberId)) {
 			return 0;
@@ -110,10 +119,12 @@ public class BoardService {
 		return boardDao.insertBoardTip(boardNo, memberId);
 	}
 
+	// 스크랩 삭제 기능임. tip_tbl에서 이 회원의 스크랩 기록을 지움.
 	public int removeBoardTip(int boardNo, String memberId) {
 		return boardDao.deleteBoardTip(boardNo, memberId);
 	}
 
+	// 스크랩 여부 확인 기능임. 이 회원이 이 게시물을 스크랩했는지 확인함.
 	public boolean isBoardTiped(int boardNo, String memberId) {
 		return boardDao.selectBoardTipByMember(boardNo, memberId) > 0;
 	}
@@ -121,6 +132,7 @@ public class BoardService {
 	public boolean isBoardAuthor(int boardNo, String writerId) {
 		return boardDao.selectBoardAuthor(boardNo, writerId) > 0;
 	}
+	// 게시글 첨부파일 저장 기능임. 여러 파일을 서버에 업로드하고 DB에 경로를 저장함.
 	@Transactional
 	public int insertBoardFiles(int boardNo, String memberId, MultipartFile[] files) {
 	    int result = 0;

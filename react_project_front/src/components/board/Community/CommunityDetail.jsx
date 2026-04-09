@@ -73,8 +73,8 @@ const CommunityDetail = ({
 }) => {
   const { memberId } = useAuthStore();
   const [comments, setComments] = useState([]);
-  // 상세페이지에서 보여줄 댓글 개수를 별도 상태로 관리합니다.
-  // board.commentCount가 있으면 초기값으로 사용하지만, 실제 로드된 댓글 개수로 동기화합니다.
+  // 상세페이지에서 보여줄 댓글 개수를 별도 상태로 관리함.
+  // board.commentCount가 있으면 초기값으로 사용하지만, 실제 로드된 댓글 개수로 동기화함.
   const [commentCount, setCommentCount] = useState(board.commentCount ?? 0);
   const [newComment, setNewComment] = useState("");
   const [newPrivate, setNewPrivate] = useState(false);
@@ -157,7 +157,7 @@ const CommunityDetail = ({
           })),
         );
         // 서버에서 실제 댓글 목록을 받아오면 댓글 수를 동기화하고,
-        // 리스트 상단에 표시되는 댓글 수가 새로고침 후에도 정확히 보이도록 합니다.
+        // 리스트 상단에 표시되는 댓글 수가 새로고침 후에도 정확히 보이도록 함.
         setCommentCount(loaded.length);
         onCommentCountChange?.(board.boardNo, loaded.length);
       })
@@ -171,6 +171,9 @@ const CommunityDetail = ({
     });
   }, [comments]);
 
+  // 상세 페이지 댓글 등록 기능임. 작성한 댓글을 서버로 보내고 댓글 목록에 추가함.
+  //  - 일반 댓글과 대댓글을 모두 처리함.
+  //  - 비공개 댓글 설정(isSecret)을 같이 서버로 보냄.
   const handleAddComment = async () => {
     if (!memberId) {
       Swal.fire({ icon: "warning", title: "로그인 후 댓글 작성 가능합니다." });
@@ -209,8 +212,8 @@ const CommunityDetail = ({
         content: saved.content,
       };
 
-      // 댓글 등록 성공 시 댓글 리스트에 추가하고 카운트를 즉시 증가시킵니다.
-      // 상세 페이지에서 변경된 댓글 수는 목록으로 전달하여 제목 영역에도 반영합니다.
+      // 댓글 등록 성공 시 댓글 리스트에 추가하고 카운트를 즉시 증가시킴.
+      // 상세 페이지에서 변경된 댓글 수는 목록으로 전달하여 제목 영역에도 반영함.
       setComments((prev) => [...prev, addedComment]);
       const nextCount = commentCount + 1;
       setCommentCount(nextCount);
@@ -244,7 +247,7 @@ const CommunityDetail = ({
         const nextCount = (likeCount ?? 0) + 1;
         setLiked(true);
         setLikeCount(nextCount);
-        // 좋아요가 추가된 경우 목록에서도 즉시 반영하도록 상위 컴포넌트에 변경을 전달합니다.
+        // 좋아요가 추가된 경우 목록에서도 즉시 반영하도록 상위 컴포넌트에 변경을 전달함.
         onLikeChange?.(board.boardNo, nextCount, true);
       } else {
         await axios.delete(
@@ -254,7 +257,7 @@ const CommunityDetail = ({
         const nextCount = (likeCount ?? 0) - 1;
         setLiked(false);
         setLikeCount(nextCount);
-        // 좋아요 취소 후에도 목록 위치에서 상태가 일치하도록 변경을 전달합니다.
+        // 좋아요 취소 후에도 목록 위치에서 상태가 일치하도록 변경을 전달함.
         onLikeChange?.(board.boardNo, nextCount, false);
       }
     } catch (err) {
@@ -338,8 +341,8 @@ const CommunityDetail = ({
   };
 
   // 댓글 수정 처리
-  // 이전에는 수정 버튼 클릭 시 바로 내용을 저장하는 흐름만 있었을 수 있습니다.
-  // 지금은 수정 내용을 서버에 업데이트하고, 로컬 댓글 목록도 즉시 반영합니다.
+  // 이전에는 수정 버튼 클릭 시 바로 내용을 저장하는 흐름만 있었을 수 있음.
+  // 지금은 수정 내용을 서버에 업데이트하고, 로컬 댓글 목록도 즉시 반영함.
   const handleSaveEdit = async () => {
     if (!editTarget) return;
     const text = editText.trim();
@@ -381,8 +384,8 @@ const CommunityDetail = ({
   };
 
   // 댓글 삭제 처리
-  // 이전에는 삭제가 바로 실행되거나 버튼 순서가 뒤집혔을 수 있으므로,
-  // 확인창을 띄워 사용자에게 삭제 의사를 다시 묻고, 순서를 "삭제 / 취소"로 고정합니다.
+  // 이전에는 삭제가 바로 실행되거나 버튼 순서가 뒤집혔을 수 있음.
+  // 확인창을 띄워 사용자에게 삭제 의사를 다시 묻고, 순서를 "삭제 / 취소"로 고정함.
   const handleDeleteComment = async (comment) => {
     if (memberId !== comment.memberId) return;
 
@@ -421,8 +424,8 @@ const CommunityDetail = ({
     }
   };
 
-  // 비공개 댓글 보기 권한 판별을 위해 댓글을 ID 맵으로 보관합니다.
-  // 이 맵은 대댓글이 비공개일 때 부모 댓글 작성자를 확인하는 용도로 사용됩니다.
+  // 비공개 댓글 보기 권한 판별을 위해 댓글을 ID 맵으로 보관함.
+  // 이 맵은 대댓글이 비공개일 때 부모 댓글 작성자를 확인하는 용도로 사용됨.
   const commentMap = useMemo(() => {
     const map = {};
     comments.forEach((comment) => {

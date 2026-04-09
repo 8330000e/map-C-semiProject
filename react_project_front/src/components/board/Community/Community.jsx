@@ -109,10 +109,10 @@ const Community = ({
     sgg: "",
   });
 
-  // 목록 로딩 시 각 게시물의 추가 메타 정보를 채웁니다.
-  // 1) 댓글 개수(commentCount)
-  // 2) 현재 사용자가 좋아요를 눌렀는지 여부(liked)
-  // 이렇게 하면 목록 제목 영역에서도 새로고침 후 좋아요/댓글 상태를 유지할 수 있습니다.
+  // 게시글 목록 메타 로드 기능임.
+  // 댓글 개수와 좋아요 상태를 게시글 목록에 채워서 화면에 보여줌.
+  //  - 댓글 개수는 /boards/{boardNo}/comments API에서 가져옴.
+  //  - 좋아요 상태는 /boards/{boardNo}/likes/{memberId} API로 확인함.
   const loadBoardMeta = async (boards) => {
     if (!boards || boards.length === 0) return boards;
 
@@ -173,7 +173,7 @@ const Community = ({
           : Array.isArray(res.data)
             ? res.data
             : [];
-        // 목록 데이터를 불러온 후, 댓글 개수와 좋아요 상태를 채워서 화면에 반영합니다.
+        // 목록 데이터를 불러온 후, 댓글 개수와 좋아요 상태를 채워서 화면에 반영함.
         const itemsWithMeta = await loadBoardMeta(items);
         setBoardList(itemsWithMeta);
       })
@@ -246,6 +246,10 @@ const Community = ({
     return firstImg ? firstImg.getAttribute("src") : null;
   };
 
+  // 게시글 작성 기능임. 내용을 서버에 보내고 첨부파일이 있으면 파일도 함께 업로드함.
+  //  - 먼저 제목/내용 유효성 검사 수행함.
+  //  - /boards로 POST하여 게시글을 저장함.
+  //  - 게시글 저장 성공 후 /boards/{boardNo}/files로 첨부파일 업로드함.
   const submitWrite = async () => {
     if (!title.trim()) {
       Swal.fire({
@@ -717,7 +721,7 @@ const Community = ({
                             onDelete={(boardNo) => deleteBoard(boardNo)}
                             onLikeChange={(boardNo, newLikeCount, liked) => {
                               // 상세보기에서 좋아요 상태가 변경되면
-                              // 목록 상단의 좋아요 개수와 하트 아이콘 상태도 함께 업데이트합니다.
+                              // 목록 상단의 좋아요 개수와 하트 아이콘 상태도 함께 업데이트함.
                               setBoardList((prev) =>
                                 prev.map((item) =>
                                   item.boardNo === boardNo
@@ -735,7 +739,7 @@ const Community = ({
                               newCommentCount,
                             ) => {
                               // 상세보기에서 댓글이 추가/삭제되면
-                              // 목록 상단의 댓글 수를 동기화합니다.
+                              // 목록 상단의 댓글 수를 동기화함.
                               setBoardList((prev) =>
                                 prev.map((item) =>
                                   item.boardNo === boardNo
