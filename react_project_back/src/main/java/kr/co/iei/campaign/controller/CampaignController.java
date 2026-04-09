@@ -2,12 +2,14 @@ package kr.co.iei.campaign.controller;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,20 +43,30 @@ public class CampaignController {
 	@GetMapping(value="/{campaignNo}")
 	public ResponseEntity<?> selectOneCampaign(@PathVariable Integer campaignNo){
 		Campaign result = campaignService.selectOneCampaign(campaignNo);
+//		System.out.println(result);
 		return ResponseEntity.ok(result);
 	}
-//	@PostMapping(value="/{memberId}")
-//	public ResponseEntity<?> createCampaign(@PathVariable String memberId,@RequestBody Campaign camp){
-//		camp.setMemberId(memberId);
-//		int result = campaignService.createCampaign(camp);
-//		return ResponseEntity.ok(result);
-//	}
+	@PostMapping(value="/{memberId}")
+	public ResponseEntity<?> createCampaign(@PathVariable String memberId,@RequestBody Campaign camp){
+		camp.setMemberId(memberId);
+		int result = campaignService.createCampaign(camp);
+		return ResponseEntity.ok(result);
+	}
 	@GetMapping(value="/{memberId}/part")
 	public ResponseEntity<?> checkParticipanceMember(@PathVariable String memberId,@RequestParam Integer campaignNo){
 		Campaign c = new Campaign();
 		c.setMemberId(memberId);
 		c.setCampaignNo(campaignNo);
 		int result = campaignService.checkParticipanceMember(c);
+		return ResponseEntity.ok(result);
+	}
+	@PostMapping(value="/{campaignNo}/join")
+	public ResponseEntity<?> joinCampaign(@PathVariable Integer campaignNo, @RequestBody Map<String,String> map){
+		String memberId=map.get("memberId");
+		Campaign camp = new Campaign();
+		camp.setMemberId(memberId);
+		camp.setCampaignNo(campaignNo);
+		int result = campaignService.joinCampaign(camp);
 		return ResponseEntity.ok(result);
 	}
 }
