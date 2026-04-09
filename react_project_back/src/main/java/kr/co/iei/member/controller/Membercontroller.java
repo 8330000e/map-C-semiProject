@@ -115,7 +115,7 @@ public class Membercontroller {
 
 		if (loginUser != null) {
 			//회원의 상태가 정상이면 0, 탈퇴하거나 문제의 회원일 경우에는 1로 설정, 로그인에서 접근 제한
-			if (loginUser.getMemberStatus() == 1) {
+			if ( member.getMemberStatus() != null && member.getMemberStatus() == 1) {
 				return ResponseEntity.status(403).body("정지된 계정입니다. 고객센터로 문의해주세요.");
 				}
 			return ResponseEntity.ok(loginUser); // 로그인 성공
