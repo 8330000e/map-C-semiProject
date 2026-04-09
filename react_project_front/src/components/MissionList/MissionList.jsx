@@ -398,11 +398,7 @@ const MissionList = () => {
           onClick={handleAttendanceCheck}
           disabled={attendanceLoading || attendanceChecked}
         >
-          {attendanceLoading
-            ? "처리 중..."
-            : attendanceChecked
-              ? "출석완료"
-              : "출석체크(1포인트)"}
+          {attendanceChecked ? "출석완료" : "출석체크(1포인트)"}
         </button>
       </div>
 
