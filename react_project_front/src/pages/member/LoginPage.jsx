@@ -29,8 +29,7 @@ const Login = () => {
       [name]: value, // 예: name이 memberId이면 memberId 값만 변경
     });
   };
-  
-  
+
   const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
   const handleLogin = () => {
@@ -154,6 +153,7 @@ const Login = () => {
         {" || "}
         <Link to="/members/find-pw">비밀번호 찾기</Link>
         {" || "}
+
         <Link to="/join">회원가입</Link>
       </div>
 

@@ -1,10 +1,11 @@
-import styles from "./Join.module.css";
+import styles from "./JoinPage.module.css";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import EmailAuth from "../../components/emailauth/EmailAuth";
 import { useEffect } from "react";
+import joinBg from "/images/signup-background-rabbit.png";
 
 const Join = () => {
   // 페이지 이동 함수 가져오기 (React Router)
@@ -136,7 +137,7 @@ const Join = () => {
 
   return (
     <div className={styles.join_wrap}>
-      <h3 className="page-title">회원가입</h3>
+      <h3 className={styles.page_title}>회원가입</h3>
       <form onSubmit={JoinMember}>
         <div className={styles.input_wrap}>
           <label htmlFor="memberId">아이디</label>
@@ -146,6 +147,7 @@ const Join = () => {
             id="memberId"
             value={member.memberId}
             onChange={inputMember}
+            className={styles.input_field}
             onBlur={ipDupCheck}
           ></input>
           {checkId > 0 && (
@@ -172,6 +174,7 @@ const Join = () => {
             id="memberPw"
             value={member.memberPw}
             onChange={inputMember}
+            className={styles.input_field}
           />
         </div>
 
@@ -184,6 +187,7 @@ const Join = () => {
             id="memberPwRe"
             value={memberPwRe}
             onChange={(e) => setMemberPwRe(e.target.value)}
+            className={styles.input_field}
           />
           {checkPw > 0 && (
             <p
@@ -208,6 +212,7 @@ const Join = () => {
             id="memberName"
             value={member.memberName}
             onChange={inputMember}
+            className={styles.input_field}
           ></input>
         </div>
 
@@ -219,6 +224,7 @@ const Join = () => {
             id="memberNickname "
             value={member.memberNickname}
             onChange={inputMember}
+            className={styles.input_field}
           ></input>
         </div>
 
@@ -236,10 +242,15 @@ const Join = () => {
         ></EmailAuth>
 
         <div className={styles.member_button_wrap}>
-          <button type="submit" className="btn primary">
+          <button type="submit" className={styles.join_btn}>
             회원가입
           </button>
         </div>
+        <img
+          src={joinBg}
+          className={styles.join_img}
+          alt="회원가입배경화면"
+        ></img>
       </form>
     </div>
   );
