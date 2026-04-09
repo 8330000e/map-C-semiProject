@@ -32,6 +32,7 @@ public class Board {
 	    private String ctpv;
 	    private String sgg;
 	    
+	    
 	 
 	    
 	    

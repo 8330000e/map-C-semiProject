@@ -2,6 +2,7 @@ package kr.co.iei.mission.model.service;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -120,11 +121,14 @@ public class MissionService {
 	}
 
 	@Transactional
-	public int certifyRandomMission(String memberId, int missionNo, MultipartFile certImage) {
+	public Map<String, Object> certifyRandomMission(String memberId, int missionNo, MultipartFile certImage) {
 	    int count = missionDao.existsTodayRandomMissionComplete(memberId, missionNo);
 
 	    if (count > 0) {
-	        return -1;
+	        return Map.of(
+	            "result", -1,
+	            "message", "이미 오늘 랜덤 미션을 완료했습니다."
+	        );
 	    }
 
 	    File saveDir = new File(new File(root), "mission/random");
@@ -132,9 +136,10 @@ public class MissionService {
 	        saveDir.mkdirs();
 	    }
 
-	    String filePath = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, certImage);
+	    String savedFileName = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, certImage);
+	    String certImageUrl = "/uploads/mission/random/" + savedFileName;
 
-	    int result1 = missionDao.updateRandomMissionCertification(memberId, missionNo, filePath);
+	    int result1 = missionDao.updateRandomMissionCertification(memberId, missionNo, certImageUrl);
 
 	    if (result1 == 0) {
 	        throw new RuntimeException("인증할 랜덤 미션 정보가 없습니다.");
@@ -146,7 +151,11 @@ public class MissionService {
 	        throw new RuntimeException("랜덤 미션 포인트 지급 실패");
 	    }
 
-	    return 1;
+	    return Map.of(
+	        "result", 1,
+	        "message", "랜덤 미션 인증 완료! 10포인트 지급",
+	        "certImageUrl", certImageUrl
+	    );
 	}
 
 	public boolean isTodayBonusMission(String memberId) {
@@ -193,5 +202,19 @@ public class MissionService {
 		}
 
 		return 1;
+	}
+
+	public Map<String, Object> getTodayRandomMissionStatus(String memberId, int missionNo) {
+	    int count = missionDao.existsTodayRandomMissionComplete(memberId, missionNo);
+	    String certImageUrl = "";
+
+	    if (count > 0) {
+	        certImageUrl = missionDao.selectTodayRandomMissionCertImageUrl(memberId, missionNo);
+	    }
+
+	    return Map.of(
+	        "completed", count > 0,
+	        "certImageUrl", certImageUrl == null ? "" : certImageUrl
+	    );
 	}
 }

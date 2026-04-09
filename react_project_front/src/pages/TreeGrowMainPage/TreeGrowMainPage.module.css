@@ -30,6 +30,7 @@
   transition: all 0.2s ease;
   flex-shrink: 0;
 }
+
 .backButton:hover {
   background: #f3f6ee;
   transform: translateY(-1px);
@@ -37,6 +38,7 @@
 
 .noticeBox {
   flex: 1;
+  max-width: 1100px;
   min-height: 52px;
   display: flex;
   align-items: center;
@@ -59,32 +61,43 @@
   font-weight: 800;
 }
 
+.noticeViewport {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.noticeSlide {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  transform: translateY(12px);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.active {
+  transform: translateY(-50%);
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .noticeText {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 15px;
   font-weight: 600;
   color: #2e342b;
-}
-
-.noticeViewport {
-  flex: 1;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.noticeTrack {
-  display: inline-block;
-  white-space: nowrap;
-  padding-left: 100%;
-  animation: noticeMarquee 14s linear infinite;
-}
-
-@keyframes noticeMarquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
+  line-height: 1.4;
 }
 
 .container {

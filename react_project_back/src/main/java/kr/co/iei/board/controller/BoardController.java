@@ -57,9 +57,8 @@ public class BoardController {
     }
 	//게시글 작성
 	@PostMapping
-	public Board insertBoard(@RequestBody Board board) {
-	    boardService.insertBoard(board);
-	    return board;
+	public HashMap<String, Object> insertBoard(@RequestBody Board board) {
+	    return boardService.insertBoard(board);
 	}
 	// 에디터 이미지 업로드 기능임. 업로드된 파일을 서버에 저장하고 URL 경로를 리턴함.
 	@PostMapping("/editor/upload")

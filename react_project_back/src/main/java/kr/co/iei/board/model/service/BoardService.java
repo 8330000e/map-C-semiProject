@@ -44,14 +44,23 @@ public class BoardService {
 	}
 	//게시글 작성
 	@Transactional
-	public int insertBoard(Board board) {
-		int result = boardDao.insertBoard(board);
+	public HashMap<String, Object> insertBoard(Board board) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
 
-		if (result > 0) {
-			missionService.completeBasicMission(board.getWriterId());
-		}
+	    int result = boardDao.insertBoard(board);
 
-		return result;
+	    boolean pointAwarded = false;
+
+	    if (result > 0) {
+	        int missionResult = missionService.completeBasicMission(board.getWriterId());
+	        pointAwarded = missionResult == 1;
+	    }
+
+	    resultMap.put("boardNo", board.getBoardNo());
+	    resultMap.put("pointAwarded", pointAwarded);
+	    resultMap.put("result", result);
+
+	    return resultMap;
 	}
 	
 
@@ -197,7 +206,6 @@ public class BoardService {
 				return new ArrayList<>();
 			}
 			map.put("tipList", tipList);
-			System.out.println(tipList);
 			List<Board> list = boardDao.selectMemberIdBoard(map);
 			return list;
 		}

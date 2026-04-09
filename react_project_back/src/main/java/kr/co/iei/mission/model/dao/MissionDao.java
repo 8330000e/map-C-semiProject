@@ -65,5 +65,10 @@ public interface MissionDao {
 		    @Param("rewardPoint") int rewardPoint
 		);
 
+		String selectTodayRandomMissionCertImageUrl(
+			    @Param("memberId") String memberId,
+			    @Param("missionNo") int missionNo
+			);
+
 	
 }

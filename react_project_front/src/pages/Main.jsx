@@ -56,6 +56,12 @@ const getImageUrl = (thumb) => {
   }
 
   if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
+    return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
   if (trimmed.includes("/board/editor/"))
     return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
   return `${BACKSERVER}/board/editor/${trimmed}`;
@@ -379,9 +385,15 @@ const Main = () => {
         </div>
 
         <div className="main_content_two">
-          <div className="campaign_zone roundBorder">
+          <div
+            className="campaign_zone roundBorder"
+            onClick={() => {
+              console.log("클릭버튼");
+              navigate("/campaign/main");
+            }}
+          >
             <p>캠페인 존</p>
-            {/*위치설명*/}
+            {/*캠페인 컴포넌트 호출 */}
           </div>
 
           <div className="realtime_comment roundBorder">

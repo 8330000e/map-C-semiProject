@@ -390,6 +390,9 @@ header {
   align-items: center;
   height: 100%;
 }
+/* * {
+  outline: 1px solid red;
+} */
 /*랜덤 미션 패널*/
 .main_top {
   position: relative;

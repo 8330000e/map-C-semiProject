@@ -65,31 +65,28 @@ public class MissionController {
     }
     
     @GetMapping("/random/today/completed")
-    public Map<String, Boolean> getTodayRandomMissionCompleted(
+    public Map<String, Object> getTodayRandomMissionCompleted(
             @RequestParam String memberId,
             @RequestParam int missionNo
     ) {
-        boolean completed = missionService.isTodayRandomMissionCompleted(memberId, missionNo);
-        return Map.of("completed", completed);
+        return missionService.getTodayRandomMissionStatus(memberId, missionNo);
     }
     
     
-    
     @PostMapping("/random/certify")
-    public ResponseEntity<String> certifyRandomMission(
+    public ResponseEntity<Map<String, Object>> certifyRandomMission(
             @RequestParam("memberId") String memberId,
             @RequestParam("missionNo") int missionNo,
             @RequestParam("certImage") MultipartFile certImage
     ) {
-        int result = missionService.certifyRandomMission(memberId, missionNo, certImage);
+        Map<String, Object> result = missionService.certifyRandomMission(memberId, missionNo, certImage);
 
-        if (result == -1) {
-            return ResponseEntity.badRequest().body("이미 오늘 랜덤 미션을 완료했습니다.");
+        if ((int) result.get("result") == -1) {
+            return ResponseEntity.badRequest().body(result);
         }
 
-        return ResponseEntity.ok("랜덤 미션 인증 완료! 10포인트 지급");
+        return ResponseEntity.ok(result);
     }
-	
     @GetMapping("/bonus/today")
     public Map<String, Boolean> getTodayBonusMission(@RequestParam String memberId) {
         boolean completed = missionService.isTodayBonusMission(memberId);

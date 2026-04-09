@@ -53,6 +53,9 @@ import FindId from "./pages/member/findId";
 import FindPw from "./pages/member/FindPw";
 import ResetPw from "./pages/member/ResetPw";
 import MapCommunityPage from "./pages/MapCommunityPage/MapCommunityPage";
+import CampaignMainPage from "./pages/campaign/CampaignMainPage";
+import CampaignDetailPage from "./pages/campaign/CampaignDetailPage";
+import CreateCampaignPage from "./pages/campaign/CreateCampaignPage";
 
 function App() {
   const location = useLocation();
@@ -99,7 +102,6 @@ function App() {
           <Route path="/payment/fail" element={<PaymentFail />} />
           <Route path="/Store" element={<Navigate to="/store" replace />} />
           <Route path="/join" element={<JoinPage />}></Route>
-
           <Route path="/members/login" element={<Login />}></Route>
           <Route path="/members/find-id" element={<FindId />}></Route>
           <Route path="/members/find-pw" element={<FindPw />}></Route>
@@ -115,6 +117,16 @@ function App() {
               memberGrade === 1 ? <AdminPage /> : <Navigate to="/" replace />
             }
           />
+          <Route path="/campaign/main" element={<CampaignMainPage />}></Route>
+          <Route
+            path="/campaign/detail/:campaignNo"
+            element={<CampaignDetailPage />}
+          ></Route>
+          <Route
+            path="/campaign/create"
+            element={<CreateCampaignPage />}
+          ></Route>
+          <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/support/*" element={<SupportPage />} />
         </Routes>
