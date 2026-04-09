@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.iei.admin.model.vo.Faq;
 import kr.co.iei.admin.model.vo.Notice;
+import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.support.model.dao.SupportDao;
 
 @Service
@@ -27,5 +29,21 @@ public class SupportService {
 	public Notice selectNoticeDetail(Integer noticeNo) {
 		Notice notice = supportDao.selectNoticeDetail(noticeNo);
 		return notice;
+	}
+
+	public List<Qna> selectQnaList(String memberId) {
+		List<Qna> qnaList = supportDao.selectQnaList(memberId);
+		return qnaList;
+	}
+
+	@Transactional
+	public int insertQna(Qna qna) {
+		int result = supportDao.insertQna(qna);
+		return result;
+	}
+
+	public Qna selectQnaDetail(Integer qnaNo) {
+		Qna qna = supportDao.selectQnaDetail(qnaNo);
+		return qna;
 	}
 }

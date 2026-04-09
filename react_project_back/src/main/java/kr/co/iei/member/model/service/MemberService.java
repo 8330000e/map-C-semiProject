@@ -64,7 +64,7 @@ public class MemberService {
 				// -> null로 처리해도 걱정할 필요 없음
 				// -> 이미 데이터베이스에 저장완료.
 				loginMember.setMemberPw(null);
-
+				login.setMemberStatus(loginMember.getMemberStatus());
 				return login;
 			}
 		}

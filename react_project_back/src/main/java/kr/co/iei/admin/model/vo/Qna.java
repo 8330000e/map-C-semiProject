@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Alias(value="qna")
 public class Qna {
 	private Integer qnaNo;
-	private String qnaMemberId;
+	private String memberId;
 	private String qnaTitle;
 	private String qnaContent;
 	private String qnaAnswer;
@@ -21,5 +21,7 @@ public class Qna {
 	private String qnaDate;
 	
 	private MultipartFile qnaImage;
-	private String qnaImagePath;
+	private String qnaAnswerImage;
+	private String qnaQuestionImage;
+	private String qnaCategory;
 }

@@ -1,6 +1,7 @@
 package kr.co.iei.admin.controller;
 
 import java.io.File;
+import java.lang.reflect.Member;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,9 +124,23 @@ public class AdminController {
 	}
 	
 	@PatchMapping(value="qna")
-	public ResponseEntity<?> qnaAnswer(@ModelAttribute Qna qna) {
-		System.out.println(qna);
+	public ResponseEntity<?> qnaAnswer(@ModelAttribute Qna qna, @RequestParam(value="upfile", required = false) MultipartFile upfile) {
+		if (upfile != null && !upfile.isEmpty()) {
+			File saveDir = new File(new File(root), "qna");
+			if (!saveDir.exists()) {
+				saveDir.mkdir();
+			}
+			String fileName = fileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
+			qna.setQnaAnswerImage("/qna/" + fileName);
+		}
 		int result = adminService.qnaAnswer(qna);
 		return ResponseEntity.ok(result);
 	}
+	
+	@GetMapping(value="member")
+	public ResponseEntity<?> selectMemberList() {
+		List<Member> memberList = adminService.selectMemberList();
+		return ResponseEntity.ok(memberList);
+	}
+	
 }

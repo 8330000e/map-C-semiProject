@@ -9,6 +9,7 @@ import HelpIcon from "@mui/icons-material/Help";
 import useAuthStore from "../store/useAuthStore";
 import Map from "../components/mainpage/Map";
 import Bestpostlist from "../components/mainpage/Bestpostlist";
+import HorizontalScrollList from "../components/commons/HorizontalScrollList";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import Swal from "sweetalert2";
 
@@ -67,8 +68,6 @@ const getImageUrl = (thumb) => {
 };
 
 const Main = () => {
-  // 중고거래 리스트 가로 스크롤 영역 DOM에 접근하기 위한 ref
-  const usedListRef = useRef(null);
   // 실시간 댓글 "보여지는 영역" DOM
   const realtimeViewportRef = useRef(null);
   // 실시간 댓글 "실제 텍스트" DOM
@@ -435,7 +434,7 @@ const Main = () => {
 
       <div className="main_btm">
         <div className="used_list roundBorder">
-          <div className="used_list_scroll" ref={usedListRef}>
+          <HorizontalScrollList scrollClassName="used_list_scroll" showButtons={false}>
             <ul>
               {usedGoods.map((item, index) => {
                 const imageUrl = getImageUrl(item.productThumb);
@@ -483,7 +482,7 @@ const Main = () => {
                 );
               })}
             </ul>
-          </div>
+          </HorizontalScrollList>
         </div>
       </div>
     </main>
