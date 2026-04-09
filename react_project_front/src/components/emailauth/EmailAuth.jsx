@@ -1,5 +1,5 @@
 import Swal from "sweetalert2";
-import styles from "./EmailAuth.module.css";
+import styles from "../../pages/member/JoinPage.module.css";
 import axios from "axios";
 
 //  이메일 인증 페이지 컴포넌트
@@ -163,14 +163,17 @@ const EmailAuth = ({ memberEmail, setMemberEmail, onVerified }) => {
     setMemberEmail(e.target.value);
   };
 
-  <h1>이메일인증 컴포넌트</h1>;
   return (
-    <div className={styles.email_auth_wrap}>
+    //<div className={styles.join_wrap}>
+    <>
       {/* 이메일 입력 */}
 
       <div className={styles.input_wrap}>
         <label>이메일</label>
-        <div className={styles.input_item}>
+        <div
+          className={styles.input_item}
+          style={{ display: "flex", gap: "8px" }}
+        >
           <input
             type="email"
             value={memberEmail}
@@ -184,7 +187,7 @@ const EmailAuth = ({ memberEmail, setMemberEmail, onVerified }) => {
 
           <button
             type="button"
-            style={{ background: "lightgreen" }}
+            className={styles.join_btn} //joinpage 버튼 재사용
             onClick={sendMail}
           >
             인증메일 전송
@@ -194,30 +197,38 @@ const EmailAuth = ({ memberEmail, setMemberEmail, onVerified }) => {
 
       {/* 인증 */}
       <div className={styles.input_wrap}>
-        <label>이메일 확인</label>
-        <div className={styles.input_item}>
+        <label htmlFor="mailAuthInput">이메일 확인</label>
+        <div
+          className={styles.input_item}
+          style={{ display: "flex", gap: "8px" }}
+        >
           <input
             type="text"
             value={mailAuthInput}
             id="mailAuthInput"
             onChange={(e) => setMailAuthInput(e.target.value)}
           ></input>
+          {/*버튼 선택:프론트 검증 */}
+          <button
+            type="button"
+            className={styles.join_btn}
+            onClick={verifyMailCode}
+            disabled={mailAuth !== 1} // 인증메일 보내야만 활성화
+          >
+            메일 인증하기
+          </button>
         </div>
-
-        {/*버튼 선택:프론트 검증 */}
-        <button
-          type="button"
-          onClick={verifyMailCode}
-          disabled={mailAuth !== 1} // 인증메일 보내야만 활성화
-        >
-          인증하기
-        </button>
       </div>
 
       {mailAuth === 1 && !timeExpired && <p>남은시간:{showTime()}</p>}
-      {mailAuth === 3 && <p>인증되었습니다.</p>}
-      {timeExpired && <p>인증시간이 만료되었습니다.</p>}
-    </div>
+      {mailAuth === 3 && <p className={styles.check_msg}>인증되었습니다.</p>}
+      {timeExpired && (
+        <p className={`styles.check_msg ${styles.invalid}`}>
+          인증시간이 만료되었습니다.
+        </p>
+      )}
+    </>
+    //</div>
   );
 };
 export default EmailAuth;
