@@ -8,9 +8,14 @@ import { addCompletedPurchase, clearPendingPurchase, getPendingPurchase } from "
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-const updateProductStatus = async (itemId, sellerId) => {
+const updateProductStatus = async (itemId, sellerId, shouldComplete = false) => {
 	if (!sellerId) {
 		console.warn("판매자 아이디가 없어 상품 상태를 변경할 수 없습니다.", itemId);
+		return;
+	}
+
+	if (!shouldComplete) {
+		// 택배 거래는 결제 이후에도 판매중 상태를 유지하며 배송대기 상태로 처리합니다.
 		return;
 	}
 
@@ -23,13 +28,26 @@ const updateProductStatus = async (itemId, sellerId) => {
 	}
 };
 
+const normalizeTradeTypeText = (tradeType, deliveryMethod) => {
+	const normalized = String(tradeType ?? "").trim();
+	if (deliveryMethod === "delivery") return "택배";
+	if (deliveryMethod === "direct") return "직거래";
+	if (normalized === "0" || normalized === "직거래/택배") return "직거래/택배";
+	if (normalized === "1" || normalized === "직거래") return "직거래";
+	if (normalized === "2" || normalized === "택배") return "택배";
+	return normalized || null;
+};
+
 const saveTradeInfo = async (order) => {
 	if (!order?.marketNo || !order?.buyerId || !order?.sellerId) {
-		return;
+		return false;
 	}
 
-	const tradeTypeText = order.tradeTypeText ||
-		(order.deliveryMethod === "delivery" ? "택배" : order.deliveryMethod === "direct" ? "직거래" : null);
+	const tradeTypeText = normalizeTradeTypeText(order.tradeType, order.deliveryMethod);
+	const tradeType = tradeTypeText || (typeof order.tradeType === "string" ? order.tradeType : null);
+	const isDelivery = tradeTypeText === "택배";
+	const tradeStatus = isDelivery ? 1 : 2;
+	const shippingStatus = isDelivery ? 0 : 1;
 
 	try {
 		await axios.post(`${BACKSERVER}/api/store/trades`, {
@@ -38,9 +56,12 @@ const saveTradeInfo = async (order) => {
 			buyerId: order.buyerId,
 			buyerName: order.buyerNickname || order.buyerId,
 			tradePrice: Number(order.amount || 0),
-			tradeStatus: 1,
-			tradeType: tradeTypeText || order.tradeType,
+			tradeStatus,
+			tradeType: tradeType,
 			tradeTypeText,
+			productPrice: Number(order.productPrice || order.baseAmount || 0),
+			deliveryFee: Number(order.deliveryFee ?? (isDelivery ? 5000 : 0)),
+			ctpvsggId: order.ctpvsggId || null,
 			receiverName: order.orderInfo?.receiverName,
 			buyerPhone: order.orderInfo?.phone,
 			zipCode: order.orderInfo?.zipCode,
@@ -49,10 +70,12 @@ const saveTradeInfo = async (order) => {
 			deliveryMemo: order.orderInfo?.deliveryMemo,
 			invoiceNumber: order.orderInfo?.invoiceNumber || null,
 			courierCode: order.orderInfo?.courierCode || null,
-			shippingStatus: 0,
+			shippingStatus,
 		});
+		return true;
 	} catch (error) {
 		console.error("거래 정보 저장 실패:", error);
+		return false;
 	}
 };
 
@@ -67,23 +90,38 @@ const PaymentSuccess = () => {
 	const order = orderId ? getPendingPurchase(orderId) : null;
 
 	useEffect(() => {
-		if (marketNo) {
-			updateProductStatus(marketNo, order?.sellerId);
-		}
-		if (orderId && order) {
+		const processPaymentResult = async () => {
+			if (!orderId || !order) return;
+
+			const deliveryMethod = order.deliveryMethod || deliveryMethodParam;
+			const tradeTypeText = order.tradeTypeText || normalizeTradeTypeText(order.tradeType, deliveryMethod);
+			const isDelivery = tradeTypeText === "택배";
+
+			if (marketNo) {
+				updateProductStatus(marketNo, order?.sellerId, !isDelivery);
+			}
+
 			const completedOrder = {
 				...order,
-				deliveryMethod: order.deliveryMethod || deliveryMethodParam || order.deliveryMethod,
+				deliveryMethod,
+				tradeTypeText,
+				productPrice: Number(order.productPrice || order.baseAmount || 0),
 				deliveryFee: Number(order.deliveryFee || 0),
+				ctpvsggId: order.ctpvsggId || null,
 				status: "구매완료",
 				date: new Date().toISOString(),
 				paymentKey,
 				amount: Number(amount || order.amount || 0),
 			};
-			saveTradeInfo(completedOrder);
-			addCompletedPurchase(completedOrder);
+
+			const backendSaved = await saveTradeInfo(completedOrder);
+			if (!backendSaved) {
+				addCompletedPurchase(completedOrder);
+			}
 			clearPendingPurchase(orderId);
-		}
+		};
+
+		processPaymentResult();
 	}, [amount, marketNo, order, orderId, paymentKey]);
 
 	return (

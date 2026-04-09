@@ -3,14 +3,19 @@ import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
 import styles from "./PurchaseHistory.module.css";
-import { getCompletedPurchaseById, removeCompletedPurchase } from "./orderHistoryStorage";
+import { removeCompletedPurchase, getCompletedPurchaseById } from "./orderHistoryStorage";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
 const tradeTypeLabel = (type, text, deliveryMethod, address) => {
   const normalized = String(type ?? text ?? deliveryMethod ?? "").trim();
   const hasAddress = Boolean((address ?? "").toString().trim());
-  if (normalized === "0" || normalized === "직거래/택배") return hasAddress ? "택배" : "직거래";
+
+  if (normalized === "0" || normalized === "직거래/택배") {
+    if (deliveryMethod === "delivery" || deliveryMethod === "택배" || hasAddress) return "택배";
+    if (deliveryMethod === "direct" || deliveryMethod === "직거래") return "직거래";
+    return "직거래/택배";
+  }
   if (normalized === "1" || normalized === "직거래" || normalized === "direct") return "직거래";
   if (normalized === "2" || normalized === "택배" || normalized === "delivery") return "택배";
   return hasAddress ? "택배" : "직거래";
@@ -72,7 +77,7 @@ const PurchaseDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { memberId: loginMemberId } = useAuthStore();
-  const [item, setItem] = useState(() => getCompletedPurchaseById(id, loginMemberId));
+  const [item, setItem] = useState(null);
   const [isProcessingOrderAction, setIsProcessingOrderAction] = useState(false);
 
   const [rating, setRating] = useState(5);
@@ -91,41 +96,110 @@ const PurchaseDetail = () => {
   );
 
   useEffect(() => {
-    setItem(getCompletedPurchaseById(id, loginMemberId));
+    const fetchPurchaseDetail = async () => {
+      if (!id || !loginMemberId) {
+        setItem(null);
+        return;
+      }
+
+      try {
+        let response = null;
+        const savedPurchase = getCompletedPurchaseById(id, loginMemberId);
+        if (savedPurchase) {
+          setItem(savedPurchase);
+          return;
+        }
+
+        const numericId = !Number.isNaN(Number(id));
+        if (numericId) {
+          try {
+            response = await axios.get(`${BACKSERVER}/api/store/trades/${id}`);
+          } catch (err) {
+            response = null;
+          }
+        }
+
+        if ((!response || !response.data) && numericId) {
+          try {
+            response = await axios.get(`${BACKSERVER}/api/store/markets/${id}/trade-info`, {
+              params: { buyerId: loginMemberId },
+            });
+            if (!response.data) {
+              response = await axios.get(`${BACKSERVER}/api/store/markets/${id}/trade-info`);
+            }
+          } catch (err) {
+            response = null;
+          }
+        }
+
+        if (!response || !response.data) {
+          if (numericId) {
+            try {
+              response = await axios.get(`${BACKSERVER}/api/store/boards/${id}`);
+            } catch (err) {
+              response = null;
+            }
+          }
+        }
+
+        if (response && response.data) {
+          setItem(response.data);
+        } else {
+          setItem(null);
+        }
+      } catch (error) {
+        console.error("구매 상세 조회 실패", error);
+        setItem(null);
+      }
+    };
+
+    fetchPurchaseDetail();
   }, [id, loginMemberId]);
 
   useEffect(() => {
-    if (!item?.marketNo || !loginMemberId) return;
+    if (!item?.marketNo) return;
 
     const fetchTradeInfo = async () => {
+      const url = `${BACKSERVER}/api/store/markets/${item.marketNo}/trade-info`;
+      let response = null;
+
       try {
-        const response = await axios.get(`${BACKSERVER}/api/store/markets/${item.marketNo}/trade-info`, {
+        response = await axios.get(url, {
           params: { buyerId: loginMemberId },
         });
-        if (response.data) {
-          setItem((prev) => ({
-            ...prev,
-            orderInfo: {
-              ...prev?.orderInfo,
-              receiverName: response.data.receiverName || prev?.orderInfo?.receiverName,
-              phone: response.data.buyerPhone || prev?.orderInfo?.phone,
-              zipCode: response.data.zipCode || prev?.orderInfo?.zipCode,
-              address: response.data.address || prev?.orderInfo?.address,
-              addressDetail: response.data.addressDetail || prev?.orderInfo?.addressDetail,
-              deliveryMemo: response.data.deliveryMemo || prev?.orderInfo?.deliveryMemo,
-              deliveryMethod: response.data.deliveryMethod || prev?.orderInfo?.deliveryMethod,
-            },
-            tradeNo: response.data.tradeNo || prev?.tradeNo,
-            tradeType: response.data.tradeType ?? prev?.tradeType,
-            tradeTypeText: response.data.tradeTypeText ?? prev?.tradeTypeText,
-            deliveryMethod: response.data.deliveryMethod ?? prev?.deliveryMethod,
-            courierCode: response.data.courierCode ?? prev?.courierCode,
-            shippingStatus: response.data.shippingStatus ?? prev?.shippingStatus,
-            invoiceNumber: response.data.invoiceNumber ?? prev?.invoiceNumber,
-          }));
-        }
       } catch (error) {
-        console.error("거래 정보 조회 실패", error);
+        response = null;
+      }
+
+      if ((!response || !response.data) && loginMemberId) {
+        try {
+          response = await axios.get(url);
+        } catch (error) {
+          response = null;
+        }
+      }
+
+      if (response && response.data) {
+        setItem((prev) => ({
+          ...prev,
+          orderInfo: {
+            ...prev?.orderInfo,
+            receiverName: response.data.receiverName || prev?.orderInfo?.receiverName,
+            phone: response.data.buyerPhone || prev?.orderInfo?.phone,
+            zipCode: response.data.zipCode || prev?.orderInfo?.zipCode,
+            address: response.data.address || prev?.orderInfo?.address,
+            addressDetail: response.data.addressDetail || prev?.orderInfo?.addressDetail,
+            deliveryMemo: response.data.deliveryMemo || prev?.orderInfo?.deliveryMemo,
+            deliveryMethod: response.data.deliveryMethod || prev?.orderInfo?.deliveryMethod,
+          },
+          tradeNo: response.data.tradeNo || prev?.tradeNo,
+          tradeType: response.data.tradeType ?? prev?.tradeType,
+          tradeTypeText: response.data.tradeTypeText ?? prev?.tradeTypeText,
+          deliveryMethod: response.data.deliveryMethod ?? prev?.deliveryMethod,
+          courierCode: response.data.courierCode ?? prev?.courierCode,
+          shippingStatus: response.data.shippingStatus ?? prev?.shippingStatus,
+          invoiceNumber: response.data.invoiceNumber ?? prev?.invoiceNumber,
+        }));
       }
     };
 
@@ -186,11 +260,14 @@ const PurchaseDetail = () => {
         params: { status: 0, memberId: item.sellerId },
       });
 
+      const addressValue = item.orderInfo?.address || item.address || "";
+      const originalTradeType = tradeTypeLabel(item.tradeType, item.tradeTypeText, item.deliveryMethod, addressValue);
       const tradePayload = {
         tradeStatus: 0,
         shippingStatus: 0,
-        tradeType: "직거래",
-        tradeTypeText: "직거래",
+        tradeType: originalTradeType,
+        tradeTypeText: originalTradeType,
+        ctpvsggId: originalTradeType === "택배" ? null : item.ctpvsggId || null,
         receiverName: null,
         buyerPhone: null,
         zipCode: null,
@@ -321,9 +398,21 @@ const PurchaseDetail = () => {
   const displayDeliveryMethod = item.deliveryMethod || item.orderInfo?.deliveryMethod;
   const displayTradeType = tradeTypeLabel(item.tradeType, item.tradeTypeText, displayDeliveryMethod, addressValue);
   const isDelivery = isDeliveryTrade(item.tradeType, item.tradeTypeText, displayDeliveryMethod, addressValue);
-  const rawDeliveryFee = Number(item.deliveryFee ?? item.orderInfo?.deliveryFee ?? 0);
-  const inferredDeliveryFee = rawDeliveryFee > 0 ? rawDeliveryFee : displayTradeType === "택배" ? 5000 : 0;
-  const productPrice = Math.max(Number(item.amount || 0) - inferredDeliveryFee, 0);
+  const rawOrderAmount = Number(item.amount ?? item.tradePrice ?? 0);
+  const explicitProductPrice = Number(item.productPrice ?? item.orderInfo?.productPrice ?? 0);
+  const explicitDeliveryFee = Number(item.deliveryFee ?? item.orderInfo?.deliveryFee ?? 0);
+  let inferredDeliveryFee = explicitDeliveryFee;
+  if (displayTradeType === "택배") {
+    if (inferredDeliveryFee <= 0) {
+      if (rawOrderAmount > explicitProductPrice && explicitProductPrice > 0) {
+        inferredDeliveryFee = rawOrderAmount - explicitProductPrice;
+      } else {
+        inferredDeliveryFee = 5000;
+      }
+    }
+  }
+  const productPrice = explicitProductPrice > 0 ? explicitProductPrice : Math.max(rawOrderAmount - inferredDeliveryFee, 0);
+  const totalAmount = rawOrderAmount;
   const shippingFeeLabel = inferredDeliveryFee > 0 ? `${inferredDeliveryFee.toLocaleString("ko-KR")}원` : "무료";
   const shippingFeeStatus = inferredDeliveryFee > 0 ? "배송비 추가" : "배송비 없음";
   const shippingStatusValue = item.shippingStatus ?? item.orderInfo?.shippingStatus ?? 0;
@@ -406,7 +495,7 @@ const PurchaseDetail = () => {
         <div className={styles.section_title}>결제정보</div>
         <div className={styles.payment_summary_header}>
           <span>주문금액</span>
-          <strong>{Number(item.amount || 0).toLocaleString("ko-KR")}원</strong>
+          <strong>{Number(totalAmount).toLocaleString("ko-KR")}원</strong>
         </div>
         <div className={styles.summary_row}>
           <span>상품금액</span>
@@ -420,7 +509,7 @@ const PurchaseDetail = () => {
         )}
         <div className={styles.summary_row}>
           <span>총 결제금액</span>
-          <strong>{Number(item.amount || 0).toLocaleString("ko-KR")}원</strong>
+          <strong>{Number(totalAmount).toLocaleString("ko-KR")}원</strong>
         </div>
         <div className={styles.summary_tag}>{shippingFeeStatus}</div>
       </div>

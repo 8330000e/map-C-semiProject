@@ -12,14 +12,14 @@ const parseJson = (value, fallback) => {
 export const getCompletedPurchases = (buyerId) => {
   if (typeof window === "undefined") return [];
   const purchases = parseJson(window.localStorage.getItem(COMPLETED_PURCHASES_KEY), []);
-  if (buyerId == null) return purchases;
+  if (!buyerId) return [];
   return purchases.filter((item) => item.buyerId === buyerId);
 };
 
 export const getCompletedSales = (sellerId) => {
   if (typeof window === "undefined") return [];
   const purchases = parseJson(window.localStorage.getItem(COMPLETED_PURCHASES_KEY), []);
-  if (sellerId == null) return purchases;
+  if (!sellerId) return [];
   return purchases.filter((item) => item.sellerId === sellerId);
 };
 
@@ -56,7 +56,14 @@ export const removeCompletedPurchaseByMarketNo = (marketNo) => {
 };
 
 export const getCompletedPurchaseById = (id, buyerId) => {
-  return getCompletedPurchases(buyerId).find((item) => String(item.id) === String(id)) || null;
+  return (
+    getCompletedPurchases(buyerId).find(
+      (item) =>
+        String(item.id) === String(id) ||
+        String(item.tradeNo) === String(id) ||
+        String(item.marketNo) === String(id),
+    ) || null
+  );
 };
 
 export const setPendingPurchase = (orderId, payload) => {

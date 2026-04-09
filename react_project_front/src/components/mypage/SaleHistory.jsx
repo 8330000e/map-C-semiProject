@@ -11,14 +11,15 @@ const normalizeStatus = (status) => String(status ?? "").replace(/\s+/g, "").tri
 
 const getSaleStatusLabel = (productStatus) => {
   const normalized = normalizeStatus(productStatus);
-  if (normalized === "예약중" || normalized === "1") return "예약중";
-  if (normalized === "판매완료" || normalized === "2" || normalized === "구매완료") return "판매완료";
+  if (normalized === "0" || normalized === "판매중") return "판매중";
+  if (normalized === "1" || normalized === "예약중") return "예약중";
+  if (normalized === "2" || normalized === "판매완료" || normalized === "구매완료") return "판매완료";
   return "판매중";
 };
 
 const getShippingStatusLabel = (status) => {
   const normalized = String(status ?? "").trim();
-  if (!normalized) return null;
+  if (!normalized) return "배송전";
   if (
     normalized === "1" ||
     normalized === "배송완료" ||
@@ -35,10 +36,10 @@ const getShippingStatusLabel = (status) => {
     normalized === "배송대기" ||
     normalized === "배송 대기"
   ) {
-    return "배송전";
+    return "배송대기";
   }
   if (normalized.includes("완료")) return "배송완료";
-  return null;
+  return "배송전";
 };
 
 const getCourierLabel = (code) => {
@@ -53,21 +54,37 @@ const getCourierLabel = (code) => {
 const resolveTradeType = (type, typeText, deliveryMethod, address) => {
   const normalized = String(type ?? typeText ?? deliveryMethod ?? "").trim();
   const addressExists = Boolean((address ?? "").toString().trim());
-  if (normalized === "0" || normalized === "직거래/택배") return addressExists ? "택배" : "직거래";
+
+  if (normalized === "0" || normalized === "직거래/택배") {
+    if (deliveryMethod === "delivery" || deliveryMethod === "택배" || addressExists) return "택배";
+    if (deliveryMethod === "direct" || deliveryMethod === "직거래") return "직거래";
+    return "직거래/택배";
+  }
   if (normalized === "1" || normalized === "직거래" || normalized === "direct") return "직거래";
   if (normalized === "2" || normalized === "택배" || normalized === "delivery") return "택배";
   return addressExists ? "택배" : "직거래";
 };
 
-const getTradeTypeLabel = (item) => {
-  const address = item.orderInfo?.address || item.address || "";
+const getTradeTypeLabel = (item, tradeInfo) => {
+  const address = item.orderInfo?.address || item.address || tradeInfo?.address || "";
   return resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod, address);
 };
 
 const getShippingStatusValue = (item, tradeInfo) => {
   if (tradeInfo?.shippingStatus != null) return tradeInfo.shippingStatus;
   if (item.shippingStatus != null) return item.shippingStatus;
-  return null;
+  return 0;
+};
+
+const isDeliveryPendingTrade = (item, tradeInfo) => {
+  const tradeType = getTradeTypeLabel(item, tradeInfo);
+  if (tradeType !== "택배" && tradeType !== "직거래/택배") return false;
+
+  const tradeStatus = tradeInfo?.tradeStatus ?? item.tradeStatus;
+  if (tradeStatus !== 1 && tradeStatus !== "1") return false;
+
+  const shippingStatus = getShippingStatusValue(item, tradeInfo);
+  return !(shippingStatus === 1 || shippingStatus === "1");
 };
 
 const getTradeInfoForItem = (item, tradeInfoMap) => {
@@ -79,8 +96,13 @@ const getItemTitle = (item) => {
   return item.title || item.marketTitle || item.marketName || item.boardTitle || "";
 };
 
+const stripStatusTag = (title) => {
+  if (!title) return "";
+  return title.replace(/^\s*\[(판매중|거래중|판매완료|예약중)\]\s*/i, "");
+};
+
 const hasSellingTag = (item) => {
-  return getItemTitle(item).includes("[판매중]");
+  return getItemTitle(item).toString().includes("[판매중]");
 };
 
 const isBoardSelling = (item) => {
@@ -100,8 +122,30 @@ const SaleHistory = () => {
   const [completedPage, setCompletedPage] = useState(1);
 
   useEffect(() => {
-    if (!memberId) return;
-    setSalesHistory(getCompletedSales(memberId));
+    const fetchSalesHistory = async () => {
+      if (!memberId) {
+        setSalesHistory([]);
+        return;
+      }
+
+      try {
+        const backendUrl = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+        const res = await axios.get(`${backendUrl}/api/store/trades`, {
+          params: { sellerId: memberId },
+        });
+        const items = Array.isArray(res.data)
+          ? res.data
+          : Array.isArray(res.data.items)
+          ? res.data.items
+          : [];
+        setSalesHistory(items);
+      } catch (error) {
+        console.error("판매내역 서버 조회 실패:", error);
+        setSalesHistory(getCompletedSales(memberId));
+      }
+    };
+
+    fetchSalesHistory();
   }, [memberId]);
 
   useEffect(() => {
@@ -170,11 +214,8 @@ const SaleHistory = () => {
     () =>
       salesHistory.filter((item) => {
         if (hasSellingTag(item)) return false;
-        const tradeType = getTradeTypeLabel(item);
-        if (tradeType !== "택배" && tradeType !== "직거래/택배") return false;
         const tradeInfo = getTradeInfoForItem(item, tradeInfoMap);
-        const shippingStatus = getShippingStatusLabel(getShippingStatusValue(item, tradeInfo));
-        return shippingStatus === "배송전";
+        return isDeliveryPendingTrade(item, tradeInfo);
       }),
     [salesHistory, tradeInfoMap],
   );
@@ -183,24 +224,44 @@ const SaleHistory = () => {
     () =>
       salesHistory.filter((item) => {
         if (hasSellingTag(item)) return false;
-        const tradeType = getTradeTypeLabel(item);
         const tradeInfo = getTradeInfoForItem(item, tradeInfoMap);
-        const shippingStatus = getShippingStatusLabel(getShippingStatusValue(item, tradeInfo));
+        const tradeType = getTradeTypeLabel(item, tradeInfo);
+        const shippingStatus = getShippingStatusValue(item, tradeInfo);
         if (tradeType === "택배" || tradeType === "직거래/택배") {
-          return shippingStatus === "배송완료";
+          return shippingStatus === 1 || shippingStatus === "1";
         }
-        return getSaleStatusLabel(item.status) === "판매완료";
+        return getSaleStatusLabel(item.status ?? item.productStatus ?? item.tradeStatus) === "판매완료";
       }),
     [salesHistory, tradeInfoMap],
   );
 
+  const completedBoardFallbackItems = useMemo(
+    () =>
+      sellerBoards.filter((board) => {
+        if (isBoardSelling(board)) return false;
+        const boardKey = String(board.marketNo ?? board.id ?? "");
+        return !salesHistory.some((item) => {
+          const itemKey = String(item.marketNo ?? item.id ?? "");
+          return itemKey && itemKey === boardKey;
+        });
+      }),
+    [sellerBoards, salesHistory],
+  );
+
+  const completedItemsWithFallback = useMemo(
+    () => [...completedItems, ...completedBoardFallbackItems],
+    [completedItems, completedBoardFallbackItems],
+  );
+
   const sellingPageCount = Math.max(1, Math.ceil(sellingItems.length / PAGE_SIZE));
   const deliveryWaitingPageCount = Math.max(1, Math.ceil(deliveryWaitingItems.length / PAGE_SIZE));
-  const completedPageCount = Math.max(1, Math.ceil(completedItems.length / PAGE_SIZE));
+  const completedPageCount = Math.max(1, Math.ceil(completedItemsWithFallback.length / PAGE_SIZE));
 
   const visibleSellingItems = sellingItems.slice((sellingPage - 1) * PAGE_SIZE, sellingPage * PAGE_SIZE);
   const visibleDeliveryWaitingItems = deliveryWaitingItems.slice((deliveryWaitingPage - 1) * PAGE_SIZE, deliveryWaitingPage * PAGE_SIZE);
-  const visibleCompletedItems = completedItems.slice((completedPage - 1) * PAGE_SIZE, completedPage * PAGE_SIZE);
+  const visibleCompletedItems = completedItemsWithFallback.slice((completedPage - 1) * PAGE_SIZE, completedPage * PAGE_SIZE);
+
+  const hasAnyHistory = sellingItems.length > 0 || deliveryWaitingItems.length > 0 || completedItemsWithFallback.length > 0;
 
   useEffect(() => {
     if (sellingPage > sellingPageCount) setSellingPage(sellingPageCount);
@@ -244,17 +305,17 @@ const SaleHistory = () => {
     const displayCourierCode = tradeInfo?.courierCode ?? item.courierCode;
     const displayInvoiceNumber = tradeInfo?.invoiceNumber ?? item.invoiceNumber;
     const address = item.orderInfo?.address || item.address || "";
-    const displayTradeType = resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod, address);
+    const displayTradeType = resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod, address || tradeInfo?.address);
     const hasDelivery = displayTradeType === "택배" || displayTradeType === "직거래/택배";
     const linkMarketNo = marketNo;
-    const displayTitle = getItemTitle(item);
+    const displayTitle = stripStatusTag(getItemTitle(item));
     const displayDate = item.date
       ? new Date(item.date).toLocaleDateString("ko-KR")
       : item.createdAt
       ? new Date(item.createdAt).toLocaleDateString("ko-KR")
       : "-";
-    const displayAmount = Number(item.amount ?? item.productPrice ?? 0).toLocaleString("ko-KR");
-    const saleStatus = getSaleStatusLabel(item.status ?? item.productStatus);
+    const displayAmount = Number(item.tradePrice ?? item.amount ?? item.productPrice ?? 0).toLocaleString("ko-KR");
+    const saleStatus = getSaleStatusLabel(item.status ?? item.productStatus ?? item.tradeStatus);
 
     return (
       <Link key={`${marketNo}-${displayTitle}`} to={`/mypage/history/sale/${linkMarketNo}`} className={styles.sale_card}>
@@ -280,8 +341,9 @@ const SaleHistory = () => {
     <div className={styles.sale_history_wrap}>
       <h3 className={styles.sale_title}>판매내역</h3>
       <div className={styles.sale_list}>
-        {salesHistory.length === 0 && <p>등록된 판매내역이 없습니다.</p>}
-        {salesHistory.length > 0 && (
+        {!hasAnyHistory ? (
+          <p>등록된 판매내역이 없습니다.</p>
+        ) : (
           <>
             <section className={styles.sale_status_section}>
               <div className={styles.status_header}>
