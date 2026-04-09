@@ -1,4 +1,4 @@
-package kr.co.iei.member.controller;
+	package kr.co.iei.member.controller;
 
 import java.util.Map;
 import java.util.Random;
@@ -116,12 +116,13 @@ public class Membercontroller {
 		LoginMember loginUser = memberService.login(member);
 
 		if (loginUser != null) {
-
+			if (loginUser.getMemberStatus() == 1) {
+				return ResponseEntity.status(403).body("정지된 계정입니다. 고객센터로 문의해주세요.");
+				}
 			return ResponseEntity.ok(loginUser); // 로그인 성공
 		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다."); // 문제가 생기면 에러 404발생
 		}
-
 	}
 
 	// 아이디 찾기 설정(김경건)

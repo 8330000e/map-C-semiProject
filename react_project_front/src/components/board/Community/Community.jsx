@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom"; // URL 쿼리값으로 mode(writ
 import styles from "./Community.module.css";
 import axios from "axios";
 import TextEditor from "./TextEditor";
-import CommunityDetail from "./CommunityDetail";
+import BoardListBox from "./BoardListBox";
 import useAuthStore from "../../../store/useAuthStore";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -626,139 +626,16 @@ const Community = ({
                 </div>
               </div>
 
-              <div className={styles.boardListBox}>
-                {boardList.length > 0 ? (
-                  boardList.map((board, index) => {
-                    const isExpanded = expandedBoardNo === board.boardNo;
-                    return (
-                      <div
-                        className={styles.boardItem}
-                        key={
-                          board.boardNo ??
-                          `${board.boardTitle}-${board.createDate}-${index}`
-                        }
-                        onClick={async () => {
-                          if (!board?.boardNo) {
-                            console.warn(
-                              "boardNo is undefined, skipping read count update.",
-                              board,
-                            );
-                            return;
-                          }
-
-                          if (!isExpanded) {
-                            try {
-                              await axios.get(
-                                `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/read`,
-                              );
-                              setBoardList((prev) =>
-                                prev.map((item) =>
-                                  item.boardNo === board.boardNo
-                                    ? {
-                                        ...item,
-                                        readCount: (item.readCount ?? 0) + 1,
-                                      }
-                                    : item,
-                                ),
-                              );
-                            } catch (err) {
-                              console.error("조회수 증가 실패", err);
-                            }
-                          }
-                          setExpandedBoardNo(isExpanded ? null : board.boardNo);
-                        }}
-                      >
-                        <div className={styles.boardItemTop}>
-                          <div className={styles.boardWriter}>
-                            <span className={styles.writerIcon}>👤</span>
-                            <span>{board.writerNickname}</span>
-                          </div>
-                          <div className={styles.boardDate}>
-                            {board.createDate}
-                          </div>
-                        </div>
-                        <div className={styles.boardTitle}>
-                          {board.boardTitle}
-                        </div>
-
-                        {board.thumbnailUrl && (
-                          <div className={styles.boardThumbnailBox}>
-                            <img
-                              src={getImageUrl(
-                                board.thumbnailUrl || board.boardThumb,
-                              )}
-                              alt="썸네일"
-                              className={styles.boardThumbnail}
-                            />
-                          </div>
-                        )}
-                        <div className={styles.boardItemBottom}>
-                          <span className={styles.iconItem}>
-                            <VisibilityIcon fontSize="small" />
-                            <span>{board.readCount ?? 0}</span>
-                          </span>
-                          <span className={styles.iconItem}>
-                            {board.liked ? (
-                              <FavoriteIcon fontSize="small" />
-                            ) : (
-                              <FavoriteBorderIcon fontSize="small" />
-                            )}
-                            <span>{board.likeCount ?? 0}</span>
-                          </span>
-
-                          <span className={styles.iconItem}>
-                            <ChatIcon fontSize="small" />
-                            <span>{board.commentCount ?? 0}</span>
-                          </span>
-                        </div>
-                        {isExpanded && (
-                          <CommunityDetail
-                            board={board}
-                            onEdit={(boardItem) => {
-                              setSelectedBoard(boardItem);
-                              startEdit(boardItem);
-                            }}
-                            onDelete={(boardNo) => deleteBoard(boardNo)}
-                            onLikeChange={(boardNo, newLikeCount, liked) => {
-                              // 상세보기에서 좋아요 상태가 변경되면
-                              // 목록 상단의 좋아요 개수와 하트 아이콘 상태도 함께 업데이트함.
-                              setBoardList((prev) =>
-                                prev.map((item) =>
-                                  item.boardNo === boardNo
-                                    ? {
-                                        ...item,
-                                        likeCount: newLikeCount,
-                                        liked,
-                                      }
-                                    : item,
-                                ),
-                              );
-                            }}
-                            onCommentCountChange={(
-                              boardNo,
-                              newCommentCount,
-                            ) => {
-                              // 상세보기에서 댓글이 추가/삭제되면
-                              // 목록 상단의 댓글 수를 동기화함.
-                              setBoardList((prev) =>
-                                prev.map((item) =>
-                                  item.boardNo === boardNo
-                                    ? { ...item, commentCount: newCommentCount }
-                                    : item,
-                                ),
-                              );
-                            }}
-                          />
-                        )}
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div className={styles.emptyBoard}>
-                    등록된 게시글이 없습니다.
-                  </div>
-                )}
-              </div>
+              <BoardListBox
+                boardList={boardList}
+                expandedBoardNo={expandedBoardNo}
+                setExpandedBoardNo={setExpandedBoardNo}
+                setBoardList={setBoardList}
+                setSelectedBoard={setSelectedBoard}
+                startEdit={startEdit}
+                deleteBoard={deleteBoard}
+                getImageUrl={getImageUrl}
+              />
             </>
           ) : (
             <div className={styles.boardWriteWrap}>

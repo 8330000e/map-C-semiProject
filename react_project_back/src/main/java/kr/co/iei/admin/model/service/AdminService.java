@@ -1,6 +1,7 @@
 package kr.co.iei.admin.model.service;
 
 
+import java.lang.reflect.Member;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,15 +84,17 @@ public class AdminService {
 		
 		List<Qna> qnaList = adminDao.selectQnaList(listItem);
 		ListResponse response = new ListResponse(qnaList, totalPage);
+
 		return response;
 	}
 
 	@Transactional
 	public int qnaAnswer(Qna qna) {
-		if (qna.getQnaImage() != null) {
-			String filepath = fileUtils.upload(root + "qna/", qna.getQnaImage());
-			qna.setQnaImagePath(filepath);
-		}
 		return adminDao.qnaAnswer(qna);
+	}
+
+	public List<Member> selectMemberList() {
+		List<Member> memberList = adminDao.selectMemberList();
+		return memberList;
 	}
 }
