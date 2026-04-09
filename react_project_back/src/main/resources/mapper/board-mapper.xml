@@ -57,6 +57,8 @@
             SELECT ISEQ$$_80822.NEXTVAL FROM DUAL
         </selectKey>
 
+        <!-- Community 게시글 등록 시 프론트에서 ctpv/sgg 값이 전달되므로
+             DB INSERT에도 해당 컬럼을 함께 추가함 -->
         INSERT INTO BOARD_TBL (
             BOARD_NO,
             WRITER_ID,
@@ -66,7 +68,9 @@
             MEMBER_NICKNAME,
             BOARD_STATUS,
             BOARD_LAT,
-            BOARD_LNG
+            BOARD_LNG,
+            CTPV,
+            SGG
         ) VALUES (
             #{boardNo},
             #{writerId},
@@ -76,7 +80,9 @@
             #{memberNickname},
             #{boardStatus},
             #{boardLat},
-            #{boardLng}
+            #{boardLng},
+            #{ctpv},
+            #{sgg}
         )
     </insert>
 
