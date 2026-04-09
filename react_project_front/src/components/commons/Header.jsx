@@ -4,6 +4,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MailIcon from "@mui/icons-material/Mail";
 import SettingsIcon from "@mui/icons-material/Settings";
+import Swal from "sweetalert2";
 
 import useAuthStore from "../../store/useAuthStore";
 import { useState } from "react";
@@ -13,9 +14,19 @@ const Header = () => {
   const [drawer, setDrawer] = useState(false);
   const { memberId, memberNickname, logout, memberGrade } = useAuthStore();
 
-  const handleLogout = () => {
-    logout();
-    navigate("/");
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: "정말 로그아웃 하시겠습니까?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "로그아웃",
+      cancelButtonText: "취소",
+    });
+
+    if (result.isConfirmed) {
+      logout();
+      navigate("/");
+    }
   };
 
   return (
