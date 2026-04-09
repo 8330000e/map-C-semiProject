@@ -13,6 +13,7 @@ const CampaignDetailPage = () => {
   const [readComplete, setReadComplete] = useState(false);
   const [isCreator, setIsCreator] = useState(false);
   const [campaignDetail, setCampaignDetail] = useState();
+  const [inCampaign, setInCampaign] = useState(false);
 
   useEffect(() => {
     axios
@@ -29,6 +30,22 @@ const CampaignDetailPage = () => {
         console.log(err);
       });
   }, []);
+  useEffect(() => {
+    axios
+      .get(
+        `${import.meta.env.VITE_BACKSERVER}/campaigns/${memberId}/part?campaignNo=${campaignNo}`,
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.data === 1) {
+          setInCampaign(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   return (
     memberId &&
     readComplete && (
@@ -52,6 +69,7 @@ const CampaignDetailPage = () => {
             <CampaignDetailSideBar
               campaignDetail={campaignDetail}
               isCreator={isCreator}
+              inCampaign={inCampaign}
             />
           </div>
         </div>
@@ -82,12 +100,16 @@ const CampaignDetailPage = () => {
 };
 export default CampaignDetailPage;
 
-const CampaignDetailSideBar = ({ campaignDetail, isCreator }) => {
+const CampaignDetailSideBar = ({ campaignDetail, isCreator, inCampaign }) => {
   return (
-    <div>
+    <div className={styles.campdetailpage_sidebar_wrap}>
+      <div className={styles.campdetailpage_sidebar_title}>
+        <h3>캠페인 상세내용</h3>
+      </div>
       <div>{campaignDetail.campaignExplanation}</div>
-      <p>히히</p>
-      <Button onClick={() => {}}></Button>
+      <Button className="btn primary lg">
+        {isCreator ? "설정" : inCampaign ? "참여중" : "참여하기"}
+      </Button>
     </div>
   );
 };

@@ -131,7 +131,13 @@ const CreateCampaignPage = () => {
               />
             </div>
             <div className={styles.createcampaign_btn_wrap}>
-              <Button className="btn primary lg" type="submit">
+              <Button
+                className="btn primary lg"
+                type="submit"
+                onClick={() => {
+                  console.log(writeInfo.campaignExpireDate);
+                }}
+              >
                 승인요청
               </Button>
             </div>

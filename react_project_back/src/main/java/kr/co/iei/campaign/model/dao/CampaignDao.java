@@ -15,4 +15,6 @@ public interface CampaignDao {
 
 	int createCampaign(Campaign camp);
 
+	List<String> checkParticipanceMember(Campaign c);
+
 }

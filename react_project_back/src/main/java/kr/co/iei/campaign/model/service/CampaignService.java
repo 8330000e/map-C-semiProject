@@ -30,4 +30,18 @@ public class CampaignService {
 		int result = campaignDao.createCampaign(camp);
 		return result;
 	}
+
+	public int checkParticipanceMember(Campaign c) {
+		String memberId=c.getMemberId();
+		int number = 0;
+		List<String> list = campaignDao.checkParticipanceMember(c);
+		for (String checkId : list) {
+			if(checkId.equals(memberId)) {
+				number =1;
+			}else {
+				number =0;
+			}
+		}
+		return number;
+	}
 }

@@ -34,9 +34,12 @@
 			#{campaignExplanation},
 			0,
 			#{campaignGoalMember},
-			#{campaignExpireDate},
+			to_date(#{campaignExpireDate},'yyyy-mm-dd')+1,
 			#{memberId},
 			null
 		)
 	</insert>
+	<select id="checkParticipanceMember" resultType="String">
+		select * from campaign_member_tbl cmt join create_campaign_tbl cct on cmt.campaign_no = cct.campaign_no where cct.campaign_no = #{campaignNo}
+	</select>
 </mapper>

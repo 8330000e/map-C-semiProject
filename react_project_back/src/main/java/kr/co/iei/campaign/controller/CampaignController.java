@@ -49,4 +49,12 @@ public class CampaignController {
 		int result = campaignService.createCampaign(camp);
 		return ResponseEntity.ok(result);
 	}
+	@GetMapping(value="/{memberId}/part")
+	public ResponseEntity<?> checkParticipanceMember(@PathVariable String memberId,@RequestParam Integer campaignNo){
+		Campaign c = new Campaign();
+		c.setMemberId(memberId);
+		c.setCampaignNo(campaignNo);
+		int result = campaignService.checkParticipanceMember(c);
+		return ResponseEntity.ok(result);
+	}
 }
