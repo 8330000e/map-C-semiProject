@@ -22,7 +22,7 @@ public class CampaignService {
 	public Campaign selectOneCampaign(Integer campaignNo) {
 		System.out.println(campaignNo);
 		Campaign result = campaignDao.selectOneCampaign(campaignNo);
-		System.out.println(result.getMemberCount());
+//		System.out.println(result.getMemberCount());
 		return result;
 	}
 	@Transactional
@@ -35,13 +35,21 @@ public class CampaignService {
 		String memberId=c.getMemberId();
 		int number = 0;
 		List<String> list = campaignDao.checkParticipanceMember(c);
+		System.out.println(memberId);
+		System.out.println(list);
 		for (String checkId : list) {
 			if(checkId.equals(memberId)) {
 				number =1;
+				break;
 			}else {
 				number =0;
 			}
 		}
 		return number;
+	}
+
+	public int joinCampaign(Campaign camp) {
+		int result = campaignDao.joinCampaign(camp);
+		return result;
 	}
 }
