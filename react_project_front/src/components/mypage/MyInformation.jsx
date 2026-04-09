@@ -8,6 +8,7 @@ import useAuthStore from "../../store/useAuthStore.js";
 const MyInformation = () => {
   const { memberId, memberNickname, memberThumb } = useAuthStore();
   const [member, setMember] = useState();
+  const [readyMark, setReadyMark] = useState(false);
   const reference = useRef(null);
 
   useEffect(() => {
@@ -54,10 +55,9 @@ const MyInformation = () => {
         <div className={styles.myinformation_img_wrap}>
           <img
             src={
-              userImg
-              // memberThumb !== null
-              //   ? `${import.meta.env.VITE_BACKSERVER}/member/thumb/${memberThumb}`
-              //   : userImg
+              memberThumb !== null
+                ? `${import.meta.env.VITE_BACKSERVER}/member/thumb/${memberThumb}`
+                : userImg
             }
           />
           <div

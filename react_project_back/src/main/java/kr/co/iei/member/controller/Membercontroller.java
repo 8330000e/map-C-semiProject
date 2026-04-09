@@ -240,15 +240,24 @@ public class Membercontroller {
 	// 썸네일 변경
 	@PatchMapping(value = "/{memberId}/thumb")
 	public ResponseEntity<?> updateThumb(@PathVariable String memberId, @RequestParam("file") MultipartFile file) {
-		String savepath = root+"member/thumb";
-		System.out.println(file);
-		String memberThumb = FileUtils.upload(savepath, file);
+		if(file == null||file.isEmpty()) {
+			throw new RuntimeException("이럴 경우는 없을거임");
+		}
+		File saveDirectoryPath = new File(new File(root),"member/thumb");
+		if(!saveDirectoryPath.exists()) {
+			saveDirectoryPath.mkdirs();
+		}
+		
+		String memberThumb = FileUtils.upload(saveDirectoryPath.getAbsolutePath(), file);
 		Member mem = new Member();
 		mem.setMemberId(memberId);
 		mem.setMemberThumb(memberThumb);
 		int result = memberService.updateMemberThumb(mem);
-		String finalThumb = "/member/thumb/"+memberThumb;
-		return ResponseEntity.ok(finalThumb);
+		if(result ==1) {
+			return ResponseEntity.ok(memberThumb);
+		}else {
+			return ResponseEntity.ok("파일업로드 안됨");
+		}
 	}
 
 	@GetMapping
