@@ -6,13 +6,17 @@ import RegionMap from "../../components/mainpage/RegionMap";
 
 const BASE_NOTICE =
   "📢 8개 지역중 거주한 지역에 물을 주세요.📢 나무는 일주일마다 초기화 됩니다..";
+
 const NOTICE_STORAGE_KEY = "tree_temp_notice";
+const MARQUEE_START_KEY = "tree_notice_marquee_start";
+const MARQUEE_DURATION = 14; // CSS와 맞춰야 함(초)
 
 const TreeGrowMainPage = () => {
   const [selectedRegionNo, setSelectedRegionNo] = useState(2);
   const navigate = useNavigate();
 
   const [tempNotice, setTempNotice] = useState(null);
+  const [marqueeDelay, setMarqueeDelay] = useState(0);
   const noticeTimerRef = useRef(null);
 
   useEffect(() => {
@@ -39,6 +43,23 @@ const TreeGrowMainPage = () => {
       console.error("공지 복구 실패:", error);
       localStorage.removeItem(NOTICE_STORAGE_KEY);
     }
+  }, []);
+
+  // marquee 시작 시각 복구
+  useEffect(() => {
+    const now = Date.now();
+    let savedStart = localStorage.getItem(MARQUEE_START_KEY);
+
+    if (!savedStart) {
+      localStorage.setItem(MARQUEE_START_KEY, String(now));
+      savedStart = String(now);
+    }
+
+    const elapsedSeconds =
+      ((now - Number(savedStart)) / 1000) % MARQUEE_DURATION;
+
+    // 이미 elapsedSeconds 만큼 진행된 상태로 시작
+    setMarqueeDelay(-elapsedSeconds);
   }, []);
 
   const addNotice = (message) => {
@@ -90,8 +111,12 @@ const TreeGrowMainPage = () => {
           <div className={styles.noticeViewport}>
             <div
               className={styles.noticeTrack}
-              key={tempNotice?.expiresAt || "base"}
+              style={{
+                animationDuration: `${MARQUEE_DURATION}s`,
+                animationDelay: `${marqueeDelay}s`,
+              }}
             >
+              <span className={styles.noticeText}>{marqueeText}</span>
               <span className={styles.noticeText}>{marqueeText}</span>
             </div>
           </div>

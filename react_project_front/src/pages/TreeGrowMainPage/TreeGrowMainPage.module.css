@@ -37,6 +37,7 @@
 
 .noticeBox {
   flex: 1;
+  max-width: 1100px;
   min-height: 52px;
   display: flex;
   align-items: center;
@@ -72,18 +73,30 @@
 }
 
 .noticeTrack {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   white-space: nowrap;
-  padding-left: 100%;
-  animation: noticeMarquee 14s linear infinite;
+  will-change: transform;
+  animation-name: noticeMarqueeLoop;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
-@keyframes noticeMarquee {
+.noticeText {
+  display: inline-block;
+  flex-shrink: 0;
+  padding-right: 80px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2e342b;
+}
+
+@keyframes noticeMarqueeLoop {
   0% {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-50%);
   }
 }
 
