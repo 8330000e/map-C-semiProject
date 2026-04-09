@@ -242,7 +242,7 @@ const MissionList = () => {
             src={
               mission.missionType === "RANDOM"
                 ? completed && randomMissionCertImage
-                  ? randomMissionCertImage
+                  ? getImageUrl(randomMissionCertImage, "cert")
                   : mission.missionImageUrl
                 : mission.missionType === "BONUS"
                   ? completed

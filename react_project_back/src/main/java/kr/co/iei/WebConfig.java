@@ -54,7 +54,13 @@ public class WebConfig implements WebMvcConfigurer {//MVC 관련 설정
 		String uploadPath = System.getProperty("user.home") + File.separator + "upload" + File.separator;
 		registry.addResourceHandler("/upload/**")
 			.addResourceLocations(new File(uploadPath).toURI().toString());
+		
+		 //사용자가 업로드한 인증 이미지를 브라우저에서 접근할 수 있도록 /uploads/** 경로를 실제 파일 저장 경로와 매핑
+	    registry
+	        .addResourceHandler("/uploads/**")
+	        .addResourceLocations(getFileUri(new File(root)));
 	}
+	
 
 	/**
 	 * 윈도우와 맥(macOS) 모두에서 정상 동작하도록 파일 시스템 경로를 URI로 변환합니다.
