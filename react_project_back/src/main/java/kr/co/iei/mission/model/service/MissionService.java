@@ -87,8 +87,21 @@ public class MissionService {
 	        return -1;
 	    }
 
+	    // 기본 미션 완료 정보 INSERT 처리임.
 	    int result1 = missionDao.insertBasicMission(memberId);
+
+	    // 회원 포인트 정보 업데이트 처리임.
+	    // MEMBER_POINT_TBL에 회원 정보가 없으면 UPDATE가 0건 처리될 수 있음.
 	    int result2 = missionDao.updateMemberPointForBasic(memberId);
+
+	    if (result2 == 0) {
+	        // 회원 포인트 정보가 없어 UPDATE가 실패한 경우임.
+	        // MEMBER_POINT_TBL에 기본 0원 포인트 행을 먼저 생성하고 재시도함.
+	        int insertPointResult = missionDao.insertMemberPoint(memberId);
+	        if (insertPointResult > 0) {
+	            result2 = missionDao.updateMemberPointForBasic(memberId);
+	        }
+	    }
 
 	    if (result1 == 0 || result2 == 0) {
 	        throw new RuntimeException("기본 미션 포인트 지급 실패");

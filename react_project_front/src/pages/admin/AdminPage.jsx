@@ -6,18 +6,18 @@ import { useEffect } from "react";
 import AdminHeader from "../../components/admin/AdminHeader";
 import AdminFooter from "../../components/admin/AdminFooter";
 import DashBoardPage from "./DashBoardPage";
-import AdminMember from "./AdminMember";
+import AdminMemberPage from "./AdminMemberPage";
 import AdminSupport from "./AdminSupport";
 
 const AdminPage = () => {
   useEffect(() => {
     // 관리자 페이지 들어오면 실행
-    document.body.style.margin = "0"; // body 마진 없애기
-    document.body.style.backgroundColor = "#0b0f1a"; // body 배경 다크로
+
+    document.body.style.backgroundColor = "#0b0f1a"; // body 배경 어둡게
 
     return () => {
       // 관리자 페이지 나가면 실행 (메인으로 돌아갈 때)
-      document.body.style.margin = "60px 80px"; // 원래 마진 복원
+
       document.body.style.backgroundColor = "#fbfff5"; // 원래 배경색 복원
     };
   }, []);
@@ -43,7 +43,7 @@ const AdminPage = () => {
                */}{" "}
               <Route path="" element={<Navigate to="/admin/dashboard" />} />
               <Route path="dashboard" element={<DashBoardPage />} />
-              <Route path="members" element={<AdminMember />} />
+              <Route path="members" element={<AdminMemberPage />} />
               <Route path="support/*" element={<AdminSupport />} />
             </Routes>
           </div>

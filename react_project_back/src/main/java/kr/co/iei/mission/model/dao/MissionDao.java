@@ -27,9 +27,14 @@ public interface MissionDao {
 
 	int existsTodayBasicMission(String memberId);
 	
+	// 기본 미션 완료 정보 INSERT 처리임.
 	int insertBasicMission(String memberId);
 	
+	// 기본 미션 성공 시 회원 포인트를 5점 적립함.
 	int updateMemberPointForBasic(String memberId);
+	
+	// MEMBER_POINT_TBL에 해당 회원 행이 없을 때 기본 0포인트 행 생성 처리임.
+	int insertMemberPoint(String memberId);
 
 	int existsTodayRandomMissionComplete(
 	        @Param("memberId") String memberId,

@@ -17,6 +17,8 @@ const AdminQnaPage = () => {
   const size = 10;
   const [totalPage, setTotalPage] = useState(null);
 
+  const [previewImage, setPreviewImage] = useState(null);
+
   const qnaAnswer = () => {
     Swal.fire({
       title: "1:1 문의 답변 등록",
@@ -30,10 +32,12 @@ const AdminQnaPage = () => {
         formData.append("qnaNo", selectedQna.qnaNo);
         formData.append("qnaAnswer", answer);
         if (imageFile) {
-          formData.append("qnaImage", imageFile);
+          formData.append("upfile", imageFile);
         }
         axios
-          .patch(`${import.meta.env.VITE_BACKSERVER}/admins/qna`, formData)
+          .patch(`${import.meta.env.VITE_BACKSERVER}/admins/qna`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          })
           .then((res) => {
             console.log(res);
             if (res.data === 1) {
@@ -48,6 +52,10 @@ const AdminQnaPage = () => {
           })
           .catch((err) => {
             console.log(err);
+            Swal.fire({
+              title: "err",
+              icon: "error",
+            });
           });
       }
     });
@@ -86,6 +94,8 @@ const AdminQnaPage = () => {
       setPage={setPage}
       totalPage={totalPage}
       imageFile={imageFile}
+      setPreviewImage={setPreviewImage}
+      previewImage={previewImage}
     />
   );
 };

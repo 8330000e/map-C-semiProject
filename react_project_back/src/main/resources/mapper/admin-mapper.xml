@@ -96,11 +96,13 @@
 	<select id="selectQnaList" resultType="qna">
 		select 
 			qna_no,
-			member_id as qnaMemberId,
+			member_id,
 			qna_title,
 			qna_content,
 			qna_status,
-			qna_date
+			qna_date,
+			qna_category,
+			qna_question_image
 		from qna_tbl
 		order by qna_status asc, qna_date desc
 		OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
@@ -113,11 +115,29 @@
 	<update id="qnaAnswer">
 		update qna_tbl set
 			qna_answer = #{qnaAnswer},
-			qna_image_path = #{qnaImagePath},
+			qna_answer_image = #{qnaAnswerImage},
 			qna_status = 1
 		where qna_no = #{qnaNo}
 	</update>
 	
+	<select id="selectMemberList" resultType="member">
+		SELECT 
+   	 		m.member_id,
+    		m.member_name,
+    		m.member_nickname,
+    		m.member_email,
+    		m.member_grade,
+    		m.member_thumb,
+    		m.member_status,
+    		m.enroll_date,
+    	(SELECT COUNT(*) FROM board_tbl b WHERE b.writer_id = m.member_id) AS boardCount,
+    	(SELECT COUNT(*) FROM board_comment_tbl c WHERE c.board_comment_writer = m.member_id) AS commentCount,
+    	(SELECT COUNT(*) FROM board_report_tbl r 
+     	JOIN board_tbl b ON r.board_no = b.board_no 
+    	WHERE b.writer_id = m.member_id) AS reportCount
+		FROM member_tbl1 m
+		ORDER BY m.enroll_date DESC
+	</select>
 	
 	
 

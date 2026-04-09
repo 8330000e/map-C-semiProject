@@ -20,6 +20,8 @@ const AdminQna = ({
   setPage,
   totalPage,
   imageFile,
+  setPreviewImage,
+  previewImage,
 }) => {
   const fileRef = useRef(null);
 
@@ -38,7 +40,9 @@ const AdminQna = ({
             <colgroup>
               <col className={styles.col_no} />
               <col className={styles.col_title} />
+              <col className={styles.col_category} />
               <col className={styles.col_writer} />
+
               <col className={styles.col_date} />
               <col className={styles.col_status} />
               <col className={styles.col_answer} />
@@ -47,6 +51,7 @@ const AdminQna = ({
               <tr>
                 <th className={styles.col_no}>번호</th>
                 <th className={styles.col_title}>제목</th>
+                <th className={styles.col_category}>카테고리</th>
                 <th className={styles.col_writer}>작성자</th>
                 <th className={styles.col_date}>문의일</th>
                 <th className={styles.col_status}>상태</th>
@@ -65,7 +70,8 @@ const AdminQna = ({
                       <span className={styles.badge_no}>{item.qnaNo}</span>
                     </td>
                     <td className={styles.col_title}>{item.qnaTitle}</td>
-                    <td className={styles.col_writer}>{item.qnaMemberId}</td>
+                    <td className={styles.col_category}>{item.qnaCategory}</td>
+                    <td className={styles.col_writer}>{item.memberId}</td>
                     <td className={styles.col_date}>{item.qnaDate}</td>
                     <td className={styles.col_status}>
                       <span
@@ -129,7 +135,23 @@ const AdminQna = ({
                   readOnly
                 />
               </div>
-              <div className={styles.qna_image}>질문 이미지 영역</div>
+              <div className={styles.qna_image}>
+                {" "}
+                {selectedQna.qnaQuestionImage ? (
+                  <img
+                    src={`${import.meta.env.VITE_BACKSERVER}${selectedQna.qnaQuestionImage}`}
+                    alt="질문 이미지"
+                    onClick={() =>
+                      setPreviewImage(
+                        `${import.meta.env.VITE_BACKSERVER}${selectedQna.qnaQuestionImage}`,
+                      )
+                    }
+                    style={{ cursor: "pointer" }}
+                  />
+                ) : (
+                  <div className={styles.no_image}>탄소커넥트</div>
+                )}
+              </div>
             </div>
 
             <div className={styles.modal_answer}>
@@ -183,6 +205,15 @@ const AdminQna = ({
         totalPage={totalPage}
         naviSize={5}
       />
+
+      {previewImage && (
+        <div
+          className={styles.image_modal}
+          onClick={() => setPreviewImage(null)}
+        >
+          <img src={previewImage} alt="이미지 크게보기" />
+        </div>
+      )}
     </>
   );
 };

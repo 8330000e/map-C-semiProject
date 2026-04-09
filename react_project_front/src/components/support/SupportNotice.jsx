@@ -1,10 +1,9 @@
-import { useNavigate } from "react-router-dom";
 import styles from "./SupportNotice.module.css";
 import NoticeCardList from "./NoticeCardList";
 
 const SupportNotice = ({ noticeList, setCategory, category }) => {
   const categories = ["전체", "이벤트", "점검", "업데이트", "안내"];
-  const navigate = useNavigate();
+
   return (
     <div className={styles.wrap}>
       {/* 타이틀 */}
