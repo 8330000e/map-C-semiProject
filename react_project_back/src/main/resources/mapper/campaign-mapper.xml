@@ -21,7 +21,7 @@
 			   campaign_explanation,
 			   campaign_goal_member,
 			   campaign_start_date,
-			   campaign_expire_date,
+			   campaign_expire_date - interval '1' day as campaign_expire_date,
 			   member_id,
                (select count(*) from campaign_member_tbl where campaign_no=#{campaignNo})as member_count
                from create_campaign_tbl ct
@@ -42,4 +42,7 @@
 	<select id="checkParticipanceMember" resultType="String">
 		select * from campaign_member_tbl cmt join create_campaign_tbl cct on cmt.campaign_no = cct.campaign_no where cct.campaign_no = #{campaignNo}
 	</select>
+	<insert id="joinCampaign">
+		insert into campaign_member_tbl values(#{memberId},#{campaignNo})
+	</insert>
 </mapper>
