@@ -1,10 +1,11 @@
-package kr.co.iei.member.controller;
+	package kr.co.iei.member.controller;
 
 import java.util.Map;
 import java.util.Random;
 
 import org.apache.ibatis.annotations.Param;
 
+import java.io.File;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,9 @@ public class Membercontroller {
 	@Autowired
 	private EmailSender emailSender;
 
-	private FileUtils fileUtil;
+	// 회원가입 로직
+//	@Autowired
+//	private FileUtils fileUtil;
 
 	@Value("${file.root}")
 	private String root;
@@ -114,12 +117,14 @@ public class Membercontroller {
 		LoginMember loginUser = memberService.login(member);
 
 		if (loginUser != null) {
-
+			//회원의 상태가 정상이면 0, 탈퇴하거나 문제의 회원일 경우에는 1로 설정, 로그인에서 접근 제한
+			if ( member.getMemberStatus() != null && member.getMemberStatus() == 1) {
+				return ResponseEntity.status(403).body("정지된 계정입니다. 고객센터로 문의해주세요.");
+				}
 			return ResponseEntity.ok(loginUser); // 로그인 성공
 		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다."); // 문제가 생기면 에러 404발생
 		}
-
 	}
 
 	// 아이디 찾기 설정(김경건)
@@ -236,14 +241,25 @@ public class Membercontroller {
 
 	// 썸네일 변경
 	@PatchMapping(value = "/{memberId}/thumb")
-	public ResponseEntity<?> updateThumb(@PathVariable String memberId, @ModelAttribute MultipartFile file) {
-		String savepath = root + "member/";
-		String memberThumb = fileUtil.upload(savepath, file);
+	public ResponseEntity<?> updateThumb(@PathVariable String memberId, @RequestParam("file") MultipartFile file) {
+		if(file == null||file.isEmpty()) {
+			throw new RuntimeException("이럴 경우는 없을거임");
+		}
+		File saveDirectoryPath = new File(new File(root),"member/thumb");
+		if(!saveDirectoryPath.exists()) {
+			saveDirectoryPath.mkdirs();
+		}
+		
+		String memberThumb = FileUtils.upload(saveDirectoryPath.getAbsolutePath(), file);
 		Member mem = new Member();
 		mem.setMemberId(memberId);
 		mem.setMemberThumb(memberThumb);
 		int result = memberService.updateMemberThumb(mem);
-		return ResponseEntity.ok(memberThumb);
+		if(result ==1) {
+			return ResponseEntity.ok(memberThumb);
+		}else {
+			return ResponseEntity.ok("파일업로드 안됨");
+		}
 	}
 
 	@GetMapping

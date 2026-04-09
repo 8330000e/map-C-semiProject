@@ -122,6 +122,8 @@ secrets.yml
 .project
 .settings/
 bin/
+.metadata/
+.metadata.backup/
 
 # ===========================
 # OS

@@ -23,6 +23,7 @@ const Support = () => {
       desc: "개별 문의를 등록하고 처리 상태를 확인할 수 있습니다.",
       btn: "문의하기",
       color: "qna",
+      path: "/support/qna",
     },
   ];
 

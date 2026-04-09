@@ -4,10 +4,45 @@ import axios from "axios";
 
 import userImg from "../../assets/admin.png";
 import useAuthStore from "../../store/useAuthStore.js";
+const BACKSERVER = "http://localhost:9999";
+
+const getImageUrl = (thumb) => {
+  console.log(thumb);
+  if (!thumb) return null;
+  if (typeof thumb !== "string") return null;
+  let trimmed = thumb.trim();
+  if (!trimmed) return null;
+
+  trimmed = trimmed.replace(/\\/g, "/").replace(/\\/g, "/");
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
+    return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
+  if (driveMatch) {
+    const boardIndex = trimmed.indexOf("/board/editor/");
+    if (boardIndex !== -1) {
+      const suffix = trimmed.substring(boardIndex);
+      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
+    }
+    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
+  }
+
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
+    return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
+  return `${BACKSERVER}/member/thumb/${trimmed}`;
+};
 
 const MyInformation = () => {
-  const { memberId, memberNickname, memberThumb } = useAuthStore();
+  const { memberId, memberNickname, isReady, memberThumb } = useAuthStore();
   const [member, setMember] = useState();
+  const [readyMark, setReadyMark] = useState(false);
   const reference = useRef(null);
 
   useEffect(() => {
@@ -49,13 +84,17 @@ const MyInformation = () => {
       });
   };
   return (
-    member && (
+    member &&
+    memberId && (
+      // isReady &&
       <div className={styles.myinformation_main_wrap}>
         <div className={styles.myinformation_img_wrap}>
           <img
             src={
-              memberThumb !== null
-                ? `${import.meta.env.VITE_BACKSERVER}/member/thumb/${memberThumb}`
+              member.memberThumb !== null
+                ? getImageUrl(
+                    memberThumb === null ? member.memberThumb : memberThumb,
+                  )
                 : userImg
             }
           />

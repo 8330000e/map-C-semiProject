@@ -72,6 +72,9 @@ const isDeliveryTrade = (item) => {
   return resolved === "택배" || resolved === "직거래/택배";
 };
 
+// 구매내역 페이지 기능임. 로그인한 사용자가 완료한 구매 내역을 보여줌.
+//  - 구매 상품 목록을 페이지 단위로 렌더링함.
+//  - 각 주문의 배송 정보는 추가 API 호출로 가져옴.
 const PurchaseHistory = () => {
   const { memberId } = useAuthStore();
   const [purchaseHistory, setPurchaseHistory] = useState([]);

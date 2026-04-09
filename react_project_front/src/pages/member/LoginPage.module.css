@@ -22,6 +22,7 @@
   padding: 10px;
   margin-top: -20px;
   margin-bottom: 10px;
+  font-size: larger;
 }
 
 /*로그인 이미지 설정*/
@@ -90,6 +91,18 @@
   margin-top: 20px;
   font-size: 0.85rem;
   color: #666;
+}
+
+.search_wrap a {
+  display: inline-block; /* scale 적용하려면 이게 안정적 */
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+.search_wrap a:hover {
+  transform: scale(1.15); /* 살짝 커짐 */
+  color: #000; /* 선택사항: 색도 진하게 */
 }
 
 /*버튼 클릭 효과*/

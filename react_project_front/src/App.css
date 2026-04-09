@@ -198,18 +198,103 @@ header {
   flex-direction: column;
   padding: 6px 10px 4px;
   gap: 4px;
+  position: relative;
+}
+.used_scroll_btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(70, 77, 62, 0.9);
+  color: #fff;
+  /* 좌우 버튼을 투명하게 눌림 상태로 보여주기 위한 설정임. */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+.used_scroll_btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.used_scroll_left {
+  left: 6px;
+}
+.used_scroll_right {
+  right: 6px;
+}
+.horizontal_scroll_wrap {
+  position: relative;
+  width: 100%;
+}
+.horizontal_scroll_area {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(70, 77, 62, 0.8) rgba(255, 255, 255, 0.2);
+  scroll-behavior: smooth;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+.horizontal_scroll_area::-webkit-scrollbar {
+  height: 12px;
+}
+.horizontal_scroll_area::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.2);
+}
+.horizontal_scroll_area::-webkit-scrollbar-thumb {
+  background: rgba(70, 77, 62, 0.8);
+  border-radius: 10px;
+}
+.horizontal_scroll_area::-webkit-scrollbar-thumb:hover {
+  background: rgba(70, 77, 62, 0.95);
+}
+.horizontal_scroll_area > ul {
+  display: flex;
+  list-style-type: none;
+  gap: 12px;
+  align-items: flex-start;
+  width: max-content;
 }
 .used_list_header {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+/* 상품 리스트 가로 스크롤 영역 스타일임.
+   이 클래스는 Main.jsx의 중고거래 리스트 가로 스크롤에 사용함.
+   다른 곳에서 쓰려면 동일한 클래스명을 가진 컨테이너를 만들면 됨. */
 .used_list_scroll {
-  overflow-x: auto;
+  overflow-x: scroll;
   overflow-y: hidden;
   scrollbar-width: thin;
+  scrollbar-color: rgba(70, 77, 62, 0.8) rgba(255, 255, 255, 0.2);
   scroll-behavior: smooth;
   padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+/* 모바일 터치 스크롤을 자연스럽게 하기 위한 설정임. */
+.used_list_scroll::-webkit-scrollbar {
+  height: 12px;
+}
+/* 스크롤바 트랙을 투명하게 처리함. */
+.used_list_scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.2);
+}
+/* 스크롤바 썸 색상과 모서리 둥글게 처리함. */
+.used_list_scroll::-webkit-scrollbar-thumb {
+  background: rgba(70, 77, 62, 0.8);
+  border-radius: 10px;
+}
+/* hover 시 스크롤바를 더 짙게 보여줌. */
+.used_list_scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(70, 77, 62, 0.95);
 }
 .used_list_scroll > ul {
   display: flex;
@@ -305,6 +390,9 @@ header {
   align-items: center;
   height: 100%;
 }
+/* * {
+  outline: 1px solid red;
+} */
 /*랜덤 미션 패널*/
 .main_top {
   position: relative;

@@ -57,6 +57,8 @@
             SELECT ISEQ$$_80822.NEXTVAL FROM DUAL
         </selectKey>
 
+        <!-- Community 게시글 등록 시 프론트에서 ctpv/sgg 값이 전달되므로
+             DB INSERT에도 해당 컬럼을 함께 추가함 -->
         INSERT INTO BOARD_TBL (
             BOARD_NO,
             WRITER_ID,
@@ -66,7 +68,9 @@
             MEMBER_NICKNAME,
             BOARD_STATUS,
             BOARD_LAT,
-            BOARD_LNG
+            BOARD_LNG,
+            CTPV,
+            SGG
         ) VALUES (
             #{boardNo},
             #{writerId},
@@ -76,7 +80,9 @@
             #{memberNickname},
             #{boardStatus},
             #{boardLat},
-            #{boardLng}
+            #{boardLng},
+            #{ctpv},
+            #{sgg}
         )
     </insert>
 
@@ -132,7 +138,7 @@
         AND MEMBER_ID = #{memberId}
     </select>
 
-    <!-- 파일 업로드 -->
+    <!-- 파일 업로드 기능임. 첨부파일 정보를 DB에 저장함. -->
     <insert id="insertBoardFile" parameterType="boardFile">
         <selectKey keyProperty="fileNo" resultType="int" order="BEFORE">
             SELECT BOARD_FILE_SEQ.NEXTVAL FROM DUAL
@@ -153,7 +159,7 @@
         )
     </insert>
 
-    <!-- 댓글 조회 -->
+    <!-- 댓글 조회 기능임. 해당 게시글에 달린 모든 댓글을 가져옴. -->
     <!--
       비공개 댓글은 DB에서 'Y'/'N'로 저장됩니다.
       프론트엔드에서는 1/0 형태로 사용하므로 조회 시 변환합니다.
@@ -249,7 +255,7 @@
         offset 0 rows fetch next 10 rows only
     </select>
 
-    <!-- 내가 쓴 글 -->
+    <!-- 마이페이지용 -->
     <select id="selectMemberIdBoard" resultType="kr.co.iei.board.model.vo.Board">
         SELECT 
             board_no,
@@ -266,13 +272,15 @@
    			<if test="checker == 1">
         		writer_id = #{memberId}
    			</if>
-   			<if test="checker == 2 and boardNoList != null and boardNoList != ''">
+   			<if test="checker == 2 and boardNoList != null and boardNoList.size() > 0">
+   				<!-- 좋아요한 게시글 ID가 있을 때만 조건값을 넣음 -->
    				board_no in
    				<foreach collection="boardNoList" item="boardNo" open="(" close=")" separator=",">
    					#{boardNo}
    				</foreach>
    			</if>
-   			<if test="checker == 3 and tipList != null and tipList != ''">
+   			<if test="checker == 3 and tipList != null and tipList.size() > 0">
+   				<!-- 스크랩한 게시글 ID가 있을 때만 조건값을 넣음 -->
    				board_no in
    				<foreach collection="tipList" item="boardNo" open="(" close=")" separator=",">
    					#{boardNo}
@@ -300,8 +308,26 @@
     select board_no from board_like_tbl where member_id = #{memberId}
     </select>
     <select id="selectTipBoard" resultType="Integer">
+    	-- 이 회원이 스크랩한 게시글 번호 목록을 가져오는 기능임
     	select board_no from tip_tbl where member_id=#{memberId}
     </select>
+    <select id="selectBoardTipByMember" resultType="int">
+    	-- 이 회원이 이 게시글을 스크랩했는지 확인하는 기능임
+    	select count(*) from tip_tbl where board_no = #{boardNo} and member_id = #{memberId}
+    </select>
+    <insert id="insertBoardTip" parameterType="map">
+    	-- 스크랩 추가 기능임. 이미 스크랩한 기록이 있으면 또 추가 안 함
+        insert into tip_tbl (board_no, member_id)
+        select #{boardNo}, #{memberId}
+        from dual
+        where not exists (
+            select 1 from tip_tbl where board_no = #{boardNo} and member_id = #{memberId}
+        )
+    </insert>
+    <delete id="deleteBoardTip" parameterType="map">
+    	-- 스크랩 삭제 기능임. 이 회원의 스크랩 기록을 지움
+        delete from tip_tbl where board_no = #{boardNo} and member_id = #{memberId}
+    </delete>
     
     <select id="existsTodayBasicMission" resultType="int">
     SELECT COUNT(*)

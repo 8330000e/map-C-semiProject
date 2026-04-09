@@ -34,7 +34,7 @@ public class WebConfig implements WebMvcConfigurer {//MVC 관련 설정
 		// file.root에 설정된 루트 폴더 아래의 실제 파일을 /member/thumb/**, /board/editor/** 경로로 제공.
 		registry
 			.addResourceHandler("/member/thumb/**")
-			.addResourceLocations(getFileUri(new File(root, "member")));
+			.addResourceLocations(getFileUri(new File(root, "member/thumb/")));
 
 		// 게시글 에디터에서 업로드한 이미지도 같은 루트 아래 board/editor 폴더에서 제공합니다.
 		// 프론트에서는 /board/editor/{fileName} 형태의 URL로 접근합니다.
@@ -44,6 +44,10 @@ public class WebConfig implements WebMvcConfigurer {//MVC 관련 설정
 		// /notice/... .jpg로 요청하면 upload/semiproject/notice/... .jpg 파일을 찾아줌 
 		registry.addResourceHandler("/notice/**")
 	    .addResourceLocations(getFileUri(new File(root, "notice")));
+		
+		// qna도 추가 
+		registry.addResourceHandler("/qna/**")
+		.addResourceLocations(getFileUri(new File(root, "qna")));
 
 		// 추가로 사용자 홈 디렉터리의 upload 폴더를 /upload/**로 제공하도록 설정합니다.
 		// 이 매핑은 file.root와는 별개로, 사용자 홈에 있는 legacy upload 파일을 서빙할 때 사용됩니다.

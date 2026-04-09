@@ -1,0 +1,79 @@
+.campaignmain_wrap {
+  width: 900px;
+  min-height: 700px;
+  margin: 0px auto;
+  padding: 3px 0px;
+  background-color: var(--gray6);
+  border-radius: 20px;
+}
+.campaignmain_title_wrap {
+  display: flex;
+  margin: 10px 10px;
+  padding: 20px;
+}
+.campaignmain_title_wrap > h2 {
+  width: 200px;
+}
+.campaignmain_title_wrap > div {
+  display: flex;
+  width: 500px;
+}
+.campaignmain_title_wrap > div > label {
+  width: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.campaignmain_content_wrap {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.campaignmain_notice {
+  text-align: center;
+}
+.campaignmain_list {
+  cursor: pointer;
+}
+.campaignmain_list > ul {
+  display: flex;
+  position: relative;
+  width: 800px;
+  height: 80px;
+  margin: 10px auto;
+  background-color: var(--gray8);
+  border-radius: 5px;
+}
+.campaignmain_list li {
+  list-style-type: none;
+}
+.campaignmain_campaign_title {
+  position: absolute;
+  top: 2px;
+}
+.campaignmain_campaign_goal_member {
+  position: absolute;
+  bottom: 2px;
+}
+.campaignmain_campaign_status {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+}
+.campaignmain_date {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+.campaignmain_btn_wrap {
+  width: 800px;
+  margin: 30px auto;
+  display: flex;
+  justify-content: end;
+}
+.campaignmain_btn_wrap > button {
+  border: 1.5px solid var(--gray3);
+  background-color: var(--gray8);
+  border-radius: 50px;
+}
