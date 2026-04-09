@@ -302,6 +302,15 @@
     <select id="selectTipBoard" resultType="Integer">
     	select board_no from tip_tbl where member_id=#{memberId}
     </select>
+    <select id="selectTipByMember" resultType="int">
+    	select count(*) from tip_tbl where board_no = #{boardNo} and member_id = #{memberId}
+    </select>
+    <insert id="insertBoardTip" parameterType="map">
+        insert into tip_tbl (board_no, member_id) values (#{boardNo}, #{memberId})
+    </insert>
+    <delete id="deleteBoardTip" parameterType="map">
+        delete from tip_tbl where board_no = #{boardNo} and member_id = #{memberId}
+    </delete>
     
     <select id="existsTodayBasicMission" resultType="int">
     SELECT COUNT(*)

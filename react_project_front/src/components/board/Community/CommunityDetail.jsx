@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../../store/useAuthStore";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -85,6 +86,7 @@ const CommunityDetail = ({
   const [likeCount, setLikeCount] = useState(board.likeCount ?? 0);
   const [scrapped, setScrapped] = useState(false);
   const commentsEndRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setComments([]);
@@ -95,11 +97,9 @@ const CommunityDetail = ({
     setEditText("");
     setEditPrivate(false);
     setLikeCount(board.likeCount ?? 0);
-    setScrapped(localStorage.getItem(`scrap_board_${board.boardNo}`) === "1");
+    setScrapped(false);
 
     if (memberId && board?.boardNo) {
-      // 상세보기 진입 시 로그인 사용자의 좋아요 여부를 서버에서 확인합니다.
-      // 이 값은 새로고침 후에도 하트 내부 채우기 상태를 일관되게 유지하는 데 사용됩니다.
       axios
         .get(
           `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes/${memberId}`,
@@ -107,14 +107,22 @@ const CommunityDetail = ({
         .then((res) => {
           const likedStatus = res.data === true;
           setLiked(likedStatus);
-          // 목록에서도 같은 게시글에 대한 liked 상태가 일치하도록 상위 컴포넌트에 전달합니다.
           onLikeChange?.(board.boardNo, likeCount, likedStatus);
         })
         .catch((err) => console.error("좋아요 여부 조회 실패", err));
+
+      axios
+        .get(
+          `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/tips/${memberId}`,
+        )
+        .then((res) => {
+          setScrapped(res.data === true);
+        })
+        .catch((err) => console.error("스크랩 여부 조회 실패", err));
     } else {
       if (memberId && !board?.boardNo) {
         console.warn(
-          "boardNo is undefined, skipping like status fetch.",
+          "boardNo is undefined, skipping like/tip status fetch.",
           board,
         );
       }
@@ -257,16 +265,37 @@ const CommunityDetail = ({
     }
   };
 
-  const toggleScrap = () => {
+  const toggleScrap = async () => {
     if (!memberId) {
       Swal.fire({ icon: "warning", title: "로그인이 필요합니다." });
       return;
     }
-    setScrapped((prev) => {
-      const next = !prev;
-      localStorage.setItem(`scrap_board_${board.boardNo}`, next ? "1" : "0");
-      return next;
-    });
+
+    try {
+      if (!scrapped) {
+        await axios.post(
+          `${BACKSERVER}/boards/${board.boardNo}/tips`,
+          null,
+          { params: { memberId } },
+        );
+        setScrapped(true);
+        Swal.fire({ icon: "success", title: "스크랩 되었습니다.", timer: 1000, showConfirmButton: false });
+        navigate("/mypage/tipScrap");
+      } else {
+        await axios.delete(`${BACKSERVER}/boards/${board.boardNo}/tips`, {
+          params: { memberId },
+        });
+        setScrapped(false);
+        Swal.fire({ icon: "success", title: "스크랩이 취소되었습니다.", timer: 1000, showConfirmButton: false });
+      }
+    } catch (err) {
+      console.error("스크랩 처리 실패", err);
+      Swal.fire({
+        icon: "error",
+        title: "스크랩 처리 실패",
+        text: "다시 시도해주세요.",
+      });
+    }
   };
 
   const handleReport = async () => {

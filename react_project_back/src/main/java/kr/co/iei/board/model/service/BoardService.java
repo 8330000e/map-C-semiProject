@@ -103,6 +103,18 @@ public class BoardService {
 		return boardDao.selectBoardLikeByMember(boardNo, memberId) > 0;
 	}
 
+	public int addBoardTip(int boardNo, String memberId) {
+		return boardDao.insertBoardTip(boardNo, memberId);
+	}
+
+	public int removeBoardTip(int boardNo, String memberId) {
+		return boardDao.deleteBoardTip(boardNo, memberId);
+	}
+
+	public boolean isBoardTiped(int boardNo, String memberId) {
+		return boardDao.selectBoardTipByMember(boardNo, memberId) > 0;
+	}
+
 	public boolean isBoardAuthor(int boardNo, String writerId) {
 		return boardDao.selectBoardAuthor(boardNo, writerId) > 0;
 	}

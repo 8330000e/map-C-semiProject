@@ -191,6 +191,38 @@ public class BoardController {
 			return ResponseEntity.internalServerError().body("좋아요 취소 실패: " + e.getMessage());
 		}
 	}
+
+	@GetMapping("/{boardNo}/tips/{memberId}")
+	public ResponseEntity<Boolean> isTiped(@PathVariable int boardNo, @PathVariable String memberId) {
+		try {
+			return ResponseEntity.ok(boardService.isBoardTiped(boardNo, memberId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().build();
+		}
+	}
+
+	@PostMapping("/{boardNo}/tips")
+	public ResponseEntity<?> tipBoard(@PathVariable int boardNo, @RequestParam String memberId) {
+		try {
+			boardService.addBoardTip(boardNo, memberId);
+			return ResponseEntity.ok().build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().body("스크랩 처리 실패: " + e.getMessage());
+		}
+	}
+
+	@DeleteMapping("/{boardNo}/tips")
+	public ResponseEntity<?> untipBoard(@PathVariable int boardNo, @RequestParam String memberId) {
+		try {
+			boardService.removeBoardTip(boardNo, memberId);
+			return ResponseEntity.ok().build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().body("스크랩 취소 실패: " + e.getMessage());
+		}
+	}
 	 
 	// frontend에서 인기 게시글을 조회하기 위해 추가한 엔드포인트입니다.
 	// Bestpostlist.jsx에서 /boards/best로 요청하여 top 게시글 목록을 받아옵니다.
