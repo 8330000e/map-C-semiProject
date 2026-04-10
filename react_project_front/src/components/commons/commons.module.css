@@ -137,6 +137,38 @@ header > .profile_bar_wrap {
   font-weight: 500;
   margin-bottom: 8px;
 }
+
+.footer {
+  padding: 20px 0;
+  font-size: 14px;
+  color: #464d3e;
+}
+
+.footer_wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.footer_guide {
+  width: 100%;
+}
+
+.footer_guide > ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer_guide > ul > li {
+  white-space: nowrap;
+  color: #464d3e;
+}
+
 .footer_info {
   color: gray;
 }
