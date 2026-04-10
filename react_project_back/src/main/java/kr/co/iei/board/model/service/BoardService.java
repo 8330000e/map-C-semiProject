@@ -33,6 +33,8 @@ public class BoardService {
 	
 	
 	//게시글 조회
+	// 검색 조건을 받아서 BoardDao.selectBoardList()에 전달하고,
+	// DB에서 게시글 리스트를 조회해서 결과를 반환함.
 	public List<Board> selectBoardList(int status, int searchType, String searchKeyword) {
 		HashMap<String, Object> param = new HashMap<>();
         param.put("status", status);
@@ -66,6 +68,8 @@ public class BoardService {
 
 
 	//게시글 수정
+	// 프론트에서 수정된 게시글 데이터를 받아서 DB에 반영하는 역할임.
+	// BoardDao.updateBoard()가 실제로 SQL을 호출함.
 	public int updateBoard(Board board) {
 	    return boardDao.updateBoard(board);
 	}
@@ -172,8 +176,10 @@ public class BoardService {
 	}
 	// 인기 게시글 조회 비즈니스 로직
 	// BoardController.bestBoardList()에서 호출되어 DAO에서 결과를 가져옵니다.
-	public List<BoardLike> bestBoardList() {
-		return boardDao.bestBoardList();
+	public List<BoardLike> bestBoardList(int status) {
+		HashMap<String, Object> param = new HashMap<>();
+		param.put("status", status);
+		return boardDao.bestBoardList(param);
 	}
 	
 	public List<Board> selectMemberIdBoard(HashMap<String, Object> map) {
@@ -213,6 +219,11 @@ public class BoardService {
 			return null;
 		}
 	}
+
+	public List<Board> getTipBoardList() {
+		return boardDao.selectTipBoardList();
+	}
+
 	public List<Board> selectMarkers() {
 		List<Board> list = boardDao.selectMarkers();
 		return list;

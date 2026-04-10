@@ -14,7 +14,7 @@ import Swal from "sweetalert2";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
+const TreeGrowMain = ({ selectedRegionNo }) => {
   const GRAPH_MAX = 10000;
   const BAR_MAX_HEIGHT = 180;
   const BAR_MIN_HEIGHT = 14;
@@ -39,12 +39,27 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
     { name: "제주권", value: "x3.0" },
   ];
   const getRegionMultiplierValue = (regionName) => {
-    const found = defaultMultiplier.find((item) => item.name === regionName);
-    if (!found) return 1.0;
-    return Number(found.value.replace("x", ""));
+    const normalizedName = regionName?.trim();
+
+    const multiplierMap = {
+      서울: 1.2,
+      경기: 1.0,
+      인천: 2.1,
+      충청: 1.6,
+      충청권: 1.6,
+      전라: 1.7,
+      전라권: 1.7,
+      경상: 1.1,
+      경상권: 1.1,
+      강원: 3.0,
+      강원권: 3.0,
+      제주: 3.0,
+      제주권: 3.0,
+    };
+
+    return multiplierMap[normalizedName] ?? 1.0;
   };
 
-  const [regionList, setRegionList] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [chartData, setChartData] = useState([]);
   const [ownedPoint, setOwnedPoint] = useState(0);
@@ -64,11 +79,6 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
       if (a.rank !== b.rank) return a.rank - b.rank;
       return b.value - a.value;
     });
-
-  const maxValue =
-    rankedChartData.length > 0
-      ? Math.max(...rankedChartData.map((item) => item.value))
-      : 0;
 
   const getLegendColorClass = (rank) => {
     if (rank === 1) return styles.gold;
@@ -131,6 +141,12 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+  const [showWaterRipple, setShowWaterRipple] = useState(false);
+
+  const [treeClickCount, setTreeClickCount] = useState(0);
+  const [showAbsorbEffect, setShowAbsorbEffect] = useState(false);
+  const [showTreeBounce, setShowTreeBounce] = useState(false);
+  const [showEasterEgg, setShowEasterEgg] = useState(false);
 
   const [waterAmount, setWaterAmount] = useState(0);
   const regionWater = selectedRegion?.water ?? 0;
@@ -170,8 +186,6 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
 
       const regionsRes = await axios.get(`${BACKSERVER}/regions`);
       const regions = regionsRes.data;
-
-      setRegionList(regions);
 
       const mappedChartData = regions.map((item) => ({
         name: item.regionName,
@@ -254,10 +268,6 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
         remainPoint: updatedPoint,
       });
       try {
-        onAddNotice?.(
-          `💧 ${memberId}님이 ${selectedRegion.name}에 ${waterAmount}h2O를 주었습니다 `,
-          "user",
-        );
       } catch (e) {
         console.error("공지 실패:", e);
       }
@@ -273,8 +283,9 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
       console.error(e);
       Swal.fire({
         icon: "error",
-        title: "실패",
-        text: "포인트 부족 또는 오류",
+        title: "오류",
+        text:
+          e.response?.data?.message || "물 주기 처리 중 오류가 발생했습니다.",
       });
     }
   };
@@ -288,10 +299,94 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
   if (!selectedRegion) {
     return null;
   }
+
+  const getSeason = () => {
+    const month = new Date().getMonth() + 1;
+
+    if (month >= 3 && month <= 5) return "spring";
+    if (month >= 6 && month <= 8) return "summer";
+    if (month >= 9 && month <= 11) return "autumn";
+    return "winter";
+  };
+
+  const season = getSeason();
+
+  const getParticleCount = () => {
+    if (season === "spring") return 8;
+    if (season === "summer") return 6;
+    if (season === "autumn") return 9;
+    return 12;
+  };
+
+  const handleTreeClick = () => {
+    setShowAbsorbEffect(true);
+    setShowTreeBounce(true);
+
+    setTimeout(() => setShowAbsorbEffect(false), 700);
+    setTimeout(() => setShowTreeBounce(false), 500);
+
+    setTreeClickCount((prev) => {
+      const next = prev + 1;
+
+      if (next >= 10) {
+        setShowEasterEgg(true);
+
+        setTimeout(() => {
+          setShowEasterEgg(false);
+        }, 4000);
+
+        return 0;
+      }
+
+      return next;
+    });
+  };
+
   return (
-    <div className={styles.treeGrowMain}>
+    <div
+      className={`${styles.treeGrowMain} ${styles[`stage${currentStage}`]} ${styles[season]} ${showEasterEgg && season === "winter" ? styles.winterEasterCard : ""}`}
+    >
       <section className={styles.topCard}>
+        {showEasterEgg && season === "winter" && (
+          <>
+            <div className={styles.easterEggSnowLayer}>
+              {Array.from({ length: 260 }).map((_, idx) => (
+                <span
+                  key={idx}
+                  className={styles.easterEggSnowflake}
+                  style={{
+                    left: `${(idx * 3.9) % 100}%`,
+                    animationDelay: `${(idx % 36) * 0.05}s`,
+                    animationDuration: `${2.4 + (idx % 6) * 0.22}s`,
+                    width: `${8 + (idx % 5) * 3}px`,
+                    height: `${8 + (idx % 5) * 3}px`,
+                  }}
+                />
+              ))}
+            </div>
+
+            <div className={styles.easterEggSnowFog}></div>
+            <div className={styles.easterEggSnowGround}></div>
+          </>
+        )}
         <div className={styles.topHeader}>
+          <div className={styles.seasonLayer}>
+            {Array.from({ length: getParticleCount() }).map((_, idx) => (
+              <span
+                key={idx}
+                className={`${styles.particle} ${styles[season + "Particle"]}`}
+                style={{
+                  left: `${5 + ((idx * 11) % 90)}%`,
+                  animationDelay: `${idx * 0.9}s`,
+                  animationDuration:
+                    season === "winter"
+                      ? `${10 + (idx % 3)}s`
+                      : `${6 + (idx % 4)}s`,
+                }}
+              />
+            ))}
+          </div>
+
           <span className={styles.regionName}>{selectedRegion?.name}</span>
           <span className={styles.stageText}>{currentStageLabel}</span>
         </div>
@@ -313,11 +408,11 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
 
           <div className={styles.rightTreeArea}>
             <div className={styles.treeStageLabel}>{currentStageLabel}</div>
-            <div className={styles.treeBox}>
+            <div className={styles.treeBox} onClick={handleTreeClick}>
               <div className={styles.treeFloatWrap}>
                 <div
-                  className={styles.treeScaleWrap}
-                  style={{ transform: `scale(${currentTreeScale})` }}
+                  className={`${styles.treeScaleWrap} ${showTreeBounce ? styles.treeBounce : ""}`}
+                  style={{ "--tree-scale": currentTreeScale }}
                 >
                   <img
                     key={currentStage}
@@ -325,6 +420,17 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
                     alt={currentStageLabel}
                     className={styles.treeImage}
                   />
+
+                  {showAbsorbEffect && (
+                    <div className={styles.absorbEffect}>
+                      <img
+                        src={waterDropImg}
+                        alt="흡수 물방울"
+                        className={styles.absorbDrop}
+                      />
+                      <span className={styles.absorbSpark}></span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -348,25 +454,38 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
               </div>
 
               <span className={styles.waterText}>
-                {regionWater}h2O/{currentStageTarget}h2O
+                {regionWater}H2O/{currentStageTarget}H2O
               </span>
             </div>
 
-            {isLogin ? (
-              <button
-                className={styles.waterButton}
-                onClick={() => {
-                  if (!isTreeComplete) setIsModalOpen(true);
-                }}
-                disabled={isTreeComplete}
-              >
-                {isTreeComplete ? "성장 완료" : "물 주기(포인트 기여)"}
-              </button>
-            ) : (
-              <span className={styles.loginGuide}>
-                로그인 후 물 주기가 가능합니다.
-              </span>
-            )}
+            <button
+              className={styles.waterButton}
+              disabled={isTreeComplete}
+              onClick={() => {
+                if (!isLogin) {
+                  Swal.fire({
+                    icon: "warning",
+                    title: "로그인이 필요합니다",
+                    text: "물 주기를 하려면 로그인해주세요!",
+                    confirmButtonText: "로그인 하러가기",
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      window.location.href = "/members/login";
+                    }
+                  });
+                  return;
+                }
+
+                if (!isTreeComplete) {
+                  setShowWaterRipple(true);
+                  setTimeout(() => setShowWaterRipple(false), 900);
+
+                  setIsModalOpen(true);
+                }
+              }}
+            >
+              {isTreeComplete ? "성장 완료" : "물 주기(포인트 기여)"}
+            </button>
           </div>
         </div>
       </section>
@@ -380,7 +499,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
                   className={`${styles.legendIcon} ${getLegendColorClass(item.rank)}`}
                 />
                 <span className={styles.legendLabel}>
-                  {item.name} : {item.value}h2O
+                  {item.name} : {item.value}H2O
                 </span>
               </div>
             ))}
@@ -418,7 +537,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
 
             <div className={styles.modalContent}>
               <p className={styles.needText}>
-                다음 성장까지 필요한 물 {currentStageTarget - regionWater}h2O
+                다음 성장까지 필요한 물 {currentStageTarget - regionWater}H2O
               </p>
 
               {/* 중앙 물방울 */}
@@ -446,7 +565,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
                   </span>
 
                   <span className={styles.centerText}>
-                    선택한 물: {waterAmount}h2O
+                    선택한 물: {waterAmount}H2O
                   </span>
 
                   <span className={styles.rightText}>
@@ -511,13 +630,13 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
           <div className={styles.completeModalBox}>
             <div className={styles.completeInner}>
               <p className={styles.completeTitle}>
-                {resultData.regionName}에 {resultData.donatedWater}h2O
+                {resultData.regionName}에 {resultData.donatedWater}H2O
                 주었습니다.
               </p>
 
               <p>
-                배율 x{resultData.multiplier} 적용 → 실제 반영{" "}
-                {resultData.appliedWater}h2O
+                배율 x{resultData.multiplier} 적용 · 실제 반영{" "}
+                {resultData.appliedWater}H2O
               </p>
 
               <div className={styles.completeWaterWrap}>
@@ -545,7 +664,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
                 </div>
 
                 <p className={styles.completeAmountText}>
-                  {resultData.totalWater}h2O/{resultData.targetWater}h2O
+                  {resultData.totalWater}H2O/{resultData.targetWater}H2O
                 </p>
               </div>
 

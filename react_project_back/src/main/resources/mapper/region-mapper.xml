@@ -17,26 +17,39 @@
           ON R.REGION_NO = T.REGION_NO
         ORDER BY R.REGION_NO
     </select>
-	    
-	<update id="increaseTreeExp">
-	    UPDATE REGION_TREE_TBL
-	    SET 
-	        TREE_EXP = TREE_EXP + #{point},
-	        TOTAL_POINT_USED = TOTAL_POINT_USED + #{point}
-	    WHERE REGION_NO = #{regionNo}
-	</update>
-	
+
+    <update id="increaseTreeExp">
+        UPDATE REGION_TREE_TBL
+        SET TREE_EXP = TREE_EXP + #{appliedPoint}
+        WHERE REGION_NO = #{regionNo}
+    </update>
+
 	<insert id="insertContribution">
 	    INSERT INTO REGION_CONTRIBUTION_TBL
-	    (CONTRIBUTION_NO, MEMBER_ID, REGION_NO, CONTRIBUTED_POINT)
-	    VALUES (contribution_seq.NEXTVAL, #{memberId}, #{regionNo}, #{point})
+	    (CONTRIBUTION_NO, MEMBER_ID, REGION_NO, CONTRIBUTED_POINT, CONTRIBUTED_AT)
+	    VALUES (contribution_seq.NEXTVAL, #{memberId}, #{regionNo}, #{point}, SYSDATE)
 	</insert>
-	
-	
-	<update id="resetWeeklyTree">
-    UPDATE REGION_TREE_TBL
-    SET TREE_LEVEL = 1,
-        TREE_EXP = 0,
-        TOTAL_POINT_USED = 0
-</update>
+
+    <update id="resetWeeklyTree">
+        UPDATE REGION_TREE_TBL
+        SET TREE_LEVEL = 1,
+            TREE_EXP = 0,
+            TOTAL_POINT_USED = 0
+    </update>
+    
+	<select id="selectRecentContributionList" resultType="contribution">
+	    SELECT
+	        C.CONTRIBUTION_NO AS contributionNo,
+	        C.MEMBER_ID AS memberId,
+	        C.REGION_NO AS regionNo,
+	        R.REGION_NAME AS regionName,
+	        C.CONTRIBUTED_POINT AS contributedPoint,
+	        TO_CHAR(C.CONTRIBUTED_AT, 'YYYY-MM-DD HH24:MI:SS') AS contributedAt
+	    FROM REGION_CONTRIBUTION_TBL C
+	    JOIN REGION_TBL R
+	      ON C.REGION_NO = R.REGION_NO
+	    WHERE C.CONTRIBUTED_AT >= SYSDATE - (1/1440)
+	    ORDER BY C.CONTRIBUTED_AT DESC
+	</select>
+
 </mapper>

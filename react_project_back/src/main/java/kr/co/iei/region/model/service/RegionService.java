@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.iei.member.model.dao.MemberDao;
 import kr.co.iei.region.model.dao.RegionDao;
 import kr.co.iei.region.model.vo.Region;
+import kr.co.iei.region.model.vo.RegionContribution;
 
 @Service
 public class RegionService {
@@ -27,33 +28,46 @@ public class RegionService {
     @Transactional
     public int contributePoint(String memberId, int regionNo, int point) {
 
-        // 1. 현재 포인트 조회
         int currentPoint = memberDao.selectMemberPoint(memberId);
 
-        // ❗ 포인트 부족 방지
         if (currentPoint < point) {
             throw new RuntimeException("포인트 부족");
         }
 
-        // 2. 회원 포인트 차감
+        double multiplier = getRegionMultiplier(regionNo);
+        int appliedPoint = (int)Math.round(point * multiplier);
+
         int result1 = memberDao.decreasePoint(memberId, point);
-
-        // 3. 지역 경험치 증가
-        int result2 = regionDao.increaseTreeExp(regionNo, point);
-
-        // 4. 기여 기록 저장
+        int result2 = regionDao.increaseTreeExp(regionNo, appliedPoint);
         int result3 = regionDao.insertContribution(memberId, regionNo, point);
 
-        // 5. 하나라도 실패하면 롤백
         if (result1 == 0 || result2 == 0 || result3 == 0) {
             throw new RuntimeException("DB 처리 실패");
         }
 
         return 1;
     }
-    
+
+    private double getRegionMultiplier(int regionNo) {
+        switch (regionNo) {
+            case 2: return 1.2; // 서울
+            case 3: return 1.0; // 경기
+            case 4: return 2.1; // 인천
+            case 5: return 1.6; // 충청
+            case 6: return 1.7; // 전라
+            case 7: return 1.1; // 경상
+            case 8: return 3.0; // 강원
+            case 9: return 3.0; // 제주
+            default: return 1.0;
+        }
+    }
     @Transactional
     public int resetWeeklyTree() {
         return regionDao.resetWeeklyTree();
+    }
+
+
+    public List<RegionContribution> selectRecentContributionList() {
+        return regionDao.selectRecentContributionList();
     }
 }

@@ -4,6 +4,7 @@ package kr.co.iei.board.controller;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,8 +52,34 @@ public class BoardController {
     ) {
         List<Board> list = boardService.selectBoardList(status, searchType, searchKeyword);
 
+        List<HashMap<String, Object>> mapped = list.stream()
+            .map(board -> {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("boardNo", board.getBoardNo());
+                map.put("writerId", board.getWriterId());
+                map.put("boardTitle", board.getBoardTitle());
+                map.put("boardContent", board.getBoardContent());
+                map.put("boardThumb", board.getBoardThumb());
+                map.put("boardDate", board.getBoardDate());
+                map.put("memberNickname", board.getMemberNickname());
+                map.put("boardStatus", board.getBoardStatus());
+                map.put("boardLat", board.getBoardLat());
+                map.put("boardLng", board.getBoardLng());
+                map.put("readCount", board.getReadCount());
+                map.put("ctpv", board.getCtpv());
+                map.put("sgg", board.getSgg());
+                map.put("updatedAt", board.getUpdatedAt());
+                map.put("writerNickname", board.getWriterNickname());
+                map.put("createDate", board.getCreateDate());
+                map.put("thumbnailUrl", board.getThumbnailUrl());
+                map.put("likeCount", board.getLikeCount());
+                map.put("commentCount", board.getCommentCount());
+                return map;
+            })
+            .collect(Collectors.toList());
+
         HashMap<String, Object> result = new HashMap<>();
-        result.put("items", list);
+        result.put("items", mapped);
         return result;
     }
 	//게시글 작성
@@ -85,11 +112,15 @@ public class BoardController {
 	}
 	 
 	// 수정
+	 // 게시글 수정 요청을 처리하는 API임.
+	 // 1) 요청 보낸 사람이 해당 게시글 작성자인지 검사하고,
+	 // 2) 작성자가 맞으면 수정 내용을 서비스에 전달함.
 	 @PatchMapping("/{boardNo}")
 	 public ResponseEntity<?> updateBoard(@PathVariable int boardNo, @RequestBody Board board, @RequestParam String memberId) {
 	     if (!boardService.isBoardAuthor(boardNo, memberId)) {
 	         return ResponseEntity.status(403).body("작성자만 수정할 수 있습니다.");
 	     }
+	     // URL에서 받은 boardNo를 객체에 다시 설정함.
 	     board.setBoardNo(boardNo);
 	     int result = boardService.updateBoard(board);
 	     return ResponseEntity.ok(result);
@@ -253,8 +284,15 @@ public class BoardController {
 	// frontend에서 인기 게시글을 조회하기 위해 추가한 엔드포인트입니다.
 	// Bestpostlist.jsx에서 /boards/best로 요청하여 top 게시글 목록을 받아옵니다.
 	@GetMapping(value="/best")
-	public List<BoardLike> bestBoardList() {
-		return boardService.bestBoardList();
+	public List<BoardLike> bestBoardList(
+			@RequestParam(defaultValue = "0") int status
+	) {
+		return boardService.bestBoardList(status);
+	}
+
+	@GetMapping(value="/tips/list")
+	public ResponseEntity<List<Board>> getTipBoardList() {
+		return ResponseEntity.ok(boardService.getTipBoardList());
 	}
 	 
 	@GetMapping(value="{memberId}")

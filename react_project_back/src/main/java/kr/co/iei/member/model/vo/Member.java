@@ -32,4 +32,12 @@ public class Member {
     private Integer boardCount;					// 게시글 수 추가 
     private Integer commentCount;				// 댓글 수 추가 
     private Integer reportCount;				// 게시글이 신고당한 횟수 
+
+    public Integer getMemberStatus() {
+        return memberStatus;
+    }
+
+    public void setMemberStatus(Integer memberStatus) {
+        this.memberStatus = memberStatus;
+    }
 }

@@ -14,6 +14,9 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
+const getBoardNo = (board) =>
+  board?.boardNo ?? board?.boardId ?? board?.id ?? null;
+
 // 이미지 src는 서버에서 여러 형태로 내려올 수 있습니다.
 // 예: 이미지 전체 URL, /upload/ 경로, /board/editor/ 경로, 파일명만 전달되는 경우.
 // 여기서 브라우저가 바로 요청 가능한 URL로 변환해 줍니다.
@@ -68,6 +71,7 @@ const Community = ({
 
   const [type, setType] = useState(1);
   const [keyword, setKeyword] = useState("");
+  const [highlightBoardNo, setHighlightBoardNo] = useState(null);
 
   const [searchType, setSearchType] = useState(1);
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -79,6 +83,7 @@ const Community = ({
   const [content, setContent] = useState("");
 
   const [selectedBoard, setSelectedBoard] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   const [attachedFiles, setAttachedFiles] = useState([]);
 
@@ -89,6 +94,7 @@ const Community = ({
     const params = new URLSearchParams(location.search);
     const modeParam = params.get("mode");
     const missionParam = params.get("mission");
+    const boardNoParam = params.get("boardNo");
 
     if (modeParam === "write") {
       setMode("write");
@@ -97,18 +103,9 @@ const Community = ({
     }
 
     setMissionType(missionParam || null);
+    setHighlightBoardNo(boardNoParam ? String(boardNoParam) : null);
   }, [location.search]);
-  /*
-  const [addr, setAddr] = useState("선택된 위치 없음");
-  const [lnglat, setLnglat] = useState({
-    lat: 37.5665 - 0.001,
-    lng: 126.978,
-  });
-  const [ctpvsgg, setCtpvsgg] = useState({
-    ctpv: "",
-    sgg: "",
-  });
-  */
+
   const [selectAddr, setSelectAddr] = useState("선택된 위치 없음");
   const [selectLnglat, setSelectLnglat] = useState({
     lat: 0,
@@ -132,12 +129,12 @@ const Community = ({
           if (!board?.boardNo) return board;
 
           const commentRequest = axios.get(
-            `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/comments`,
+            `${BACKSERVER}/boards/${board.boardNo}/comments`,
           );
 
           const likeRequest = memberId
             ? axios.get(
-                `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes/${memberId}`,
+                `${BACKSERVER}/boards/${board.boardNo}/likes/${memberId}`,
               )
             : Promise.resolve({ data: false });
 
@@ -167,7 +164,7 @@ const Community = ({
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/boards`, {
+      .get(`${BACKSERVER}/boards`, {
         params: {
           status: 0,
           searchType,
@@ -192,6 +189,69 @@ const Community = ({
         setBoardList([]);
       });
   }, [searchType, searchKeyword, sido, sigungu, memberId]);
+
+  useEffect(() => {
+    if (!highlightBoardNo || !boardList.length) return;
+
+    const targetBoard = boardList.find(
+      (board) => String(getBoardNo(board)) === String(highlightBoardNo),
+    );
+    if (!targetBoard) return;
+
+    if (String(expandedBoardNo) === String(highlightBoardNo)) return;
+
+    setSelectedBoard(targetBoard);
+
+    axios
+      .get(`${BACKSERVER}/boards/${highlightBoardNo}/read`)
+      .then(() => {
+        setBoardList((prev) =>
+          prev.map((item) =>
+            String(item.boardNo) === String(highlightBoardNo)
+              ? { ...item, readCount: (item.readCount ?? 0) + 1 }
+              : item,
+          ),
+        );
+      })
+      .catch((err) => {
+        console.error("게시글 상세 이동 시 조회수 업데이트 실패", err);
+      });
+
+    setExpandedBoardNo(String(highlightBoardNo));
+    setHighlightBoardNo(null);
+  }, [boardList, highlightBoardNo]);
+
+  useEffect(() => {
+    if (!expandedBoardNo) {
+      setSelectedBoard(null);
+      setDetailLoading(false);
+      return;
+    }
+
+    if (
+      getBoardNo(selectedBoard) &&
+      String(getBoardNo(selectedBoard)) === String(expandedBoardNo) &&
+      selectedBoard.boardContent
+    ) {
+      setDetailLoading(false);
+      return;
+    }
+
+    setDetailLoading(true);
+    axios
+      .get(`${BACKSERVER}/boards/${expandedBoardNo}`)
+      .then((res) => {
+        if (res.data) {
+          setSelectedBoard(res.data);
+        }
+      })
+      .catch((err) => {
+        console.error("게시글 상세 정보 로드 실패", err);
+      })
+      .finally(() => {
+        setDetailLoading(false);
+      });
+  }, [expandedBoardNo, selectedBoard]);
 
   useEffect(() => {
     if (!mapDivRef.current || !window.naver) {
@@ -293,7 +353,7 @@ const Community = ({
       };
 
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKSERVER}/boards`,
+        `${BACKSERVER}/boards`,
         requestData,
       );
       const savedBoard = res.data;
@@ -311,7 +371,7 @@ const Community = ({
           formData.append("memberId", memberId);
 
           await axios.post(
-            `${import.meta.env.VITE_BACKSERVER}/boards/${boardNo}/files`,
+            `${BACKSERVER}/boards/${boardNo}/files`,
             formData,
             {
               headers: {
@@ -349,7 +409,7 @@ const Community = ({
 
         // 목록 다시 불러오기
         const listRes = await axios.get(
-          `${import.meta.env.VITE_BACKSERVER}/boards`,
+          `${BACKSERVER}/boards`,
           {
             params: {
               status: 0,
@@ -417,7 +477,7 @@ const Community = ({
       };
 
       const res = await axios.patch(
-        `${import.meta.env.VITE_BACKSERVER}/boards/${selectedBoard.boardNo}`,
+        `${BACKSERVER}/boards/${selectedBoard.boardNo}`,
         requestData,
         { params: { memberId } },
       );
@@ -435,7 +495,7 @@ const Community = ({
         setMode("list");
 
         const listRes = await axios.get(
-          `${import.meta.env.VITE_BACKSERVER}/boards`,
+          `${BACKSERVER}/boards`,
           {
             params: {
               status: 0,
@@ -489,7 +549,7 @@ const Community = ({
 
     try {
       const res = await axios.delete(
-        `${import.meta.env.VITE_BACKSERVER}/boards/${boardNo}`,
+        `${BACKSERVER}/boards/${boardNo}`,
         {
           timeout: 5000,
           params: { memberId },
@@ -639,12 +699,14 @@ const Community = ({
               <BoardListBox
                 boardList={boardList}
                 expandedBoardNo={expandedBoardNo}
+                selectedBoard={selectedBoard}
                 setExpandedBoardNo={setExpandedBoardNo}
-                setBoardList={setBoardList}
                 setSelectedBoard={setSelectedBoard}
+                setBoardList={setBoardList}
                 startEdit={startEdit}
                 deleteBoard={deleteBoard}
                 getImageUrl={getImageUrl}
+                detailLoading={detailLoading}
               />
             </>
           ) : (

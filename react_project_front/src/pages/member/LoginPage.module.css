@@ -1,11 +1,11 @@
 /* LoginPage.module.css */
 
 .login_wrap {
-  width: 100%;
-  max-width: 360px;
-  margin: 60px auto;
+  width: 500px;
+  min-height: 65vh;
+  margin: 80px auto;
   /* 하단에 이미지가 들어갈 공간(약 120px~150px)을 padding-bottom으로 확보합니다 */
-  padding: 40px 25px 150px;
+  padding: 50px 35px 180px;
   background-color: #ffffff;
   border-radius: 25px; /* 조금 더 둥글게 */
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -20,12 +20,13 @@
 /*로그인 제목 설정*/
 .page_title {
   padding: 10px;
+  font-size: 30px;
+  font-weight: bold;
   margin-top: -20px;
-  margin-bottom: 10px;
-  font-size: larger;
+  margin-bottom: 20px;
 }
 
-/*로그인 이미지 설정*/
+/*로그인 내부 폼 이미지 설정*/
 .login_img {
   position: absolute; /* 절대 위치 설정 */
   bottom: 0; /* 바닥에 밀착 */
@@ -46,8 +47,8 @@
 
 .input_field {
   width: 100%;
-  padding: 14px 16px;
-  margin-bottom: 14px; /* 입력창 간격 */
+  padding: 16px 18px;
+  margin-bottom: 16px; /* 입력창 간격 */
   font-size: 15px;
   color: #333;
   border: 1px solid #ddd;
@@ -98,6 +99,7 @@
   transition:
     transform 0.2s ease,
     color 0.2s ease;
+  font-size: 20px;
 }
 
 .search_wrap a:hover {
@@ -110,7 +112,7 @@
 .login_btn {
   width: 100%;
   padding: 14px;
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 600;
   color: white;
 

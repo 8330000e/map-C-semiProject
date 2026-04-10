@@ -79,6 +79,10 @@ const Main = () => {
   const { memberId } = useAuthStore();
   const isLogin = !!memberId;
 
+  const getBoardNo = (board) => {
+    return board?.boardNo ?? board?.boardId ?? board?.id ?? null;
+  };
+
   //랜덤 미션 패널
   const [todayRandomMission, setTodayRandomMission] = useState(null);
   const [showMissionBubble, setShowMissionBubble] = useState(false);
@@ -112,6 +116,8 @@ const Main = () => {
   //  - 화면에 한 개씩 표시하고 20초마다 다음 댓글로 전환함.
   //  - 긴 텍스트는 자동 스크롤 애니메이션 처리함.
   const [realtimeComments, setRealtimeComments] = useState([]);
+  const [tipBoards, setTipBoards] = useState([]);
+  const [tipIndex, setTipIndex] = useState(0);
 
   useEffect(() => {
     axios
@@ -120,6 +126,11 @@ const Main = () => {
         setRealtimeComments(Array.isArray(res.data) ? res.data : []),
       )
       .catch((err) => console.error("실시간 댓글 조회 실패", err));
+
+    axios
+      .get(`${BACKSERVER}/boards/tips/list`)
+      .then((res) => setTipBoards(Array.isArray(res.data) ? res.data : []))
+      .catch((err) => console.error("팁 리스트 조회 실패", err));
   }, []);
 
   // 화면에 현재 보여줄 댓글 1개
@@ -130,6 +141,20 @@ const Main = () => {
       Math.floor(Math.random() * realtimeComments.length)
     ];
   });
+
+  useEffect(() => {
+    if (!tipBoards.length) return;
+
+    let idx = Math.floor(Math.random() * tipBoards.length);
+    setTipIndex(idx);
+
+    const interval = setInterval(() => {
+      idx = (idx + 1) % tipBoards.length;
+      setTipIndex(idx);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [tipBoards]);
 
   // 텍스트를 왼쪽으로 이동시키기 위한 x축 값(px)
   const [realtimeOffset, setRealtimeOffset] = useState(0);
@@ -142,10 +167,12 @@ const Main = () => {
     if (!realtimeComments.length) return;
     let idx = 0;
     setVisibleRealtimeComment(realtimeComments[0]);
+    // 실시간 댓글을 5초마다 바꿔서 보여주는 로직임.
+    // visibleRealtimeComment 상태가 새로운 댓글로 변경되면 화면에서 재렌더링됨.
     const timer = setInterval(() => {
       idx = (idx + 1) % realtimeComments.length;
       setVisibleRealtimeComment(realtimeComments[idx]);
-    }, 20000);
+    }, 5000);
     return () => clearInterval(timer);
   }, [realtimeComments]);
 
@@ -380,7 +407,44 @@ const Main = () => {
           </div>
           <div className="tip_list roundBorder">
             <p>팁 리스트</p>
-            {/*위치설명*/}
+            {tipBoards.length > 0 ? (
+              <div
+                className="tip_item"
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  /*
+                    팁 리스트 클릭 이동 로직임.
+                    1) tipBoards 배열에서 현재 보이는 tipIndex의 게시물 정보를 가져옴.
+                    2) getBoardNo()는 boardNo, boardId, id 등 여러 후보 값을 확인함.
+                    3) boardNo가 유효하면 /map-community 페이지에 쿼리 파라미터로 전달해서
+                       해당 게시물 상세를 보여주도록 함.
+                    4) boardNo가 없으면 상세 페이지를 열 수 없으므로 맵 커뮤니티 메인으로 이동함.
+                  */
+                  const boardNo = getBoardNo(tipBoards[tipIndex]);
+                  if (boardNo) {
+                    navigate(`/map-community?boardNo=${boardNo}`);
+                  } else {
+                    navigate("/map-community");
+                  }
+                }}
+              >
+                <div className="tip_title">
+                  {tipBoards[tipIndex]?.boardTitle || "제목 정보 없음"}
+                </div>
+                <div className="tip_author">
+                  {tipBoards[tipIndex]?.writerId || "작성자 정보 없음"}
+                </div>
+                <div className="tip_date">
+                  {tipBoards[tipIndex]?.boardDate
+                    ? new Date(tipBoards[tipIndex].boardDate).toLocaleDateString(
+                        "ko-KR",
+                      )
+                    : "날짜 정보 없음"}
+                </div>
+              </div>
+            ) : (
+              <div className="tip_empty">스크랩된 팁이 없습니다.</div>
+            )}
           </div>
         </div>
 
