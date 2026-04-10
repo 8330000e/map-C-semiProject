@@ -1,5 +1,6 @@
 package kr.co.iei.campaign.controller;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.iei.campaign.model.service.CampaignService;
 import kr.co.iei.campaign.model.vo.Campaign;
+import kr.co.iei.campaign.model.vo.CampaignParticipance;
 import kr.co.iei.utils.FileUtils;
 
 @CrossOrigin("http://localhost:5173")
@@ -69,14 +72,31 @@ public class CampaignController {
 		int result = campaignService.joinCampaign(camp);
 		return ResponseEntity.ok(result);
 	}
-	@PatchMapping(value="/{campaignNo}/status")
-	public ResponseEntity<?> changeStatus(@PathVariable Integer campaignNo, @RequestParam Map<String,Integer> status){
-		Integer campaignStatus=status.get("status");
-		System.out.println(campaignStatus);
-		Campaign camp = new Campaign();
-		camp.setCampaignNo(campaignNo);
-		camp.setCampaignStatus(campaignStatus);
-		int result = campaignService.changeStatus(camp);
+	@PostMapping(value="/{memberId}/memothumb")
+	public ResponseEntity<?> insertMemo(@PathVariable String memberId,@RequestParam("campaignThumb") MultipartFile memoThumb,
+			@RequestParam("campaignMemo") String campaignMemo, @RequestParam("campaignNo") Integer campaignNo){
+		if(memoThumb == null|| memoThumb.isEmpty()) {
+			throw new RuntimeException("썸네일이 없음");
+		}
+		File saveFolder = new File(new File(root),"campaign/memo");
+		if(!saveFolder.exists()) {
+			saveFolder.mkdirs();
+		}
+		CampaignParticipance campPart = new CampaignParticipance();
+		String filename = FileUtils.upload(saveFolder.getAbsolutePath() + File.separator,memoThumb);
+		campPart.setCampaignThumb(filename);
+		System.out.println(filename);
+		campPart.setMemberId(memberId);
+		campPart.setCampaignNo(campaignNo);
+		campPart.setCampaignMemo(campaignMemo);
+		int result = campaignService.insertMemo(campPart);
 		return ResponseEntity.ok(result);
 	}
+	@GetMapping(value="/boards")
+	public ResponseEntity<?> getCampBoardList(@RequestParam Integer campaignNo){
+		List<CampaignParticipance> campPart = campaignService.getCampBoardList(campaignNo);
+		return ResponseEntity.ok(campPart);
+	}
+	
+	
 }

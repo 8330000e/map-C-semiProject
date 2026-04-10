@@ -1,5 +1,6 @@
 package kr.co.iei.campaign.model.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.iei.campaign.model.dao.CampaignDao;
 import kr.co.iei.campaign.model.vo.Campaign;
+import kr.co.iei.campaign.model.vo.CampaignParticipance;
 
 @Service
 public class CampaignService {
@@ -47,14 +49,30 @@ public class CampaignService {
 		}
 		return number;
 	}
-
+	@Transactional
 	public int joinCampaign(Campaign camp) {
 		int result = campaignDao.joinCampaign(camp);
 		return result;
 	}
-
-	public int changeStatus(Campaign camp) {
-		int result = campaignDao.changeStatus(camp);
+	@Transactional
+	public int changeStatus(Campaign camp2) {
+		int result = campaignDao.changeStatus(camp2);
 		return result;
 	}
+	@Transactional
+	public int insertMemo(CampaignParticipance campPart) {
+		Integer campaignNo=campPart.getCampaignNo();
+		Campaign camp = campaignDao.selectOneCampaign(campaignNo);
+		campPart.setCampaignExpireDate((camp.getCampaignExpireDate()));
+		System.out.println(campPart);
+		int result = campaignDao.insertMemo(campPart);
+		return result;
+	}
+
+	public List<CampaignParticipance> getCampBoardList(Integer campaignNo) {
+		List<CampaignParticipance> campPart = campaignDao.getCampBoardList(campaignNo);
+		return campPart;
+	}
+
+	
 }

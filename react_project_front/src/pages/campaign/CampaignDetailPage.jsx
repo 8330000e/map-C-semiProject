@@ -17,7 +17,8 @@ const CampaignDetailPage = () => {
   const [campaignDetail, setCampaignDetail] = useState();
   const [inCampaign, setInCampaign] = useState(false);
   const [dateOut, setDateout] = useState(true);
-  const realtime = Date.now();
+  // const realtime = Date.now(); 로직이 back으로 감
+  const [boardList, setBoardList] = useState([]);
 
   useEffect(() => {
     axios
@@ -54,7 +55,20 @@ const CampaignDetailPage = () => {
         console.log(err);
       });
   }, [inCampaign]);
-
+  useEffect(() => {
+    axios
+      .get(
+        `${import.meta.env.VITE_BACKSERVER}/campaigns/boards?campaignNo=${campaignNo}`,
+      )
+      .then((res) => {
+        // console.log(res.data);
+        setBoardList([...res.data]);
+        // console.log(boardList);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   return (
     memberId &&
     readComplete && (
@@ -95,6 +109,7 @@ const CampaignDetailPage = () => {
           dateOut={dateOut}
           memberId={memberId}
           isCreator={isCreator}
+          boardList={boardList}
         />
       </div>
     )
@@ -170,37 +185,53 @@ const PostBoard = ({
   memberId,
   dateOut,
   isCreator,
+  boardList,
 }) => {
   return (
-    <div className={styles.campdetailpage_board_wrap}>
-      <div className={styles.board_max_wrap}>
-        {/**Math.random -> 0 ~ 1 사이의 숫자 */}
-        <div
-          style={{
-            backgroundColor: "#FA9B3B",
-            width: "250px",
-            height: "200px",
-            position: "absolute",
-            left: `${Math.random() * 70}` + `px`,
-            top: `${Math.random() * 100}` + "px",
-            transform: `rotate(${Math.ceil(Math.random() * 2) / 2 === 1 ? 1 * (Math.random() * 15) : -1 * (Math.random() * 15)}deg)`,
+    boardList && (
+      <div className={styles.campdetailpage_board_wrap}>
+        {console.log(boardList)}
+        {boardList.map((list, index) => {
+          return (
+            <div
+              className={styles.board_max_wrap}
+              key={index + list.campaignMemo}
+            >
+              {/**Math.random -> 0 ~ 1 사이의 숫자 */}
+              <div
+                style={{
+                  backgroundColor: "#FA9B3B",
+                  width: "250px",
+                  height: "200px",
+                  position: "absolute",
+                  left: `${Math.random() * 70}` + `px`,
+                  top: `${Math.random() * 100}` + "px",
+                  transform: `rotate(${Math.ceil(Math.random() * 2) / 2 === 1 ? 1 * (Math.random() * 15) : -1 * (Math.random() * 15)}deg)`,
+                }}
+              >
+                <img
+                  src={`${import.meta.env.VITE_BACKSERVER}/campaign/memo/${list.campaignThumb}`}
+                />
+                <p>{list.campaignMemo}</p>
+              </div>
+            </div>
+          );
+        })}
+        {/* <div className={styles.board_max_wrap}></div>
+        <div className={styles.board_max_wrap}></div>
+        <div className={styles.board_max_wrap}></div>
+        <div className={styles.board_max_wrap}></div>
+        <div className={styles.board_max_wrap}></div> */}
+        <button
+          className={styles.board_btn}
+          disabled={isCreator ? !dateOut : !inCampaign || !dateOut} //현재 캠페인 생성자가 못건드림(생성자를 campaign_member_tbl에 추가시켜야 할 것 같음)
+          onClick={() => {
+            navigate(`/campaign/memoWrite/${campaignNo}`);
           }}
-        ></div>
+        >
+          메모등록
+        </button>
       </div>
-      <div className={styles.board_max_wrap}></div>
-      <div className={styles.board_max_wrap}></div>
-      <div className={styles.board_max_wrap}></div>
-      <div className={styles.board_max_wrap}></div>
-      <div className={styles.board_max_wrap}></div>
-      <button
-        className={styles.board_btn}
-        disabled={!dateOut || !inCampaign}
-        onClick={() => {
-          navigate(`/campaign/memoWrite/${campaignNo}`);
-        }}
-      >
-        메모등록
-      </button>
-    </div>
+    )
   );
 };

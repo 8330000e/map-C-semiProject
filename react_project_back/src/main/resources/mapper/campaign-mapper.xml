@@ -48,4 +48,21 @@
 	<update id="changeStatus">
 		update create_campaign_tbl set campaign_status=#{campaignStatus} where campaign_no=#{campaignNo}
 	</update>
+	<select id="selectCampaignStatus" resultType="camp">
+		select campaign_no,campaign_status,campaign_goal_member,campaign_expire_date,(select count(*) from campaign_member_tbl cmt where cmt.campaign_no=cct.campaign_no) as member_count  from create_campaign_tbl cct
+	</select>
+	<insert id="insertMemo">
+		insert into campaign_participance_tbl values(
+				campaign_participance_seq.nextval,
+				#{campaignThumb},
+				#{campaignMemo},
+				#{campaignNo},
+				sysdate,
+				to_timestamp(#{campaignExpireDate}),
+				#{memberId}
+				)
+	</insert>
+	<select id="getCampBoardList" resultType="campPart">
+		select * from campaign_participance_tbl where campaign_no =#{campaignNo}
+	</select>
 </mapper>
