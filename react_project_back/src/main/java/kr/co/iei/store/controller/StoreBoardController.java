@@ -272,14 +272,55 @@ public class StoreBoardController {
         }
     }
 
+    @GetMapping("/trades")
+    public ResponseEntity<?> getTrades(@RequestParam(required = false) String buyerId,
+                                       @RequestParam(required = false) String sellerId) {
+        try {
+            if (buyerId != null) {
+                return ResponseEntity.ok(storeBoardService.getTradesByBuyerId(buyerId));
+            }
+            if (sellerId != null) {
+                return ResponseEntity.ok(storeBoardService.getTradesBySellerId(sellerId));
+            }
+            return ResponseEntity.badRequest().body("buyerId 또는 sellerId 중 하나를 지정해야 합니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            log.error("거래 목록 조회 실패 buyerId={} sellerId={}", buyerId, sellerId, e);
+            return ResponseEntity.internalServerError().body("거래 목록 조회 실패: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/trades/{tradeNo}")
+    public ResponseEntity<?> getTradeByTradeNo(@PathVariable Long tradeNo) {
+        try {
+            StoreTradeInfo tradeInfo = storeBoardService.getTradeInfoByTradeNo(tradeNo);
+            if (tradeInfo == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(tradeInfo);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            log.error("거래 정보 조회 실패 tradeNo={}", tradeNo, e);
+            return ResponseEntity.internalServerError().body("거래 정보 조회 실패: " + e.getMessage());
+        }
+    }
+
     // 거래 정보 조회 기능임. 상품 번호와 구매자 정보로 거래 상태를 가져옴.
     @GetMapping("/markets/{marketNo}/trade-info")
     public ResponseEntity<?> getTradeInfo(@PathVariable Long marketNo,
                                           @RequestParam(required = false) String buyerId) {
         try {
-            StoreTradeInfo tradeInfo = buyerId != null
-                                      ? storeBoardService.getTradeInfoByMarketNoAndBuyerId(marketNo, buyerId)
-                                      : storeBoardService.getTradeInfoByMarketNo(marketNo);
+            StoreTradeInfo tradeInfo = null;
+            if (buyerId != null) {
+                tradeInfo = storeBoardService.getTradeInfoByMarketNoAndBuyerId(marketNo, buyerId);
+                if (tradeInfo == null) {
+                    tradeInfo = storeBoardService.getTradeInfoByMarketNo(marketNo);
+                }
+            } else {
+                tradeInfo = storeBoardService.getTradeInfoByMarketNo(marketNo);
+            }
             if (tradeInfo == null) {
                 return ResponseEntity.notFound().build();
             }

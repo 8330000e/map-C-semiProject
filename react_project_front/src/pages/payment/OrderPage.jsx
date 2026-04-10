@@ -39,11 +39,13 @@ const OrderPage = () => {
     const orderName = location.state?.orderName || "테스트 상품";
     const passedAmount = Number(location.state?.amount || 0);
     const baseAmount = Number(location.state?.baseAmount || passedAmount);
-    const deliveryFee = Number(location.state?.deliveryFee || 0);
+    const deliveryMethod = location.state?.deliveryMethod || "delivery";
+    const deliveryFee = Number(
+      location.state?.deliveryFee ?? (deliveryMethod === "delivery" ? 5000 : 0),
+    );
     const amount = passedAmount > 0 ? passedAmount : baseAmount + deliveryFee;
     const itemId = location.state?.itemId;
     const marketNo = location.state?.marketNo || itemId;
-    const deliveryMethod = location.state?.deliveryMethod || "delivery";
     const sellerId = location.state?.sellerId || null;
     const sellerNickname = location.state?.sellerNickname || sellerId;
     const tradeType = location.state?.tradeType ?? null;
@@ -152,6 +154,7 @@ const OrderPage = () => {
                 sellerId,
                 sellerNickname,
                 tradeType,
+                ctpvsggId: location.state?.ctpvsggId || null,
                 productThumb: location.state?.productThumb,
                 // 입력된 주문 정보를 정리하여 전달
                 orderInfo: {

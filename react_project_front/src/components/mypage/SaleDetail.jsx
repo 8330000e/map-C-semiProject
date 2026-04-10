@@ -9,7 +9,12 @@ const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 const tradeTypeLabel = (type, text, deliveryMethod, address) => {
   const normalized = String(type ?? text ?? deliveryMethod ?? "").trim();
   const hasAddress = Boolean((address ?? "").toString().trim());
-  if (normalized === "0" || normalized === "직거래/택배") return hasAddress ? "택배" : "직거래";
+
+  if (normalized === "0" || normalized === "직거래/택배") {
+    if (deliveryMethod === "delivery" || deliveryMethod === "택배" || hasAddress) return "택배";
+    if (deliveryMethod === "direct" || deliveryMethod === "직거래") return "직거래";
+    return "직거래/택배";
+  }
   if (normalized === "1" || normalized === "직거래" || normalized === "direct") return "직거래";
   if (normalized === "2" || normalized === "택배" || normalized === "delivery") return "택배";
   return hasAddress ? "택배" : "직거래";
@@ -22,15 +27,23 @@ const getSaleStatusLabel = (productStatus) => {
 };
 
 const getTradeInfoStatusLabel = (tradeStatus) => {
-  if (tradeStatus === 0 || tradeStatus === "0") return "주문접수";
-  if (tradeStatus === 1 || tradeStatus === "1") return "배송대기";
-  if (tradeStatus === 2 || tradeStatus === "2") return "배송완료";
+  if (tradeStatus === 0 || tradeStatus === "0") return "요청";
+  if (tradeStatus === 1 || tradeStatus === "1") return "진행중";
+  if (tradeStatus === 2 || tradeStatus === "2") return "완료";
+  if (tradeStatus === 3 || tradeStatus === "3") return "취소";
+  if (tradeStatus === 4 || tradeStatus === "4") return "환불";
   return "-";
 };
 
 const getShippingStatusLabel = (shippingStatus) => {
   if (shippingStatus === 1 || shippingStatus === "1") return "배송완료";
+  if (shippingStatus === 0 || shippingStatus === "0") return "배송대기";
   return "배송전";
+};
+
+const stripStatusTag = (title) => {
+  if (!title) return "";
+  return title.replace(/^\s*\[(판매중|거래중|판매완료|예약중)\]\s*/i, "");
 };
 
 const getCourierLabel = (code) => {
@@ -77,11 +90,15 @@ const SaleDetail = () => {
         params: { status: 0, memberId: saleOrder.sellerId },
       });
 
+      const originalTradeType = normalizeTradeType(item.tradeType || item.tradeTypeText);
       const payload = {
         tradeStatus: 0,
         shippingStatus: 0,
-        tradeType: "직거래",
-        tradeTypeText: "직거래",
+        tradeType: originalTradeType,
+        tradeTypeText: originalTradeType,
+        ctpvsggId: originalTradeType === "택배" ? null : item.ctpvsggId || null,
+        buyerId: null,
+        buyerName: null,
         receiverName: null,
         buyerPhone: null,
         zipCode: null,
@@ -171,26 +188,41 @@ const SaleDetail = () => {
   }
   const saleStatus = getSaleStatusLabel(item.productStatus);
   const isSeller = saleOrder?.sellerId && saleOrder.sellerId === memberId;
-  const shippingStatus = saleOrder ? getShippingStatusLabel(saleOrder.shippingStatus) : "-";
+  const itemAddress = item.orderInfo?.address || item.address || "";
+  const defaultTradeMethod = tradeTypeLabel(item.tradeType, item.tradeTypeText, item.deliveryMethod, itemAddress);
   const saleOrderAddress = saleOrder?.orderInfo?.address || saleOrder?.address || "";
-  const tradeMethod = saleOrder ? tradeTypeLabel(saleOrder.tradeType, saleOrder.tradeTypeText, saleOrder.deliveryMethod, saleOrderAddress) : "-";
-  const rawDeliveryFee = Number(saleOrder?.deliveryFee ?? saleOrder?.orderInfo?.deliveryFee ?? 0);
-  const inferredDeliveryFee = rawDeliveryFee > 0 ? rawDeliveryFee : tradeMethod === "택배" ? 5000 : 0;
-  const totalAmount = Number(saleOrder?.tradePrice ?? item.productPrice ?? 0);
-  const productAmount = Math.max(totalAmount - inferredDeliveryFee, 0);
+  const tradeMethod = saleOrder
+    ? tradeTypeLabel(saleOrder.tradeType, saleOrder.tradeTypeText, saleOrder.deliveryMethod, saleOrderAddress)
+    : defaultTradeMethod;
+  const isDeliveryTrade = tradeMethod === "택배" || tradeMethod === "직거래/택배";
+  const hasInvoice = Boolean((saleOrder?.invoiceNumber ?? "").toString().trim());
+  const hasShippingCompleted = saleOrder && (saleOrder.shippingStatus === 1 || saleOrder.shippingStatus === "1") && hasInvoice;
+  const isDeliveryPending = saleOrder && isDeliveryTrade && !hasShippingCompleted && !hasInvoice;
+  const shippingStatus = saleOrder
+    ? isDeliveryPending
+      ? "배송대기"
+      : getShippingStatusLabel(saleOrder.shippingStatus)
+    : isDeliveryTrade
+    ? "배송대기"
+    : "-";
+  const rawOrderAmount = Number(saleOrder?.tradePrice ?? saleOrder?.amount ?? item.productPrice ?? 0);
+  const explicitProductPrice = Number(item.productPrice ?? saleOrder?.productPrice ?? 0);
+  const explicitDeliveryFee = Number(saleOrder?.deliveryFee ?? saleOrder?.orderInfo?.deliveryFee ?? item.deliveryFee ?? 0);
+  let inferredDeliveryFee = explicitDeliveryFee;
+  if (tradeMethod === "택배") {
+    if (inferredDeliveryFee <= 0) {
+      if (rawOrderAmount > explicitProductPrice && explicitProductPrice > 0) {
+        inferredDeliveryFee = rawOrderAmount - explicitProductPrice;
+      } else {
+        inferredDeliveryFee = 5000;
+      }
+    }
+  }
+  const totalAmount = rawOrderAmount;
+  const productAmount = explicitProductPrice > 0 ? explicitProductPrice : Math.max(totalAmount - inferredDeliveryFee, 0);
   const shippingFeeLabel = inferredDeliveryFee > 0 ? `${inferredDeliveryFee.toLocaleString("ko-KR")}원` : "무료";
   const shippingFeeStatus = inferredDeliveryFee > 0 ? "배송비 추가" : "배송비 없음";
-  const isShippingPending = saleOrder && (saleOrder.shippingStatus === 0 || saleOrder.shippingStatus === "0");
-  const isDeliveryTrade = Boolean(
-    saleOrder?.tradeType === 2 ||
-    saleOrder?.tradeType === "2" ||
-    saleOrder?.tradeType === 0 ||
-    saleOrder?.tradeType === "0" ||
-    saleOrder?.tradeType === "택배" ||
-    saleOrder?.tradeType === "직거래/택배" ||
-    saleOrder?.tradeTypeText?.includes("택배")
-  );
-  const showSellerCancelButton = isSeller && saleStatus === "판매완료";
+  const showSellerCancelButton = isSeller;
 
   return (
     <div className={styles.sale_history_wrap}>
@@ -204,7 +236,7 @@ const SaleDetail = () => {
         <div className={styles.section_header}>
           <div>
             <div className={styles.section_title}>주문상품</div>
-            <div className={styles.section_subtitle}>[{saleStatus}] {item.marketTitle}</div>
+            <div className={styles.section_subtitle}>[{saleStatus}] {stripStatusTag(item.marketTitle)}</div>
           </div>
           <div className={styles.section_tag}>{tradeMethod}</div>
         </div>
@@ -278,6 +310,11 @@ const SaleDetail = () => {
                           addressDetail: saleOrder.orderInfo?.addressDetail || saleOrder.addressDetail,
                           deliveryMemo: saleOrder.orderInfo?.deliveryMemo || saleOrder.deliveryMemo,
                         });
+                        if (saleOrder.sellerId) {
+                          await axios.patch(`${BACKSERVER}/api/store/boards/${id}/status`, null, {
+                            params: { status: 2, memberId: saleOrder.sellerId },
+                          });
+                        }
                         const res = await axios.get(`${BACKSERVER}/api/store/markets/${id}/trade-info`);
                         setSaleOrder(res.data);
                         setInvoiceNumber(res.data.invoiceNumber || "");
@@ -312,7 +349,7 @@ const SaleDetail = () => {
           <span>거래방법</span>
           <span>{tradeMethod}</span>
         </div>
-        {isDeliveryTrade ? (
+        {saleOrder && isDeliveryTrade ? (
           <>
             <div className={styles.row}>
               <span>배송 상태</span>
@@ -320,30 +357,36 @@ const SaleDetail = () => {
             </div>
             <div className={styles.row}>
               <span>택배사</span>
-              <span>{getCourierLabel(saleOrder.courierCode)}</span>
+              <span>{getCourierLabel(saleOrder?.courierCode)}</span>
             </div>
             <div className={styles.row}>
               <span>송장번호</span>
-              <span>{saleOrder.invoiceNumber || "-"}</span>
+              <span>{saleOrder?.invoiceNumber || "-"}</span>
             </div>
           </>
         ) : (
           <div className={styles.row}>
             <span>배송 정보</span>
-            <span>직거래</span>
+            <span>
+              {tradeMethod === "택배"
+                ? "배송 대기"
+                : tradeMethod === "직거래/택배"
+                ? "직거래/택배"
+                : "직거래"}
+            </span>
           </div>
         )}
         <div className={styles.row}>
           <span>연락처</span>
-          <span>{saleOrder.orderInfo?.phone || saleOrder.buyerPhone || "-"}</span>
+          <span>{saleOrder?.orderInfo?.phone || saleOrder?.buyerPhone || "-"}</span>
         </div>
         <div className={styles.row}>
           <span>수령인</span>
-          <span>{saleOrder.orderInfo?.receiverName || saleOrder.receiverName || "-"}</span>
+          <span>{saleOrder?.orderInfo?.receiverName || saleOrder?.receiverName || "-"}</span>
         </div>
         <div className={styles.row}>
           <span>주소</span>
-          <span>{saleOrder.orderInfo?.address || saleOrder.address || "-"} {saleOrder.orderInfo?.addressDetail || saleOrder.addressDetail || ""}</span>
+          <span>{saleOrder?.orderInfo?.address || saleOrder?.address || "-"} {saleOrder?.orderInfo?.addressDetail || saleOrder?.addressDetail || ""}</span>
         </div>
       </div>
       <div className={styles.section_card}>

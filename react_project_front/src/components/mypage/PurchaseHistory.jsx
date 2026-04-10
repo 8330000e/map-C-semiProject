@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
 import styles from "./PurchaseHistory.module.css";
@@ -55,15 +56,32 @@ const getCourierLabel = (code) => {
 const resolveTradeType = (type, typeText, deliveryMethod, address) => {
   const normalized = String(type ?? typeText ?? deliveryMethod ?? "").trim();
   const addressExists = Boolean((address ?? "").toString().trim());
-  if (normalized === "0" || normalized === "직거래/택배") return addressExists ? "택배" : "직거래";
+
+  if (normalized === "0" || normalized === "직거래/택배") {
+    if (deliveryMethod === "delivery" || deliveryMethod === "택배" || addressExists) return "택배";
+    if (deliveryMethod === "direct" || deliveryMethod === "직거래") return "직거래";
+    return "직거래/택배";
+  }
   if (normalized === "1" || normalized === "직거래" || normalized === "direct") return "직거래";
   if (normalized === "2" || normalized === "택배" || normalized === "delivery") return "택배";
   return addressExists ? "택배" : "직거래";
 };
 
-const getTradeTypeLabel = (item) => {
-  const address = item.orderInfo?.address || item.address || "";
-  return resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod, address);
+const getTradeTypeLabel = (item, tradeInfo) => {
+  const address = item.orderInfo?.address || item.address || tradeInfo?.address || "";
+  const tradeType = tradeInfo?.tradeType ?? item.tradeType;
+  const tradeTypeText = tradeInfo?.tradeTypeText ?? item.tradeTypeText;
+  const deliveryMethod = tradeInfo?.deliveryMethod ?? item.deliveryMethod;
+  return resolveTradeType(tradeType, tradeTypeText, deliveryMethod, address);
+};
+
+const getPurchaseTradeStatusLabel = (status) => {
+  if (status === 0 || status === "0") return "요청";
+  if (status === 1 || status === "1") return "진행중";
+  if (status === 2 || status === "2") return "완료";
+  if (status === 3 || status === "3") return "취소";
+  if (status === 4 || status === "4") return "환불";
+  return status ?? "";
 };
 
 const isDeliveryTrade = (item) => {
@@ -79,10 +97,52 @@ const PurchaseHistory = () => {
   const { memberId } = useAuthStore();
   const [purchaseHistory, setPurchaseHistory] = useState([]);
   const [tradeInfoMap, setTradeInfoMap] = useState({});
+  const [boardInfoMap, setBoardInfoMap] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    setPurchaseHistory(getCompletedPurchases(memberId));
+    const fetchPurchaseHistory = async () => {
+      if (!memberId) {
+        setPurchaseHistory([]);
+        return;
+      }
+
+      try {
+        const res = await axios.get(`${BACKSERVER}/api/store/trades`, {
+          params: { buyerId: memberId },
+        });
+        const serverItems = Array.isArray(res.data)
+          ? res.data
+          : Array.isArray(res.data.items)
+          ? res.data.items
+          : [];
+        const localItems = memberId ? getCompletedPurchases(memberId) : [];
+        const existingKeys = new Set(
+          serverItems.map((item) => String(item.tradeNo ?? item.marketNo ?? item.id ?? "")),
+        );
+        const combinedItems = serverItems.concat(
+          localItems.filter((item) => {
+            const key = String(item.tradeNo ?? item.marketNo ?? item.id ?? "");
+            return key && !existingKeys.has(key);
+          }),
+        );
+        const items = combinedItems.length > 0 ? combinedItems : localItems;
+        setPurchaseHistory(items);
+        const initialTradeMap = {};
+        items.forEach((item) => {
+          const marketNo = item.marketNo ?? item.id;
+          if (marketNo) {
+            initialTradeMap[marketNo] = item;
+          }
+        });
+        setTradeInfoMap(initialTradeMap);
+      } catch (err) {
+        console.error("구매내역 서버 조회 실패:", err);
+        setPurchaseHistory(memberId ? getCompletedPurchases(memberId) : []);
+      }
+    };
+
+    fetchPurchaseHistory();
   }, [memberId]);
 
   useEffect(() => {
@@ -90,35 +150,73 @@ const PurchaseHistory = () => {
     const currentItems = purchaseHistory.slice((currentPage - 1) * PAGE_SIZE, (currentPage - 1) * PAGE_SIZE + PAGE_SIZE);
 
     const fetchTradeInfo = async (marketNo) => {
+      const url = `${backendUrl}/api/store/markets/${marketNo}/trade-info`;
+      const urlWithBuyer = memberId ? `${url}?buyerId=${memberId}` : url;
       try {
-        const url = `${backendUrl}/api/store/markets/${marketNo}/trade-info${memberId ? `?buyerId=${memberId}` : ""}`;
-        const res = await fetch(url);
-        if (!res.ok) return null;
-        return await res.json();
+        let res = await fetch(urlWithBuyer);
+        if (res.ok) return await res.json();
+        if (memberId && res.status === 404) {
+          res = await fetch(url);
+          if (res.ok) return await res.json();
+        }
+        return null;
       } catch {
         return null;
       }
     };
 
-    const loadTradeInfos = async () => {
-      if (!memberId || currentItems.length === 0) return;
-      const marketNos = currentItems
-        .map((item) => item.marketNo ?? item.id)
-        .filter((marketNo) => marketNo && !tradeInfoMap[marketNo]);
-      if (marketNos.length === 0) return;
-
-      const results = await Promise.all(marketNos.map((marketNo) => fetchTradeInfo(marketNo)));
-      setTradeInfoMap((prev) => {
-        const next = { ...prev };
-        marketNos.forEach((marketNo, index) => {
-          if (results[index]) next[marketNo] = results[index];
-        });
-        return next;
-      });
+    const fetchBoardInfo = async (marketNo) => {
+      try {
+        const res = await axios.get(`${backendUrl}/api/store/boards/${marketNo}`);
+        return res.data;
+      } catch {
+        return null;
+      }
     };
 
-    loadTradeInfos();
-  }, [purchaseHistory, currentPage, memberId, tradeInfoMap]);
+    const loadTradeAndBoardInfos = async () => {
+      if (!memberId || currentItems.length === 0) return;
+      const marketNos = Array.from(
+        new Set(
+          currentItems
+            .map((item) => item.marketNo ?? item.id)
+            .filter((marketNo) => marketNo),
+        ),
+      );
+
+      const tradeMarketNos = marketNos.filter((marketNo) => !(marketNo in tradeInfoMap));
+      const boardMarketNos = marketNos.filter((marketNo) => !(marketNo in boardInfoMap));
+
+      const tradeResults = tradeMarketNos.length > 0
+        ? await Promise.all(tradeMarketNos.map((marketNo) => fetchTradeInfo(marketNo)))
+        : [];
+      const boardResults = boardMarketNos.length > 0
+        ? await Promise.all(boardMarketNos.map((marketNo) => fetchBoardInfo(marketNo)))
+        : [];
+
+      if (tradeMarketNos.length > 0) {
+        setTradeInfoMap((prev) => {
+          const next = { ...prev };
+          tradeMarketNos.forEach((marketNo, index) => {
+            next[marketNo] = tradeResults[index] ?? null;
+          });
+          return next;
+        });
+      }
+
+      if (boardMarketNos.length > 0) {
+        setBoardInfoMap((prev) => {
+          const next = { ...prev };
+          boardMarketNos.forEach((marketNo, index) => {
+            next[marketNo] = boardResults[index] ?? null;
+          });
+          return next;
+        });
+      }
+    };
+
+    loadTradeAndBoardInfos();
+  }, [purchaseHistory, currentPage, memberId]);
 
   const pageCount = Math.max(1, Math.ceil(purchaseHistory.length / PAGE_SIZE));
 
@@ -142,21 +240,26 @@ const PurchaseHistory = () => {
         <div className={styles.purchase_list}>
           {purchaseHistory.length === 0 && <p>실제 결제 완료 내역이 없습니다.</p>}
           {currentItems.map((item) => {
-          const marketNo = item.marketNo ?? item.id;
+          const purchaseId = item.tradeNo ?? item.id ?? item.marketNo ?? `${item.buyerId || "unknown"}-${item.createdAt || item.date || Math.random()}`;
+          const marketNo = item.marketNo ?? item.id ?? item.tradeNo;
           const tradeInfo = marketNo ? tradeInfoMap[marketNo] : null;
+          const boardInfo = marketNo ? boardInfoMap[marketNo] : null;
           const displayShippingStatus = tradeInfo?.shippingStatus ?? item.shippingStatus;
           const displayCourierCode = tradeInfo?.courierCode ?? item.courierCode;
           const displayInvoiceNumber = tradeInfo?.invoiceNumber ?? item.invoiceNumber;
           const address = item.orderInfo?.address || item.address || "";
-          const displayTradeType = resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod, address);
+          const displayTradeType = getTradeTypeLabel(item, tradeInfo);
           const hasDelivery = displayTradeType === "택배" || displayTradeType === "직거래/택배";
-          const itemTitle = item.title || item.marketTitle || item.orderName || "상품 이미지";
-          const imageUrl = getImageUrl(item.productThumb || item.thumb || tradeInfo?.productThumb);
+          const itemTitle = boardInfo?.marketTitle || item.title || item.marketTitle || item.orderName || "상품 이미지";
+          const imageUrl = getImageUrl(boardInfo?.productThumb || item.productThumb || item.thumb || tradeInfo?.productThumb);
+          const displayAmount = item.tradePrice ?? item.amount ?? item.orderPrice ?? 0;
+          const displayStatus = getPurchaseTradeStatusLabel(item.status ?? item.tradeStatus);
+          const displayDate = item.completedAt ?? item.createdAt ?? item.date;
 
           return (
             <Link
-              key={item.id}
-              to={`/mypage/history/purchase/${item.id}`}
+              key={purchaseId}
+              to={`/mypage/history/purchase/${purchaseId}`}
               className={styles.purchase_card}
             >
               <div className={styles.purchase_card_image_wrap}>
@@ -173,9 +276,9 @@ const PurchaseHistory = () => {
                   <div className={styles.purchase_card_image_fallback}>이미지</div>
                 )}
               </div>
-              <div className={styles.purchase_card_title}>{getStatusPrefix(item.status)}{itemTitle}</div>
-              <div className={styles.purchase_card_meta}>{item.date} · {item.status}</div>
-              <div className={styles.purchase_card_detail}>{item.amount?.toLocaleString("ko-KR")}원</div>
+              <div className={styles.purchase_card_title}>{getStatusPrefix(displayStatus)}{itemTitle}</div>
+              <div className={styles.purchase_card_meta}>{displayDate} · {displayStatus}</div>
+              <div className={styles.purchase_card_detail}>{displayAmount?.toLocaleString("ko-KR")}원</div>
               <div className={styles.purchase_card_detail}>거래방법: {displayTradeType}</div>
               {hasDelivery && (
                 <>
