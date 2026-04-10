@@ -139,6 +139,12 @@ const TossTestPayment = () => {
 				: location.state?.deliveryMethod === "direct"
 				? "직거래"
 				: tradeType;
+			const deliveryFee = Number(
+				location.state?.deliveryFee ?? (location.state?.deliveryMethod === "delivery" ? 5000 : 0),
+			);
+			const productPrice = Number(
+				location.state?.baseAmount ?? Math.max(amount - deliveryFee, 0),
+			);
 			setPendingPurchase(orderId, {
 				id: orderId,
 				marketNo,
@@ -148,12 +154,14 @@ const TossTestPayment = () => {
 				status: "구매완료",
 				tradeType,
 				tradeTypeText,
+				productPrice,
 				deliveryMethod: location.state?.deliveryMethod,
-				deliveryFee: Number(location.state?.deliveryFee || 0),
+				deliveryFee,
 				sellerId,
 				seller: sellerNickname,
 				buyerId: memberId,
 				buyerNickname: memberNickname || memberId,
+				ctpvsggId: location.state?.ctpvsggId || null,
 				orderInfo,
 				productThumb: location.state?.productThumb,
 				date: new Date().toISOString(),

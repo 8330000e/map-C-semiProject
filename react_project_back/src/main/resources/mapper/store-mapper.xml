@@ -505,6 +505,90 @@
       AND BUYER_ID = #{buyerId}
   </select>
 
+  <select id="selectTradeInfoByTradeNo" resultType="kr.co.iei.store.model.vo.StoreTradeInfo">
+    SELECT
+      TRADE_NO AS tradeNo,
+      MARKET_NO AS marketNo,
+      SELLER_ID AS sellerId,
+      BUYER_ID AS buyerId,
+      CTPVSGG_ID AS ctpvsggId,
+      TRADE_PRICE AS tradePrice,
+      TRADE_STATUS AS tradeStatus,
+      TRADE_TYPE AS tradeType,
+      CREATED_AT AS createdAt,
+      COMPLETED_AT AS completedAt,
+      REVIEW_YN AS reviewYn,
+      CANCLE_REASON AS cancleReason,
+      RECEIVER_NAME AS receiverName,
+      BUYER_NAME AS buyerName,
+      BUYER_PHONE AS buyerPhone,
+      ZIP_CODE AS zipCode,
+      ADDRESS AS address,
+      ADDRESS_DETAIL AS addressDetail,
+      DELIVERY_MEMO AS deliveryMemo,
+      INVOICE_NUMBER AS invoiceNumber,
+      COURIER_CODE AS courierCode,
+      SHIPPING_STATUS AS shippingStatus
+    FROM STORE_BOARD_TRADEINFO_TBL
+    WHERE TRADE_NO = #{tradeNo}
+  </select>
+
+  <select id="selectTradeInfoByBuyerId" resultType="kr.co.iei.store.model.vo.StoreTradeInfo">
+    SELECT
+      TRADE_NO AS tradeNo,
+      MARKET_NO AS marketNo,
+      SELLER_ID AS sellerId,
+      BUYER_ID AS buyerId,
+      CTPVSGG_ID AS ctpvsggId,
+      TRADE_PRICE AS tradePrice,
+      TRADE_STATUS AS tradeStatus,
+      TRADE_TYPE AS tradeType,
+      CREATED_AT AS createdAt,
+      COMPLETED_AT AS completedAt,
+      REVIEW_YN AS reviewYn,
+      CANCLE_REASON AS cancleReason,
+      RECEIVER_NAME AS receiverName,
+      BUYER_NAME AS buyerName,
+      BUYER_PHONE AS buyerPhone,
+      ZIP_CODE AS zipCode,
+      ADDRESS AS address,
+      ADDRESS_DETAIL AS addressDetail,
+      DELIVERY_MEMO AS deliveryMemo,
+      INVOICE_NUMBER AS invoiceNumber,
+      COURIER_CODE AS courierCode,
+      SHIPPING_STATUS AS shippingStatus
+    FROM STORE_BOARD_TRADEINFO_TBL
+    WHERE BUYER_ID = #{buyerId}
+  </select>
+
+  <select id="selectTradeInfoBySellerId" resultType="kr.co.iei.store.model.vo.StoreTradeInfo">
+    SELECT
+      TRADE_NO AS tradeNo,
+      MARKET_NO AS marketNo,
+      SELLER_ID AS sellerId,
+      BUYER_ID AS buyerId,
+      CTPVSGG_ID AS ctpvsggId,
+      TRADE_PRICE AS tradePrice,
+      TRADE_STATUS AS tradeStatus,
+      TRADE_TYPE AS tradeType,
+      CREATED_AT AS createdAt,
+      COMPLETED_AT AS completedAt,
+      REVIEW_YN AS reviewYn,
+      CANCLE_REASON AS cancleReason,
+      RECEIVER_NAME AS receiverName,
+      BUYER_NAME AS buyerName,
+      BUYER_PHONE AS buyerPhone,
+      ZIP_CODE AS zipCode,
+      ADDRESS AS address,
+      ADDRESS_DETAIL AS addressDetail,
+      DELIVERY_MEMO AS deliveryMemo,
+      INVOICE_NUMBER AS invoiceNumber,
+      COURIER_CODE AS courierCode,
+      SHIPPING_STATUS AS shippingStatus
+    FROM STORE_BOARD_TRADEINFO_TBL
+    WHERE SELLER_ID = #{sellerId}
+  </select>
+
   <insert id="insertTradeInfo" parameterType="kr.co.iei.store.model.vo.StoreTradeInfo">
     INSERT INTO STORE_BOARD_TRADEINFO_TBL
     (
