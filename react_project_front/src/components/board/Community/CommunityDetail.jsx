@@ -25,6 +25,13 @@ const formatTime = (rawDate) => {
   return `${day}일 전`;
 };
 
+const formatDate = (rawDate) => {
+  if (!rawDate) return "";
+  const date = new Date(rawDate);
+  if (Number.isNaN(date.getTime())) return rawDate;
+  return date.toLocaleDateString("ko-KR");
+};
+
 const getImageUrl = (thumb) => {
   if (!thumb) return null;
   if (typeof thumb !== "string") return null;
@@ -589,6 +596,13 @@ const CommunityDetail = ({
             <span>·</span>
             <span>{formatTime(board.createDate)}</span>
           </div>
+          {(board.updatedAt || board.updateAt) &&
+            (board.updatedAt || board.updateAt) !== board.createDate && (
+              // 상세 페이지에서는 게시글 수정 여부와 수정 날짜를 보여줌.
+              <div className={styles.detailUpdateMeta}>
+                수정됨 · {formatDate(board.updatedAt || board.updateAt)}
+              </div>
+            )}
         </div>
         <div className={styles.detailButtonsTop}>
           <button

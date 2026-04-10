@@ -27,6 +27,8 @@ const BoardListBox = ({
     const isExpanded = expandedBoardNo === board.boardNo;
     if (!isExpanded) {
       try {
+        // 게시글 목록에서 게시글을 처음 클릭했을 때 조회수를 올리는 요청을 보냄.
+        // 이미 펼쳐진 게시글을 다시 클릭하면 조회수를 다시 올리지 않도록 함.
         await axios.get(
           `${BACKSERVER}/boards/${board.boardNo}/read`,
         );
@@ -69,8 +71,14 @@ const BoardListBox = ({
                     </div>
                     <div className={styles.boardDate}>{board.createDate}</div>
                   </div>
-                  <div className={styles.boardTitle}>{board.boardTitle}</div>
-
+                  <div className={styles.boardTitleWrap}>
+                    <div className={styles.boardTitle}>{board.boardTitle}</div>
+                    {(board.updatedAt || board.updateAt) &&
+                      (board.updatedAt !== board.createDate) && (
+                        // 게시글 생성일과 수정일이 다르면 수정된 글로 판단해서 배지를 보여줌.
+                        <span className={styles.boardUpdatedBadge}>수정됨</span>
+                      )}
+                  </div>
                   {board.thumbnailUrl && (
                     <div className={styles.boardThumbnailBox}>
                       <img
