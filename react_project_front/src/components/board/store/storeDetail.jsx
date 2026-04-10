@@ -200,6 +200,22 @@ const StoreDetail = () => {
     return `${day}일 전`;
   };
 
+  const formatCommentDateTime = (rawDate) => {
+    if (!rawDate) return "";
+    const date = new Date(rawDate);
+    if (Number.isNaN(date.getTime())) return "";
+    const pad = (value) => String(value).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  };
+
+  const formatDateTime = (rawDate) => {
+    return formatCommentDateTime(rawDate);
+  };
+
+  const isCommentEdited = (comment) => {
+    return comment?.updatedAt && comment.updatedAt !== comment.createdAt;
+  };
+
   const refreshComments = async () => {
     try {
       const response = await axios.get(`${BACKSERVER}/api/store/boards/${itemId}/reviews`);
@@ -594,6 +610,10 @@ const StoreDetail = () => {
           <p>작성자 : {item.memberId}</p>
           <p>조회수 : {item.readCount || 0}</p>
           <p>댓글 : {comments.length}</p>
+          {(item.updatedAt || item.updateAt) &&
+            (item.updatedAt || item.updateAt) !== item.createdAt && (
+              <p>수정됨 · {formatDateTime(item.updatedAt || item.updateAt)}</p>
+            )}
 
           <p>거래방법 : {getTradeTypeLabel(item.tradeType)}</p>
 
@@ -803,6 +823,11 @@ const StoreDetail = () => {
                   <span>
                     {comment.memberNickname || comment.memberId} · {formatCommentDate(comment.createdAt)}
                     {isSecret && <span className={styles.reply_badge}>비공개</span>}
+                    {isCommentEdited(comment) && (
+                      <span className={styles.comment_update_info}>
+                        수정됨 · {formatCommentDateTime(comment.updatedAt)}
+                      </span>
+                    )}
                   </span>
                   {!isOwn && (
                     <button

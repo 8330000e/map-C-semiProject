@@ -579,6 +579,12 @@
   font-size: 11px;
 }
 
+.commentUpdateMeta {
+  color: #7a7a7a;
+  font-size: 11px;
+  margin-left: 4px;
+}
+
 .commentEditBox {
   display: flex;
   flex-wrap: wrap;

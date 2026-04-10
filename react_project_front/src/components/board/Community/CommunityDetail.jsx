@@ -32,6 +32,16 @@ const formatDate = (rawDate) => {
   return date.toLocaleDateString("ko-KR");
 };
 
+const formatDateTime = (rawDate) => {
+  if (!rawDate) return "";
+  const date = new Date(rawDate);
+  if (Number.isNaN(date.getTime())) return rawDate;
+  const pad = (value) => String(value).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(
+    date.getHours(),
+  )}:${pad(date.getMinutes())}`;
+};
+
 const getImageUrl = (thumb) => {
   if (!thumb) return null;
   if (typeof thumb !== "string") return null;
@@ -390,6 +400,7 @@ const CommunityDetail = ({
                 ...item,
                 content: text,
                 isPrivate: editPrivate ? 1 : 0,
+                updatedAt: new Date().toISOString(),
                 edited: true,
               }
             : item,
@@ -513,6 +524,12 @@ const CommunityDetail = ({
             <div className={styles.commentMetaLeft}>
               <span>{comment.memberNickname || comment.memberId}</span>
               <span>{formatTime(comment.createdAt)}</span>
+              {(comment.updatedAt || comment.updateAt) &&
+                (comment.updatedAt || comment.updateAt) !== comment.createdAt && (
+                  <span className={styles.commentUpdateMeta}>
+                    수정됨 · {formatDateTime(comment.updatedAt || comment.updateAt)}
+                  </span>
+                )}
               {isSecret && <span className={styles.commentBadge}>비공개</span>}
             </div>
             <button
@@ -600,7 +617,7 @@ const CommunityDetail = ({
             (board.updatedAt || board.updateAt) !== board.createDate && (
               // 상세 페이지에서는 게시글 수정 여부와 수정 날짜를 보여줌.
               <div className={styles.detailUpdateMeta}>
-                수정됨 · {formatDate(board.updatedAt || board.updateAt)}
+                수정됨 · {formatDateTime(board.updatedAt || board.updateAt)}
               </div>
             )}
         </div>
