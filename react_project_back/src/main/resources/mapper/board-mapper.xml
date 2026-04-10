@@ -243,6 +243,9 @@
     </delete>
 
     <!-- 인기 게시글 -->
+    <!-- 공개 게시물만 조회해야 해서 board_status를 0으로 고정함 -->
+    <!-- 매장용 게시물은 제외하기 위해 store_board_tbl 존재 여부를 확인함 -->
+    <!-- 좋아요가 없는 게시물도 인기 목록에 보이게 LEFT JOIN으로 변경함 -->
     <select id="bestBoardList" parameterType="map" resultType="kr.co.iei.board.model.vo.BoardLike">
         SELECT 
             b.board_no AS boardNo, 
