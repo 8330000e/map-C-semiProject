@@ -94,6 +94,24 @@ const getTradeInfoForItem = (item, tradeInfoMap) => {
   return marketNo ? tradeInfoMap[marketNo] : null;
 };
 
+const getImageUrl = (thumb) => {
+  if (!thumb || typeof thumb !== "string") return null;
+  let trimmed = thumb.trim().replace(/\\\\/g, "/").replace(/\\/g, "/");
+  if (!trimmed) return null;
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+  if (trimmed.startsWith("/")) return `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}${trimmed}`;
+  if (trimmed.includes("/upload/")) return `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}/${trimmed.replace(/^\//, "")}`;
+  if (trimmed.includes("/board/editor/")) return `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}/${trimmed.replace(/^\//, "")}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}/board/editor/${trimmed.replace(/^\//, "")}`;
+  return `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}/board/editor/${trimmed}`;
+};
+
+const getBoardForMarketNo = (marketNo, boards) => {
+  if (!marketNo) return null;
+  return boards.find((board) => String(board.marketNo) === String(marketNo) || String(board.id) === String(marketNo));
+};
+
 // 화면에 보여줄 배송 상태 텍스트를 계산함.
 // 송장번호가 없으면 무조건 "배송대기"로 표시함.
 const getDisplayShippingStatusLabel = (item, tradeInfo) => {
@@ -302,22 +320,20 @@ const SaleHistory = () => {
   const renderPagination = (page, pageCount, onChange) => (
     <div className={styles.pagination}>
       <button type="button" disabled={page === 1} onClick={() => onChange(page - 1)}>
-        이전
+        &lt;
       </button>
-      <div className={styles.page_button_group}>
-        {Array.from({ length: pageCount }, (_, index) => index + 1).map((pageNumber) => (
-          <button
-            key={pageNumber}
-            type="button"
-            className={pageNumber === page ? styles.page_button_active : styles.page_button}
-            onClick={() => onChange(pageNumber)}
-          >
-            {pageNumber}
-          </button>
-        ))}
-      </div>
+      {Array.from({ length: pageCount }, (_, index) => index + 1).map((pageNumber) => (
+        <button
+          key={pageNumber}
+          type="button"
+          className={pageNumber === page ? styles.activePage : ""}
+          onClick={() => onChange(pageNumber)}
+        >
+          {pageNumber}
+        </button>
+      ))}
       <button type="button" disabled={page === pageCount} onClick={() => onChange(page + 1)}>
-        다음
+        &gt;
       </button>
     </div>
   );
@@ -340,23 +356,42 @@ const SaleHistory = () => {
       : "-";
     const displayAmount = Number(item.tradePrice ?? item.amount ?? item.productPrice ?? 0).toLocaleString("ko-KR");
     const saleStatus = getSaleStatusLabel(item.status ?? item.productStatus ?? item.tradeStatus);
+    const imageUrl = getImageUrl(item.productThumb || item.boardThumb || item.thumb || item.marketThumb || item.thumbnail);
 
     return (
       <Link key={`${marketNo}-${displayTitle}`} to={`/mypage/history/sale/${linkMarketNo}`} className={styles.sale_card}>
-        <div className={styles.sale_card_title}>[{saleStatus}] {displayTitle}</div>
-        <div className={styles.sale_card_meta}>{displayDate} · {saleStatus}</div>
-        <div className={styles.sale_card_detail}>{displayAmount}원</div>
-        <div className={styles.sale_card_detail}>거래방법: {displayTradeType}</div>
-        {item.buyerId || item.buyerNickname ? (
-          <div className={styles.sale_card_buyer}>구매자: {item.buyerNickname || item.buyerId}</div>
-        ) : null}
-        {hasDelivery && (
-          <>
-            <div className={styles.sale_card_detail}>배송 상태: {getDisplayShippingStatusLabel(item, tradeInfo)}</div>
-            <div className={styles.sale_card_detail}>택배사: {getCourierLabel(displayCourierCode)}</div>
-            {displayInvoiceNumber ? <div className={styles.sale_card_detail}>송장번호: {displayInvoiceNumber}</div> : null}
-          </>
-        )}
+        <div className={styles.sale_card_inner}>
+          <div className={styles.sale_card_image_wrap}>
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt={displayTitle}
+                className={styles.sale_card_image}
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            ) : (
+              <div className={styles.sale_card_image_fallback}>이미지 없음</div>
+            )}
+          </div>
+          <div className={styles.sale_card_content}>
+            <div className={styles.sale_card_title}>[{saleStatus}] {displayTitle}</div>
+            <div className={styles.sale_card_meta}>{displayDate} · {saleStatus}</div>
+            <div className={styles.sale_card_detail}>{displayAmount}원</div>
+            <div className={styles.sale_card_detail}>거래방법: {displayTradeType}</div>
+            {item.buyerId || item.buyerNickname ? (
+              <div className={styles.sale_card_buyer}>구매자: {item.buyerNickname || item.buyerId}</div>
+            ) : null}
+            {hasDelivery && (
+              <div className={styles.sale_card_shipping_info}>
+                <div className={styles.sale_card_detail}>배송 상태: {getDisplayShippingStatusLabel(item, tradeInfo)}</div>
+                <div className={styles.sale_card_detail}>택배사: {getCourierLabel(displayCourierCode)}</div>
+                {displayInvoiceNumber ? <div className={styles.sale_card_detail}>송장번호: {displayInvoiceNumber}</div> : null}
+              </div>
+            )}
+          </div>
+        </div>
       </Link>
     );
   };

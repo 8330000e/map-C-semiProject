@@ -293,35 +293,31 @@ const PurchaseHistory = () => {
       </div>
       {pageCount > 1 && (
         <div className={styles.pagination}>
+        <button
+          type="button"
+          onClick={() => changePage(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          &lt;
+        </button>
+        {Array.from({ length: pageCount }, (_, index) => index + 1).map((page) => (
           <button
+            key={page}
             type="button"
-            className={styles.pagination_button}
-            onClick={() => changePage(currentPage - 1)}
-            disabled={currentPage === 1}
+            className={currentPage === page ? styles.activePage : ""}
+            onClick={() => changePage(page)}
           >
-            이전
+            {page}
           </button>
-          <div className={styles.page_numbers}>
-            {Array.from({ length: pageCount }, (_, index) => index + 1).map((page) => (
-              <button
-                key={page}
-                type="button"
-                className={`${styles.pagination_button} ${currentPage === page ? styles.pagination_buttonActive : ""}`}
-                onClick={() => changePage(page)}
-              >
-                {page}
-              </button>
-            ))}
-          </div>
-          <button
-            type="button"
-            className={styles.pagination_button}
-            onClick={() => changePage(currentPage + 1)}
-            disabled={currentPage === pageCount}
-          >
-            다음
-          </button>
-        </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => changePage(currentPage + 1)}
+          disabled={currentPage === pageCount}
+        >
+          &gt;
+        </button>
+      </div>
       )}
       </section>
     </div>
