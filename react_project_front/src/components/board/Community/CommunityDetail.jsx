@@ -25,6 +25,23 @@ const formatTime = (rawDate) => {
   return `${day}일 전`;
 };
 
+const formatDate = (rawDate) => {
+  if (!rawDate) return "";
+  const date = new Date(rawDate);
+  if (Number.isNaN(date.getTime())) return rawDate;
+  return date.toLocaleDateString("ko-KR");
+};
+
+const formatDateTime = (rawDate) => {
+  if (!rawDate) return "";
+  const date = new Date(rawDate);
+  if (Number.isNaN(date.getTime())) return rawDate;
+  const pad = (value) => String(value).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(
+    date.getHours(),
+  )}:${pad(date.getMinutes())}`;
+};
+
 const getImageUrl = (thumb) => {
   if (!thumb) return null;
   if (typeof thumb !== "string") return null;
@@ -82,6 +99,7 @@ const CommunityDetail = ({
   const [editTarget, setEditTarget] = useState(null);
   const [editText, setEditText] = useState("");
   const [editPrivate, setEditPrivate] = useState(false);
+  const [reportedCommentIds, setReportedCommentIds] = useState([]);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(board.likeCount ?? 0);
   const [scrapped, setScrapped] = useState(false);
@@ -321,6 +339,23 @@ const CommunityDetail = ({
     }
   };
 
+  const handleReportComment = async (commentId) => {
+    const result = await Swal.fire({
+      icon: "warning",
+      title: "댓글 신고",
+      text: "이 댓글을 신고하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: "신고",
+      cancelButtonText: "취소",
+      confirmButtonColor: "#c0392b",
+    });
+
+    if (result.isConfirmed) {
+      setReportedCommentIds((prev) => [...prev, commentId]);
+      Swal.fire({ icon: "success", title: "신고 접수되었습니다." });
+    }
+  };
+
   const handleStartReply = (comment) => {
     setReplyTarget(comment);
     setNewComment(`@${comment.memberNickname || comment.memberId} `);
@@ -365,6 +400,7 @@ const CommunityDetail = ({
                 ...item,
                 content: text,
                 isPrivate: editPrivate ? 1 : 0,
+                updatedAt: new Date().toISOString(),
                 edited: true,
               }
             : item,
@@ -485,9 +521,27 @@ const CommunityDetail = ({
           style={{ marginLeft: `${comment.depth * 18}px` }}
         >
           <div className={styles.commentMeta}>
-            <span>{comment.memberNickname || comment.memberId}</span>
-            <span>{formatTime(comment.createdAt)}</span>
-            {isSecret && <span className={styles.commentBadge}>비공개</span>}
+            <div className={styles.commentMetaLeft}>
+              <span>{comment.memberNickname || comment.memberId}</span>
+              <span>{formatTime(comment.createdAt)}</span>
+              {(comment.updatedAt || comment.updateAt) &&
+                (comment.updatedAt || comment.updateAt) !== comment.createdAt && (
+                  <span className={styles.commentUpdateMeta}>
+                    수정됨 · {formatDateTime(comment.updatedAt || comment.updateAt)}
+                  </span>
+                )}
+              {isSecret && <span className={styles.commentBadge}>비공개</span>}
+            </div>
+            <button
+              type="button"
+              className={`${styles.reportIconButton} ${reportedCommentIds.includes(comment.id) ? styles.reported : ""}`}
+              onClick={() => handleReportComment(comment.id)}
+              title="댓글 신고"
+            >
+              <span className="material-icons">
+                {reportedCommentIds.includes(comment.id) ? "report" : "report_gmailerrorred"}
+              </span>
+            </button>
           </div>
           {editTarget && editTarget.id === comment.id ? (
             <div className={styles.commentEditBox}>
@@ -559,6 +613,13 @@ const CommunityDetail = ({
             <span>·</span>
             <span>{formatTime(board.createDate)}</span>
           </div>
+          {(board.updatedAt || board.updateAt) &&
+            (board.updatedAt || board.updateAt) !== board.createDate && (
+              // 상세 페이지에서는 게시글 수정 여부와 수정 날짜를 보여줌.
+              <div className={styles.detailUpdateMeta}>
+                수정됨 · {formatDateTime(board.updatedAt || board.updateAt)}
+              </div>
+            )}
         </div>
         <div className={styles.detailButtonsTop}>
           <button

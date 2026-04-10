@@ -55,9 +55,10 @@
   background-image: url("/images/signup-background-rabbit.png");
   background-repeat: no-repeat;
   background-position: center bottom; /*센터 아래 배치 이미지를 아래에 배치 설정*/
-  background-size: cover; /*가로폭에 맞춰 이미지 크시 조정*/
+  background-size: 100% 600px; /*가로폭에 맞춰 이미지 크기 조정*/
+  /*100% 600px -> 가로는 100%로 채우고 세로는 길이 조절 *?
   /*중요한 점 이미지위에 폼 내용이 오도록 padding 하단을 넉넉히 주기.*/
-  padding-bottom: 120px;
+  padding-bottom: 140px;
 }
 
 /* 폼 내부의 다른 요소들이 이미지 위에 오도록 z-index를 줍니다 */

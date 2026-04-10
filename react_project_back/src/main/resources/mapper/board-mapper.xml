@@ -22,6 +22,8 @@
 
             b.MEMBER_NICKNAME AS writerNickname,
             TO_CHAR(b.BOARD_DATE, 'YYYY-MM-DD') AS createDate,
+            <!-- 게시글 수정일을 프론트로 내려줌. 수정된 글이면 updatedAt 값이 채워짐. -->
+            TO_CHAR(b.UPDATED_AT, 'YYYY-MM-DD') AS updatedAt,
             b.BOARD_THUMB AS thumbnailUrl,
             0 AS commentCount
         FROM BOARD_TBL b
@@ -87,12 +89,15 @@
     </insert>
 
     <!-- 게시글 수정 -->
+    <!-- 게시글을 수정할 때 BOARD_TBL의 UPDATED_AT 컬럼에 현재 시간을 함께 저장함. -->
+    <!-- 이렇게 해야 프론트에서 해당 게시글이 수정된 글인지 판단할 수 있음. -->
     <update id="updateBoard" parameterType="board">
         UPDATE BOARD_TBL
         SET
             BOARD_TITLE = #{boardTitle},
             BOARD_CONTENT = #{boardContent},
-            BOARD_THUMB = #{boardThumb}
+            BOARD_THUMB = #{boardThumb},
+            UPDATED_AT = SYSDATE
         WHERE BOARD_NO = #{boardNo}
     </update>
 
@@ -310,6 +315,24 @@
     <select id="selectTipBoard" resultType="Integer">
     	-- 이 회원이 스크랩한 게시글 번호 목록을 가져오는 기능임
     	select board_no from tip_tbl where member_id=#{memberId}
+    </select>
+    <select id="selectTipBoardList" resultType="kr.co.iei.board.model.vo.Board">
+        SELECT
+            b.board_no AS boardNo,
+            b.writer_id AS writerId,
+            b.member_nickname AS memberNickname,
+            b.board_title AS boardTitle,
+            b.board_thumb AS boardThumb,
+            b.board_date AS boardDate,
+            b.read_count AS readCount
+        FROM board_tbl b
+        WHERE b.board_no IN (
+            SELECT board_no FROM tip_tbl GROUP BY board_no HAVING COUNT(*) >= 1
+        )
+        ORDER BY (
+            SELECT COUNT(*) FROM tip_tbl t WHERE t.board_no = b.board_no
+        ) DESC,
+        b.board_date DESC
     </select>
     <select id="selectBoardTipByMember" resultType="int">
     	-- 이 회원이 이 게시글을 스크랩했는지 확인하는 기능임

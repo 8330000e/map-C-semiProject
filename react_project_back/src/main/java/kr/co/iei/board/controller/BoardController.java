@@ -84,11 +84,15 @@ public class BoardController {
 	}
 	 
 	// 수정
+	 // 게시글 수정 요청을 처리하는 API임.
+	 // 1) 요청 보낸 사람이 해당 게시글 작성자인지 검사하고,
+	 // 2) 작성자가 맞으면 수정 내용을 서비스에 전달함.
 	 @PatchMapping("/{boardNo}")
 	 public ResponseEntity<?> updateBoard(@PathVariable int boardNo, @RequestBody Board board, @RequestParam String memberId) {
 	     if (!boardService.isBoardAuthor(boardNo, memberId)) {
 	         return ResponseEntity.status(403).body("작성자만 수정할 수 있습니다.");
 	     }
+	     // URL에서 받은 boardNo를 객체에 다시 설정함.
 	     board.setBoardNo(boardNo);
 	     int result = boardService.updateBoard(board);
 	     return ResponseEntity.ok(result);
@@ -254,6 +258,11 @@ public class BoardController {
 	@GetMapping(value="/best")
 	public List<BoardLike> bestBoardList() {
 		return boardService.bestBoardList();
+	}
+
+	@GetMapping(value="/tips/list")
+	public ResponseEntity<List<Board>> getTipBoardList() {
+		return ResponseEntity.ok(boardService.getTipBoardList());
 	}
 	 
 	@GetMapping(value="{memberId}")
