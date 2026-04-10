@@ -412,6 +412,14 @@ const Main = () => {
                 className="tip_item"
                 style={{ cursor: "pointer" }}
                 onClick={() => {
+                  /*
+                    팁 리스트 클릭 이동 로직임.
+                    1) tipBoards 배열에서 현재 보이는 tipIndex의 게시물 정보를 가져옴.
+                    2) getBoardNo()는 boardNo, boardId, id 등 여러 후보 값을 확인함.
+                    3) boardNo가 유효하면 /map-community 페이지에 쿼리 파라미터로 전달해서
+                       해당 게시물 상세를 보여주도록 함.
+                    4) boardNo가 없으면 상세 페이지를 열 수 없으므로 맵 커뮤니티 메인으로 이동함.
+                  */
                   const boardNo = getBoardNo(tipBoards[tipIndex]);
                   if (boardNo) {
                     navigate(`/map-community?boardNo=${boardNo}`);

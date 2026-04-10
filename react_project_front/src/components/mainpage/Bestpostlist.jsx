@@ -29,6 +29,14 @@ const Bestpostlist = () => {
       });
   }, []);
   const boardView = (boardNo) => {
+    /*
+      인기게시물 클릭 이동 로직임.
+      1) 인기게시물 항목은 boardNo를 가지고 있어야 상세 페이지로 갈 수 있음.
+      2) boardNo가 있으면 맵 커뮤니티 페이지로 이동하면서 쿼리 파라미터로 전달함.
+         예: /map-community?boardNo=123
+      3) boardNo가 없으면 안전하게 맵 커뮤니티 메인으로 이동함.
+         (boardNo가 없을 때는 상세 페이지를 표시할 수 없기 때문임)
+    */
     if (boardNo) {
       navigate(`/map-community?boardNo=${boardNo}`);
     } else {
