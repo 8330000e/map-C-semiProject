@@ -195,12 +195,15 @@ const SaleDetail = () => {
     ? tradeTypeLabel(saleOrder.tradeType, saleOrder.tradeTypeText, saleOrder.deliveryMethod, saleOrderAddress)
     : defaultTradeMethod;
   const isDeliveryTrade = tradeMethod === "택배" || tradeMethod === "직거래/택배";
-  const hasShippingCompleted = saleOrder && (saleOrder.shippingStatus === 1 || saleOrder.shippingStatus === "1");
-  const isDeliveryPending = saleOrder && isDeliveryTrade && !hasShippingCompleted && !saleOrder.invoiceNumber;
+  const hasInvoice = Boolean((saleOrder?.invoiceNumber ?? "").toString().trim());
+  const hasShippingCompleted = saleOrder && (saleOrder.shippingStatus === 1 || saleOrder.shippingStatus === "1") && hasInvoice;
+  const isDeliveryPending = saleOrder && isDeliveryTrade && !hasShippingCompleted && !hasInvoice;
   const shippingStatus = saleOrder
     ? isDeliveryPending
       ? "배송대기"
       : getShippingStatusLabel(saleOrder.shippingStatus)
+    : isDeliveryTrade
+    ? "배송대기"
     : "-";
   const rawOrderAmount = Number(saleOrder?.tradePrice ?? saleOrder?.amount ?? item.productPrice ?? 0);
   const explicitProductPrice = Number(item.productPrice ?? saleOrder?.productPrice ?? 0);

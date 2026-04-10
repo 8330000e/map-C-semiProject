@@ -66,17 +66,26 @@ export const getCompletedPurchaseById = (id, buyerId) => {
   );
 };
 
+const getPendingStorageKey = (orderId) => `${PENDING_PURCHASE_PREFIX}${orderId}`;
+
 export const setPendingPurchase = (orderId, payload) => {
   if (typeof window === "undefined") return;
-  window.sessionStorage.setItem(`${PENDING_PURCHASE_PREFIX}${orderId}`, JSON.stringify(payload));
+  const key = getPendingStorageKey(orderId);
+  window.sessionStorage.setItem(key, JSON.stringify(payload));
+  window.localStorage.setItem(key, JSON.stringify(payload));
 };
 
 export const getPendingPurchase = (orderId) => {
   if (typeof window === "undefined") return null;
-  return parseJson(window.sessionStorage.getItem(`${PENDING_PURCHASE_PREFIX}${orderId}`), null);
+  const key = getPendingStorageKey(orderId);
+  const sessionValue = parseJson(window.sessionStorage.getItem(key), null);
+  if (sessionValue) return sessionValue;
+  return parseJson(window.localStorage.getItem(key), null);
 };
 
 export const clearPendingPurchase = (orderId) => {
   if (typeof window === "undefined") return;
-  window.sessionStorage.removeItem(`${PENDING_PURCHASE_PREFIX}${orderId}`);
+  const key = getPendingStorageKey(orderId);
+  window.sessionStorage.removeItem(key);
+  window.localStorage.removeItem(key);
 };

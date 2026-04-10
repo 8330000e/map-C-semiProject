@@ -80,16 +80,26 @@ const isDeliveryPendingTrade = (item, tradeInfo) => {
   const tradeType = getTradeTypeLabel(item, tradeInfo);
   if (tradeType !== "택배" && tradeType !== "직거래/택배") return false;
 
-  const tradeStatus = tradeInfo?.tradeStatus ?? item.tradeStatus;
-  if (tradeStatus !== 1 && tradeStatus !== "1") return false;
-
   const shippingStatus = getShippingStatusValue(item, tradeInfo);
-  return !(shippingStatus === 1 || shippingStatus === "1");
+  const invoiceNumber = tradeInfo?.invoiceNumber ?? item.invoiceNumber;
+  const hasInvoice = Boolean((invoiceNumber ?? "").toString().trim());
+
+  return !(shippingStatus === 1 || shippingStatus === "1") || !hasInvoice;
 };
 
 const getTradeInfoForItem = (item, tradeInfoMap) => {
   const marketNo = item.marketNo ?? item.id;
   return marketNo ? tradeInfoMap[marketNo] : null;
+};
+
+const getDisplayShippingStatusLabel = (item, tradeInfo) => {
+  const shippingStatus = getShippingStatusValue(item, tradeInfo);
+  const invoiceNumber = tradeInfo?.invoiceNumber ?? item.invoiceNumber;
+  const hasInvoice = Boolean((invoiceNumber ?? "").toString().trim());
+  if (!hasInvoice) {
+    return "배송대기";
+  }
+  return getShippingStatusLabel(shippingStatus);
 };
 
 const getItemTitle = (item) => {
@@ -101,12 +111,20 @@ const stripStatusTag = (title) => {
   return title.replace(/^\s*\[(판매중|거래중|판매완료|예약중)\]\s*/i, "");
 };
 
+const getBoardTitleStatus = (item) => {
+  const title = getItemTitle(item);
+  const match = title.match(/^\s*\[(판매중|거래중|판매완료|예약중)\]/i);
+  if (match) return match[1];
+  return getSaleStatusLabel(item.productStatus);
+};
+
 const hasSellingTag = (item) => {
-  return getItemTitle(item).toString().includes("[판매중]");
+  const title = getItemTitle(item).toString();
+  return title.includes("[판매중]");
 };
 
 const isBoardSelling = (item) => {
-  return getSaleStatusLabel(item.productStatus) === "판매중";
+  return getBoardTitleStatus(item) === "판매중";
 };
 
 // 판매내역 페이지 기능임. 로그인한 판매자의 판매 상품과 거래 상태를 보여줌.
@@ -226,9 +244,8 @@ const SaleHistory = () => {
         if (hasSellingTag(item)) return false;
         const tradeInfo = getTradeInfoForItem(item, tradeInfoMap);
         const tradeType = getTradeTypeLabel(item, tradeInfo);
-        const shippingStatus = getShippingStatusValue(item, tradeInfo);
         if (tradeType === "택배" || tradeType === "직거래/택배") {
-          return shippingStatus === 1 || shippingStatus === "1";
+          return getDisplayShippingStatusLabel(item, tradeInfo) === "배송완료";
         }
         return getSaleStatusLabel(item.status ?? item.productStatus ?? item.tradeStatus) === "판매완료";
       }),
@@ -301,7 +318,7 @@ const SaleHistory = () => {
   const renderSaleCard = (item) => {
     const marketNo = item.marketNo ?? item.id;
     const tradeInfo = marketNo ? tradeInfoMap[marketNo] : null;
-    const displayShippingStatus = tradeInfo?.shippingStatus ?? item.shippingStatus;
+    const displayShippingStatus = getShippingStatusValue(item, tradeInfo);
     const displayCourierCode = tradeInfo?.courierCode ?? item.courierCode;
     const displayInvoiceNumber = tradeInfo?.invoiceNumber ?? item.invoiceNumber;
     const address = item.orderInfo?.address || item.address || "";
@@ -328,7 +345,7 @@ const SaleHistory = () => {
         ) : null}
         {hasDelivery && (
           <>
-            <div className={styles.sale_card_detail}>배송 상태: {getShippingStatusLabel(displayShippingStatus)}</div>
+            <div className={styles.sale_card_detail}>배송 상태: {getDisplayShippingStatusLabel(item, tradeInfo)}</div>
             <div className={styles.sale_card_detail}>택배사: {getCourierLabel(displayCourierCode)}</div>
             {displayInvoiceNumber ? <div className={styles.sale_card_detail}>송장번호: {displayInvoiceNumber}</div> : null}
           </>
