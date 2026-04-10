@@ -321,6 +321,7 @@
     	select board_no from tip_tbl where member_id=#{memberId}
     </select>
     <select id="selectTipBoardList" resultType="kr.co.iei.board.model.vo.Board">
+        <!-- 공개된 스크랩 게시글만 가져오기 위해 board_status=0 조건 추가함 -->
         SELECT
             b.board_no AS boardNo,
             b.writer_id AS writerId,
@@ -330,7 +331,8 @@
             b.board_date AS boardDate,
             b.read_count AS readCount
         FROM board_tbl b
-        WHERE b.board_no IN (
+        WHERE b.board_status = 0
+        AND b.board_no IN (
             SELECT board_no FROM tip_tbl GROUP BY board_no HAVING COUNT(*) >= 1
         )
         ORDER BY (
