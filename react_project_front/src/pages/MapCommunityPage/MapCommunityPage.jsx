@@ -7,8 +7,7 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import CelebrationOutlinedIcon from "@mui/icons-material/CelebrationOutlined";
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
-import PushPinIcon from "@mui/icons-material/PushPin";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import heart from "../../assets/img/heart.svg";
 import axios from "axios";
 
 const MapCommunityPage = () => {
@@ -225,7 +224,15 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                 <div
                   style=" display: flex; gap: 1px; align-items: center; "
                 >
-                  <FavoriteIcon />
+                  <img
+                    src=${heart}
+                    alt=""
+                    style="
+                      width: 25px;
+                      z-index: 3;
+                      border-radius: 50%;
+                    "
+                  />
                   <p>${marker.likeCount}</p>
                 </div>
               </div>

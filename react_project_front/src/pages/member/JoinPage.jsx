@@ -137,17 +137,22 @@ const Join = () => {
   };
 
   return (
-    <div className={styles.page_layout}>
-      <div
-        className={styles.left_section}
-        style={{
-          backgroundImage: `url(${joinbg1})`, // 작성자님의 배경 이미지 사용
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      ></div>
-
+    <div
+      className={styles.page_layout}
+      style={{
+        backgroundImage: `url(${joinbg1})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed", //  세미콜론 삭제, 쉼표 확인
+        width: "100vw", //  화면 가로 전체
+        minHeight: "100vh", //  화면 세로 전체 (내용 길어져도 배경 유지)
+        margin: 0, // 혹시 모를 여백 제거
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <div className={styles.right_section}>
         <div className={styles.join_wrap}>
           <h3 className={styles.page_title}>회원가입</h3>
