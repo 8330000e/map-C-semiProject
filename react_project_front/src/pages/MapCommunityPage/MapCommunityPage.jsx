@@ -20,16 +20,6 @@ const MapCommunityPage = () => {
     ctpv: "서울특별시",
     sgg: "중구",
   });
-  let mapaddr = "서울특별시 중구";
-  let maplnglat = {
-    lat: 37.5665 - 0.001,
-    lng: 126.978,
-  };
-  let mapctpvsgg = {
-    ctpv: "서울특별시",
-    sgg: "중구",
-  };
-  let detailMode = false;
 
   return (
     <div className={styles.mapCommunityPage}>
@@ -43,10 +33,6 @@ const MapCommunityPage = () => {
         <div className={styles.left}>
           <div className={styles.mapBox}>
             <Map
-              mapaddr={mapaddr}
-              maplnglat={maplnglat}
-              mapctpvsgg={mapctpvsgg}
-              detailMode={detailMode}
               addr={addr}
               lnglat={lnglat}
               ctpvsgg={ctpvsgg}
@@ -72,40 +58,39 @@ const MapCommunityPage = () => {
   );
 };
 
-const Map = ({
-  mapaddr,
-  maplnglat,
-  addr,
-  mapctpvsgg,
-  detailMode,
-  lnglat,
-  ctpvsgg,
-  setAddr,
-  setLnglat,
-  setCtpvsgg,
-}) => {
+const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
   // const [detailMode, setDetailMode] = useState(false);
   const mapDivRef = useRef(null);
-  // const [markerList, setMarkerList] = useState([]);
-  const markerList = new Array();
+  const [markerList, setMarkerList] = useState([]);
+  let mapMarkerList = [];
+  let mapaddr = "서울특별시 중구";
+  let maplnglat = {
+    lat: 37.5665 - 0.001,
+    lng: 126.978,
+  };
+  let mapctpvsgg = {
+    ctpv: "서울특별시",
+    sgg: "중구",
+  };
+  let detailMode = false;
 
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/boards/markers`)
       .then((res) => {
-        markerList.push(res.data);
+        setMarkerList(res.data);
       })
       .catch((err) => {
         console.error("마커 데이터 로드 실패:", err);
       });
   }, []);
   console.log("마커 리스트:", markerList);
+  mapMarkerList = { ...markerList };
 
   useEffect(() => {
     if (!mapDivRef.current || !window.naver) {
       return;
     }
-
     const map = new naver.maps.Map(mapDivRef.current, {
       center: new window.naver.maps.LatLng(
         `${maplnglat.lat}`,
@@ -160,6 +145,8 @@ const Map = ({
       markerName.setDraggable(false);
       naver.maps.Event.addListener(markerName, "click", (e) => {
         console.log("marker click");
+        e.coord._lat = marker.boardLat;
+        e.coord._lng = marker.boardLng;
         naver.maps.Service.reverseGeocode(
           {
             location: e.coord,
@@ -182,12 +169,9 @@ const Map = ({
         );
         map.setZoom(15);
 
-        detailMode == true
-          ? defaultMarker.setIcon("none")
-          : defaultMarker.setIcon("block");
-        detailMode == true
+        detailMode
           ? markerName.setIcon({
-              content: `<div style="position: relative; width: 100%;">
+              content: `<div><div style="position: relative; width: 100%;">
             <div
               style="
                 position: absolute;
@@ -292,9 +276,10 @@ const Map = ({
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                    text-align: left;
                   "
                 >
-                  ${marker.boardContent}
+                  ${marker.boardContent.replace(/<img[^>]*>/gi, "")}
                 </div>
               </div>
             </div>
@@ -308,6 +293,7 @@ const Map = ({
         src='src/assets/img/defaultthumbmarker.png'
         style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
       />
+    </div>
     </div>
           `,
               size: new naver.maps.Size(22, 35),
@@ -362,7 +348,7 @@ const Map = ({
   return (
     <div className={styles.map_div}>
       <div>
-        {detailMode === true ? (
+        {detailMode ? (
           ""
         ) : (
           <>
