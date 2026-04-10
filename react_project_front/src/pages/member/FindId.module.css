@@ -10,6 +10,8 @@
   flex-direction: column;
   /* 내부 요소들을 세로축 중앙 정렬 */
   align-items: center;
+  justify-content: flex-start; /* 위에서부터 차례대로 배치 */
+  padding-top: 60px;
   position: relative;
   overflow: hidden;
   border: 3px solid lightgreen;
@@ -18,12 +20,15 @@
 .page_title {
   text-align: center;
   width: 100%;
-  margin-bottom: 30px;
+  /* !important를 붙여서 다른 스타일이 방해하지 못하게 강제해 보세요 */
+  margin-bottom: 80px !important;
+  display: block;
 }
 
 .input_wrap {
   width: 100%;
   text-align: left;
+  margin-top: 30px;
   margin-bottom: 20px;
 }
 
@@ -45,7 +50,7 @@
 
 .btn_wrap {
   width: 100%;
-  text-align: center;
+  align-items: center;
   margin-top: 20px;
   display: flex;
   justify-content: center;
