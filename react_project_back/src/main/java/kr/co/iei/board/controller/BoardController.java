@@ -283,8 +283,10 @@ public class BoardController {
 	// frontend에서 인기 게시글을 조회하기 위해 추가한 엔드포인트입니다.
 	// Bestpostlist.jsx에서 /boards/best로 요청하여 top 게시글 목록을 받아옵니다.
 	@GetMapping(value="/best")
-	public List<BoardLike> bestBoardList() {
-		return boardService.bestBoardList();
+	public List<BoardLike> bestBoardList(
+			@RequestParam(defaultValue = "0") int status
+	) {
+		return boardService.bestBoardList(status);
 	}
 
 	@GetMapping(value="/tips/list")

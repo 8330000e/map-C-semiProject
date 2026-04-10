@@ -243,19 +243,20 @@
     </delete>
 
     <!-- 인기 게시글 -->
-    <select id="bestBoardList" resultType="kr.co.iei.board.model.vo.BoardLike">
+    <select id="bestBoardList" parameterType="map" resultType="kr.co.iei.board.model.vo.BoardLike">
         SELECT 
-            t.board_no, 
+            b.board_no AS boardNo, 
             COUNT(t.board_no) AS count, 
-            b.board_title, 
+            b.board_title AS boardTitle, 
             b.ctpv, 
             b.sgg
-        FROM board_like_tbl t
-        JOIN board_tbl b ON (t.board_no = b.board_no)
-        WHERE NOT EXISTS (
+        FROM board_tbl b
+        LEFT JOIN board_like_tbl t ON (t.board_no = b.board_no)
+        WHERE b.board_status = 0
+        AND NOT EXISTS (
             SELECT 1 FROM store_board_tbl s WHERE s.board_no = b.board_no
         )
-        GROUP BY t.board_no, b.board_title, b.ctpv, b.sgg
+        GROUP BY b.board_no, b.board_title, b.ctpv, b.sgg
         ORDER BY count DESC
         offset 0 rows fetch next 10 rows only
     </select>

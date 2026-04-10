@@ -5,15 +5,23 @@ import { useNavigate } from "react-router-dom";
 
 const Bestpostlist = () => {
   const navigate = useNavigate();
-  const [bestPost, setBestPost] = useState([]);
   const [bestPostList, setBestPostList] = useState([]);
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/boards/best`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/boards/best`, {
+        params: {
+          status: 0,
+        },
+      })
       .then((res) => {
-        // 인기 게시글 데이터를 상태에 저장하거나 필요한 작업 수행
-        console.log(res.data);
-        setBestPostList(res.data);
+        // 인기게시물은 맵커뮤니티의 기본 게시글 목록과 동일한 status=0 조건을 적용합니다.
+        const bestPosts = Array.isArray(res.data) ? res.data : [];
+        const validBestPosts = bestPosts.filter(
+          (bestPost) =>
+            bestPost?.boardNo || bestPost?.boardId || bestPost?.id,
+        );
+        console.log(validBestPosts);
+        setBestPostList(validBestPosts);
       })
       .catch((err) => {
         // best post list .jsx 부분에 console.err로 되어있었음
