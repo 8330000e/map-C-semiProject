@@ -71,6 +71,7 @@
   height: 100%;
   position: relative;
   color: var(--color1);
+  transform: t;
 }
 
 .spot_box {

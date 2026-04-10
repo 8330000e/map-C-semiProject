@@ -20,6 +20,16 @@ const MapCommunityPage = () => {
     ctpv: "서울특별시",
     sgg: "중구",
   });
+  let mapaddr = "서울특별시 중구";
+  let maplnglat = {
+    lat: 37.5665 - 0.001,
+    lng: 126.978,
+  };
+  let mapctpvsgg = {
+    ctpv: "서울특별시",
+    sgg: "중구",
+  };
+  let detailMode = false;
 
   return (
     <div className={styles.mapCommunityPage}>
@@ -33,6 +43,10 @@ const MapCommunityPage = () => {
         <div className={styles.left}>
           <div className={styles.mapBox}>
             <Map
+              mapaddr={mapaddr}
+              maplnglat={maplnglat}
+              mapctpvsgg={mapctpvsgg}
+              detailMode={detailMode}
               addr={addr}
               lnglat={lnglat}
               ctpvsgg={ctpvsgg}
@@ -58,17 +72,28 @@ const MapCommunityPage = () => {
   );
 };
 
-const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
-  const [detailMode, setDetailMode] = useState(false);
+const Map = ({
+  mapaddr,
+  maplnglat,
+  addr,
+  mapctpvsgg,
+  detailMode,
+  lnglat,
+  ctpvsgg,
+  setAddr,
+  setLnglat,
+  setCtpvsgg,
+}) => {
+  // const [detailMode, setDetailMode] = useState(false);
   const mapDivRef = useRef(null);
-  const [marker, setMarker] = useState(null);
-  const [markerList, setMarkerList] = useState([]);
+  // const [markerList, setMarkerList] = useState([]);
+  const markerList = new Array();
 
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/boards/markers`)
       .then((res) => {
-        setMarkerList(res.data);
+        markerList.push(res.data);
       })
       .catch((err) => {
         console.error("마커 데이터 로드 실패:", err);
@@ -82,12 +107,18 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
     }
 
     const map = new naver.maps.Map(mapDivRef.current, {
-      center: new window.naver.maps.LatLng(`${lnglat.lat}`, `${lnglat.lng}`),
+      center: new window.naver.maps.LatLng(
+        `${maplnglat.lat}`,
+        `${maplnglat.lng}`,
+      ),
       zoom: 15,
     });
 
     const defaultMarker = new naver.maps.Marker({
-      position: new window.naver.maps.LatLng(`${lnglat.lat}`, `${lnglat.lng}`),
+      position: new window.naver.maps.LatLng(
+        `${maplnglat.lat}`,
+        `${maplnglat.lng}`,
+      ),
       map: map,
       icon: {
         content:
@@ -101,7 +132,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
     defaultMarker.setDraggable(false);
 
     markerList.map((marker, i) => {
-      marker;
+      mapaddr = "선택된 위치 없음";
       const markerName = new naver.maps.Marker({
         key: i,
         position: new window.naver.maps.LatLng(
@@ -127,8 +158,22 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
       });
       markerName.setTitle(marker.boardTitle || "제목 없음" || "Default Marker");
       markerName.setDraggable(false);
-      naver.maps.Event.addListener(markerName, "click", () => {
-        setDetailMode(true);
+      naver.maps.Event.addListener(markerName, "click", (e) => {
+        console.log("marker click");
+        naver.maps.Service.reverseGeocode(
+          {
+            location: e.coord,
+          },
+          (status, response) => {
+            if (status != naver.maps.Service.Status.OK) {
+              alert("주소를 찾을 수 없습니다.");
+              return;
+            }
+            mapaddr = response.result.items[0].address;
+          },
+        );
+
+        detailMode = true;
         map.setCenter(
           new window.naver.maps.LatLng(
             markerName.getPosition().lat() + 0.003,
@@ -137,10 +182,10 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
         );
         map.setZoom(15);
 
-        detailMode
+        detailMode == true
           ? defaultMarker.setIcon("none")
           : defaultMarker.setIcon("block");
-        detailMode
+        detailMode == true
           ? markerName.setIcon({
               content: `<div style="position: relative; width: 100%;">
             <div
@@ -174,7 +219,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                   "
                 />
               </div>
-              <p>${addr}</p>
+              <p>${mapaddr}</p>
             </div>
             <div
               style="
@@ -287,7 +332,8 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
     });
 
     naver.maps.Event.addListener(map, "click", function (e) {
-      setDetailMode(false);
+      console.log("map click");
+      detailMode = false;
       defaultMarker.setPosition(e.coord);
       naver.maps.Service.reverseGeocode(
         {
@@ -311,47 +357,49 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
         },
       );
     });
-  }, [addr, lnglat, ctpvsgg, markerList, detailMode]);
+  }, [markerList]);
 
   return (
     <div className={styles.map_div}>
       <div>
-        {detailMode ? (
+        {detailMode === true ? (
           ""
         ) : (
-          <div className={styles.spot_box}>
-            <div className={styles.spot_box_top}>
-              <p>
-                {addr == " "
-                  ? "주소 정보가 없습니다"
-                  : ctpvsgg.ctpv + " " + ctpvsgg.sgg}
-              </p>
-              <div>
-                <div className={styles.spot_box_top_posts}>
-                  <DescriptionOutlinedIcon sx={{ fontSize: "24px" }} />
-                  <p>{markerList.length == 0 ? 0 : markerList.length}</p>
+          <>
+            <div className={styles.spot_box}>
+              <div className={styles.spot_box_top}>
+                <p>
+                  {addr == " "
+                    ? "주소 정보가 없습니다"
+                    : ctpvsgg.ctpv + " " + ctpvsgg.sgg}
+                </p>
+                <div>
+                  <div className={styles.spot_box_top_posts}>
+                    <DescriptionOutlinedIcon sx={{ fontSize: "24px" }} />
+                    <p>{markerList.length == 0 ? 0 : markerList.length}</p>
+                  </div>
                 </div>
               </div>
+              <div>
+                <p>
+                  <CelebrationOutlinedIcon sx={{ fontSize: "30px" }} />
+                </p>
+                <p>
+                  <strong>1,321명</strong>의 구민들이 탄소 배출량{" "}
+                  <strong>10,151kg</strong>을 절감했습니다!
+                </p>
+              </div>
             </div>
-            <div>
+            <div className={styles.map_item}>
               <p>
-                <CelebrationOutlinedIcon sx={{ fontSize: "30px" }} />
+                <ErrorOutlineOutlinedIcon
+                  sx={{ color: "#fff", fontSize: "18px" }}
+                />
               </p>
-              <p>
-                <strong>1,321명</strong>의 구민들이 탄소 배출량{" "}
-                <strong>10,151kg</strong>을 절감했습니다!
-              </p>
+              <p>탄소 배출량</p>
             </div>
-          </div>
+          </>
         )}
-        <div className={styles.map_item}>
-          <p>
-            <ErrorOutlineOutlinedIcon
-              sx={{ color: "#fff", fontSize: "18px" }}
-            />
-          </p>
-          <p>탄소 배출량</p>
-        </div>
       </div>
       <div id="map" className={styles.map} ref={mapDivRef}></div>
     </div>
