@@ -14,6 +14,9 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
+const getBoardNo = (board) =>
+  board?.boardNo ?? board?.boardId ?? board?.id ?? null;
+
 // 이미지 src는 서버에서 여러 형태로 내려올 수 있습니다.
 // 예: 이미지 전체 URL, /upload/ 경로, /board/editor/ 경로, 파일명만 전달되는 경우.
 // 여기서 브라우저가 바로 요청 가능한 URL로 변환해 줍니다.
@@ -192,9 +195,11 @@ const Community = ({
     if (expandedBoardNo === highlightBoardNo) return;
 
     const targetBoard = boardList.find(
-      (board) => String(board.boardNo) === String(highlightBoardNo),
+      (board) => String(getBoardNo(board)) === String(highlightBoardNo),
     );
     if (!targetBoard) return;
+
+    setSelectedBoard(targetBoard);
 
     axios
       .get(`${BACKSERVER}/boards/${highlightBoardNo}/read`)
@@ -220,7 +225,7 @@ const Community = ({
       return;
     }
 
-    if (selectedBoard?.boardNo && String(selectedBoard.boardNo) === String(expandedBoardNo) && selectedBoard.boardContent) {
+    if (getBoardNo(selectedBoard) && String(getBoardNo(selectedBoard)) === String(expandedBoardNo) && selectedBoard.boardContent) {
       return;
     }
 

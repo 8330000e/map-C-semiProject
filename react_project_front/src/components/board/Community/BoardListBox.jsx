@@ -31,7 +31,9 @@ const BoardListBox = ({
     if (!expandedBoardNo) return;
     const item = itemRefs.current[normalizeId(expandedBoardNo)];
     if (!item) return;
-    item.scrollIntoView({ behavior: "smooth", block: "center" });
+    window.requestAnimationFrame(() => {
+      item.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
   }, [expandedBoardNo]);
 
   const handleBoardClick = async (board) => {
@@ -50,7 +52,7 @@ const BoardListBox = ({
         setBoardList((prev) =>
           prev.map((item) => {
             const itemBoardNo = getBoardNo(item);
-            return itemBoardNo === boardNo
+            return normalizeId(itemBoardNo) === normalizeId(boardNo)
               ? { ...item, readCount: (item.readCount ?? 0) + 1 }
               : item;
           }),
@@ -131,7 +133,11 @@ const BoardListBox = ({
                   </div>
                   {isExpanded && (
                     <CommunityDetail
-                      board={selectedBoard?.boardNo === board.boardNo ? selectedBoard : board}
+                      board={
+                        normalizeId(getBoardNo(selectedBoard)) === normalizeId(boardNo)
+                          ? selectedBoard
+                          : board
+                      }
                       onEdit={(boardItem) => {
                         setSelectedBoard(boardItem);
                         startEdit(boardItem);
