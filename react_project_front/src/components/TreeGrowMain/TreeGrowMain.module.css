@@ -150,49 +150,45 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  pointer-events: none;
   overflow: hidden;
   position: relative;
   z-index: 2;
 }
-.spring .rightTreeArea::before {
-  background: radial-gradient(
-    circle,
-    rgba(220, 245, 190, 0.6) 0%,
-    rgba(220, 245, 190, 0.22) 42%,
-    transparent 72%
-  );
-  animation: glowPulse 4.5s ease-in-out infinite;
-}
-
-.summer .rightTreeArea::before {
-  background: radial-gradient(
-    circle,
-    rgba(255, 243, 170, 0.5) 0%,
-    rgba(190, 235, 140, 0.2) 45%,
-    transparent 72%
-  );
-  animation: glowPulse 4s ease-in-out infinite;
-}
 
 .autumn .rightTreeArea::before {
+  content: "";
+  position: absolute;
+  top: 88px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(255, 205, 145, 0.5) 0%,
-    rgba(230, 170, 100, 0.18) 45%,
+    rgba(245, 204, 150, 0.34) 0%,
+    rgba(226, 173, 108, 0.16) 45%,
     transparent 72%
   );
+  filter: blur(5px);
   animation: glowPulse 5s ease-in-out infinite;
+  z-index: 0;
 }
 
 .winter .rightTreeArea::before {
+  content: "";
+  position: absolute;
+  top: 88px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(215, 232, 255, 0.5) 0%,
-    rgba(215, 232, 255, 0.18) 45%,
+    rgba(220, 235, 255, 0.42) 0%,
+    rgba(200, 220, 245, 0.18) 45%,
     transparent 72%
   );
+  filter: blur(5px);
   animation: glowPulse 5s ease-in-out infinite;
+  z-index: 0;
 }
 
 @keyframes glowPulse {
@@ -851,32 +847,36 @@
   cursor: not-allowed;
   opacity: 0.9;
 }
-.spring .topCard {
-  background:
-    radial-gradient(
-      circle at 70% 20%,
-      rgba(255, 244, 210, 0.35) 0%,
-      rgba(255, 244, 210, 0) 18%
-    ),
-    linear-gradient(180deg, #f8fcf4 0%, #eef8e8 45%, #dff0d2 100%);
-}
-.summer .topCard {
-  background:
-    radial-gradient(
-      circle at 70% 20%,
-      rgba(255, 248, 190, 0.3) 0%,
-      rgba(255, 248, 190, 0) 18%
-    ),
-    linear-gradient(180deg, #eef9f1 0%, #dff2d8 42%, #bfe0a9 100%);
-}
+
 .autumn .topCard {
   background:
     radial-gradient(
-      circle at 70% 20%,
-      rgba(255, 228, 170, 0.28) 0%,
-      rgba(255, 228, 170, 0) 18%
+      circle at 72% 20%,
+      rgba(255, 220, 165, 0.3) 0%,
+      rgba(255, 220, 165, 0) 22%
     ),
-    linear-gradient(180deg, #fcf7ef 0%, #f3e6cf 45%, #dfc39d 100%);
+    linear-gradient(180deg, #fbf7ef 0%, #f4ead8 40%, #e7d1ad 72%, #dbc08f 100%);
+}
+.autumn .topCard::before {
+  background:
+    radial-gradient(
+      ellipse at 20% 60%,
+      #d7be8d 0%,
+      #d7be8d 32%,
+      transparent 33%
+    ),
+    radial-gradient(
+      ellipse at 50% 60%,
+      #cba66f 0%,
+      #cba66f 34%,
+      transparent 35%
+    ),
+    radial-gradient(
+      ellipse at 80% 60%,
+      #d3b27d 0%,
+      #d3b27d 32%,
+      transparent 33%
+    );
 }
 .winter .topCard {
   background:
@@ -886,6 +886,27 @@
       rgba(255, 255, 255, 0) 18%
     ),
     linear-gradient(180deg, #f8fbfd 0%, #edf3f7 45%, #dbe5ec 100%);
+}
+.winter .topCard::before {
+  background:
+    radial-gradient(
+      ellipse at 20% 60%,
+      #dfe6eb 0%,
+      #dfe6eb 32%,
+      transparent 33%
+    ),
+    radial-gradient(
+      ellipse at 50% 60%,
+      #cfd9e2 0%,
+      #cfd9e2 34%,
+      transparent 35%
+    ),
+    radial-gradient(
+      ellipse at 80% 60%,
+      #d8e0e8 0%,
+      #d8e0e8 32%,
+      transparent 33%
+    );
 }
 .seasonLayer {
   position: absolute;
@@ -929,21 +950,116 @@
   background: linear-gradient(135deg, #ffd6e7 0%, #ffb7d2 100%);
   border-radius: 70% 30% 70% 30%;
   box-shadow: 0 0 8px rgba(255, 183, 210, 0.28);
+  animation-name: springPetalDropAndStay;
+}
+.spring .rightTreeArea::before {
+  background: radial-gradient(
+    circle,
+    rgba(220, 245, 190, 0.6) 0%,
+    rgba(220, 245, 190, 0.22) 42%,
+    transparent 72%
+  );
+  animation: glowPulse 4.5s ease-in-out infinite;
+}
+.spring .topCard {
+  background:
+    radial-gradient(
+      circle at 70% 20%,
+      rgba(255, 244, 210, 0.35) 0%,
+      rgba(255, 244, 210, 0) 18%
+    ),
+    linear-gradient(180deg, #f8fcf4 0%, #eef8e8 45%, #dff0d2 100%);
+}
+@keyframes springPetalDropAndStay {
+  0% {
+    transform: translate3d(0, -20px, 0) rotate(0deg) scale(0.85);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.95;
+  }
+  30% {
+    transform: translate3d(18px, 180px, 0) rotate(110deg) scale(1);
+    opacity: 0.95;
+  }
+  55% {
+    transform: translate3d(6px, 430px, 0) rotate(170deg) scale(0.96);
+    opacity: 0.9;
+  }
+  85% {
+    transform: translate3d(6px, 430px, 0) rotate(170deg) scale(0.96);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(6px, 430px, 0) rotate(170deg) scale(0.96);
+    opacity: 0;
+  }
 }
 
 /* 여름 반짝이 */
 .summerParticle {
-  width: 8px;
-  height: 8px;
+  width: 12px;
+  height: 12px;
   background: radial-gradient(
     circle,
-    rgba(255, 255, 210, 0.95) 0%,
-    rgba(255, 244, 160, 0.7) 45%,
-    rgba(255, 244, 160, 0) 75%
+    rgba(255, 250, 210, 1) 0%,
+    rgba(255, 234, 140, 0.92) 38%,
+    rgba(255, 223, 110, 0.45) 62%,
+    rgba(255, 223, 110, 0) 78%
   );
   border-radius: 50%;
-  box-shadow: 0 0 12px rgba(255, 245, 160, 0.55);
+  box-shadow:
+    0 0 10px rgba(255, 240, 160, 0.7),
+    0 0 22px rgba(255, 223, 110, 0.45);
   animation-name: summerFloat;
+}
+
+.summer .topCard {
+  background:
+    radial-gradient(
+      circle at 78% 18%,
+      rgba(255, 241, 170, 0.48) 0%,
+      rgba(255, 241, 170, 0) 20%
+    ),
+    linear-gradient(180deg, #f3fbef 0%, #e3f5d8 38%, #c7e7ae 72%, #b5dc91 100%);
+}
+.summer .rightTreeArea::before {
+  content: "";
+  position: absolute;
+  top: 88px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 236, 150, 0.42) 0%,
+    rgba(205, 235, 120, 0.2) 42%,
+    rgba(205, 235, 120, 0) 72%
+  );
+  filter: blur(5px);
+  animation: glowPulse 4s ease-in-out infinite;
+  z-index: 0;
+}
+.summer .topCard::before {
+  background:
+    radial-gradient(
+      ellipse at 20% 60%,
+      #8bcf63 0%,
+      #8bcf63 32%,
+      transparent 33%
+    ),
+    radial-gradient(
+      ellipse at 50% 60%,
+      #76bc4c 0%,
+      #76bc4c 34%,
+      transparent 35%
+    ),
+    radial-gradient(
+      ellipse at 80% 60%,
+      #85c95a 0%,
+      #85c95a 32%,
+      transparent 33%
+    );
 }
 
 @keyframes summerFloat {
@@ -966,54 +1082,115 @@
 
 /* 가을 낙엽 */
 .autumnParticle {
-  width: 13px;
-  height: 13px;
-  background: linear-gradient(135deg, #d98c3f 0%, #b85a2b 100%);
-  clip-path: polygon(
-    50% 0%,
-    68% 22%,
-    100% 50%,
-    74% 76%,
-    50% 100%,
-    28% 74%,
-    0% 50%,
-    24% 22%
-  );
-  box-shadow: 0 0 8px rgba(184, 90, 43, 0.18);
+  width: 14px;
+  height: 10px;
+  background: linear-gradient(135deg, #d9a15d 0%, #b96a2d 100%);
+  border-radius: 70% 30% 70% 30%;
+  box-shadow: 0 0 6px rgba(185, 106, 45, 0.18);
+  animation-name: autumnLeafFall;
 }
 
+@keyframes autumnLeafFall {
+  0% {
+    transform: translate3d(0, -20px, 0) rotate(0deg) scale(0.85);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.95;
+  }
+  35% {
+    transform: translate3d(26px, 120px, 0) rotate(90deg) scale(1);
+    opacity: 0.95;
+  }
+  65% {
+    transform: translate3d(-18px, 240px, 0) rotate(180deg) scale(0.95);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(14px, 390px, 0) rotate(260deg) scale(0.9);
+    opacity: 0;
+  }
+}
 /* 겨울 눈 */
 .winterParticle {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   background: radial-gradient(
     circle,
     rgba(255, 255, 255, 1) 0%,
     rgba(235, 245, 255, 0.95) 45%,
-    rgba(180, 210, 255, 0.55) 72%,
-    rgba(180, 210, 255, 0) 100%
+    rgba(190, 220, 255, 0.65) 72%,
+    rgba(190, 220, 255, 0) 100%
   );
   border-radius: 50%;
   box-shadow:
-    0 0 10px rgba(255, 255, 255, 0.95),
-    0 0 18px rgba(180, 210, 255, 0.55);
+    0 0 8px rgba(255, 255, 255, 0.95),
+    0 0 16px rgba(190, 220, 255, 0.55);
   animation-name: winterSnow;
 }
-
 @keyframes winterSnow {
   0% {
-    transform: translate3d(0, -20px, 0) scale(0.8);
+    transform: translate3d(0, -20px, 0) scale(0.75);
     opacity: 0;
   }
-  15% {
+  10% {
+    opacity: 1;
+  }
+  40% {
+    transform: translate3d(12px, 120px, 0) scale(1);
     opacity: 0.95;
   }
-  50% {
-    transform: translate3d(10px, 150px, 0) scale(1);
+  70% {
+    transform: translate3d(-8px, 240px, 0) scale(0.95);
     opacity: 0.9;
   }
   100% {
-    transform: translate3d(-8px, 360px, 0) scale(0.85);
+    transform: translate3d(10px, 390px, 0) scale(0.85);
     opacity: 0;
   }
+}
+/* 나무 hover 반응 */
+.treeBox {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  position: relative;
+  cursor: pointer;
+}
+
+.treeFloatWrap {
+  transition: transform 0.35s ease;
+}
+
+.treeScaleWrap {
+  transition: transform 0.35s ease;
+}
+
+.treeImage {
+  transition:
+    transform 0.35s ease,
+    filter 0.35s ease;
+}
+
+.treeBox:hover .treeFloatWrap {
+  transform: translateY(-8px);
+}
+
+.treeBox:hover .treeScaleWrap {
+  transform: scale(1.04) rotate(-1deg);
+}
+
+.treeBox:hover .treeImage {
+  filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.18));
+}
+.treeScaleWrap {
+  transform: scale(var(--tree-scale, 1));
+  transform-origin: bottom center;
+  transition: transform 0.35s ease;
+}
+
+.treeBox:hover .treeScaleWrap {
+  transform: scale(calc(var(--tree-scale, 1) * 1.04)) rotate(-1deg);
 }

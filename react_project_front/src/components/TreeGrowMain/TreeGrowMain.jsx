@@ -65,11 +65,6 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
       return b.value - a.value;
     });
 
-  const maxValue =
-    rankedChartData.length > 0
-      ? Math.max(...rankedChartData.map((item) => item.value))
-      : 0;
-
   const getLegendColorClass = (rank) => {
     if (rank === 1) return styles.gold;
     if (rank === 2) return styles.silver;
@@ -131,6 +126,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+  const [showWaterRipple, setShowWaterRipple] = useState(false);
 
   const [waterAmount, setWaterAmount] = useState(0);
   const regionWater = selectedRegion?.water ?? 0;
@@ -290,7 +286,8 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
   }
 
   const getSeason = () => {
-    const month = new Date().getMonth() + 1;
+    //const month = new Date().getMonth() + 1;
+    const month = 3;
 
     if (month >= 3 && month <= 5) return "spring";
     if (month >= 6 && month <= 8) return "summer";
@@ -299,6 +296,14 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
   };
 
   const season = getSeason();
+
+  const getParticleCount = () => {
+    if (season === "spring") return 8;
+    if (season === "summer") return 6;
+    if (season === "autumn") return 9;
+    return 12;
+  };
+
   return (
     <div
       className={`${styles.treeGrowMain} ${styles[`stage${currentStage}`]} ${styles[season]}`}
@@ -306,14 +311,17 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
       <section className={styles.topCard}>
         <div className={styles.topHeader}>
           <div className={styles.seasonLayer}>
-            {Array.from({ length: 8 }).map((_, idx) => (
+            {Array.from({ length: getParticleCount() }).map((_, idx) => (
               <span
                 key={idx}
                 className={`${styles.particle} ${styles[season + "Particle"]}`}
                 style={{
-                  left: `${8 + idx * 11}%`,
+                  left: `${5 + ((idx * 11) % 90)}%`,
                   animationDelay: `${idx * 0.9}s`,
-                  animationDuration: `${7 + (idx % 3)}s`,
+                  animationDuration:
+                    season === "spring"
+                      ? `${10 + (idx % 3)}s`
+                      : `${6 + (idx % 4)}s`,
                 }}
               />
             ))}
@@ -339,11 +347,11 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
 
           <div className={styles.rightTreeArea}>
             <div className={styles.treeStageLabel}>{currentStageLabel}</div>
-            <div className={styles.treeBox}>
+            <div className={styles.treeBox} title="나무가 반응해요">
               <div className={styles.treeFloatWrap}>
                 <div
                   className={styles.treeScaleWrap}
-                  style={{ transform: `scale(${currentTreeScale})` }}
+                  style={{ "--tree-scale": currentTreeScale }}
                 >
                   <img
                     key={currentStage}
@@ -397,6 +405,9 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
                 }
 
                 if (!isTreeComplete) {
+                  setShowWaterRipple(true);
+                  setTimeout(() => setShowWaterRipple(false), 900);
+
                   setIsModalOpen(true);
                 }
               }}
