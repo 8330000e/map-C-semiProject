@@ -209,9 +209,11 @@ const PostBoard = ({
                   transform: `rotate(${Math.ceil(Math.random() * 2) / 2 === 1 ? 1 * (Math.random() * 15) : -1 * (Math.random() * 15)}deg)`,
                 }}
               >
-                <img
-                  src={`${import.meta.env.VITE_BACKSERVER}/campaign/memo/${list.campaignThumb}`}
-                />
+                <div className={styles.camp_board_img}>
+                  <img
+                    src={`${import.meta.env.VITE_BACKSERVER}/campaign/memo/${list.campaignThumb}`}
+                  />
+                </div>
                 <p>{list.campaignMemo}</p>
               </div>
             </div>

@@ -301,8 +301,7 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
   }
 
   const getSeason = () => {
-    //const month = new Date().getMonth() + 1;
-    const month = 12;
+    const month = new Date().getMonth() + 1;
 
     if (month >= 3 && month <= 5) return "spring";
     if (month >= 6 && month <= 8) return "summer";
@@ -371,7 +370,22 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
           </>
         )}
         <div className={styles.topHeader}>
-          <div className={styles.seasonLayer}></div>
+          <div className={styles.seasonLayer}>
+            {Array.from({ length: getParticleCount() }).map((_, idx) => (
+              <span
+                key={idx}
+                className={`${styles.particle} ${styles[season + "Particle"]}`}
+                style={{
+                  left: `${5 + ((idx * 11) % 90)}%`,
+                  animationDelay: `${idx * 0.9}s`,
+                  animationDuration:
+                    season === "winter"
+                      ? `${10 + (idx % 3)}s`
+                      : `${6 + (idx % 4)}s`,
+                }}
+              />
+            ))}
+          </div>
 
           <span className={styles.regionName}>{selectedRegion?.name}</span>
           <span className={styles.stageText}>{currentStageLabel}</span>

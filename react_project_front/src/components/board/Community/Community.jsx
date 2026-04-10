@@ -83,6 +83,7 @@ const Community = ({
   const [content, setContent] = useState("");
 
   const [selectedBoard, setSelectedBoard] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   const [attachedFiles, setAttachedFiles] = useState([]);
 
@@ -192,12 +193,12 @@ const Community = ({
   useEffect(() => {
     if (!highlightBoardNo || !boardList.length) return;
 
-    if (expandedBoardNo === highlightBoardNo) return;
-
     const targetBoard = boardList.find(
       (board) => String(getBoardNo(board)) === String(highlightBoardNo),
     );
     if (!targetBoard) return;
+
+    if (String(expandedBoardNo) === String(highlightBoardNo)) return;
 
     setSelectedBoard(targetBoard);
 
@@ -217,18 +218,26 @@ const Community = ({
       });
 
     setExpandedBoardNo(String(highlightBoardNo));
-  }, [boardList, highlightBoardNo, expandedBoardNo]);
+    setHighlightBoardNo(null);
+  }, [boardList, highlightBoardNo]);
 
   useEffect(() => {
     if (!expandedBoardNo) {
       setSelectedBoard(null);
+      setDetailLoading(false);
       return;
     }
 
-    if (getBoardNo(selectedBoard) && String(getBoardNo(selectedBoard)) === String(expandedBoardNo) && selectedBoard.boardContent) {
+    if (
+      getBoardNo(selectedBoard) &&
+      String(getBoardNo(selectedBoard)) === String(expandedBoardNo) &&
+      selectedBoard.boardContent
+    ) {
+      setDetailLoading(false);
       return;
     }
 
+    setDetailLoading(true);
     axios
       .get(`${BACKSERVER}/boards/${expandedBoardNo}`)
       .then((res) => {
@@ -238,6 +247,9 @@ const Community = ({
       })
       .catch((err) => {
         console.error("게시글 상세 정보 로드 실패", err);
+      })
+      .finally(() => {
+        setDetailLoading(false);
       });
   }, [expandedBoardNo, selectedBoard]);
 
@@ -694,6 +706,7 @@ const Community = ({
                 startEdit={startEdit}
                 deleteBoard={deleteBoard}
                 getImageUrl={getImageUrl}
+                detailLoading={detailLoading}
               />
             </>
           ) : (
