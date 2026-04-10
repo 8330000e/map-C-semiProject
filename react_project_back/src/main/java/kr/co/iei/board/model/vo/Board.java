@@ -1,12 +1,10 @@
 package kr.co.iei.board.model.vo;
 
-import java.beans.JavaBean;
-
 import org.apache.ibatis.type.Alias;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import kr.co.iei.member.model.vo.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Alias(value="board")
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Board {
 
@@ -31,6 +30,9 @@ public class Board {
 	    private Integer readCount;
 	    private String ctpv;
 	    private String sgg;
+	    // 게시글이 수정된 날짜를 담는 필드임.
+	    // 수정할 때마다 DB에 SYSDATE로 저장해서 프론트에서 "수정됨" 표시를 할 수 있도록 함.
+	    private String updatedAt;
 	    
 	    
 	 

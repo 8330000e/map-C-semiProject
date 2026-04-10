@@ -7,7 +7,7 @@ const Footer = () => {
     <>
       <div className={styles.footer}>
         <div className={styles.footer_wrap}>
-          <div className={styles.footer_guide}>
+            <div className={styles.footer_guide}>
             <ul>
               <li>광고 및 제휴 안내</li>
               <li>이용약관</li>
@@ -24,6 +24,7 @@ const Footer = () => {
               Copyright Herald KH정보교육원 종로 Students. All Rights Reserved
             </p>
           </div>
+
         </div>
       </div>
     </>
