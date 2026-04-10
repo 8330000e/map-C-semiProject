@@ -310,6 +310,17 @@
   border: 1px solid #e7eddd;
 }
 
+.boardDetailLoading {
+  margin-top: 14px;
+  padding: 18px 16px;
+  border-radius: 12px;
+  background-color: #f5f7f1;
+  color: #666;
+  text-align: center;
+  font-size: 14px;
+  border: 1px solid #e4e8e0;
+}
+
 .detailTopArea {
   display: flex;
   justify-content: space-between;
