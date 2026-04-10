@@ -57,7 +57,7 @@ public interface BoardDao {
 
 	int deleteBoardComment(@Param("commentNo") long commentNo, @Param("memberId") String memberId);
 
-	List<BoardLike> bestBoardList();
+	List<BoardLike> bestBoardList(HashMap<String, Object> param);
 	
 	List<Board> selectMemberIdBoard(HashMap<String, Object> map);
 

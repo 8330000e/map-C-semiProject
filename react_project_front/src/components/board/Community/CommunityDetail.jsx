@@ -88,11 +88,12 @@ const CommunityDetail = ({
   onLikeChange,
   onCommentCountChange,
 }) => {
+  const safeBoard = board || {};
   const { memberId } = useAuthStore();
   const [comments, setComments] = useState([]);
   // 상세페이지에서 보여줄 댓글 개수를 별도 상태로 관리함.
   // board.commentCount가 있으면 초기값으로 사용하지만, 실제 로드된 댓글 개수로 동기화함.
-  const [commentCount, setCommentCount] = useState(board.commentCount ?? 0);
+  const [commentCount, setCommentCount] = useState(safeBoard.commentCount ?? 0);
   const [newComment, setNewComment] = useState("");
   const [newPrivate, setNewPrivate] = useState(false);
   const [replyTarget, setReplyTarget] = useState(null);
@@ -101,10 +102,14 @@ const CommunityDetail = ({
   const [editPrivate, setEditPrivate] = useState(false);
   const [reportedCommentIds, setReportedCommentIds] = useState([]);
   const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(board.likeCount ?? 0);
+  const [likeCount, setLikeCount] = useState(safeBoard.likeCount ?? 0);
   const [scrapped, setScrapped] = useState(false);
   const commentsEndRef = useRef(null);
   const navigate = useNavigate();
+
+  if (!board?.boardNo) {
+    return null;
+  }
 
   useEffect(() => {
     setComments([]);

@@ -243,19 +243,23 @@
     </delete>
 
     <!-- 인기 게시글 -->
-    <select id="bestBoardList" resultType="kr.co.iei.board.model.vo.BoardLike">
+    <!-- 공개 게시물만 조회해야 해서 board_status를 0으로 고정함 -->
+    <!-- 매장용 게시물은 제외하기 위해 store_board_tbl 존재 여부를 확인함 -->
+    <!-- 좋아요가 없는 게시물도 인기 목록에 보이게 LEFT JOIN으로 변경함 -->
+    <select id="bestBoardList" parameterType="map" resultType="kr.co.iei.board.model.vo.BoardLike">
         SELECT 
-            t.board_no, 
+            b.board_no AS boardNo, 
             COUNT(t.board_no) AS count, 
-            b.board_title, 
+            b.board_title AS boardTitle, 
             b.ctpv, 
             b.sgg
-        FROM board_like_tbl t
-        JOIN board_tbl b ON (t.board_no = b.board_no)
-        WHERE NOT EXISTS (
+        FROM board_tbl b
+        LEFT JOIN board_like_tbl t ON (t.board_no = b.board_no)
+        WHERE b.board_status = 0
+        AND NOT EXISTS (
             SELECT 1 FROM store_board_tbl s WHERE s.board_no = b.board_no
         )
-        GROUP BY t.board_no, b.board_title, b.ctpv, b.sgg
+        GROUP BY b.board_no, b.board_title, b.ctpv, b.sgg
         ORDER BY count DESC
         offset 0 rows fetch next 10 rows only
     </select>
@@ -317,6 +321,7 @@
     	select board_no from tip_tbl where member_id=#{memberId}
     </select>
     <select id="selectTipBoardList" resultType="kr.co.iei.board.model.vo.Board">
+        <!-- 공개된 스크랩 게시글만 가져오기 위해 board_status=0 조건 추가함 -->
         SELECT
             b.board_no AS boardNo,
             b.writer_id AS writerId,
@@ -326,7 +331,8 @@
             b.board_date AS boardDate,
             b.read_count AS readCount
         FROM board_tbl b
-        WHERE b.board_no IN (
+        WHERE b.board_status = 0
+        AND b.board_no IN (
             SELECT board_no FROM tip_tbl GROUP BY board_no HAVING COUNT(*) >= 1
         )
         ORDER BY (

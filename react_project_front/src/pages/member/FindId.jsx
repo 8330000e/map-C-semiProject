@@ -69,20 +69,23 @@ const FindId = () => {
 
   return (
     <div className={styles.find_id_wrap}>
-      <h1 className="page-title">아이디 찾기 페이지</h1>
+      <h1 className={styles.page_title}>아이디 찾기 페이지</h1>
       {/*
       이메일 인증 컴포넌트에서 이메일 인증이 완료되면 setEmailVerified(true)로
       상태 변경
       */}
 
-      <EmailAuth
-        memberEmail={memberEmail}
-        //아이디찾기에서는 업데이트가 아니고 단순히 이메일 인증이기 때문에
-        //setMember({ ...member, memberEmail: email })이런식으로 안 해도 됨.
-        //즉 이메일이 업데이트 되었을 때 다른 정보는 건드리지 말고 이메일 정보만 업데이트 해주게 할 필요가 없음.
-        setMemberEmail={setMemberEmail}
-        onVerified={setEmailVerified}
-      ></EmailAuth>
+      <div className={styles.input_wrap}>
+        <EmailAuth
+          memberEmail={memberEmail}
+          //아이디찾기에서는 업데이트가 아니고 단순히 이메일 인증이기 때문에
+          //setMember({ ...member, memberEmail: email })이런식으로 안 해도 됨.
+          //즉 이메일이 업데이트 되었을 때 다른 정보는 건드리지 말고 이메일 정보만 업데이트 해주게 할 필요가 없음.
+          setMemberEmail={setMemberEmail}
+          onVerified={setEmailVerified}
+        ></EmailAuth>
+      </div>
+
       <div>
         {/*disabled={!emailVerified}
           이메일 인증이 끝난 이후 아이디 찾기 버튼 누르게 하기를 하려고 했으나
@@ -91,9 +94,15 @@ const FindId = () => {
 
           
         */}
-        <button type="button" onClick={handleFindId} disabled={!emailVerified}>
-          아이디 찾기
-        </button>
+        <div className={styles.btn_wrap}>
+          <button
+            type="button"
+            className={`${styles.find_id_btn} ${!emailVerified ? styles.disabled_btn : ""}`}
+            onClick={handleFindId}
+          >
+            아이디 찾기
+          </button>
+        </div>
       </div>
     </div>
   );

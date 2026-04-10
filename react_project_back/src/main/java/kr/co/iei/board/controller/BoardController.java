@@ -4,6 +4,7 @@ package kr.co.iei.board.controller;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,8 +51,34 @@ public class BoardController {
     ) {
         List<Board> list = boardService.selectBoardList(status, searchType, searchKeyword);
 
+        List<HashMap<String, Object>> mapped = list.stream()
+            .map(board -> {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("boardNo", board.getBoardNo());
+                map.put("writerId", board.getWriterId());
+                map.put("boardTitle", board.getBoardTitle());
+                map.put("boardContent", board.getBoardContent());
+                map.put("boardThumb", board.getBoardThumb());
+                map.put("boardDate", board.getBoardDate());
+                map.put("memberNickname", board.getMemberNickname());
+                map.put("boardStatus", board.getBoardStatus());
+                map.put("boardLat", board.getBoardLat());
+                map.put("boardLng", board.getBoardLng());
+                map.put("readCount", board.getReadCount());
+                map.put("ctpv", board.getCtpv());
+                map.put("sgg", board.getSgg());
+                map.put("updatedAt", board.getUpdatedAt());
+                map.put("writerNickname", board.getWriterNickname());
+                map.put("createDate", board.getCreateDate());
+                map.put("thumbnailUrl", board.getThumbnailUrl());
+                map.put("likeCount", board.getLikeCount());
+                map.put("commentCount", board.getCommentCount());
+                return map;
+            })
+            .collect(Collectors.toList());
+
         HashMap<String, Object> result = new HashMap<>();
-        result.put("items", list);
+        result.put("items", mapped);
         return result;
     }
 	//게시글 작성
@@ -256,8 +283,10 @@ public class BoardController {
 	// frontend에서 인기 게시글을 조회하기 위해 추가한 엔드포인트입니다.
 	// Bestpostlist.jsx에서 /boards/best로 요청하여 top 게시글 목록을 받아옵니다.
 	@GetMapping(value="/best")
-	public List<BoardLike> bestBoardList() {
-		return boardService.bestBoardList();
+	public List<BoardLike> bestBoardList(
+			@RequestParam(defaultValue = "0") int status
+	) {
+		return boardService.bestBoardList(status);
 	}
 
 	@GetMapping(value="/tips/list")
