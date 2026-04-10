@@ -20,6 +20,61 @@
   height: 450px;
   padding: 12px 14px;
   position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 70% 28%,
+      rgba(255, 245, 200, 0.45) 0%,
+      rgba(255, 245, 200, 0) 18%
+    ),
+    linear-gradient(180deg, #f8fbf4 0%, #eef8ea 42%, #e1f1d8 72%, #d7ebc9 100%);
+}
+
+.topCard::before {
+  content: "";
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  bottom: -42px;
+  height: 145px;
+  background:
+    radial-gradient(
+      ellipse at 20% 60%,
+      #b8d99a 0%,
+      #b8d99a 32%,
+      transparent 33%
+    ),
+    radial-gradient(
+      ellipse at 50% 60%,
+      #a8cf84 0%,
+      #a8cf84 34%,
+      transparent 35%
+    ),
+    radial-gradient(
+      ellipse at 80% 60%,
+      #b7d88f 0%,
+      #b7d88f 32%,
+      transparent 33%
+    );
+  opacity: 0.95;
+  z-index: 0;
+}
+
+.topCard::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 68px;
+  transform: translateX(-50%);
+  width: 260px;
+  height: 64px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(92, 63, 34, 0.42) 0%,
+    rgba(92, 63, 34, 0.22) 48%,
+    rgba(92, 63, 34, 0) 75%
+  );
+  z-index: 1;
 }
 
 .topHeader {
@@ -97,6 +152,62 @@
   justify-content: center;
   pointer-events: none;
   overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+.spring .rightTreeArea::before {
+  background: radial-gradient(
+    circle,
+    rgba(220, 245, 190, 0.6) 0%,
+    rgba(220, 245, 190, 0.22) 42%,
+    transparent 72%
+  );
+  animation: glowPulse 4.5s ease-in-out infinite;
+}
+
+.summer .rightTreeArea::before {
+  background: radial-gradient(
+    circle,
+    rgba(255, 243, 170, 0.5) 0%,
+    rgba(190, 235, 140, 0.2) 45%,
+    transparent 72%
+  );
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+.autumn .rightTreeArea::before {
+  background: radial-gradient(
+    circle,
+    rgba(255, 205, 145, 0.5) 0%,
+    rgba(230, 170, 100, 0.18) 45%,
+    transparent 72%
+  );
+  animation: glowPulse 5s ease-in-out infinite;
+}
+
+.winter .rightTreeArea::before {
+  background: radial-gradient(
+    circle,
+    rgba(215, 232, 255, 0.5) 0%,
+    rgba(215, 232, 255, 0.18) 45%,
+    transparent 72%
+  );
+  animation: glowPulse 5s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.72;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.96);
+    opacity: 0.72;
+  }
 }
 
 .treeStageLabel {
@@ -117,7 +228,25 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  animation: treeFloat 3.2s ease-in-out infinite;
+  animation: treeFloatPremium 4.8s ease-in-out infinite;
+}
+
+@keyframes treeFloatPremium {
+  0% {
+    transform: translateY(0px) rotate(-0.4deg);
+  }
+  25% {
+    transform: translateY(-4px) rotate(0.2deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(0.5deg);
+  }
+  75% {
+    transform: translateY(-3px) rotate(-0.2deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(-0.4deg);
+  }
 }
 
 .treeScaleWrap {
@@ -137,6 +266,13 @@
   filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.15));
 }
 
+.treeBox,
+.treeFloatWrap,
+.treeScaleWrap,
+.treeImage {
+  position: relative;
+  z-index: 3;
+}
 @keyframes growPop {
   0% {
     opacity: 0.65;
@@ -240,8 +376,8 @@
 }
 
 .waterButton {
-  border: 1px solid #8ea54a;
-  background: #b8d564;
+  border: 1px solid #b0d261;
+  background: #b0d261;
   color: #111;
   font-size: 12px;
   font-weight: 700;
@@ -714,4 +850,170 @@
   color: #6a7265;
   cursor: not-allowed;
   opacity: 0.9;
+}
+.spring .topCard {
+  background:
+    radial-gradient(
+      circle at 70% 20%,
+      rgba(255, 244, 210, 0.35) 0%,
+      rgba(255, 244, 210, 0) 18%
+    ),
+    linear-gradient(180deg, #f8fcf4 0%, #eef8e8 45%, #dff0d2 100%);
+}
+.summer .topCard {
+  background:
+    radial-gradient(
+      circle at 70% 20%,
+      rgba(255, 248, 190, 0.3) 0%,
+      rgba(255, 248, 190, 0) 18%
+    ),
+    linear-gradient(180deg, #eef9f1 0%, #dff2d8 42%, #bfe0a9 100%);
+}
+.autumn .topCard {
+  background:
+    radial-gradient(
+      circle at 70% 20%,
+      rgba(255, 228, 170, 0.28) 0%,
+      rgba(255, 228, 170, 0) 18%
+    ),
+    linear-gradient(180deg, #fcf7ef 0%, #f3e6cf 45%, #dfc39d 100%);
+}
+.winter .topCard {
+  background:
+    radial-gradient(
+      circle at 70% 20%,
+      rgba(255, 255, 255, 0.35) 0%,
+      rgba(255, 255, 255, 0) 18%
+    ),
+    linear-gradient(180deg, #f8fbfd 0%, #edf3f7 45%, #dbe5ec 100%);
+}
+.seasonLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  top: -12%;
+  opacity: 0;
+  animation-name: seasonFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes seasonFall {
+  0% {
+    transform: translate3d(0, -20px, 0) rotate(0deg) scale(0.8);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate3d(20px, 180px, 0) rotate(120deg) scale(1);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate3d(-10px, 420px, 0) rotate(260deg) scale(0.9);
+    opacity: 0;
+  }
+}
+
+/* 봄 꽃잎 */
+.springParticle {
+  width: 14px;
+  height: 10px;
+  background: linear-gradient(135deg, #ffd6e7 0%, #ffb7d2 100%);
+  border-radius: 70% 30% 70% 30%;
+  box-shadow: 0 0 8px rgba(255, 183, 210, 0.28);
+}
+
+/* 여름 반짝이 */
+.summerParticle {
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 210, 0.95) 0%,
+    rgba(255, 244, 160, 0.7) 45%,
+    rgba(255, 244, 160, 0) 75%
+  );
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(255, 245, 160, 0.55);
+  animation-name: summerFloat;
+}
+
+@keyframes summerFloat {
+  0% {
+    transform: translate3d(0, 30px, 0) scale(0.7);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate3d(24px, 170px, 0) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(-12px, 340px, 0) scale(0.75);
+    opacity: 0;
+  }
+}
+
+/* 가을 낙엽 */
+.autumnParticle {
+  width: 13px;
+  height: 13px;
+  background: linear-gradient(135deg, #d98c3f 0%, #b85a2b 100%);
+  clip-path: polygon(
+    50% 0%,
+    68% 22%,
+    100% 50%,
+    74% 76%,
+    50% 100%,
+    28% 74%,
+    0% 50%,
+    24% 22%
+  );
+  box-shadow: 0 0 8px rgba(184, 90, 43, 0.18);
+}
+
+/* 겨울 눈 */
+.winterParticle {
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(235, 245, 255, 0.95) 45%,
+    rgba(180, 210, 255, 0.55) 72%,
+    rgba(180, 210, 255, 0) 100%
+  );
+  border-radius: 50%;
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.95),
+    0 0 18px rgba(180, 210, 255, 0.55);
+  animation-name: winterSnow;
+}
+
+@keyframes winterSnow {
+  0% {
+    transform: translate3d(0, -20px, 0) scale(0.8);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  50% {
+    transform: translate3d(10px, 150px, 0) scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(-8px, 360px, 0) scale(0.85);
+    opacity: 0;
+  }
 }

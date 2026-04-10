@@ -288,10 +288,36 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
   if (!selectedRegion) {
     return null;
   }
+
+  const getSeason = () => {
+    const month = new Date().getMonth() + 1;
+
+    if (month >= 3 && month <= 5) return "spring";
+    if (month >= 6 && month <= 8) return "summer";
+    if (month >= 9 && month <= 11) return "autumn";
+    return "winter";
+  };
+
+  const season = getSeason();
   return (
-    <div className={styles.treeGrowMain}>
+    <div
+      className={`${styles.treeGrowMain} ${styles[`stage${currentStage}`]} ${styles[season]}`}
+    >
       <section className={styles.topCard}>
         <div className={styles.topHeader}>
+          <div className={styles.seasonLayer}>
+            {Array.from({ length: 8 }).map((_, idx) => (
+              <span
+                key={idx}
+                className={`${styles.particle} ${styles[season + "Particle"]}`}
+                style={{
+                  left: `${8 + idx * 11}%`,
+                  animationDelay: `${idx * 0.9}s`,
+                  animationDuration: `${7 + (idx % 3)}s`,
+                }}
+              />
+            ))}
+          </div>
           <span className={styles.regionName}>{selectedRegion?.name}</span>
           <span className={styles.stageText}>{currentStageLabel}</span>
         </div>
@@ -352,21 +378,31 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
               </span>
             </div>
 
-            {isLogin ? (
-              <button
-                className={styles.waterButton}
-                onClick={() => {
-                  if (!isTreeComplete) setIsModalOpen(true);
-                }}
-                disabled={isTreeComplete}
-              >
-                {isTreeComplete ? "성장 완료" : "물 주기(포인트 기여)"}
-              </button>
-            ) : (
-              <span className={styles.loginGuide}>
-                로그인 후 물 주기가 가능합니다.
-              </span>
-            )}
+            <button
+              className={styles.waterButton}
+              disabled={isTreeComplete}
+              onClick={() => {
+                if (!isLogin) {
+                  Swal.fire({
+                    icon: "warning",
+                    title: "로그인이 필요합니다",
+                    text: "물 주기를 하려면 로그인해주세요!",
+                    confirmButtonText: "로그인 하러가기",
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      window.location.href = "/members/login";
+                    }
+                  });
+                  return;
+                }
+
+                if (!isTreeComplete) {
+                  setIsModalOpen(true);
+                }
+              }}
+            >
+              {isTreeComplete ? "성장 완료" : "물 주기(포인트 기여)"}
+            </button>
           </div>
         </div>
       </section>
