@@ -108,12 +108,16 @@ const Header = () => {
                 sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }}
               />
 
-              <button
-                onClick={handleLogout}
-                className={`${styles.btn} ${styles.outline}`}
-              >
-                로그아웃
-              </button>
+              {/*memberId가 있을 경우에는 즉 로그인이 되어 있을 경우에는 로그아웃 버튼 활성화x */}
+              {memberId && (
+                <button
+                  onClick={handleLogout}
+                  className={`${styles.btn} ${styles.outline}`}
+                >
+                  로그아웃
+                </button>
+              )}
+
               {/* <button
                 onClick={() => setDrawer((prev) => !prev)}
                 className={`${styles.btn} ${styles.outline}`}
