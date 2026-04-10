@@ -20,17 +20,25 @@ const Bestpostlist = () => {
         console.log("인기 게시글 데이터를 가져오는 중 오류 발생:", err);
       });
   }, []);
-  const boardView = (i) => {
-    navigate("/map-community");
-    //navigate(`/map-community/${i}`);
+  const boardView = (boardNo) => {
+    if (boardNo) {
+      navigate(`/map-community?boardNo=${boardNo}`);
+    } else {
+      navigate("/map-community");
+    }
   };
   return (
     <div className={styles.bestpostlist}>
       <div>인기 게시글</div>
       {bestPostList.map((bestPost, i) => {
+        const boardNo = bestPost?.boardNo ?? bestPost?.boardId ?? bestPost?.id ?? null;
         return (
           <ul key={`${bestPost}+${i}`} className={styles.list_wrap}>
-            <li className={styles.list_item} onClick={() => boardView(i)}>
+            <li
+              className={styles.list_item}
+              style={{ cursor: "pointer" }}
+              onClick={() => boardView(boardNo)}
+            >
               <p>{i + 1}</p>
               <p>{bestPost.boardTitle}</p>
               <p>{bestPost.sgg}</p>

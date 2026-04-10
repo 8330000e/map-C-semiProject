@@ -68,6 +68,7 @@ const Community = ({
 
   const [type, setType] = useState(1);
   const [keyword, setKeyword] = useState("");
+  const [highlightBoardNo, setHighlightBoardNo] = useState(null);
 
   const [searchType, setSearchType] = useState(1);
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -89,6 +90,7 @@ const Community = ({
     const params = new URLSearchParams(location.search);
     const modeParam = params.get("mode");
     const missionParam = params.get("mission");
+    const boardNoParam = params.get("boardNo");
 
     if (modeParam === "write") {
       setMode("write");
@@ -97,6 +99,7 @@ const Community = ({
     }
 
     setMissionType(missionParam || null);
+    setHighlightBoardNo(boardNoParam ? String(boardNoParam) : null);
   }, [location.search]);
 
   const [selectAddr, setSelectAddr] = useState("선택된 위치 없음");
@@ -182,6 +185,34 @@ const Community = ({
         setBoardList([]);
       });
   }, [searchType, searchKeyword, sido, sigungu, memberId]);
+
+  useEffect(() => {
+    if (!highlightBoardNo || !boardList.length) return;
+
+    if (expandedBoardNo === highlightBoardNo) return;
+
+    const targetBoard = boardList.find(
+      (board) => String(board.boardNo) === String(highlightBoardNo),
+    );
+    if (!targetBoard) return;
+
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/boards/${highlightBoardNo}/read`)
+      .then(() => {
+        setBoardList((prev) =>
+          prev.map((item) =>
+            String(item.boardNo) === String(highlightBoardNo)
+              ? { ...item, readCount: (item.readCount ?? 0) + 1 }
+              : item,
+          ),
+        );
+      })
+      .catch((err) => {
+        console.error("게시글 상세 이동 시 조회수 업데이트 실패", err);
+      });
+
+    setExpandedBoardNo(String(highlightBoardNo));
+  }, [boardList, highlightBoardNo, expandedBoardNo]);
 
   useEffect(() => {
     if (!mapDivRef.current || !window.naver) {

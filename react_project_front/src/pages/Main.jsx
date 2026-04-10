@@ -79,6 +79,10 @@ const Main = () => {
   const { memberId } = useAuthStore();
   const isLogin = !!memberId;
 
+  const getBoardNo = (board) => {
+    return board?.boardNo ?? board?.boardId ?? board?.id ?? null;
+  };
+
   //랜덤 미션 패널
   const [todayRandomMission, setTodayRandomMission] = useState(null);
   const [showMissionBubble, setShowMissionBubble] = useState(false);
@@ -404,7 +408,18 @@ const Main = () => {
           <div className="tip_list roundBorder">
             <p>팁 리스트</p>
             {tipBoards.length > 0 ? (
-              <div className="tip_item">
+              <div
+                className="tip_item"
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  const boardNo = getBoardNo(tipBoards[tipIndex]);
+                  if (boardNo) {
+                    navigate(`/map-community?boardNo=${boardNo}`);
+                  } else {
+                    navigate("/map-community");
+                  }
+                }}
+              >
                 <div className="tip_title">
                   {tipBoards[tipIndex]?.boardTitle || "제목 정보 없음"}
                 </div>
