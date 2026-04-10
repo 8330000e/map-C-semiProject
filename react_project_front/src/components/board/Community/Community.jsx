@@ -83,6 +83,7 @@ const Community = ({
   const [content, setContent] = useState("");
 
   const [selectedBoard, setSelectedBoard] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   const [attachedFiles, setAttachedFiles] = useState([]);
 
@@ -223,13 +224,20 @@ const Community = ({
   useEffect(() => {
     if (!expandedBoardNo) {
       setSelectedBoard(null);
+      setDetailLoading(false);
       return;
     }
 
-    if (getBoardNo(selectedBoard) && String(getBoardNo(selectedBoard)) === String(expandedBoardNo) && selectedBoard.boardContent) {
+    if (
+      getBoardNo(selectedBoard) &&
+      String(getBoardNo(selectedBoard)) === String(expandedBoardNo) &&
+      selectedBoard.boardContent
+    ) {
+      setDetailLoading(false);
       return;
     }
 
+    setDetailLoading(true);
     axios
       .get(`${BACKSERVER}/boards/${expandedBoardNo}`)
       .then((res) => {
@@ -239,6 +247,9 @@ const Community = ({
       })
       .catch((err) => {
         console.error("게시글 상세 정보 로드 실패", err);
+      })
+      .finally(() => {
+        setDetailLoading(false);
       });
   }, [expandedBoardNo, selectedBoard]);
 
@@ -695,6 +706,7 @@ const Community = ({
                 startEdit={startEdit}
                 deleteBoard={deleteBoard}
                 getImageUrl={getImageUrl}
+                detailLoading={detailLoading}
               />
             </>
           ) : (

@@ -19,6 +19,7 @@ const BoardListBox = ({
   startEdit,
   deleteBoard,
   getImageUrl,
+  detailLoading,
 }) => {
   const itemRefs = useRef({});
 
@@ -131,7 +132,11 @@ const BoardListBox = ({
                       <span>{board.commentCount ?? 0}</span>
                     </span>
                   </div>
-                  {isExpanded && (
+                  {isExpanded && detailLoading ? (
+                    <div className={styles.boardDetailLoading}>
+                      상세 정보를 불러오는 중입니다...
+                    </div>
+                  ) : isExpanded && (
                     <CommunityDetail
                       board={
                         normalizeId(getBoardNo(selectedBoard)) === normalizeId(boardNo)
