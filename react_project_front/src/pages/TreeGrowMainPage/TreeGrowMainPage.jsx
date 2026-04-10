@@ -1,77 +1,44 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import TreeGrowMain from "../../components/TreeGrowMain/TreeGrowMain";
 import styles from "./TreeGrowMainPage.module.css";
 import RegionMap from "../../components/mainpage/RegionMap";
 
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+
 const BASE_NOTICE =
   "📢 8개 지역중 거주한 지역에 물을 주세요. 📢 나무는 일주일마다 초기화 됩니다.";
 
-const NOTICE_STORAGE_KEY = "tree_temp_notice";
-const NOTICE_DURATION = 60000; // 유저 공지 1분 유지
-const SLIDE_DURATION = 3000; // 공지 3초마다 변경
+const SLIDE_DURATION = 2500;
 
 const TreeGrowMainPage = () => {
   const [selectedRegionNo, setSelectedRegionNo] = useState(2);
-  const navigate = useNavigate();
-
-  const [tempNotice, setTempNotice] = useState(null);
+  const [serverNotices, setServerNotices] = useState([]);
   const [currentNoticeIndex, setCurrentNoticeIndex] = useState(0);
 
-  const noticeTimerRef = useRef(null);
+  const navigate = useNavigate();
   const slideTimerRef = useRef(null);
 
-  // 저장된 임시 공지 복구
-  useEffect(() => {
-    const savedNotice = localStorage.getItem(NOTICE_STORAGE_KEY);
-    if (!savedNotice) return;
-
+  const fetchNotices = async () => {
     try {
-      const parsed = JSON.parse(savedNotice);
-      const now = Date.now();
-
-      if (parsed.expiresAt > now) {
-        setTempNotice(parsed);
-
-        const remainTime = parsed.expiresAt - now;
-
-        noticeTimerRef.current = setTimeout(() => {
-          setTempNotice(null);
-          localStorage.removeItem(NOTICE_STORAGE_KEY);
-        }, remainTime);
-      } else {
-        localStorage.removeItem(NOTICE_STORAGE_KEY);
-      }
+      const res = await axios.get(`${BACKSERVER}/regions/notices`);
+      setServerNotices(res.data);
     } catch (error) {
-      console.error("공지 복구 실패:", error);
-      localStorage.removeItem(NOTICE_STORAGE_KEY);
+      console.error("공지 조회 실패:", error);
     }
-  }, []);
-
-  // 공지 추가
-  const addNotice = (message) => {
-    const expiresAt = Date.now() + NOTICE_DURATION;
-
-    const newNotice = {
-      id: `temp-${Date.now()}`,
-      message: `${message}`,
-      expiresAt,
-    };
-
-    setTempNotice(newNotice);
-    localStorage.setItem(NOTICE_STORAGE_KEY, JSON.stringify(newNotice));
-
-    if (noticeTimerRef.current) {
-      clearTimeout(noticeTimerRef.current);
-    }
-
-    noticeTimerRef.current = setTimeout(() => {
-      setTempNotice(null);
-      localStorage.removeItem(NOTICE_STORAGE_KEY);
-    }, NOTICE_DURATION);
   };
 
-  // 공지 리스트 구성
+  useEffect(() => {
+    fetchNotices();
+
+    const interval = setInterval(() => {
+      fetchNotices();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const notices = useMemo(() => {
     const list = [
       {
@@ -80,17 +47,18 @@ const TreeGrowMainPage = () => {
       },
     ];
 
-    if (tempNotice?.message) {
+    serverNotices.forEach((notice) => {
       list.push({
-        id: tempNotice.id || "temp",
-        message: tempNotice.message,
+        id: notice.contributionNo,
+        message: `💧 ${notice.memberId}님이 ${
+          notice.regionName ?? `지역 ${notice.regionNo}`
+        }에 ${notice.contributedPoint}H2O를 주었습니다.`,
       });
-    }
+    });
 
     return list;
-  }, [tempNotice]);
+  }, [serverNotices]);
 
-  // 공지 자동 슬라이드
   useEffect(() => {
     if (slideTimerRef.current) {
       clearInterval(slideTimerRef.current);
@@ -112,19 +80,14 @@ const TreeGrowMainPage = () => {
     };
   }, [notices]);
 
-  // notices 길이 변경 시 index 보정
   useEffect(() => {
     if (currentNoticeIndex >= notices.length) {
       setCurrentNoticeIndex(0);
     }
   }, [currentNoticeIndex, notices.length]);
 
-  // 언마운트 시 타이머 정리
   useEffect(() => {
     return () => {
-      if (noticeTimerRef.current) {
-        clearTimeout(noticeTimerRef.current);
-      }
       if (slideTimerRef.current) {
         clearInterval(slideTimerRef.current);
       }
@@ -168,10 +131,7 @@ const TreeGrowMainPage = () => {
         </div>
 
         <div className={styles.right}>
-          <TreeGrowMain
-            selectedRegionNo={selectedRegionNo}
-            onAddNotice={addNotice}
-          />
+          <TreeGrowMain selectedRegionNo={selectedRegionNo} />
         </div>
       </div>
     </div>

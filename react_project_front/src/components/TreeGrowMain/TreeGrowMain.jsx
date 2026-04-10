@@ -14,7 +14,7 @@ import Swal from "sweetalert2";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
+const TreeGrowMain = ({ selectedRegionNo }) => {
   const GRAPH_MAX = 10000;
   const BAR_MAX_HEIGHT = 180;
   const BAR_MIN_HEIGHT = 14;
@@ -143,6 +143,11 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
   const [showWaterRipple, setShowWaterRipple] = useState(false);
 
+  const [treeClickCount, setTreeClickCount] = useState(0);
+  const [showAbsorbEffect, setShowAbsorbEffect] = useState(false);
+  const [showTreeBounce, setShowTreeBounce] = useState(false);
+  const [showEasterEgg, setShowEasterEgg] = useState(false);
+
   const [waterAmount, setWaterAmount] = useState(0);
   const regionWater = selectedRegion?.water ?? 0;
 
@@ -263,10 +268,6 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
         remainPoint: updatedPoint,
       });
       try {
-        onAddNotice?.(
-          `💧 ${memberId}님이 ${selectedRegion.name}에 ${waterAmount}H2O를 주었습니다 `,
-          "user",
-        );
       } catch (e) {
         console.error("공지 실패:", e);
       }
@@ -318,28 +319,60 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
     return 12;
   };
 
+  const handleTreeClick = () => {
+    setShowAbsorbEffect(true);
+    setShowTreeBounce(true);
+
+    setTimeout(() => setShowAbsorbEffect(false), 700);
+    setTimeout(() => setShowTreeBounce(false), 500);
+
+    setTreeClickCount((prev) => {
+      const next = prev + 1;
+
+      if (next >= 10) {
+        setShowEasterEgg(true);
+
+        setTimeout(() => {
+          setShowEasterEgg(false);
+        }, 4000);
+
+        return 0;
+      }
+
+      return next;
+    });
+  };
+
   return (
     <div
-      className={`${styles.treeGrowMain} ${styles[`stage${currentStage}`]} ${styles[season]}`}
+      className={`${styles.treeGrowMain} ${styles[`stage${currentStage}`]} ${styles[season]} ${showEasterEgg && season === "winter" ? styles.winterEasterCard : ""}`}
     >
       <section className={styles.topCard}>
+        {showEasterEgg && season === "winter" && (
+          <>
+            <div className={styles.easterEggSnowLayer}>
+              {Array.from({ length: 260 }).map((_, idx) => (
+                <span
+                  key={idx}
+                  className={styles.easterEggSnowflake}
+                  style={{
+                    left: `${(idx * 3.9) % 100}%`,
+                    animationDelay: `${(idx % 36) * 0.05}s`,
+                    animationDuration: `${2.4 + (idx % 6) * 0.22}s`,
+                    width: `${8 + (idx % 5) * 3}px`,
+                    height: `${8 + (idx % 5) * 3}px`,
+                  }}
+                />
+              ))}
+            </div>
+
+            <div className={styles.easterEggSnowFog}></div>
+            <div className={styles.easterEggSnowGround}></div>
+          </>
+        )}
         <div className={styles.topHeader}>
-          <div className={styles.seasonLayer}>
-            {Array.from({ length: getParticleCount() }).map((_, idx) => (
-              <span
-                key={idx}
-                className={`${styles.particle} ${styles[season + "Particle"]}`}
-                style={{
-                  left: `${5 + ((idx * 11) % 90)}%`,
-                  animationDelay: `${idx * 0.9}s`,
-                  animationDuration:
-                    season === "winter"
-                      ? `${10 + (idx % 3)}s`
-                      : `${6 + (idx % 4)}s`,
-                }}
-              />
-            ))}
-          </div>
+          <div className={styles.seasonLayer}></div>
+
           <span className={styles.regionName}>{selectedRegion?.name}</span>
           <span className={styles.stageText}>{currentStageLabel}</span>
         </div>
@@ -361,10 +394,10 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
 
           <div className={styles.rightTreeArea}>
             <div className={styles.treeStageLabel}>{currentStageLabel}</div>
-            <div className={styles.treeBox} title="나무가 반응해요">
+            <div className={styles.treeBox} onClick={handleTreeClick}>
               <div className={styles.treeFloatWrap}>
                 <div
-                  className={styles.treeScaleWrap}
+                  className={`${styles.treeScaleWrap} ${showTreeBounce ? styles.treeBounce : ""}`}
                   style={{ "--tree-scale": currentTreeScale }}
                 >
                   <img
@@ -373,6 +406,17 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
                     alt={currentStageLabel}
                     className={styles.treeImage}
                   />
+
+                  {showAbsorbEffect && (
+                    <div className={styles.absorbEffect}>
+                      <img
+                        src={waterDropImg}
+                        alt="흡수 물방울"
+                        className={styles.absorbDrop}
+                      />
+                      <span className={styles.absorbSpark}></span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

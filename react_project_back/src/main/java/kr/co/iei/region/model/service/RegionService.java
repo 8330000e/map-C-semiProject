@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.iei.member.model.dao.MemberDao;
 import kr.co.iei.region.model.dao.RegionDao;
 import kr.co.iei.region.model.vo.Region;
+import kr.co.iei.region.model.vo.RegionContribution;
 
 @Service
 public class RegionService {
@@ -63,5 +64,10 @@ public class RegionService {
     @Transactional
     public int resetWeeklyTree() {
         return regionDao.resetWeeklyTree();
+    }
+
+
+    public List<RegionContribution> selectRecentContributionList() {
+        return regionDao.selectRecentContributionList();
     }
 }

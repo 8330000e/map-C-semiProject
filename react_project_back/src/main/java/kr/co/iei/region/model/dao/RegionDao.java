@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import kr.co.iei.region.model.vo.Region;
+import kr.co.iei.region.model.vo.RegionContribution;
 
 @Mapper
 public interface RegionDao {
@@ -20,4 +21,6 @@ public interface RegionDao {
                            @Param("point") int point);
 
     int resetWeeklyTree();
+
+	List<RegionContribution> selectRecentContributionList();
 }

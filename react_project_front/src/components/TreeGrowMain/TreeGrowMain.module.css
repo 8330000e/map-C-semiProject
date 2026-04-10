@@ -1316,3 +1316,232 @@
   color: #2f372b;
   transform: scale(1.05);
 }
+.absorbEffect {
+  position: absolute;
+  left: 50%;
+  bottom: -30px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.absorbDrop {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  animation: absorbToTree 0.7s ease-out forwards;
+  filter: drop-shadow(0 0 10px rgba(90, 170, 255, 0.5));
+}
+
+@keyframes absorbToTree {
+  0% {
+    transform: translateY(40px) scale(0.8);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(-120px) scale(0.95);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-170px) scale(0.2);
+    opacity: 0;
+  }
+}
+.treeBounce {
+  animation: treeEatBounce 0.5s ease;
+}
+
+@keyframes treeEatBounce {
+  0% {
+    transform: scale(var(--tree-scale, 1)) translateY(0);
+  }
+  35% {
+    transform: scale(calc(var(--tree-scale, 1) * 1.08)) translateY(-8px);
+  }
+  70% {
+    transform: scale(calc(var(--tree-scale, 1) * 0.98)) translateY(2px);
+  }
+  100% {
+    transform: scale(var(--tree-scale, 1)) translateY(0);
+  }
+}
+.absorbSpark {
+  position: absolute;
+  left: 50%;
+  top: -145px;
+  width: 24px;
+  height: 24px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(180, 230, 255, 0.7) 40%,
+    rgba(180, 230, 255, 0) 75%
+  );
+  animation: absorbSparkFlash 0.45s ease-out forwards;
+}
+
+@keyframes absorbSparkFlash {
+  0% {
+    transform: translateX(-50%) scale(0.2);
+    opacity: 0;
+  }
+  30% {
+    transform: translateX(-50%) scale(1.4);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) scale(2);
+    opacity: 0;
+  }
+}
+.easterEggSnowLayer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.easterEggSnowflake {
+  position: absolute;
+  top: -12%;
+  border-radius: 50%;
+  opacity: 0;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(240, 247, 255, 0.92) 45%,
+    rgba(210, 230, 250, 0.45) 72%,
+    rgba(210, 230, 250, 0) 100%
+  );
+  box-shadow:
+    0 0 8px rgba(255, 255, 255, 0.95),
+    0 0 18px rgba(210, 230, 255, 0.55);
+  animation: easterEggSnowBlast linear forwards;
+}
+
+@keyframes easterEggSnowBlast {
+  0% {
+    transform: translate3d(0, -30px, 0) scale(0.7);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.95;
+  }
+  35% {
+    transform: translate3d(25px, 140px, 0) scale(1);
+    opacity: 1;
+  }
+  70% {
+    transform: translate3d(-15px, 300px, 0) scale(1.08);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate3d(12px, 470px, 0) scale(1.02);
+    opacity: 0;
+  }
+}
+
+.winterEasterCard {
+  animation: winterFlash 0.8s ease;
+}
+
+@keyframes winterFlash {
+  0% {
+    filter: brightness(1);
+  }
+  35% {
+    filter: brightness(1.08);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+.easterEggSnowFog {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(255, 255, 255, 0.28) 0%,
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 75% 30%,
+      rgba(255, 255, 255, 0.22) 0%,
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 40% 65%,
+      rgba(255, 255, 255, 0.18) 0%,
+      transparent 26%
+    ),
+    rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(1.5px);
+  animation: snowFogPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes snowFogPulse {
+  0% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.82;
+  }
+  100% {
+    opacity: 0.55;
+  }
+}
+.easterEggSnowGround {
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  bottom: -8px;
+  height: 115px;
+  z-index: 9;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse at 15% 100%,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0.98) 38%,
+      transparent 39%
+    ),
+    radial-gradient(
+      ellipse at 45% 100%,
+      rgba(248, 252, 255, 0.98) 0%,
+      rgba(248, 252, 255, 0.98) 40%,
+      transparent 41%
+    ),
+    radial-gradient(
+      ellipse at 75% 100%,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0.98) 38%,
+      transparent 39%
+    ),
+    radial-gradient(
+      ellipse at 95% 100%,
+      rgba(245, 250, 255, 0.96) 0%,
+      rgba(245, 250, 255, 0.96) 34%,
+      transparent 35%
+    );
+  animation: snowGroundRise 0.9s ease-out forwards;
+}
+
+@keyframes snowGroundRise {
+  0% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
