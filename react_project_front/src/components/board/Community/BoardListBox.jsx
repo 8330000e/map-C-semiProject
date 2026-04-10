@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useEffect, useRef } from "react";
 import CommunityDetail from "./CommunityDetail";
 import styles from "./Community.module.css";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -12,54 +13,76 @@ const BoardListBox = ({
   boardList,
   expandedBoardNo,
   setExpandedBoardNo,
-  setBoardList,
+  selectedBoard,
   setSelectedBoard,
+  setBoardList,
   startEdit,
   deleteBoard,
   getImageUrl,
 }) => {
+  const itemRefs = useRef({});
+
+  const getBoardNo = (board) =>
+    board?.boardNo ?? board?.boardId ?? board?.id ?? null;
+
+  const normalizeId = (id) => (id !== null && id !== undefined ? String(id) : "");
+
+  useEffect(() => {
+    if (!expandedBoardNo) return;
+    const item = itemRefs.current[normalizeId(expandedBoardNo)];
+    if (!item) return;
+    item.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [expandedBoardNo]);
+
   const handleBoardClick = async (board) => {
-    if (!board?.boardNo) {
+    const boardNo = getBoardNo(board);
+    if (!boardNo) {
       console.warn("boardNo is undefined, skipping read count update.", board);
       return;
     }
 
-    const isExpanded = expandedBoardNo === board.boardNo;
+    const isExpanded = normalizeId(expandedBoardNo) === normalizeId(boardNo);
     if (!isExpanded) {
       try {
         // 게시글 목록에서 게시글을 처음 클릭했을 때 조회수를 올리는 요청을 보냄.
         // 이미 펼쳐진 게시글을 다시 클릭하면 조회수를 다시 올리지 않도록 함.
-        await axios.get(
-          `${BACKSERVER}/boards/${board.boardNo}/read`,
-        );
+        await axios.get(`${BACKSERVER}/boards/${boardNo}/read`);
         setBoardList((prev) =>
-          prev.map((item) =>
-            item.boardNo === board.boardNo
+          prev.map((item) => {
+            const itemBoardNo = getBoardNo(item);
+            return itemBoardNo === boardNo
               ? { ...item, readCount: (item.readCount ?? 0) + 1 }
-              : item,
-          ),
+              : item;
+          }),
         );
       } catch (err) {
         console.error("조회수 증가 실패", err);
       }
     }
 
-    setExpandedBoardNo(isExpanded ? null : board.boardNo);
+    setExpandedBoardNo(isExpanded ? null : boardNo);
+    setSelectedBoard(isExpanded ? null : board);
   };
 
   return (
     <div className={styles.boardListBox}>
       {boardList.length > 0 ? (
         <ul className={styles.boardListItems}>
-          {boardList.map((board, index) => {
-            const isExpanded = expandedBoardNo === board.boardNo;
-            return (
-              <li
-                className={styles.boardListItem}
-                key={
-                  board.boardNo ?? `${board.boardTitle}-${board.createDate}-${index}`
-                }
-              >
+          {boardList
+            .filter((board) => getBoardNo(board) !== null)
+            .map((board, index) => {
+              const boardNo = getBoardNo(board);
+              const isExpanded = normalizeId(expandedBoardNo) === normalizeId(boardNo);
+              return (
+                <li
+                  ref={(el) => {
+                    if (el) {
+                      itemRefs.current[normalizeId(boardNo)] = el;
+                    }
+                  }}
+                  className={styles.boardListItem}
+                  key={boardNo}
+                >
                 <div
                   className={styles.boardItem}
                   onClick={() => handleBoardClick(board)}
@@ -67,12 +90,12 @@ const BoardListBox = ({
                   <div className={styles.boardItemTop}>
                     <div className={styles.boardWriter}>
                       <span className={styles.writerIcon}>👤</span>
-                      <span>{board.writerNickname}</span>
+                      <span>{board.writerNickname || board.memberNickname || board.writerId || board.memberId}</span>
                     </div>
-                    <div className={styles.boardDate}>{board.createDate}</div>
+                    <div className={styles.boardDate}>{board.createDate || board.boardDate}</div>
                   </div>
                   <div className={styles.boardTitleWrap}>
-                    <div className={styles.boardTitle}>{board.boardTitle}</div>
+                    <div className={styles.boardTitle}>{board.boardTitle || board.BOARD_TITLE || board.title || "제목 없음"}</div>
                     {(board.updatedAt || board.updateAt) &&
                       (board.updatedAt !== board.createDate) && (
                         // 게시글 생성일과 수정일이 다르면 수정된 글로 판단해서 배지를 보여줌.
@@ -108,7 +131,7 @@ const BoardListBox = ({
                   </div>
                   {isExpanded && (
                     <CommunityDetail
-                      board={board}
+                      board={selectedBoard?.boardNo === board.boardNo ? selectedBoard : board}
                       onEdit={(boardItem) => {
                         setSelectedBoard(boardItem);
                         startEdit(boardItem);

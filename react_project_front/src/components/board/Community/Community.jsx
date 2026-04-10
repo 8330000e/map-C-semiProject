@@ -125,12 +125,12 @@ const Community = ({
           if (!board?.boardNo) return board;
 
           const commentRequest = axios.get(
-            `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/comments`,
+            `${BACKSERVER}/boards/${board.boardNo}/comments`,
           );
 
           const likeRequest = memberId
             ? axios.get(
-                `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes/${memberId}`,
+                `${BACKSERVER}/boards/${board.boardNo}/likes/${memberId}`,
               )
             : Promise.resolve({ data: false });
 
@@ -160,7 +160,7 @@ const Community = ({
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/boards`, {
+      .get(`${BACKSERVER}/boards`, {
         params: {
           status: 0,
           searchType,
@@ -197,7 +197,7 @@ const Community = ({
     if (!targetBoard) return;
 
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/boards/${highlightBoardNo}/read`)
+      .get(`${BACKSERVER}/boards/${highlightBoardNo}/read`)
       .then(() => {
         setBoardList((prev) =>
           prev.map((item) =>
@@ -213,6 +213,28 @@ const Community = ({
 
     setExpandedBoardNo(String(highlightBoardNo));
   }, [boardList, highlightBoardNo, expandedBoardNo]);
+
+  useEffect(() => {
+    if (!expandedBoardNo) {
+      setSelectedBoard(null);
+      return;
+    }
+
+    if (selectedBoard?.boardNo && String(selectedBoard.boardNo) === String(expandedBoardNo) && selectedBoard.boardContent) {
+      return;
+    }
+
+    axios
+      .get(`${BACKSERVER}/boards/${expandedBoardNo}`)
+      .then((res) => {
+        if (res.data) {
+          setSelectedBoard(res.data);
+        }
+      })
+      .catch((err) => {
+        console.error("게시글 상세 정보 로드 실패", err);
+      });
+  }, [expandedBoardNo, selectedBoard]);
 
   useEffect(() => {
     if (!mapDivRef.current || !window.naver) {
@@ -314,7 +336,7 @@ const Community = ({
       };
 
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKSERVER}/boards`,
+        `${BACKSERVER}/boards`,
         requestData,
       );
       const savedBoard = res.data;
@@ -332,7 +354,7 @@ const Community = ({
           formData.append("memberId", memberId);
 
           await axios.post(
-            `${import.meta.env.VITE_BACKSERVER}/boards/${boardNo}/files`,
+            `${BACKSERVER}/boards/${boardNo}/files`,
             formData,
             {
               headers: {
@@ -370,7 +392,7 @@ const Community = ({
 
         // 목록 다시 불러오기
         const listRes = await axios.get(
-          `${import.meta.env.VITE_BACKSERVER}/boards`,
+          `${BACKSERVER}/boards`,
           {
             params: {
               status: 0,
@@ -438,7 +460,7 @@ const Community = ({
       };
 
       const res = await axios.patch(
-        `${import.meta.env.VITE_BACKSERVER}/boards/${selectedBoard.boardNo}`,
+        `${BACKSERVER}/boards/${selectedBoard.boardNo}`,
         requestData,
         { params: { memberId } },
       );
@@ -456,7 +478,7 @@ const Community = ({
         setMode("list");
 
         const listRes = await axios.get(
-          `${import.meta.env.VITE_BACKSERVER}/boards`,
+          `${BACKSERVER}/boards`,
           {
             params: {
               status: 0,
@@ -510,7 +532,7 @@ const Community = ({
 
     try {
       const res = await axios.delete(
-        `${import.meta.env.VITE_BACKSERVER}/boards/${boardNo}`,
+        `${BACKSERVER}/boards/${boardNo}`,
         {
           timeout: 5000,
           params: { memberId },
@@ -660,9 +682,10 @@ const Community = ({
               <BoardListBox
                 boardList={boardList}
                 expandedBoardNo={expandedBoardNo}
+                selectedBoard={selectedBoard}
                 setExpandedBoardNo={setExpandedBoardNo}
-                setBoardList={setBoardList}
                 setSelectedBoard={setSelectedBoard}
+                setBoardList={setBoardList}
                 startEdit={startEdit}
                 deleteBoard={deleteBoard}
                 getImageUrl={getImageUrl}
