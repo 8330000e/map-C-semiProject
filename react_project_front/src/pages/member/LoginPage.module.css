@@ -1,7 +1,7 @@
 /* LoginPage.module.css */
 
 .login_wrap {
-  width: 600px;
+  width: 500px;
   min-height: 65vh;
   margin: 80px auto;
   /* 하단에 이미지가 들어갈 공간(약 120px~150px)을 padding-bottom으로 확보합니다 */
@@ -20,7 +20,7 @@
 /*로그인 제목 설정*/
 .page_title {
   padding: 10px;
-  font-size: 50px;
+  font-size: 40px;
   font-weight: bold;
   margin-top: -20px;
   margin-bottom: 20px;
