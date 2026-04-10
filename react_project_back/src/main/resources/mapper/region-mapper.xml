@@ -17,26 +17,24 @@
           ON R.REGION_NO = T.REGION_NO
         ORDER BY R.REGION_NO
     </select>
-	    
-	<update id="increaseTreeExp">
-	    UPDATE REGION_TREE_TBL
-	    SET 
-	        TREE_EXP = TREE_EXP + #{point},
-	        TOTAL_POINT_USED = TOTAL_POINT_USED + #{point}
-	    WHERE REGION_NO = #{regionNo}
-	</update>
-	
-	<insert id="insertContribution">
-	    INSERT INTO REGION_CONTRIBUTION_TBL
-	    (CONTRIBUTION_NO, MEMBER_ID, REGION_NO, CONTRIBUTED_POINT)
-	    VALUES (contribution_seq.NEXTVAL, #{memberId}, #{regionNo}, #{point})
-	</insert>
-	
-	
-	<update id="resetWeeklyTree">
-    UPDATE REGION_TREE_TBL
-    SET TREE_LEVEL = 1,
-        TREE_EXP = 0,
-        TOTAL_POINT_USED = 0
-</update>
+
+    <update id="increaseTreeExp">
+        UPDATE REGION_TREE_TBL
+        SET TREE_EXP = TREE_EXP + #{appliedPoint}
+        WHERE REGION_NO = #{regionNo}
+    </update>
+
+    <insert id="insertContribution">
+        INSERT INTO REGION_CONTRIBUTION_TBL
+        (CONTRIBUTION_NO, MEMBER_ID, REGION_NO, CONTRIBUTED_POINT)
+        VALUES (contribution_seq.NEXTVAL, #{memberId}, #{regionNo}, #{point})
+    </insert>
+
+    <update id="resetWeeklyTree">
+        UPDATE REGION_TREE_TBL
+        SET TREE_LEVEL = 1,
+            TREE_EXP = 0,
+            TOTAL_POINT_USED = 0
+    </update>
+
 </mapper>

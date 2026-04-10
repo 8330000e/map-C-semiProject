@@ -39,12 +39,27 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
     { name: "제주권", value: "x3.0" },
   ];
   const getRegionMultiplierValue = (regionName) => {
-    const found = defaultMultiplier.find((item) => item.name === regionName);
-    if (!found) return 1.0;
-    return Number(found.value.replace("x", ""));
+    const normalizedName = regionName?.trim();
+
+    const multiplierMap = {
+      서울: 1.2,
+      경기: 1.0,
+      인천: 2.1,
+      충청: 1.6,
+      충청권: 1.6,
+      전라: 1.7,
+      전라권: 1.7,
+      경상: 1.1,
+      경상권: 1.1,
+      강원: 3.0,
+      강원권: 3.0,
+      제주: 3.0,
+      제주권: 3.0,
+    };
+
+    return multiplierMap[normalizedName] ?? 1.0;
   };
 
-  const [regionList, setRegionList] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [chartData, setChartData] = useState([]);
   const [ownedPoint, setOwnedPoint] = useState(0);
@@ -167,8 +182,6 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
       const regionsRes = await axios.get(`${BACKSERVER}/regions`);
       const regions = regionsRes.data;
 
-      setRegionList(regions);
-
       const mappedChartData = regions.map((item) => ({
         name: item.regionName,
         value: item.treeExp,
@@ -251,7 +264,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
       });
       try {
         onAddNotice?.(
-          `💧 ${memberId}님이 ${selectedRegion.name}에 ${waterAmount}h2O를 주었습니다 `,
+          `💧 ${memberId}님이 ${selectedRegion.name}에 ${waterAmount}H2O를 주었습니다 `,
           "user",
         );
       } catch (e) {
@@ -269,8 +282,9 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
       console.error(e);
       Swal.fire({
         icon: "error",
-        title: "실패",
-        text: "포인트 부족 또는 오류",
+        title: "오류",
+        text:
+          e.response?.data?.message || "물 주기 처리 중 오류가 발생했습니다.",
       });
     }
   };
@@ -287,7 +301,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
 
   const getSeason = () => {
     //const month = new Date().getMonth() + 1;
-    const month = 3;
+    const month = 12;
 
     if (month >= 3 && month <= 5) return "spring";
     if (month >= 6 && month <= 8) return "summer";
@@ -319,7 +333,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
                   left: `${5 + ((idx * 11) % 90)}%`,
                   animationDelay: `${idx * 0.9}s`,
                   animationDuration:
-                    season === "spring"
+                    season === "winter"
                       ? `${10 + (idx % 3)}s`
                       : `${6 + (idx % 4)}s`,
                 }}
@@ -382,7 +396,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
               </div>
 
               <span className={styles.waterText}>
-                {regionWater}h2O/{currentStageTarget}h2O
+                {regionWater}H2O/{currentStageTarget}H2O
               </span>
             </div>
 
@@ -427,7 +441,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
                   className={`${styles.legendIcon} ${getLegendColorClass(item.rank)}`}
                 />
                 <span className={styles.legendLabel}>
-                  {item.name} : {item.value}h2O
+                  {item.name} : {item.value}H2O
                 </span>
               </div>
             ))}
@@ -465,7 +479,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
 
             <div className={styles.modalContent}>
               <p className={styles.needText}>
-                다음 성장까지 필요한 물 {currentStageTarget - regionWater}h2O
+                다음 성장까지 필요한 물 {currentStageTarget - regionWater}H2O
               </p>
 
               {/* 중앙 물방울 */}
@@ -493,7 +507,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
                   </span>
 
                   <span className={styles.centerText}>
-                    선택한 물: {waterAmount}h2O
+                    선택한 물: {waterAmount}H2O
                   </span>
 
                   <span className={styles.rightText}>
@@ -558,13 +572,13 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
           <div className={styles.completeModalBox}>
             <div className={styles.completeInner}>
               <p className={styles.completeTitle}>
-                {resultData.regionName}에 {resultData.donatedWater}h2O
+                {resultData.regionName}에 {resultData.donatedWater}H2O
                 주었습니다.
               </p>
 
               <p>
-                배율 x{resultData.multiplier} 적용 → 실제 반영{" "}
-                {resultData.appliedWater}h2O
+                배율 x{resultData.multiplier} 적용 · 실제 반영{" "}
+                {resultData.appliedWater}H2O
               </p>
 
               <div className={styles.completeWaterWrap}>
@@ -592,7 +606,7 @@ const TreeGrowMain = ({ selectedRegionNo, onAddNotice }) => {
                 </div>
 
                 <p className={styles.completeAmountText}>
-                  {resultData.totalWater}h2O/{resultData.targetWater}h2O
+                  {resultData.totalWater}H2O/{resultData.targetWater}H2O
                 </p>
               </div>
 
