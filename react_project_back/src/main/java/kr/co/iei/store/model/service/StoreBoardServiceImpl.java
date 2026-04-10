@@ -203,6 +203,27 @@ public class StoreBoardServiceImpl implements StoreBoardService {
         return storeBoardDAO.selectTradeInfoByMarketNoAndBuyerId(marketNo, buyerId);
     }
 
+    @Override
+    public StoreTradeInfo getTradeInfoByTradeNo(Long tradeNo) {
+        return storeBoardDAO.selectTradeInfoByTradeNo(tradeNo);
+    }
+
+    @Override
+    public List<StoreTradeInfo> getTradesByBuyerId(String buyerId) {
+        if (buyerId == null || buyerId.isBlank()) {
+            return List.of();
+        }
+        return storeBoardDAO.selectTradeInfoByBuyerId(buyerId);
+    }
+
+    @Override
+    public List<StoreTradeInfo> getTradesBySellerId(String sellerId) {
+        if (sellerId == null || sellerId.isBlank()) {
+            return List.of();
+        }
+        return storeBoardDAO.selectTradeInfoBySellerId(sellerId);
+    }
+
     private void normalizeStoreBoard(StoreBoard storeBoard) {
         if (storeBoard == null) {
             return;

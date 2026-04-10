@@ -59,6 +59,12 @@ public interface StoreBoardDAO {
     StoreTradeInfo selectTradeInfoByMarketNoAndBuyerId(@Param("marketNo") Long marketNo,
                                                        @Param("buyerId") String buyerId);
 
+    StoreTradeInfo selectTradeInfoByTradeNo(@Param("tradeNo") Long tradeNo);
+
+    List<StoreTradeInfo> selectTradeInfoByBuyerId(@Param("buyerId") String buyerId);
+
+    List<StoreTradeInfo> selectTradeInfoBySellerId(@Param("sellerId") String sellerId);
+
     int insertTradeInfo(StoreTradeInfo tradeInfo);
 
     int updateTradeInfo(StoreTradeInfo tradeInfo);

@@ -62,7 +62,7 @@ const StoreDetail = () => {
   const [editingText, setEditingText] = useState("");
   const [editingPrivate, setEditingPrivate] = useState(false);
   const [saleStatus, setSaleStatus] = useState("판매중");
-  const [deliveryMethod, setDeliveryMethod] = useState("direct");
+  const [deliveryMethod, setDeliveryMethod] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -176,12 +176,12 @@ const StoreDetail = () => {
     setSupportDirect(itemTradeSetting.direct);
     setSupportDelivery(itemTradeSetting.delivery);
 
-    if (itemTradeSetting.direct) {
+    if (itemTradeSetting.direct && !itemTradeSetting.delivery) {
       setDeliveryMethod("direct");
-    } else if (itemTradeSetting.delivery) {
+    } else if (!itemTradeSetting.direct && itemTradeSetting.delivery) {
       setDeliveryMethod("delivery");
     } else {
-      setDeliveryMethod("direct");
+      setDeliveryMethod("");
     }
   }, [itemTradeSetting]);
 
@@ -429,6 +429,16 @@ const StoreDetail = () => {
   };
 
   const handleGoToPayment = () => {
+    if (!deliveryMethod) {
+      Swal.fire({
+        icon: "warning",
+        title: "거래방법을 선택해주세요",
+        text: "택배 또는 직거래 중 하나를 선택하셔야 합니다.",
+        confirmButtonColor: "#464d3e",
+      });
+      return;
+    }
+
     const baseAmount = parsePriceToNumber(item.productPrice);
     const finalAmount = deliveryMethod === "delivery" ? baseAmount + DELIVERY_FEE : baseAmount;
     navigate("/payment/order", {
@@ -443,6 +453,7 @@ const StoreDetail = () => {
         sellerId: item.memberId,
         sellerNickname: item.memberNickname,
         tradeType: item.tradeType,
+        ctpvsggId: item.ctpvsggId || null,
         productThumb: item.productThumb,
       },
     });
@@ -570,6 +581,11 @@ const StoreDetail = () => {
                 택배배송 (배송비 {DELIVERY_FEE.toLocaleString("ko-KR")}원)
               </label>
             </div>
+            {!deliveryMethod && supportDirect && supportDelivery && (
+              <p style={{ marginTop: 8, color: "#5a5a5a", fontSize: "0.95rem" }}>
+                양쪽 거래가 가능할 때는 먼저 거래방법을 선택해주세요.
+              </p>
+            )}
           </div>
 
           <div className={styles.info_box}>상품 상태 : {item.productStatus || "미등록"}</div>
