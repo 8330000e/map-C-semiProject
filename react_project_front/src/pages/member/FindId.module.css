@@ -1,0 +1,63 @@
+.find_id_wrap {
+  width: 500px;
+  min-height: 65vh;
+  margin: 80px auto;
+  padding: 50px 35px 180px;
+  background-color: #ffffff;
+  border-radius: 25px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  /* 내부 요소들을 세로축 중앙 정렬 */
+  align-items: center;
+  justify-content: flex-start; /* 위에서부터 차례대로 배치 */
+  padding-top: 60px;
+  position: relative;
+  overflow: hidden;
+  border: 3px solid lightgreen;
+}
+
+.page_title {
+  text-align: center;
+  width: 100%;
+  /* !important를 붙여서 다른 스타일이 방해하지 못하게 강제해 보세요 */
+  margin-bottom: 80px !important;
+  display: block;
+}
+
+.input_wrap {
+  width: 100%;
+  text-align: left;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.input_wrap label {
+  display: block;
+  text-align: left;
+}
+
+.find_id_btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #6c63ff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn_wrap {
+  width: 100%;
+  align-items: center;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.disabled_btn {
+  background-color: #ccc;
+  cursor: not-allowed;
+  pointer-events: none; /*클릭 막기*/
+}

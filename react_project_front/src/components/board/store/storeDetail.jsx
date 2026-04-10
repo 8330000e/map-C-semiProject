@@ -53,6 +53,7 @@ const StoreDetail = () => {
   const [loadError, setLoadError] = useState("");
 
   const [comments, setComments] = useState([]);
+  const [reportedCommentIds, setReportedCommentIds] = useState({});
   const [transactionReviews, setTransactionReviews] = useState([]);
   const [sellerRatings, setSellerRatings] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -62,7 +63,7 @@ const StoreDetail = () => {
   const [editingText, setEditingText] = useState("");
   const [editingPrivate, setEditingPrivate] = useState(false);
   const [saleStatus, setSaleStatus] = useState("판매중");
-  const [deliveryMethod, setDeliveryMethod] = useState("direct");
+  const [deliveryMethod, setDeliveryMethod] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -171,17 +172,18 @@ const StoreDetail = () => {
 
   const [supportDirect, setSupportDirect] = useState(true);
   const [supportDelivery, setSupportDelivery] = useState(true);
+  const [reported, setReported] = useState(false);
 
   useEffect(() => {
     setSupportDirect(itemTradeSetting.direct);
     setSupportDelivery(itemTradeSetting.delivery);
 
-    if (itemTradeSetting.direct) {
+    if (itemTradeSetting.direct && !itemTradeSetting.delivery) {
       setDeliveryMethod("direct");
-    } else if (itemTradeSetting.delivery) {
+    } else if (!itemTradeSetting.direct && itemTradeSetting.delivery) {
       setDeliveryMethod("delivery");
     } else {
-      setDeliveryMethod("direct");
+      setDeliveryMethod("");
     }
   }, [itemTradeSetting]);
 
@@ -196,6 +198,22 @@ const StoreDetail = () => {
     if (hour < 24) return `${hour}시간 전`;
     const day = Math.floor(hour / 24);
     return `${day}일 전`;
+  };
+
+  const formatCommentDateTime = (rawDate) => {
+    if (!rawDate) return "";
+    const date = new Date(rawDate);
+    if (Number.isNaN(date.getTime())) return "";
+    const pad = (value) => String(value).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  };
+
+  const formatDateTime = (rawDate) => {
+    return formatCommentDateTime(rawDate);
+  };
+
+  const isCommentEdited = (comment) => {
+    return comment?.updatedAt && comment.updatedAt !== comment.createdAt;
   };
 
   const refreshComments = async () => {
@@ -429,6 +447,16 @@ const StoreDetail = () => {
   };
 
   const handleGoToPayment = () => {
+    if (!deliveryMethod) {
+      Swal.fire({
+        icon: "warning",
+        title: "거래방법을 선택해주세요",
+        text: "택배 또는 직거래 중 하나를 선택하셔야 합니다.",
+        confirmButtonColor: "#464d3e",
+      });
+      return;
+    }
+
     const baseAmount = parsePriceToNumber(item.productPrice);
     const finalAmount = deliveryMethod === "delivery" ? baseAmount + DELIVERY_FEE : baseAmount;
     navigate("/payment/order", {
@@ -443,9 +471,44 @@ const StoreDetail = () => {
         sellerId: item.memberId,
         sellerNickname: item.memberNickname,
         tradeType: item.tradeType,
+        ctpvsggId: item.ctpvsggId || null,
         productThumb: item.productThumb,
       },
     });
+  };
+
+  const handleReport = async () => {
+    const result = await Swal.fire({
+      icon: "warning",
+      title: "신고하기",
+      text: "해당 게시글을 신고하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: "신고",
+      cancelButtonText: "취소",
+      confirmButtonColor: "#c0392b",
+    });
+
+    if (result.isConfirmed) {
+      setReported(true);
+      Swal.fire({ icon: "success", title: "신고 접수되었습니다." });
+    }
+  };
+
+  const handleReportComment = async (commentId) => {
+    const result = await Swal.fire({
+      icon: "warning",
+      title: "댓글 신고하기",
+      text: "이 댓글을 신고하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: "신고",
+      cancelButtonText: "취소",
+      confirmButtonColor: "#c0392b",
+    });
+
+    if (result.isConfirmed) {
+      setReportedCommentIds((prev) => ({ ...prev, [commentId]: true }));
+      Swal.fire({ icon: "success", title: "신고 접수되었습니다." });
+    }
   };
 
   const handleEdit = () => {
@@ -528,11 +591,29 @@ const StoreDetail = () => {
         </div>
 
         <div className={styles.detail_summary}>
-          <p className={styles.price}>{formatPrice(item.productPrice)}</p>
+          <div className={styles.detail_summary_top}>
+            <p className={styles.price}>{formatPrice(item.productPrice)}</p>
+            {!isAuthor && (
+              <button
+                type="button"
+                className={`${styles.report_icon_button} ${reported ? styles.reported : ""}`}
+                onClick={handleReport}
+                title={reported ? "신고 완료" : "신고하기"}
+              >
+                <span className="material-icons">
+                  {reported ? "report" : "report_gmailerrorred"}
+                </span>
+              </button>
+            )}
+          </div>
           <div className={styles.region_badge}>{item.regionName || item.ctpvsggId || "미등록"}</div>
           <p>작성자 : {item.memberId}</p>
           <p>조회수 : {item.readCount || 0}</p>
           <p>댓글 : {comments.length}</p>
+          {(item.updatedAt || item.updateAt) &&
+            (item.updatedAt || item.updateAt) !== item.createdAt && (
+              <p>수정됨 · {formatDateTime(item.updatedAt || item.updateAt)}</p>
+            )}
 
           <p>거래방법 : {getTradeTypeLabel(item.tradeType)}</p>
 
@@ -570,6 +651,11 @@ const StoreDetail = () => {
                 택배배송 (배송비 {DELIVERY_FEE.toLocaleString("ko-KR")}원)
               </label>
             </div>
+            {!deliveryMethod && supportDirect && supportDelivery && (
+              <p style={{ marginTop: 8, color: "#5a5a5a", fontSize: "0.95rem" }}>
+                양쪽 거래가 가능할 때는 먼저 거래방법을 선택해주세요.
+              </p>
+            )}
           </div>
 
           <div className={styles.info_box}>상품 상태 : {item.productStatus || "미등록"}</div>
@@ -592,17 +678,21 @@ const StoreDetail = () => {
               </button>
             </div>
           ) : null}
-          {saleStatus !== "판매완료" && !isAuthor && (
+          {!isAuthor && (
             <div className={styles.button_group}>
-              <button type="button" className={styles.cart_button}>
-                🛒 장바구니
-              </button>
-              <button type="button" className={styles.buy_button} onClick={handleGoToPayment}>
-                구매하기
-              </button>
+              {saleStatus !== "판매완료" && (
+                <>
+                  <button type="button" className={styles.cart_button}>
+                    🛒 장바구니
+                  </button>
+                  <button type="button" className={styles.buy_button} onClick={handleGoToPayment}>
+                    구매하기
+                  </button>
+                </>
+              )}
             </div>
           )}
-          {saleStatus === "판매완료" && (
+          {saleStatus === "판매완료" && isAuthor && (
             <div className={styles.info_box}>
               이 상품은 결제 완료 처리되어 더 이상 수정/삭제할 수 없습니다.
             </div>
@@ -730,8 +820,27 @@ const StoreDetail = () => {
                 style={{ marginLeft: `${(comment.commentDepth || 0) * 20}px` }}
               >
                 <p className={styles.comment_meta}>
-                  [프로필이미지] {comment.memberNickname || comment.memberId} · {formatCommentDate(comment.createdAt)}
-                  {isSecret && <span className={styles.reply_badge}>비공개</span>}
+                  <span>
+                    {comment.memberNickname || comment.memberId} · {formatCommentDate(comment.createdAt)}
+                    {isSecret && <span className={styles.reply_badge}>비공개</span>}
+                    {isCommentEdited(comment) && (
+                      <span className={styles.comment_update_info}>
+                        수정됨 · {formatCommentDateTime(comment.updatedAt)}
+                      </span>
+                    )}
+                  </span>
+                  {!isOwn && (
+                    <button
+                      type="button"
+                      className={`${styles.report_icon_button} ${reportedCommentIds[comment.reviewNo] ? styles.reported : ""}`}
+                      onClick={() => handleReportComment(comment.reviewNo)}
+                      title={reportedCommentIds[comment.reviewNo] ? "신고 완료" : "댓글 신고"}
+                    >
+                      <span className="material-icons">
+                        {reportedCommentIds[comment.reviewNo] ? "report" : "report_gmailerrorred"}
+                      </span>
+                    </button>
+                  )}
                 </p>
 
                 {editingTarget && editingTarget.reviewNo === comment.reviewNo ? (

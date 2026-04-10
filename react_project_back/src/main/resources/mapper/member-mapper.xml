@@ -114,7 +114,7 @@ fetch first 1 row only
 	</update>
 
 	<!-- 포인트 조회 -->
-	<select id="selectMemberPoint" parameterType="string" resultType="int">
+	<select id="selectMemberPoint" parameterType="string" resultType="Integer">
 	SELECT TOTAL_POINT
 	FROM MEMBER_POINT_TBL
 	WHERE MEMBER_ID = #{memberId}

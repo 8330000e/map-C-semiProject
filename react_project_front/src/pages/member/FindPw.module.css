@@ -1,0 +1,56 @@
+.find_pw_wrap {
+  width: 500px;
+  min-height: 65vh;
+  margin: 80px auto;
+  padding: 50px 35px 180px;
+  background-color: #ffffff;
+  border-radius: 25px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+
+  border: 3px solid lightgreen;
+}
+
+.page_title {
+  text-align: center;
+  padding-bottom: 35px;
+}
+
+.input_wrap {
+  width: 100%;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  font-size: 15px;
+}
+
+.label_id {
+  margin-bottom: 10px;
+}
+
+.input_id {
+  width: 100%;
+  padding: 16px 18px;
+  margin-top: 10px;
+  margin-bottom: 16px; /* 입력창 간격 */
+  font-size: 13px;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+  background-color: #f9fafc;
+  transition: all 0.2s ease;
+}
+
+.find_pw_btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #6c63ff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}

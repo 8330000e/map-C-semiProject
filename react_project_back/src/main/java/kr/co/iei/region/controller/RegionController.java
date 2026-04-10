@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.region.model.service.RegionService;
 import kr.co.iei.region.model.vo.Region;
+import kr.co.iei.region.model.vo.RegionContribution;
 
 @CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
 @RestController
@@ -47,5 +48,11 @@ public class RegionController {
         response.put("message", result > 0 ? "물 주기 성공" : "물 주기 실패");
 
         return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/notices")
+    public ResponseEntity<List<RegionContribution>> selectRecentContributionList() {
+        List<RegionContribution> list = regionService.selectRecentContributionList();
+        return ResponseEntity.ok(list);
     }
 }
