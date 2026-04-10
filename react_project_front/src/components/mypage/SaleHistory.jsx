@@ -145,6 +145,17 @@ const hasSellingTag = (item) => {
   return title.includes("[판매중]");
 };
 
+const hasShippingDetails = (item, tradeInfo) => {
+  const invoiceNumber = tradeInfo?.invoiceNumber ?? item.invoiceNumber;
+  const shippingStatus = getShippingStatusValue(item, tradeInfo);
+  return Boolean(
+    invoiceNumber ||
+    (shippingStatus !== null && shippingStatus !== undefined && shippingStatus !== "") ||
+    tradeInfo?.courierCode != null ||
+    item.courierCode != null
+  );
+};
+
 const isBoardSelling = (item) => {
   return getBoardTitleStatus(item) === "판매중";
 };
@@ -347,6 +358,7 @@ const SaleHistory = () => {
     const address = item.orderInfo?.address || item.address || "";
     const displayTradeType = resolveTradeType(item.tradeType, item.tradeTypeText, item.deliveryMethod, address || tradeInfo?.address);
     const hasDelivery = displayTradeType === "택배" || displayTradeType === "직거래/택배";
+    const hasShippingInfo = hasDelivery && hasShippingDetails(item, tradeInfo);
     const linkMarketNo = marketNo;
     const displayTitle = stripStatusTag(getItemTitle(item));
     const displayDate = item.date
@@ -383,7 +395,7 @@ const SaleHistory = () => {
             {item.buyerId || item.buyerNickname ? (
               <div className={styles.sale_card_buyer}>구매자: {item.buyerNickname || item.buyerId}</div>
             ) : null}
-            {hasDelivery && (
+            {hasShippingInfo && (
               <div className={styles.sale_card_shipping_info}>
                 <div className={styles.sale_card_detail}>배송 상태: {getDisplayShippingStatusLabel(item, tradeInfo)}</div>
                 <div className={styles.sale_card_detail}>택배사: {getCourierLabel(displayCourierCode)}</div>
@@ -437,9 +449,9 @@ const SaleHistory = () => {
             <section className={styles.sale_status_section}>
               <div className={styles.status_header}>
                 <h4>판매완료</h4>
-                <span>{completedItems.length}건</span>
+                <span>{completedItemsWithFallback.length}건</span>
               </div>
-              {completedItems.length > 0 ? (
+              {completedItemsWithFallback.length > 0 ? (
                 <>
                   <div className={styles.status_card_list}>{visibleCompletedItems.map(renderSaleCard)}</div>
                   {completedPageCount > 1 && renderPagination(completedPage, completedPageCount, setCompletedPage)}
