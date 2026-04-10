@@ -192,12 +192,12 @@ const Community = ({
   useEffect(() => {
     if (!highlightBoardNo || !boardList.length) return;
 
-    if (expandedBoardNo === highlightBoardNo) return;
-
     const targetBoard = boardList.find(
       (board) => String(getBoardNo(board)) === String(highlightBoardNo),
     );
     if (!targetBoard) return;
+
+    if (String(expandedBoardNo) === String(highlightBoardNo)) return;
 
     setSelectedBoard(targetBoard);
 
@@ -217,7 +217,8 @@ const Community = ({
       });
 
     setExpandedBoardNo(String(highlightBoardNo));
-  }, [boardList, highlightBoardNo, expandedBoardNo]);
+    setHighlightBoardNo(null);
+  }, [boardList, highlightBoardNo]);
 
   useEffect(() => {
     if (!expandedBoardNo) {
