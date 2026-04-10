@@ -13,6 +13,7 @@
 .campdetailpage_details_wrap {
   width: 800px;
   background-color: aqua;
+  height: 500px;
 }
 .campdetailpage_sidebar {
   width: 300px;
@@ -58,4 +59,89 @@
   padding: 4px;
   max-width: 100%;
   max-height: 100%;
+}
+.camp_polygon_wrap {
+  display: flex;
+  position: relative;
+  width: 500px;
+}
+.camp_polygon1 {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  top: 2px;
+  left: 2px;
+  background-color: orangered;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon2 {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  top: 10px;
+  left: 90px;
+  background-color: orangered;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon3 {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  top: 6px;
+  left: 180px;
+  background-color: orangered;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon4 {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  right: 180px;
+  top: 30px;
+  background-color: orangered;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon5 {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  right: 60px;
+  top: 80px;
+  background-color: orangered;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon6 {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: orangered;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon7 {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: orangered;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon8 {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: orangered;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon9 {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: orangered;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon0 {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: orangered;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }

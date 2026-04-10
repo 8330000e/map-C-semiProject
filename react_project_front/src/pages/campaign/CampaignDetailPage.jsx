@@ -86,6 +86,18 @@ const CampaignDetailPage = () => {
             <div>{campaignDetail.memberCount}</div>
             <div>{campaignDetail.memberId}</div>
             <div>{campaignDetail.campaignExpireDate}</div>
+            <div className={styles.camp_polygon_wrap}>
+              <div className={styles.camp_polygon1}></div>
+              <div className={styles.camp_polygon2}></div>
+              <div className={styles.camp_polygon3}></div>
+              <div className={styles.camp_polygon4}></div>
+              <div className={styles.camp_polygon5}></div>
+              <div className={styles.camp_polygon6}></div>
+              <div className={styles.camp_polygon7}></div>
+              <div className={styles.camp_polygon8}></div>
+              <div className={styles.camp_polygon9}></div>
+              <div className={styles.camp_polygon0}></div>
+            </div>
           </div>
           <div className={styles.campdetailpage_sidebar}>
             <div>{campaignDetail.campaignExplanation}</div>
@@ -219,11 +231,6 @@ const PostBoard = ({
             </div>
           );
         })}
-        {/* <div className={styles.board_max_wrap}></div>
-        <div className={styles.board_max_wrap}></div>
-        <div className={styles.board_max_wrap}></div>
-        <div className={styles.board_max_wrap}></div>
-        <div className={styles.board_max_wrap}></div> */}
         <button
           className={styles.board_btn}
           disabled={isCreator ? !dateOut : !inCampaign || !dateOut} //현재 캠페인 생성자가 못건드림(생성자를 campaign_member_tbl에 추가시켜야 할 것 같음)
