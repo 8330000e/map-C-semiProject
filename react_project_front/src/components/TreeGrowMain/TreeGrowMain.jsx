@@ -301,8 +301,7 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
   }
 
   const getSeason = () => {
-    //const month = new Date().getMonth() + 1;
-    const month = 3;
+    const month = new Date().getMonth() + 1;
 
     if (month >= 3 && month <= 5) return "spring";
     if (month >= 6 && month <= 8) return "summer";
