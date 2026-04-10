@@ -71,15 +71,18 @@ const Header = () => {
         </NavLink>
 
         <div className={styles.header_wrap}>
-          {!memberId && !isLoginPage ? (
+          {!memberId ? (
             <div className={styles.login}>
               <Link to="/members/login">
-                <button
-                  type="button"
-                  className={`btn ${styles.btn} ${styles.inline} ${styles.login_btn}`}
-                >
-                  로그인
-                </button>
+                {/*로그인이 안됐을 떄 로그인 버튼이 뜨도록 설정 */}
+                {!isLoginPage && (
+                  <button
+                    type="button"
+                    className={`btn ${styles.btn} ${styles.inline} ${styles.login_btn}`}
+                  >
+                    로그인
+                  </button>
+                )}
               </Link>
             </div>
           ) : (
@@ -104,9 +107,12 @@ const Header = () => {
                 </div>
               )}
 
-              <NotificationsIcon
-                sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }}
-              />
+              {/*로그인만 됐을 떄에만 아이콘이 뜨도록 설정 */}
+              {memberId && (
+                <NotificationsIcon
+                  sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }}
+                />
+              )}
 
               {/*memberId가 있을 경우에는 즉 로그인이 되어 있을 경우에는 로그아웃 버튼 활성화x */}
               {memberId && (
@@ -126,96 +132,115 @@ const Header = () => {
               >
                 메뉴 열기
               </button> */}
-
-              <div
-                id="header-drawer"
-                className={`${styles.header_drawer} ${drawer ? styles.drawer_open : ""}`}
-                ref={drawerRef}
-              >
-                <div className={styles.drawer_menu}>
-                  <NavLink
-                    to="/mypage/updateMyInfo"
-                    className={({ isActive }) =>
-                      isActive ? styles.drawer_link_active : styles.drawer_link
-                    }
-                    onClick={() => setDrawer(false)}
-                  >
-                    내 정보
-                  </NavLink>
-                  <NavLink
-                    to="/mypage/changePw"
-                    className={({ isActive }) =>
-                      isActive ? styles.drawer_link_active : styles.drawer_link
-                    }
-                    onClick={() => setDrawer(false)}
-                  >
-                    비밀번호 변경
-                  </NavLink>
-                  <NavLink
-                    to="/mypage/myBoard"
-                    className={({ isActive }) =>
-                      isActive ? styles.drawer_link_active : styles.drawer_link
-                    }
-                    onClick={() => setDrawer(false)}
-                  >
-                    내 게시판
-                  </NavLink>
-                  <NavLink
-                    to="/mypage/myLikeBoard"
-                    className={({ isActive }) =>
-                      isActive ? styles.drawer_link_active : styles.drawer_link
-                    }
-                    onClick={() => setDrawer(false)}
-                  >
-                    좋아요누른 게시판
-                  </NavLink>
-                  <NavLink
-                    to="/mypage/tipScrap"
-                    className={({ isActive }) =>
-                      isActive ? styles.drawer_link_active : styles.drawer_link
-                    }
-                    onClick={() => setDrawer(false)}
-                  >
-                    팁 스크랩
-                  </NavLink>
-                  <NavLink
-                    to="/mypage/leaveMember"
-                    className={({ isActive }) =>
-                      isActive ? styles.drawer_link_active : styles.drawer_link
-                    }
-                    onClick={() => setDrawer(false)}
-                  >
-                    회원 탈퇴
-                  </NavLink>
-                  <NavLink
-                    to="/mypage/myPoint"
-                    className={({ isActive }) =>
-                      isActive ? styles.drawer_link_active : styles.drawer_link
-                    }
-                    onClick={() => setDrawer(false)}
-                  >
-                    내 포인트
-                  </NavLink>
-                  <NavLink
-                    to="/mypage/history/purchase"
-                    className={({ isActive }) =>
-                      isActive ? styles.drawer_link_active : styles.drawer_link
-                    }
-                    onClick={() => setDrawer(false)}
-                  >
-                    구매내역
-                  </NavLink>
-                  <NavLink
-                    to="/mypage/history/sale"
-                    className={({ isActive }) =>
-                      isActive ? styles.drawer_link_active : styles.drawer_link
-                    }
-                    onClick={() => setDrawer(false)}
-                  >
-                    판매내역
-                  </NavLink>
+              {memberId && (
+                <div
+                  id="header-drawer"
+                  className={`${styles.header_drawer} ${drawer ? styles.drawer_open : ""}`}
+                  ref={drawerRef}
+                >
+                  <div className={styles.drawer_menu}>
+                    <NavLink
+                      to="/mypage/updateMyInfo"
+                      className={({ isActive }) =>
+                        isActive
+                          ? styles.drawer_link_active
+                          : styles.drawer_link
+                      }
+                      onClick={() => setDrawer(false)}
+                    >
+                      내 정보
+                    </NavLink>
+                    <NavLink
+                      to="/mypage/changePw"
+                      className={({ isActive }) =>
+                        isActive
+                          ? styles.drawer_link_active
+                          : styles.drawer_link
+                      }
+                      onClick={() => setDrawer(false)}
+                    >
+                      비밀번호 변경
+                    </NavLink>
+                    <NavLink
+                      to="/mypage/myBoard"
+                      className={({ isActive }) =>
+                        isActive
+                          ? styles.drawer_link_active
+                          : styles.drawer_link
+                      }
+                      onClick={() => setDrawer(false)}
+                    >
+                      내 게시판
+                    </NavLink>
+                    <NavLink
+                      to="/mypage/myLikeBoard"
+                      className={({ isActive }) =>
+                        isActive
+                          ? styles.drawer_link_active
+                          : styles.drawer_link
+                      }
+                      onClick={() => setDrawer(false)}
+                    >
+                      좋아요누른 게시판
+                    </NavLink>
+                    <NavLink
+                      to="/mypage/tipScrap"
+                      className={({ isActive }) =>
+                        isActive
+                          ? styles.drawer_link_active
+                          : styles.drawer_link
+                      }
+                      onClick={() => setDrawer(false)}
+                    >
+                      팁 스크랩
+                    </NavLink>
+                    <NavLink
+                      to="/mypage/leaveMember"
+                      className={({ isActive }) =>
+                        isActive
+                          ? styles.drawer_link_active
+                          : styles.drawer_link
+                      }
+                      onClick={() => setDrawer(false)}
+                    >
+                      회원 탈퇴
+                    </NavLink>
+                    <NavLink
+                      to="/mypage/myPoint"
+                      className={({ isActive }) =>
+                        isActive
+                          ? styles.drawer_link_active
+                          : styles.drawer_link
+                      }
+                      onClick={() => setDrawer(false)}
+                    >
+                      내 포인트
+                    </NavLink>
+                    <NavLink
+                      to="/mypage/history/purchase"
+                      className={({ isActive }) =>
+                        isActive
+                          ? styles.drawer_link_active
+                          : styles.drawer_link
+                      }
+                      onClick={() => setDrawer(false)}
+                    >
+                      구매내역
+                    </NavLink>
+                    <NavLink
+                      to="/mypage/history/sale"
+                      className={({ isActive }) =>
+                        isActive
+                          ? styles.drawer_link_active
+                          : styles.drawer_link
+                      }
+                      onClick={() => setDrawer(false)}
+                    >
+                      판매내역
+                    </NavLink>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
         </div>

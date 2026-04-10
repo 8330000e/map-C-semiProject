@@ -404,11 +404,19 @@
 	cursor: not-allowed;
 }
 
+.pagination button.activePage {
+	background: #464d3e;
+	color: #fff;
+	border-color: #464d3e;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
 .activePage {
 	background: #464d3e;
 	color: #fff;
 	border-color: #464d3e;
 }
+
 
 @media (max-width: 1200px) {
 	.grid_box {
