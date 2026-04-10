@@ -20,16 +20,13 @@
 /*로그인 제목 설정*/
 .page_title {
   padding: 10px;
-
+  font-size: 50px;
+  font-weight: bold;
+  margin-top: -20px;
   margin-bottom: 20px;
 }
 
-.page_title > h3 {
-  font-size: 70px;
-  font-weight: bold;
-}
-
-/*로그인 이미지 설정*/
+/*로그인 내부 폼 이미지 설정*/
 .login_img {
   position: absolute; /* 절대 위치 설정 */
   bottom: 0; /* 바닥에 밀착 */
@@ -102,6 +99,7 @@
   transition:
     transform 0.2s ease,
     color 0.2s ease;
+  font-size: 20px;
 }
 
 .search_wrap a:hover {
@@ -114,7 +112,7 @@
 .login_btn {
   width: 100%;
   padding: 14px;
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 600;
   color: white;
 

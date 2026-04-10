@@ -37,28 +37,33 @@
   pointer-events: none; /* 클릭을 방해하지 않도록 */
 }
 
-.right_section {
-  flex: 1; /* 오른쪽 절반 차지 */
-
-  display: flex;
-  justify-content: center; /* 가로 가운데 정렬 */
-  align-items: flex-start; /* 세로 가운데 정렬 */
-  padding: 60px 40px;
-  overflow-y: auto; /* 내용이 많아지면 폼 영역만 스크롤 */
-}
-
 .join_wrap {
   width: 600px;
   margin: 0 auto;
-  padding: 40px 20px;
+
+  padding: 60px 40px;
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(144, 238, 144, 0.3);
+  border: 3px solid lightgreen;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   position: relative;
   margin-top: 40px;
   margin-bottom: 40px;
+
+  /*------------토끼 이미지 설정-----------*/
+  background-image: url("/images/signup-background-rabbit.png");
+  background-repeat: no-repeat;
+  background-position: center bottom; /*센터 아래 배치 이미지를 아래에 배치 설정*/
+  background-size: cover; /*가로폭에 맞춰 이미지 크시 조정*/
+  /*중요한 점 이미지위에 폼 내용이 오도록 padding 하단을 넉넉히 주기.*/
+  padding-bottom: 120px;
+}
+
+/* 폼 내부의 다른 요소들이 이미지 위에 오도록 z-index를 줍니다 */
+.join_wrap form {
+  position: relative;
+  z-index: 1;
 }
 
 .page_title {
