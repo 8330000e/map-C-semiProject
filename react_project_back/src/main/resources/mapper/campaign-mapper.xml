@@ -45,4 +45,7 @@
 	<insert id="joinCampaign">
 		insert into campaign_member_tbl values(#{memberId},#{campaignNo})
 	</insert>
+	<update id="changeStatus">
+		update create_campaign_tbl set campaign_status=#{campaignStatus} where campaign_no=#{campaignNo}
+	</update>
 </mapper>

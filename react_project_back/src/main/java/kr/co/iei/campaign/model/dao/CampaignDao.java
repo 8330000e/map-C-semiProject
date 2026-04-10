@@ -19,4 +19,6 @@ public interface CampaignDao {
 
 	int joinCampaign(Campaign camp);
 
+	int changeStatus(Campaign camp);
+
 }

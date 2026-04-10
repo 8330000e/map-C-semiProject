@@ -69,4 +69,14 @@ public class CampaignController {
 		int result = campaignService.joinCampaign(camp);
 		return ResponseEntity.ok(result);
 	}
+	@PatchMapping(value="/{campaignNo}/status")
+	public ResponseEntity<?> changeStatus(@PathVariable Integer campaignNo, @RequestParam Map<String,Integer> status){
+		Integer campaignStatus=status.get("status");
+		System.out.println(campaignStatus);
+		Campaign camp = new Campaign();
+		camp.setCampaignNo(campaignNo);
+		camp.setCampaignStatus(campaignStatus);
+		int result = campaignService.changeStatus(camp);
+		return ResponseEntity.ok(result);
+	}
 }

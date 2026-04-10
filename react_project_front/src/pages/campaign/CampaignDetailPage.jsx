@@ -16,21 +16,19 @@ const CampaignDetailPage = () => {
   const [isCreator, setIsCreator] = useState(false);
   const [campaignDetail, setCampaignDetail] = useState();
   const [inCampaign, setInCampaign] = useState(false);
-  const [dateOut, setDateout] = useState(false);
+  const [dateOut, setDateout] = useState(true);
   const realtime = Date.now();
 
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNo}`)
       .then((res) => {
-        console.log(res);
-        const expire = new Date(res.data.campaignExpireDate);
-        const deadline = expire.getTime();
-        console.log(realtime - deadline);
-        if (realtime - deadline <= 0) {
-          setDateout(true);
+        // const expire = new Date(res.data.campaignExpireDate);
+        // const deadline = expire.getTime();
+        // console.log(realtime - deadline);
+        if (res.data.campaignStatus === 3 || res.data.campaignStatus === 4) {
+          setDateout(false);
         }
-        console.log(dateOut);
         if (res.data.memberId === memberId) {
           setIsCreator(true);
         }
@@ -47,10 +45,10 @@ const CampaignDetailPage = () => {
         `${import.meta.env.VITE_BACKSERVER}/campaigns/${memberId}/part?campaignNo=${campaignNo}`,
       )
       .then((res) => {
-        console.log(res);
         if (res.data === 1) {
           setInCampaign(true);
         }
+        console.log(inCampaign);
       })
       .catch((err) => {
         console.log(err);
@@ -96,6 +94,7 @@ const CampaignDetailPage = () => {
           campaignNo={campaignNo}
           dateOut={dateOut}
           memberId={memberId}
+          isCreator={isCreator}
         />
       </div>
     )
@@ -164,7 +163,14 @@ const CampaignDetailSideBar = ({
     </div>
   );
 };
-const PostBoard = ({ navigate, inCampaign, campaignNo, memberId, dateOut }) => {
+const PostBoard = ({
+  navigate,
+  inCampaign,
+  campaignNo,
+  memberId,
+  dateOut,
+  isCreator,
+}) => {
   return (
     <div className={styles.campdetailpage_board_wrap}>
       <div className={styles.board_max_wrap}>

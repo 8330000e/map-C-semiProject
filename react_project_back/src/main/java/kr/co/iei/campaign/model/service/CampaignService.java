@@ -20,7 +20,7 @@ public class CampaignService {
 	}
 
 	public Campaign selectOneCampaign(Integer campaignNo) {
-		System.out.println(campaignNo);
+//		System.out.println(campaignNo);
 		Campaign result = campaignDao.selectOneCampaign(campaignNo);
 //		System.out.println(result.getMemberCount());
 		return result;
@@ -35,8 +35,8 @@ public class CampaignService {
 		String memberId=c.getMemberId();
 		int number = 0;
 		List<String> list = campaignDao.checkParticipanceMember(c);
-		System.out.println(memberId);
-		System.out.println(list);
+//		System.out.println(memberId);
+//		System.out.println(list);
 		for (String checkId : list) {
 			if(checkId.equals(memberId)) {
 				number =1;
@@ -50,6 +50,11 @@ public class CampaignService {
 
 	public int joinCampaign(Campaign camp) {
 		int result = campaignDao.joinCampaign(camp);
+		return result;
+	}
+
+	public int changeStatus(Campaign camp) {
+		int result = campaignDao.changeStatus(camp);
 		return result;
 	}
 }
