@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
@@ -110,7 +111,7 @@ public class Membercontroller {
 
 	// 로그인 로직(김경건)
 	@PostMapping(value = "/login")
-	public ResponseEntity<?> loginMember(@RequestBody Member member) {
+	public ResponseEntity<?> loginMember(@RequestBody Member member, HttpServletRequest request) {
 
 		// 경로 설정 잘하기
 		// package kr.co.iei.member.model.vo;
@@ -121,6 +122,11 @@ public class Membercontroller {
 			if ( member.getMemberStatus() != null && member.getMemberStatus() == 1) {
 				return ResponseEntity.status(403).body("정지된 계정입니다. 고객센터로 문의해주세요.");
 				}
+			String ip = request.getRemoteAddr();
+			if (ip.equals("0:0:0:0:0:0:0:1")) {
+			    ip = "127.0.0.1";
+			}
+			memberService.insertLog(loginUser.getMemberId(), ip, "로그인");
 			return ResponseEntity.ok(loginUser); // 로그인 성공
 		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다."); // 문제가 생기면 에러 404발생

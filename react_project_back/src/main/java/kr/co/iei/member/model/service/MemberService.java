@@ -1,6 +1,8 @@
 package kr.co.iei.member.model.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -188,6 +190,16 @@ public class MemberService {
 	public int leaveMember(String memberId) {
 		int result = memberDao.leaveMember(memberId);
 		return result;
+	}
+
+	@Transactional
+	public void insertLog(String memberId, String logIp, String logAction) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("memberId", memberId);
+		params.put("logIp", logIp);
+		params.put("logAction", logAction);
+		memberDao.insertLog(params);
+		
 	}
 	
 	
