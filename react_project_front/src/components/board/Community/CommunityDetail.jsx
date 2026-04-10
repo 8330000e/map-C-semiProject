@@ -82,6 +82,7 @@ const CommunityDetail = ({
   const [editTarget, setEditTarget] = useState(null);
   const [editText, setEditText] = useState("");
   const [editPrivate, setEditPrivate] = useState(false);
+  const [reportedCommentIds, setReportedCommentIds] = useState([]);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(board.likeCount ?? 0);
   const [scrapped, setScrapped] = useState(false);
@@ -321,6 +322,23 @@ const CommunityDetail = ({
     }
   };
 
+  const handleReportComment = async (commentId) => {
+    const result = await Swal.fire({
+      icon: "warning",
+      title: "댓글 신고",
+      text: "이 댓글을 신고하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: "신고",
+      cancelButtonText: "취소",
+      confirmButtonColor: "#c0392b",
+    });
+
+    if (result.isConfirmed) {
+      setReportedCommentIds((prev) => [...prev, commentId]);
+      Swal.fire({ icon: "success", title: "신고 접수되었습니다." });
+    }
+  };
+
   const handleStartReply = (comment) => {
     setReplyTarget(comment);
     setNewComment(`@${comment.memberNickname || comment.memberId} `);
@@ -485,9 +503,21 @@ const CommunityDetail = ({
           style={{ marginLeft: `${comment.depth * 18}px` }}
         >
           <div className={styles.commentMeta}>
-            <span>{comment.memberNickname || comment.memberId}</span>
-            <span>{formatTime(comment.createdAt)}</span>
-            {isSecret && <span className={styles.commentBadge}>비공개</span>}
+            <div className={styles.commentMetaLeft}>
+              <span>{comment.memberNickname || comment.memberId}</span>
+              <span>{formatTime(comment.createdAt)}</span>
+              {isSecret && <span className={styles.commentBadge}>비공개</span>}
+            </div>
+            <button
+              type="button"
+              className={`${styles.reportIconButton} ${reportedCommentIds.includes(comment.id) ? styles.reported : ""}`}
+              onClick={() => handleReportComment(comment.id)}
+              title="댓글 신고"
+            >
+              <span className="material-icons">
+                {reportedCommentIds.includes(comment.id) ? "report" : "report_gmailerrorred"}
+              </span>
+            </button>
           </div>
           {editTarget && editTarget.id === comment.id ? (
             <div className={styles.commentEditBox}>

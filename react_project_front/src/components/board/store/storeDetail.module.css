@@ -139,6 +139,36 @@
 	text-decoration: line-through;
 }
 
+.detail_summary_top {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.report_icon_button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 4px;
+	border: none;
+	border-radius: 4px;
+	background: transparent;
+	color: var(--danger);
+	cursor: pointer;
+	transition: background 0.2s ease, color 0.2s ease;
+}
+
+.report_icon_button:hover {
+	background: rgba(220, 67, 34, 0.12);
+	color: var(--danger);
+}
+
+.reported {
+	background: transparent;
+	color: var(--danger);
+}
+
 .action_row {
 	margin-top: 10px;
 	display: flex;
@@ -412,6 +442,9 @@
 }
 
 .comment_meta {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 	font-size: 12px;
 	color: #4f5847;
 	margin: 0 0 6px;
