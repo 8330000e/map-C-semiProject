@@ -76,6 +76,8 @@ const getShippingStatusValue = (item, tradeInfo) => {
   return 0;
 };
 
+// 택배 거래인 경우에만 배송대기 여부를 판별함.
+// 택배 거래이면서 송장번호가 없거나 배송상태가 완료가 아니면 배송대기로 보고함.
 const isDeliveryPendingTrade = (item, tradeInfo) => {
   const tradeType = getTradeTypeLabel(item, tradeInfo);
   if (tradeType !== "택배" && tradeType !== "직거래/택배") return false;
@@ -92,6 +94,8 @@ const getTradeInfoForItem = (item, tradeInfoMap) => {
   return marketNo ? tradeInfoMap[marketNo] : null;
 };
 
+// 화면에 보여줄 배송 상태 텍스트를 계산함.
+// 송장번호가 없으면 무조건 "배송대기"로 표시함.
 const getDisplayShippingStatusLabel = (item, tradeInfo) => {
   const shippingStatus = getShippingStatusValue(item, tradeInfo);
   const invoiceNumber = tradeInfo?.invoiceNumber ?? item.invoiceNumber;
@@ -238,6 +242,9 @@ const SaleHistory = () => {
     [salesHistory, tradeInfoMap],
   );
 
+  // 완료된 판매 거래만 골라냄.
+  // 택배 거래인 경우 배송 상태가 '배송완료'일 때만 완료로 처리함.
+  // 택배가 아닌 경우에는 게시글 상태가 판매완료인지 확인함.
   const completedItems = useMemo(
     () =>
       salesHistory.filter((item) => {

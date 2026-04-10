@@ -7,13 +7,14 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import Swal from "sweetalert2";
 
 import useAuthStore from "../../store/useAuthStore";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 // 로고 이미지는 Vite 정상 로딩을 위해 import 방식으로 참조함.
 import logo from "../../assets/logo/logo.svg";
 
 const Header = () => {
   const navigate = useNavigate();
   const [drawer, setDrawer] = useState(false);
+  const drawerRef = useRef(null);
   const { memberId, memberNickname, logout, memberGrade } = useAuthStore();
 
   //location : 현재 나의 위치가 어느페이지에 있는지를 알려주는 일종의 네비게이션
@@ -36,6 +37,29 @@ const Header = () => {
       navigate("/");
     }
   };
+
+  useEffect(() => {
+    // 드로어가 열려 있을 때만 밖 클릭 감지함.
+    // 밖을 클릭하면 드로어를 닫도록 처리함.
+    if (!drawer) return;
+
+    const handleClickOutside = (event) => {
+      if (drawerRef.current && !drawerRef.current.contains(event.target)) {
+        setDrawer(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [drawer]);
+
+  useEffect(() => {
+    // 페이지 이동이 일어나면 드로어를 자동으로 닫음.
+    // 다른 페이지로 이동했을 때 드로어가 그대로 열려 있지 않도록 함.
+    setDrawer(false);
+  }, [location.pathname]);
 
   return (
     <>
@@ -72,7 +96,7 @@ const Header = () => {
                 <div
                   className={`${styles.profile_item} ${drawer ? styles.drawer_open : styles.drawer_close}`}
                   onClick={() => {
-                    setDrawer(true);
+                    setDrawer((prev) => !prev);
                   }}
                 >
                   <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
@@ -102,9 +126,7 @@ const Header = () => {
               <div
                 id="header-drawer"
                 className={`${styles.header_drawer} ${drawer ? styles.drawer_open : ""}`}
-                onClick={() => {
-                  setDrawer(false);
-                }}
+                ref={drawerRef}
               >
                 <div className={styles.drawer_menu}>
                   <NavLink
