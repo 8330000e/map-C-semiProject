@@ -137,8 +137,8 @@ public class Membercontroller {
 	        
 	        
 	        params.put("logResult", 0);
-	        memberService.insertLog(params);
 	        memberService.checkLocation(loginUser.getMemberId(), location, loginUser.getMemberEmail());
+	        memberService.insertLog(params);
 	        return ResponseEntity.ok(loginUser);
 	    } else {
 	    	params.put("logResult", 1);

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -70,7 +71,8 @@ public class MemberService {
 				// -> null로 처리해도 걱정할 필요 없음
 				// -> 이미 데이터베이스에 저장완료.
 				loginMember.setMemberPw(null);
-				loginMember.setMemberStatus(loginMember.getMemberStatus());
+				login.setMemberStatus(loginMember.getMemberStatus());
+				login.setMemberEmail(loginMember.getMemberEmail());
 
 				return login;
 			}
@@ -203,8 +205,11 @@ public class MemberService {
 		memberDao.insertLog(params);
 	}
 
+	@Async
 	public void checkLocation(String memberId, String location, String memberEmail) {
 		String lastLocation = memberDao.getLastLocation(memberId);
+		System.out.println("location:" + location);
+		System.out.println("lastLocation: " + lastLocation);
 		if (lastLocation != null && !lastLocation.equals(location)) {
 			String title = "비정상 로그인 감지";
 			String content = "새로운 위치에서 로그인이 감지되었습니다." + location;
