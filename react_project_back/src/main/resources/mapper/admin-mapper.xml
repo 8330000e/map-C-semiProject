@@ -121,23 +121,38 @@
 	</update>
 	
 	<select id="selectMemberList" resultType="member">
-		SELECT 
-   	 		m.member_id,
-    		m.member_name,
-    		m.member_nickname,
-    		m.member_email,
-    		m.member_grade,
-    		m.member_thumb,
-    		m.member_status,
-    		m.enroll_date,
-    	(SELECT COUNT(*) FROM board_tbl b WHERE b.writer_id = m.member_id) AS boardCount,
-    	(SELECT COUNT(*) FROM board_comment_tbl c WHERE c.board_comment_writer = m.member_id) AS commentCount,
-    	(SELECT COUNT(*) FROM board_report_tbl r 
-     	JOIN board_tbl b ON r.board_no = b.board_no 
-    	WHERE b.writer_id = m.member_id) AS reportCount
-		FROM member_tbl1 m
-		ORDER BY m.enroll_date DESC
-	</select>
+    SELECT 
+        m.member_id, m.member_name, m.member_nickname,
+        m.member_email, m.member_grade, m.member_thumb,
+        m.member_status, to_char(m.enroll_date, 'YYYY-MM-DD') as enrollDate,
+        (SELECT COUNT(*) FROM board_tbl b WHERE b.writer_id = m.member_id) AS boardCount,
+        (SELECT COUNT(*) FROM board_comment_tbl c WHERE c.board_comment_writer = m.member_id) AS commentCount,
+        (SELECT COUNT(*) FROM board_report_tbl r JOIN board_tbl b ON r.board_no = b.board_no WHERE b.writer_id = m.member_id) AS reportCount
+    FROM member_tbl1 m
+    <where>
+        <if test="status != null">
+            m.member_status = #{status}
+        </if>
+        <if test="grade != null">
+            AND m.member_grade = #{grade}
+        </if>
+        <if test="keyword != null">
+            AND (m.member_id LIKE '%'||#{keyword}||'%' OR m.member_name LIKE '%'||#{keyword}||'%')
+        </if>
+    </where>
+    ORDER BY m.enroll_date DESC
+</select>
+
+<select id="getRecentLog" resultType="log">
+	<![CDATA[
+	select * from (
+		select member_log_no, log_ip, log_time, log_action, log_detail
+		from member_log_tbl
+		where member_id = #{memberId}
+		order by log_time desc
+	) where rownum <= 4	
+	]]>
+</select>
 	
 	
 

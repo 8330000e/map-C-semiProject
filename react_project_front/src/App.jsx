@@ -63,6 +63,7 @@ import PointForGoodPage from "./pages/pointadmin/PointForGoodPage";
 function App() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith("/admin");
+  const { memberGrade } = useAuthStore();
   {
     /*1. 로그인로직 
     2. 로그인 후 null이 아닌 memeber state를 useAthsore에 저장*/
@@ -112,6 +113,13 @@ function App() {
           <Route path="/tree-grow" element={<TreeGrowMainPage />} />
           <Route path="/mission" element={<MissionListPage />} />
           <Route path="/community" element={<MapCommunityPage />} />
+
+          <Route
+            path="/admin/*"
+            element={
+              memberGrade === 1 ? <AdminPage /> : <Navigate to="/" replace />
+            }
+          />
           <Route path="/campaign/main" element={<CampaignMainPage />}></Route>
           <Route
             path="/campaign/detail/:campaignNo"

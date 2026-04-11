@@ -128,4 +128,32 @@ fetch first 1 row only
 <update id="leaveMember">
 	update member_tbl1 set member_status = 2 where member_id =#{memberId}
 </update>
+
+<insert id ="insertLog">
+	insert into member_log_tbl (member_log_no, member_id, log_ip, log_time, log_action, log_device, log_result, log_location, log_detail)
+	values (
+		log_seq.nextval,
+		#{memberId},
+		#{logIp},
+		sysdate,
+		#{logAction},
+		#{logDevice},
+		#{logResult},
+		#{logLocation},
+		#{logDetail}
+	)
+</insert>
+
+<select id="getLastLocation" resultType="String">
+	<![CDATA[
+	select * from (
+    	select log_location 
+    	from member_log_tbl 
+    	where member_id = #{memberId} 
+    	order by log_time desc
+) where rownum <= 1
+]]>
+</select>
+
+
 </mapper>

@@ -10,6 +10,7 @@ import useAuthStore from "../../store/useAuthStore";
 import { useState, useEffect, useRef } from "react";
 // 로고 이미지는 Vite 정상 로딩을 위해 import 방식으로 참조함.
 import logo from "../../assets/logo/logo.svg";
+import axios from "axios";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -33,8 +34,18 @@ const Header = () => {
     });
 
     if (result.isConfirmed) {
-      logout();
-      navigate("/");
+      axios
+        .post(`${import.meta.env.VITE_BACKSERVER}/members/logout/${memberId}`)
+        .then((res) => {
+          console.log(res);
+          logout();
+          navigate("/");
+        })
+        .catch((err) => {
+          console.log(err);
+          logout();
+          navigate("/");
+        });
     }
   };
 
