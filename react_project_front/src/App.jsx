@@ -58,6 +58,7 @@ import CampaignDetailPage from "./pages/campaign/CampaignDetailPage";
 import CreateCampaignPage from "./pages/campaign/CreateCampaignPage";
 import CampaignManagerPage from "./pages/campaign/CampaignManagerPage";
 import CampaignMemoWritePage from "./pages/campaign/CampaignMemoWritePage";
+import PointForGoodPage from "./pages/pointadmin/PointForGoodPage";
 
 function App() {
   const location = useLocation();
@@ -131,6 +132,7 @@ function App() {
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/support/*" element={<SupportPage />} />
+          <Route path="/point-give" element={<PointForGoodPage />}></Route>
         </Routes>
       </main>
       {!isAdmin && <Footer />}
