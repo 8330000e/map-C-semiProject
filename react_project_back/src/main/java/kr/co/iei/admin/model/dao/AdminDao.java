@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import kr.co.iei.admin.model.vo.DashData;
 import kr.co.iei.admin.model.vo.Faq;
 import kr.co.iei.admin.model.vo.ListItem;
+import kr.co.iei.admin.model.vo.Log;
 import kr.co.iei.admin.model.vo.Notice;
 import kr.co.iei.admin.model.vo.Qna;
 
@@ -37,6 +38,10 @@ public interface AdminDao {
 	int getTotalCount();
 
 	List<Member> selectMemberList(Integer status, Integer grade, String keyword);
+
+	List<Log> getRecentLog(String memberId);
+
+
 
 
 

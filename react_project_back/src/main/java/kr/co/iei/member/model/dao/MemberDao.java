@@ -51,4 +51,6 @@ public interface MemberDao {
 	int insertMemberPoint(String memberId);
 	
 	void insertLog(Map<String, Object> params);
+	
+	
 }

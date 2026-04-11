@@ -1,3 +1,4 @@
+import { Tab } from "@mui/icons-material";
 import styles from "./AdminMember.module.css";
 
 const AdminMember = ({
@@ -7,6 +8,10 @@ const AdminMember = ({
   statusText,
   filter,
   changeFilter,
+  selectRecentLogList,
+  recentLogList,
+  isModalOpen,
+  setIsModalOpen,
 }) => {
   return (
     <>
@@ -47,7 +52,10 @@ const AdminMember = ({
                       ? styles.member_item_active
                       : ""
                   }`}
-                  onClick={() => setSelectedMember(member)}
+                  onClick={() => {
+                    setSelectedMember(member);
+                    selectRecentLogList(member.memberId);
+                  }}
                 >
                   <div className={styles.member_identity}>
                     <span className={styles.avatar}>
@@ -142,9 +150,83 @@ const AdminMember = ({
                   <strong>{selectedMember.reportCount}</strong>
                 </article>
               </section>
+
+              <section className={styles.member_log}>
+                <div className={styles.member_log_list}>
+                  {recentLogList.length === 0 ? (
+                    <div className={styles.empty_state}>
+                      활동 기록이 없습니다.
+                    </div>
+                  ) : (
+                    // thead = 헤더 영역, tbody = 데이터 영역tr = 한 줄(row), th = 헤더 칸, td = 데이터 칸
+
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>접속 IP</th>
+                          <th>유형</th>
+                          <th>접속 시간</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {recentLogList.map((recentLog) => (
+                          <tr key={recentLog.memberLogNo}>
+                            <td>{recentLog.logIp}</td>
+                            <td>{recentLog.logAction}</td>
+                            <td>{recentLog.logTime}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+                <button
+                  className={styles.log_modal_btn}
+                  onClick={() => {
+                    setIsModalOpen(true);
+                  }}
+                >
+                  전체보기
+                </button>
+              </section>
             </>
           )}
         </section>
+        {isModalOpen && (
+          <div
+            className={styles.modal_bg}
+            onClick={() => {
+              setIsModalOpen(false);
+            }}
+          >
+            <div
+              className={styles.modal_content}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <h3>전체기록</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>접속 IP</th>
+                    <th>유형</th>
+                    <th>접속시간</th>
+                    <th>상세</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>아직</td>
+                    <td>안</td>
+                    <td>만</td>
+                    <td>듬</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

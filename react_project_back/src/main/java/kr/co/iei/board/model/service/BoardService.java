@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,7 @@ import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
+import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.mission.model.service.MissionService;
 import kr.co.iei.utils.FileUtils;
 
@@ -27,6 +29,9 @@ public class BoardService {
 	
 	@Autowired
 	private MissionService missionService;
+	
+	@Autowired
+	private MemberService memberService;
 
 	@Value("${file.root}")
 	private String root;
@@ -46,7 +51,7 @@ public class BoardService {
 	}
 	//게시글 작성
 	@Transactional
-	public HashMap<String, Object> insertBoard(Board board) {
+	public HashMap<String, Object> insertBoard(Board board, String ip, String device) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
 
 	    int result = boardDao.insertBoard(board);
@@ -56,6 +61,14 @@ public class BoardService {
 	    if (result > 0) {
 	        int missionResult = missionService.completeBasicMission(board.getWriterId());
 	        pointAwarded = missionResult == 1;
+	        
+	        Map<String, Object> logParams = new HashMap<>();
+	        logParams.put("memberId", board.getWriterId());
+	        logParams.put("logIp", ip);      
+	        logParams.put("logAction", "게시글작성");
+	        logParams.put("logDevice", device);
+	        logParams.put("logDetail", board.getBoardNo() + " | " + board.getBoardTitle());
+	        memberService.insertLog(logParams);
 	    }
 
 	    resultMap.put("boardNo", board.getBoardNo());

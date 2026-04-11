@@ -22,11 +22,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.co.iei.board.model.service.BoardService;
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
+import kr.co.iei.utils.DeviceParser;
 import kr.co.iei.utils.FileUtils;
 
 @CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
@@ -84,8 +86,13 @@ public class BoardController {
     }
 	//게시글 작성
 	@PostMapping
-	public HashMap<String, Object> insertBoard(@RequestBody Board board) {
-	    return boardService.insertBoard(board);
+	public HashMap<String, Object> insertBoard(@RequestBody Board board, HttpServletRequest request) {
+		String ip = request.getRemoteAddr();
+        if (ip.equals("0:0:0:0:0:0:0:1")) {
+            ip = "127.0.0.1";
+        }
+        String device = DeviceParser.parse(request.getHeader("User-Agent"));
+	    return boardService.insertBoard(board, ip, device);
 	}
 	// 에디터 이미지 업로드 기능임. 업로드된 파일을 서버에 저장하고 URL 경로를 리턴함.
 	@PostMapping("/editor/upload")

@@ -24,8 +24,8 @@ public class Member {
     private String memberThumb;
     private String enrollDate;                // SYSDATE 사용 예정
 
-    private Integer memberStatus = 0;     // 기본값 1 // 기본값 0임 
-    private Integer mannerScore = 0;       // 기본값 0 // 기본값 36.5임 
+    private Integer memberStatus = 0;      
+    private Integer mannerScore = 0;       
 
     private Integer tradeCount = 0;        // 기본값 0
     

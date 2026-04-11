@@ -14,6 +14,7 @@ import kr.co.iei.admin.model.vo.DashData;
 import kr.co.iei.admin.model.vo.Faq;
 import kr.co.iei.admin.model.vo.ListItem;
 import kr.co.iei.admin.model.vo.ListResponse;
+import kr.co.iei.admin.model.vo.Log;
 import kr.co.iei.admin.model.vo.Notice;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.utils.FileUtils;
@@ -97,4 +98,11 @@ public class AdminService {
 		List<Member> memberList = adminDao.selectMemberList(status, grade, keyword);
 		return memberList;
 	}
+
+	public List<Log> getRecentLog(String memberId) {
+		List<Log> recentLogList = adminDao.getRecentLog(memberId);
+		return recentLogList;
+	}
+
+	
 }

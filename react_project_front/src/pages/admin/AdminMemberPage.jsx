@@ -12,11 +12,14 @@ const statusText = {
 const AdminMemberPage = () => {
   const [memberList, setMemberList] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [filter, setFilter] = useState({
     status: "ALL",
     grade: "ALL",
     keyword: "",
   });
+
+  const [recentLogList, setRecentLogList] = useState([]);
 
   const changeFilter = (e) => {
     const name = e.target.name;
@@ -40,6 +43,19 @@ const AdminMemberPage = () => {
       });
   };
 
+  const selectRecentLogList = (memberId) => {
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/admins/recentLog/${memberId}`)
+      .then((res) => {
+        console.log(res);
+        console.log(navigator.userAgent);
+        setRecentLogList(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     selectMemberList();
   }, [filter]);
@@ -53,6 +69,10 @@ const AdminMemberPage = () => {
         statusText={statusText}
         filter={filter}
         changeFilter={changeFilter}
+        selectRecentLogList={selectRecentLogList}
+        recentLogList={recentLogList}
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
       />
     </>
   );

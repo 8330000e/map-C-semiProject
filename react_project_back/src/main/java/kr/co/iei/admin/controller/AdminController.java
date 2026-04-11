@@ -25,6 +25,7 @@ import kr.co.iei.admin.model.vo.DashData;
 import kr.co.iei.admin.model.vo.Faq;
 import kr.co.iei.admin.model.vo.ListItem;
 import kr.co.iei.admin.model.vo.ListResponse;
+import kr.co.iei.admin.model.vo.Log;
 import kr.co.iei.admin.model.vo.Notice;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.utils.FileUtils;
@@ -144,6 +145,12 @@ public class AdminController {
 			) {
 		List<Member> memberList = adminService.selectMemberList(status, grade, keyword);
 		return ResponseEntity.ok(memberList);
+	}
+	
+	@GetMapping(value="recentLog/{memberId}")
+	public ResponseEntity<?> getRecentLog(@PathVariable String memberId) {
+		List<Log> recentLogList = adminService.getRecentLog(memberId);
+		return ResponseEntity.ok(recentLogList);
 	}
 	
 }

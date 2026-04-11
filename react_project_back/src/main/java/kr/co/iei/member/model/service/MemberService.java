@@ -193,15 +193,9 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void insertLog(String memberId, String logIp, String logAction) {
-		Map<String, Object> params = new HashMap<>();
-		params.put("memberId", memberId);
-		params.put("logIp", logIp);
-		params.put("logAction", logAction);
+	public void insertLog(Map<String, Object> params) {
+		Member m = memberDao.selectOneMember((String)params.get("memberId"));
+		if (m == null) return;
 		memberDao.insertLog(params);
-		
 	}
-	
-	
-
 }
