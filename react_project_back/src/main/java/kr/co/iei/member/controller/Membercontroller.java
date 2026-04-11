@@ -135,8 +135,10 @@ public class Membercontroller {
 	            return ResponseEntity.status(403).body("정지된 계정입니다. 고객센터로 문의해주세요.");
 	        }   
 	        
+	        
 	        params.put("logResult", 0);
 	        memberService.insertLog(params);
+	        memberService.checkLocation(loginUser.getMemberId(), location, loginUser.getMemberEmail());
 	        return ResponseEntity.ok(loginUser);
 	    } else {
 	    	params.put("logResult", 1);

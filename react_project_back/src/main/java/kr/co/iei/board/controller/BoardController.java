@@ -164,11 +164,18 @@ public class BoardController {
 	//  - replyTarget이 있는 경우 parentCommentNo를 함께 전달함.
 	//  - isSecret 값에 따라 공개/비공개 댓글이 저장됨.
 	@PostMapping("/{boardNo}/comments")
-	public ResponseEntity<?> addBoardComment(@PathVariable int boardNo, @RequestBody BoardComment comment) {
+	public ResponseEntity<?> addBoardComment(@PathVariable int boardNo, @RequestBody BoardComment comment, HttpServletRequest request) {
 		// 댓글 등록 요청 처리
 		// front에서 boardNo는 URL 경로로, 댓글 내용과 작성자 정보는 body로 전달됩니다.
 		comment.setBoardNo(boardNo);
-		BoardComment saved = boardService.addBoardComment(comment);
+		
+		String ip = request.getRemoteAddr();
+        if (ip.equals("0:0:0:0:0:0:0:1")) {
+            ip = "127.0.0.1";
+        }
+        String device = DeviceParser.parse(request.getHeader("User-Agent"));
+        
+		BoardComment saved = boardService.addBoardComment(comment, ip, device);
 		return ResponseEntity.ok(saved);
 	}
 

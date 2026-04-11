@@ -120,8 +120,19 @@ public class BoardService {
 	// 댓글 등록 기능임. 새 댓글을 DB에 저장하고 저장된 댓글 객체를 리턴함.
 	//  - 댓글 번호는 MyBatis selectKey로 자동 생성됨.
 	//  - 부모 댓글 번호가 있으면 대댓글로 저장됨.
-	public BoardComment addBoardComment(BoardComment comment) {
+	public BoardComment addBoardComment(BoardComment comment, String ip, String device) {
 		boardDao.insertBoardComment(comment);
+		 Map<String, Object> logParams = new HashMap<>();
+	        logParams.put("memberId", comment.getMemberId());
+	        logParams.put("logIp", ip);      
+	        logParams.put("logAction", "댓글작성");
+	        logParams.put("logDevice", device);
+	        String detail = comment.getContent();
+	        if (detail.length() > 30) {
+	        	detail = detail.substring(0, 30) + "...";
+	        }
+	        logParams.put("logDetail", comment.getBoardNo() + " | " + detail);
+	        memberService.insertLog(logParams);
 		return comment;
 	}
 

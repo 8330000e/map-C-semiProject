@@ -52,5 +52,7 @@ public interface MemberDao {
 	
 	void insertLog(Map<String, Object> params);
 	
+	String getLastLocation(String memberId);
+	
 	
 }

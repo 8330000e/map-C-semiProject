@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.iei.member.model.dao.MemberDao;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
+import kr.co.iei.utils.EmailSender;
 import kr.co.iei.utils.JwtUtils;
 
 @Service
@@ -27,6 +28,9 @@ public class MemberService {
 
 	@Autowired
 	private JwtUtils jwtUtils;
+	
+	@Autowired
+	private EmailSender emailSender;
 
 	@Transactional
 	public int insertMember(Member member) {
@@ -197,5 +201,14 @@ public class MemberService {
 		Member m = memberDao.selectOneMember((String)params.get("memberId"));
 		if (m == null) return;
 		memberDao.insertLog(params);
+	}
+
+	public void checkLocation(String memberId, String location, String memberEmail) {
+		String lastLocation = memberDao.getLastLocation(memberId);
+		if (lastLocation != null && !lastLocation.equals(location)) {
+			String title = "비정상 로그인 감지";
+			String content = "새로운 위치에서 로그인이 감지되었습니다." + location;
+			emailSender.sendMail(title, memberEmail, content);
+		}
 	}
 }

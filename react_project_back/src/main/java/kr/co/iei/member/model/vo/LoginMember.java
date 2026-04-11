@@ -15,4 +15,5 @@ public class LoginMember {
 	private Long endTime;
 	private String memberNickname;
 	private Integer memberStatus;
+	private String memberEmail;
 }

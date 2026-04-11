@@ -144,5 +144,16 @@ fetch first 1 row only
 	)
 </insert>
 
+<select id="getLastLocation" resultType="String">
+	<![CDATA[
+	select * from (
+    	select log_location 
+    	from member_log_tbl 
+    	where member_id = #{memberId} 
+    	order by log_time desc
+) where rownum <= 1
+]]>
+</select>
+
 
 </mapper>
