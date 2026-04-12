@@ -153,7 +153,7 @@ const CampaignDetailSideBar = ({
             ? inCampaign
               ? (e.target.disabled = true)
               : isCreator
-                ? navigate("/campaign/settings/updateCampaign")
+                ? navigate("/campaign/settings/updateCamp")
                 : Swal.fire({
                     title: "캠페인을 참여하시겠습니까?",
                     icon: "question",
@@ -227,6 +227,12 @@ const PostBoard = ({
                   />
                 </div>
                 <p>{list.campaignMemo}</p>
+                {list.memberId === memberId && (
+                  <div className={styles.board_btn_wrap}>
+                    <button>수정</button>
+                    <button>삭제</button>
+                  </div>
+                )}
               </div>
             </div>
           );

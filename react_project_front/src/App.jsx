@@ -58,6 +58,7 @@ import CampaignDetailPage from "./pages/campaign/CampaignDetailPage";
 import CreateCampaignPage from "./pages/campaign/CreateCampaignPage";
 import CampaignManagerPage from "./pages/campaign/CampaignManagerPage";
 import CampaignMemoWritePage from "./pages/campaign/CampaignMemoWritePage";
+import CampaignSettingsPage from "./pages/campaign/CampaignSettingsPage";
 
 function App() {
   const location = useLocation();
@@ -128,6 +129,10 @@ function App() {
             path="/campaign/memoWrite/:campaignNo"
             element={<CampaignMemoWritePage />}
           />
+          <Route
+            path="/campaign/settings/*"
+            element={<CampaignSettingsPage />}
+          ></Route>
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/support/*" element={<SupportPage />} />

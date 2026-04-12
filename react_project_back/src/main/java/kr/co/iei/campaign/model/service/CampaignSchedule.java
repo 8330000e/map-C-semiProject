@@ -37,6 +37,7 @@ public class CampaignSchedule {
 			int campaignNo=camp.getCampaignNo();
 			int campStatus=camp.getCampaignStatus();
 			String campExpireDate=camp.getCampaignExpireDate();
+			String memberId = camp.getMemberId();
 			int campGoalMember=camp.getCampaignGoalMember();
 			int memberCount = camp.getMemberCount();
 			Date current = new Date();
@@ -56,6 +57,7 @@ public class CampaignSchedule {
 				if(memberCount >= campGoalMember) {
 					changeStatus = 3;
 					//멤버들에게 포인트 주는 로직
+					int successPoint=memberCount * 15;
 				}else {
 					changeStatus = 4;
 				}
