@@ -1,3 +1,5 @@
+// 관리자 사이드 메뉴 - 각 관리 페이지로 이동하는 네비게이션
+// 현재 경로와 일치하는 메뉴에 active_menu 클래스 붙어서 하이라이트됨
 import styles from "./AdminSideMenu.module.css";
 import { NavLink } from "react-router-dom";
 import adminProfile from "../../assets/admin.png";
@@ -11,10 +13,12 @@ import HistoryIcon from "@mui/icons-material/History";
 const AdminSideMenu = ({ memberNickname }) => {
   return (
     <div className={styles.side_menu_wrap}>
+      {/* 관리자 프로필 영역 */}
       <div className={styles.admin_profile}>
         <img src={adminProfile} />
         <span className={styles.name}>{memberNickname}</span>
       </div>
+
       <NavLink
         className={({ isActive }) => (isActive ? styles.active_menu : "")}
         to="/admin/dashboard"
@@ -35,6 +39,7 @@ const AdminSideMenu = ({ memberNickname }) => {
         </div>
       </NavLink>
 
+      {/* 아직 미구현 메뉴들 - 추후 라우트 연결 예정 */}
       <NavLink
         className={({ isActive }) => (isActive ? styles.active_menu : "")}
         to="/admin/boards"

@@ -1,6 +1,6 @@
 .admin_outer {
   width: 100%;
-  background-color: #0b0f1a;
+  background-color: var(--admin-bg);
   display: flex;
   justify-content: center;
   color: #fff;
@@ -19,10 +19,10 @@
 
 .admin_page_aside,
 .admin_page_content {
-  background-color: #121826;
-  border: 1px solid #334c69;
+  background-color: var(--admin-panel);
+  border: 1px solid var(--admin-stroke);
   border-radius: 18px;
-  box-shadow: 0 12px 24px #0a0a0a;
+  box-shadow: 0 12px 24px var(--admin-shadow);
   height: 100%;
 }
 
@@ -37,7 +37,8 @@
   flex: 1 1 auto;
   overflow-y: auto;
 }
-/* 스크롤 바 디자인 */
+
+/* 스크롤바 디자인 */
 .admin_page_content::-webkit-scrollbar {
   width: 6px;
 }
@@ -45,6 +46,6 @@
   background: transparent;
 }
 .admin_page_content::-webkit-scrollbar-thumb {
-  background: #334c69;
+  background: var(--admin-stroke);
   border-radius: 10px;
 }

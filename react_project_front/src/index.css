@@ -113,22 +113,41 @@ a:hover {
     filter: invert(1) brightness(2);
   }
 }
+/* ===================== 관리자 페이지 전용 CSS 변수 ===================== */
 :root {
+  /* 배경 */
   --admin-bg: #0b0f1a;
-  --admin-bg-2: #0a1224;
   --admin-panel: #121826;
   --admin-panel-2: #161f33;
+
+  /* 테두리 */
   --admin-stroke: #334c69;
   --admin-stroke-strong: #5f7694;
+
+  /* 텍스트 */
   --admin-text: #e6edf7;
   --admin-muted: #9aa7bd;
+
+  /* 강조 */
   --admin-accent: #5b8cff;
   --admin-accent-soft: #1f2f53;
-  --admin-highlight: #2d456f;
+
+  /* 상태 색상 */
   --admin-success: #22c55e;
   --admin-success-soft: #173726;
   --admin-warning: #f6c356;
+
+  /* 회원 상태 뱃지 */
+  --admin-status-active: #a8f251;
+  --admin-status-banned: #f36464;
+  --admin-status-dormant: #a2afc4;
+  --admin-badge-role: #95a4ff;
+
+  /* 기타 */
   --admin-input-bg: #0f1624;
+  --admin-table-header: #2f4868;
+  --admin-overlay: rgba(0, 0, 0, 0.6);
   --admin-shadow: #0a0a0a;
   --admin-card-shadow: #111827;
 }
+/* ===================================================================== */

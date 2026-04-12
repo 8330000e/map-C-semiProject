@@ -3,7 +3,7 @@
   display: block;
   width: 100%;
   position: relative;
-  background-color: #0b0f1a;
+  background-color: var(--admin-bg);
 }
 
 .admin_header_inner {
@@ -16,22 +16,26 @@
   justify-content: space-between;
   gap: 24px;
 }
+
 .admin_header_inner > a {
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
 }
+
 .admin_header_inner > a > img {
   width: 36px;
   height: 36px;
 }
+
 .admin_header_inner > a > h1 {
   font-size: 32px;
   font-family: "NanumGothicExtraBold", sans-serif;
   font-weight: 800;
-  color: #464d3e;
+  color: #464d3e; /* 브랜드 컬러 - 관리자 테마와 무관하게 유지 */
 }
+
 header > h1 a,
 header > h1 a:visited,
 header > h1 a:hover,
@@ -60,34 +64,32 @@ header > h1 a:active {
   font-size: 15px;
   font-weight: 600;
   margin-right: 5px;
-  color: #d7dfec;
+  color: var(--admin-text);
   cursor: pointer;
 }
 
 .profile_bar_wrap > button {
-  border: 1px solid #5f7694;
-  background-color: #0b1326;
-  color: #d7dfec;
+  border: 1px solid var(--admin-stroke-strong);
+  background-color: var(--admin-bg);
+  color: var(--admin-text);
   border-radius: 8px;
   padding: 8px 14px;
   cursor: pointer;
 }
 
 .profile_bar_wrap > button:hover {
-  background-color: #1f2f53;
+  background-color: var(--admin-accent-soft);
 }
 
 /* AdminFooter.jsx */
 .admin_footer {
   width: 100%;
-  
   font-size: 15px;
-  color: #d7dfec;
+  color: var(--admin-text);
   padding: 12px 24px;
 }
 
 .admin_footer_wrap {
-  
   padding-top: 12px;
 }
 
@@ -100,5 +102,5 @@ header > h1 a:active {
 }
 
 .admin_footer_info {
-  color: #8ea1ba;
+  color: var(--admin-muted);
 }

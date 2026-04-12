@@ -130,7 +130,7 @@ fetch first 1 row only
 </update>
 
 <insert id ="insertLog">
-	insert into member_log_tbl (member_log_no, member_id, log_ip, log_time, log_action, log_device, log_result, log_location, log_detail)
+	insert into member_log_tbl (member_log_no, member_id, log_ip, log_time, log_action, log_device, log_result, log_location, log_detail, log_alert)
 	values (
 		log_seq.nextval,
 		#{memberId},
@@ -140,7 +140,8 @@ fetch first 1 row only
 		#{logDevice},
 		#{logResult},
 		#{logLocation},
-		#{logDetail}
+		#{logDetail},
+		#{logAlert}
 	)
 </insert>
 

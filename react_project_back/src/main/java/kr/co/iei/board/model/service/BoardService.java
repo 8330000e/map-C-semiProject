@@ -128,8 +128,8 @@ public class BoardService {
 	        logParams.put("logAction", "댓글작성");
 	        logParams.put("logDevice", device);
 	        String detail = comment.getContent();
-	        if (detail.length() > 30) {
-	        	detail = detail.substring(0, 30) + "...";
+	        if (detail.length() > 10) {
+	        	detail = detail.substring(0, 10) + "...";
 	        }
 	        logParams.put("logDetail", comment.getBoardNo() + " | " + detail);
 	        memberService.insertLog(logParams);
