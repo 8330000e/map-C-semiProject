@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "./PointForGoodPage.module.css";
+import Swal from "sweetalert2";
 
 //부모 컴포넌트 , props로 isOpen, onClose를 설정.
 //->여기서 알아야 할 아주 중요한 점 한가지. 컴포넌트로 분할 할 떄
@@ -8,14 +9,75 @@ import styles from "./PointForGoodPage.module.css";
 //샹력된다. 따라서 한 번 팝업창이 켜지면 그 한번으로 끝내기 위해서는
 //-> 팝업창이 뜨게 하는 로직을 제일 맨위로 올려야 한다.
 const DonationPage = ({ isOpen, onClose }) => {
+  const [memberId, setMemberId] = useState("");
+  const [totalPoint, setTotalPoint] = useState(1000);
+  const [donatePoint, setDonatePoint] = useState("");
   if (!isOpen) return null;
 
+  //체크박스에서 전체 기부포인트를 누르면 기부하게 하는 함수
+  const handleAllGivePoint = (e) => {
+    if (e.target.cheked) {
+      setDonatePoint(totalPoint);
+    } else {
+      setDonatePoint("");
+    }
+  };
+
+  const handlePointChange = (e) => {
+    if (e.target.value) {
+      setDonatePoint();
+    }
+  };
   return (
     <div className={styles.donation_overlay}>
       <div className={styles.donation_page_content}>
         <div className={styles.content_body}>
           <h3>신청 정보 확인</h3>
         </div>
+        <div className={styles.input_group}>
+          <label htmlFor="memberId">신청 아이디:</label>
+          <input
+            type="text"
+            id="memberId"
+            name="memberId"
+            value={memberId}
+            onChange={(e) => setMemberId(e.target.value)}
+            placeholder="아이디를 입력하세요"
+          ></input>
+        </div>
+        <div className={styles.point_header}>
+          <label>기부 신청 포인트</label>
+          <span className={styles.all_give_point_check}>
+            <input type="checkbox" onChange={handleAllGivePoint}></input>
+            {/*span에서는 문자열을 사용할 떄 span밖에서 자유롭게 쓰면된다. */}
+            전포인트기부
+          </span>
+        </div>
+
+        <input
+          className={styles.point_input}
+          type="text"
+          value={donatePoint}
+          onChange={handlePointChange}
+          placeholder="포인트를 입력해 주세요"
+        ></input>
+        <p className={styles.info_point}>
+          현재 보유 포인트:<strong>{totalPoint.toLocaleString()}</strong>P
+        </p>
+        <p className={styles.point_sub_text}>10포인트는 1000원에 해당됩니다.</p>
+        <button
+          className={styles.submit_btn}
+          onClick={() => {
+            Swal.fire({
+              title: "포인트 기부완료!",
+              text: "당신의 기부에 진심으로 감사합니다!",
+              icon: "success",
+            });
+          }}
+        >
+          기부 포인트 입력 완료!
+        </button>
+
         <button onClick={onClose} className={styles.donation_page_btn}>
           닫기
         </button>
@@ -25,11 +87,6 @@ const DonationPage = ({ isOpen, onClose }) => {
 };
 
 const PointForGoodPage = () => {
-  /*
-  const [member, setMember] = useState({
-    memberId: "",
-  });
-  */
   //기부 버튼을 눌렀을 때 팝업창이 열리고 닫히는 걸 조정하기 위한 상태 설정
   const [isOpen, setIsOpen] = useState(false);
 
