@@ -32,6 +32,8 @@ public class Member {
     private Integer boardCount;					// 게시글 수 추가 
     private Integer commentCount;				// 댓글 수 추가 
     private Integer reportCount;				// 게시글이 신고당한 횟수 
+    
+    private Date lockUntil;						// 정지관련 
 
     public Integer getMemberStatus() {
         return memberStatus;

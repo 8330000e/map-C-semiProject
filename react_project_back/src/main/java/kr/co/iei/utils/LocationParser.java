@@ -6,16 +6,20 @@ import com.google.gson.JsonParser;
 
 public class LocationParser {
 
-    public static String getLocation() {
+    public static String getLocation(String ip) {
         RestTemplate restTemplate = new RestTemplate();
         
-        // 1. 공인 IP 가져오기
-        String publicIp = restTemplate.getForObject("https://api.ipify.org", String.class);
+        // 로컬이면 공인 IP 가져오기
+        if (ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1")) {
+            ip = restTemplate.getForObject("https://api.ipify.org", String.class);
+        }
         
-        // 2. IP로 위치 조회
-        String response = restTemplate.getForObject("http://ip-api.com/json/" + publicIp, String.class);
+        // 1. IP로 위치 조회
+        String response = restTemplate.getForObject("http://ip-api.com/json/" + ip, String.class);
         
-        // 3. JSON에서 도시, 국가 뽑기
+        System.out.println("location: " + response);
+        
+        // 2. JSON에서 도시, 국가 뽑기
         JsonObject json = JsonParser.parseString(response).getAsJsonObject();
         String region = json.get("regionName").getAsString();
         String country = json.get("country").getAsString();
