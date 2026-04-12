@@ -6,6 +6,7 @@ import java.util.Random;
 import org.apache.ibatis.annotations.Param;
 
 import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -115,6 +116,12 @@ public class Membercontroller {
 	// 로그인 로직(김경건)
 	@PostMapping(value = "/login")
 	public ResponseEntity<?> loginMember(@RequestBody Member member, HttpServletRequest request) {
+		
+		Date lockUntil = memberService.getLockUntil(member.getMemberId());
+		if (lockUntil != null && lockUntil.after(new Date())) { // null 아니고 lockUntil이 지금 시간보다 미래면 
+			return ResponseEntity.status(403).body("일시 정지되었습니다. 잠시 후 다시 시도해주세요."); // 403 + 메시지 반환 
+		}
+		
 	    LoginMember loginUser = memberService.login(member);
 	    
 	    String ip = request.getRemoteAddr();
@@ -122,7 +129,7 @@ public class Membercontroller {
             ip = "127.0.0.1";
         }
         String device = DeviceParser.parse(request.getHeader("User-Agent"));
-        String location = LocationParser.getLocation();
+        String location = LocationParser.getLocation(ip);
         Map<String, Object> params = new HashMap<>();
         params.put("memberId", member.getMemberId());
         params.put("logIp", ip);
@@ -142,7 +149,9 @@ public class Membercontroller {
 	        return ResponseEntity.ok(loginUser);
 	    } else {
 	    	params.put("logResult", 1);
+	    	params.put("logAction", "로그인실패");
 	    	memberService.insertLog(params);
+	    	memberService.checkFailCount(member.getMemberId());
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다.");
 	    }
 	}
@@ -315,7 +324,7 @@ public class Membercontroller {
 	            ip = "127.0.0.1";
 	        }
 		 String device = DeviceParser.parse(request.getHeader("User-Agent"));
-		 String location = LocationParser.getLocation();
+		 String location = LocationParser.getLocation(ip);
 		 Map<String, Object> params = new HashMap<>();
 		 params.put("memberId", memberId);
 		 params.put("logIp", ip);

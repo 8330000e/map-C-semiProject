@@ -1,5 +1,6 @@
 package kr.co.iei.member.model.service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -215,5 +216,19 @@ public class MemberService {
 			String content = "새로운 위치에서 로그인이 감지되었습니다." + location;
 			emailSender.sendMail(title, memberEmail, content);
 		}
+	}
+
+	public Date getLockUntil(String memberId) {
+		Date lockUntil = memberDao.getLockUntil(memberId);
+		return lockUntil;
+	}
+
+	public void checkFailCount(String memberId) {
+		int failCount = memberDao.getFailCount(memberId);
+		System.out.println(failCount);
+		if (failCount >= 3) {
+			memberDao.updateLockUntil(memberId);
+		}
+		
 	}
 }

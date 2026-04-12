@@ -155,5 +155,22 @@ fetch first 1 row only
 ]]>
 </select>
 
+<select id="getLockUntil" resultType="java.util.Date">
+	select lock_until from member_tbl1 where member_id = #{memberId}
+</select>
+
+<select id="getFailCount">
+	SELECT COUNT(*) FROM member_log_tbl
+    WHERE member_id = #{memberId}
+    AND log_action = '로그인실패'
+    AND log_time > SYSDATE - (1/1440)	<!-- 60분 * 24 = 1440 sysdate - (1/1440) = 현재시간 1분전  -->
+</select>
+
+<update id="updateLockUntil">
+	update member_tbl1 
+	set lock_until = sysdate + (5/1440) <!-- 현재시간 5분후 -->
+	where member_id = #{memberId}	
+</update>
+
 
 </mapper>
