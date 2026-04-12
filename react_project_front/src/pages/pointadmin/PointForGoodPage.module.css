@@ -1,0 +1,80 @@
+.point_for_good_wrap {
+  padding: 0px;
+  margin: 0px;
+}
+
+.point_sidebar {
+  display: flex;
+  margin: 10px;
+}
+
+.left_sidebar {
+  width: 430px;
+  height: 500px;
+  margin: 20px;
+  padding: 30px;
+}
+
+.grade_title {
+  margin-top: 10px;
+  margin-bottom: 100px;
+}
+
+.contain_point_title {
+  margin-top: 30px;
+}
+
+.right_sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 800px;
+  height: 500px;
+  margin: 20px;
+  padding: 30px;
+}
+
+.donation_title {
+  display: flex;
+  margin: 10px;
+}
+
+.donation_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.donation_page_content {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  min-height: 400px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /*팝업창의 뜰 위치설정 */
+  transform: translate(-50%, -50%); /*중앙 정렬 기준*/
+  background-color: aliceblue;
+  padding: 30px;
+  border-radius: 10px;
+  z-index: 1000;
+}
+
+.content_body {
+  flex: 1; /*남은 공간을 모두 차지하게 하여 버튼을 아래로 내리기*/
+}
+
+.donation_page_btn {
+  padding: 10px;
+  cursor: pointer;
+  margin-top: 250px;
+}
+
+.buytree_title {
+  display: flex;
+  margin: 10px;
+}

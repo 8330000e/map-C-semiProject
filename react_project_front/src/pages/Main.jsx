@@ -369,11 +369,17 @@ const Main = () => {
                 나무 키우기
               </Link>
             </li>
+            {/*포인트 나눔 새로 추가 */}
+            <li>
+              <Link to="/point-give">포인트 나눔</Link>
+            </li>
+
             <li>
               <span>
                 <hr />
               </span>
             </li>
+
             <li>
               <a href="#">공지사항</a>
             </li>
@@ -436,9 +442,9 @@ const Main = () => {
                 </div>
                 <div className="tip_date">
                   {tipBoards[tipIndex]?.boardDate
-                    ? new Date(tipBoards[tipIndex].boardDate).toLocaleDateString(
-                        "ko-KR",
-                      )
+                    ? new Date(
+                        tipBoards[tipIndex].boardDate,
+                      ).toLocaleDateString("ko-KR")
                     : "날짜 정보 없음"}
                 </div>
               </div>
@@ -498,7 +504,10 @@ const Main = () => {
 
       <div className="main_btm">
         <div className="used_list roundBorder">
-          <HorizontalScrollList scrollClassName="used_list_scroll" showButtons={false}>
+          <HorizontalScrollList
+            scrollClassName="used_list_scroll"
+            showButtons={false}
+          >
             <ul>
               {usedGoods.map((item, index) => {
                 const imageUrl = getImageUrl(item.productThumb);
