@@ -324,7 +324,7 @@ const MissionList = () => {
       await Swal.fire({
         icon: "success",
         title: "인증 완료!",
-        text: "랜덤 미션 완료! 10포인트 지급 🎉",
+        text: "랜덤 미션 완료! 20포인트 지급 🎉",
         confirmButtonColor: "#89a93f",
       });
 
