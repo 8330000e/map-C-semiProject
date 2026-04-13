@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
+import useAuthStore from "../../../store/useAuthStore";
+import userImg from "../../../assets/user.png";
 import styles from "./store.module.css";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
@@ -59,7 +61,28 @@ const getImageUrl = (thumb) => {
     return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
+const getMemberImageUrl = (thumb) => {
+    if (!thumb) return userImg;
+    if (typeof thumb !== "string") return userImg;
+    let trimmed = thumb.trim();
+    if (!trimmed) return userImg;
+
+    trimmed = trimmed.replace(/\\/g, "/");
+
+    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+    if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+    if (trimmed.startsWith("/member/thumb/")) return `${BACKSERVER}${trimmed}`;
+    if (trimmed.includes("/member/thumb/")) return `${BACKSERVER}/${trimmed.replace(/^\/+/, "")}`;
+    if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+    if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+    if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+    if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
+    return `${BACKSERVER}/member/thumb/${trimmed}`;
+};
+
 const Store = () => {
+    const { memberId, memberThumb } = useAuthStore();
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 16;
     const [searchType, setSearchType] = useState("title");
@@ -157,7 +180,7 @@ const Store = () => {
                         </span>
                     </li>
                     <li>
-                        <a href="#">공지사항</a>
+                        <Link to="/support/notice">공지사항</Link>
                     </li>
                 </ul>
 
@@ -227,7 +250,17 @@ const Store = () => {
                                     <p className={styles.tradeType}>거래방법 : {tradeMethodLabel}</p>
 
                                     <div className={styles.metaRow}>
-                                        <span className={styles.author}>{item.memberId}</span>
+                                        <span className={styles.authorAvatarWrapper}>
+                                            <img
+                                                className={styles.authorAvatar}
+                                                src={getMemberImageUrl(item.memberThumb || (item.memberId === memberId ? memberThumb : null))}
+                                                alt={`${item.memberId} 프로필`}
+                                                onError={(e) => {
+                                                    e.currentTarget.src = userImg;
+                                                }}
+                                            />
+                                            <span className={styles.author}>{item.memberNickname || item.memberId}</span>
+                                        </span>
                                         <span className={styles.metaDivider}>|</span>
                                         <span className={styles.commentCount}>💬 {item.commentCount ?? 0}</span>
                                         <span className={styles.metaDivider}>|</span>

@@ -3,11 +3,16 @@
 
 import styles from "./AdminMember.module.css";
 
+const statusText = {
+  0: "정상",
+  1: "정지",
+  2: "탈퇴",
+};
+
 const AdminMember = ({
   memberList,
   selectedMember,
   setSelectedMember,
-  statusText,
   filter,
   changeFilter,
   selectRecentLogList,
@@ -39,7 +44,7 @@ const AdminMember = ({
             </select>
             <select name="grade" value={filter.grade} onChange={changeFilter}>
               <option value="ALL">권한</option>
-              <option value={0}>일반</option>
+              <option value={2}>일반</option>
               <option value={1}>관리자</option>
             </select>
             <input
@@ -98,7 +103,16 @@ const AdminMember = ({
                     <span className={`${styles.badge} ${styles.badge_role}`}>
                       {member.memberGrade === 2 ? "일반" : "관리자"}
                     </span>
-                    <span className={`${styles.badge}`}>
+                    <span
+                      className={`${styles.badge} ${
+                        member.failCount >= 3 && member.locationChangeCount >= 1
+                          ? styles.danger_high
+                          : member.failCount >= 3 ||
+                              member.locationChangeCount >= 1
+                            ? styles.danger_mid
+                            : styles.danger_safe
+                      }`}
+                    >
                       {member.failCount >= 3 && member.locationChangeCount >= 1
                         ? "위험"
                         : member.failCount >= 3 ||
@@ -264,10 +278,7 @@ const AdminMember = ({
                 <thead>
                   <tr>
                     <th>접속 IP</th>
-                    <th
-                      className={styles.sort_th}
-                      onClick={toggleLogSort}
-                    >
+                    <th className={styles.sort_th} onClick={toggleLogSort}>
                       접속시간 {logFilter.sort === "DESC" ? "▼" : "▲"}
                     </th>
                     <th>

@@ -24,6 +24,7 @@ public class Board {
 	    private String boardThumb;
 	    private String boardDate;
 	    private String memberNickname;
+	    private String memberThumb;
 	    private Integer boardStatus;
 	    private Double boardLat;
 	    private Double boardLng;
@@ -68,5 +69,9 @@ public class Board {
     /*이거는 마이페이지 작업을 위한 거니 신경 안 쓰셔도 됩니다.*/
     private String searchBoard;
     private Integer filter;
+    
+    // 관리자용 
+    private Integer reportCount;
+    private String detectedKeyword;
 }
 

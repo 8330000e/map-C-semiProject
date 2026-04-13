@@ -198,6 +198,11 @@
 .status_dormant { background-color: var(--admin-status-dormant); color: #1c2433; }
 .badge_role { background-color: var(--admin-badge-role); color: #1a2245; }
 
+/* 위험도 뱃지 */
+.danger_high { background-color: var(--admin-status-banned); color: #450e0e; }
+.danger_mid { background-color: var(--admin-warning); color: #2a1f00; }
+.danger_safe { background-color: var(--admin-status-active); color: #0f2f0d; }
+
 .join_date {
   color: var(--admin-muted);
   font-size: 13px;
