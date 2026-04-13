@@ -2,6 +2,8 @@ import axios from "axios";
 import { useEffect, useRef } from "react";
 import CommunityDetail from "./CommunityDetail";
 import styles from "./Community.module.css";
+import userImg from "../../../assets/user.png";
+import useAuthStore from "../../../store/useAuthStore";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatIcon from "@mui/icons-material/Chat";
@@ -19,9 +21,11 @@ const BoardListBox = ({
   startEdit,
   deleteBoard,
   getImageUrl,
+  getAvatarUrl,
   detailLoading,
 }) => {
   const itemRefs = useRef({});
+  const { memberId, memberThumb } = useAuthStore();
 
   const getBoardNo = (board) =>
     board?.boardNo ?? board?.boardId ?? board?.id ?? null;
@@ -92,7 +96,23 @@ const BoardListBox = ({
                 >
                   <div className={styles.boardItemTop}>
                     <div className={styles.boardWriter}>
-                      <span className={styles.writerIcon}>👤</span>
+                      <img
+                        src={
+                          getAvatarUrl(
+                            board.memberThumb ||
+                            board.writerThumb ||
+                            board.profileThumb ||
+                            (board.writerId === memberId ? memberThumb : null),
+                          ) || userImg
+                        }
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          target.onerror = null;
+                          target.src = userImg;
+                        }}
+                        alt="작성자"
+                        className={styles.writerAvatar}
+                      />
                       <span>{board.writerNickname || board.memberNickname || board.writerId || board.memberId}</span>
                     </div>
                     <div className={styles.boardDate}>{board.createDate || board.boardDate}</div>

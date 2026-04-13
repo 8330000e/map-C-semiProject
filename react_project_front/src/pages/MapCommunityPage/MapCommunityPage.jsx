@@ -10,6 +10,34 @@ import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import heart from "../../assets/img/heart.svg";
 import axios from "axios";
 
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+
+const getImageUrl = (thumb) => {
+  if (!thumb || typeof thumb !== "string") return null;
+  let trimmed = thumb.trim();
+  if (!trimmed) return null;
+
+  trimmed = trimmed.replace(/\\/g, "/").replace(/\\/g, "/");
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
+  if (driveMatch) {
+    const boardIndex = trimmed.indexOf("/board/editor/");
+    if (boardIndex !== -1) {
+      const suffix = trimmed.substring(boardIndex);
+      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
+    }
+    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
+  }
+
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
+  return `${BACKSERVER}/member/thumb/${trimmed}`;
+};
+
 const MapCommunityPage = () => {
   const [addr, setAddr] = useState("서울특별시 중구");
   const [lnglat, setLnglat] = useState({
@@ -118,6 +146,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
 
     markerList.map((marker, i) => {
       mapaddr = "선택된 위치 없음";
+      const writerAvatar = getImageUrl(marker.memberThumb) || defaultImg;
       const markerName = new naver.maps.Marker({
         key: i,
         position: new window.naver.maps.LatLng(
@@ -239,7 +268,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                   style=" display: flex; gap: 8px; align-items: center; "
                 >
                   <img
-                    src=${defaultImg}
+                    src=${writerAvatar}
                     alt=""
                     style="
                       width: 35px;

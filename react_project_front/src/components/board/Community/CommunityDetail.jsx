@@ -8,6 +8,7 @@ import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import FlagIcon from "@mui/icons-material/Flag";
 import styles from "./Community.module.css";
+import userImg from "../../../assets/user.png";
 import Swal from "sweetalert2";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
@@ -72,6 +73,31 @@ const getImageUrl = (thumb) => {
   if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
     return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
   return `${BACKSERVER}/board/editor/${trimmed}`;
+};
+
+const getMemberImageUrl = (thumb) => {
+  if (!thumb) return null;
+  if (typeof thumb !== "string") return null;
+  let trimmed = thumb.trim();
+  if (!trimmed) return null;
+
+  trimmed = trimmed.replace(/\\/g, "/").replace(/\\/g, "/");
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
+    return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+  if (trimmed.startsWith("/member/thumb/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/member/thumb/"))
+    return `${BACKSERVER}/${trimmed.replace(/^\/+/, "")}`;
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
+    return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
+  return `${BACKSERVER}/member/thumb/${trimmed}`;
 };
 
 const hasImageInContent = (html) => {
@@ -569,6 +595,13 @@ const CommunityDetail = ({
         isSecret && !canViewSecretComment(comment)
           ? "비공개 댓글입니다."
           : comment.content;
+      const commentAvatarUrl =
+        getMemberImageUrl(
+          comment.memberThumb ||
+          comment.commentThumb ||
+          comment.thumb ||
+          comment.profileThumb,
+        ) || userImg;
       return (
         <div
           key={comment.id}
@@ -577,6 +610,16 @@ const CommunityDetail = ({
         >
           <div className={styles.commentMeta}>
             <div className={styles.commentMetaLeft}>
+              <img
+                src={commentAvatarUrl}
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  target.onerror = null;
+                  target.src = userImg;
+                }}
+                alt="댓글 작성자"
+                className={styles.commentAvatar}
+              />
               <span>{comment.memberNickname || comment.memberId}</span>
               <span>{formatTime(comment.createdAt)}</span>
               {(comment.updatedAt || comment.updateAt) &&
@@ -668,6 +711,23 @@ const CommunityDetail = ({
         <div>
           <div className={styles.detailTitle}>{board.boardTitle}</div>
           <div className={styles.detailMeta}>
+            <img
+              src={
+                getMemberImageUrl(
+                  board.writerThumb ||
+                  board.memberThumb ||
+                  board.profileThumb ||
+                  board.thumb,
+                ) || userImg
+              }
+              onError={(e) => {
+                const target = e.currentTarget;
+                target.onerror = null;
+                target.src = userImg;
+              }}
+              alt="작성자"
+              className={styles.detailMetaAvatar}
+            />
             <span>{board.writerNickname || board.writerId}</span>
             <span>·</span>
             <span>{formatTime(board.createDate)}</span>
