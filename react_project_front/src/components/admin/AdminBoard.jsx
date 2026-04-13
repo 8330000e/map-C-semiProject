@@ -60,11 +60,11 @@ const AdminBoard = ({
                 </td>
                 <td>
                   {board.detectedKeyword && board.reportCount > 0 ? (
-                    <GppBadIcon />
+                    <GppBadIcon className={styles.icon_high} />
                   ) : board.detectedKeyword || board.reportCount > 0 ? (
-                    <WarningAmberIcon />
+                    <WarningAmberIcon className={styles.icon_mid} />
                   ) : (
-                    <CheckCircleIcon />
+                    <CheckCircleIcon className={styles.icon_safe} />
                   )}
                 </td>
                 <td>{board.reportCount}</td>

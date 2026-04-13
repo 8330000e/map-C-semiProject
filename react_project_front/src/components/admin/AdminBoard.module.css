@@ -186,3 +186,16 @@
 .board_table td:last-child {
   white-space: nowrap;
 }
+
+/* 위험도 아이콘 색상 */
+.icon_safe {
+  color: #4caf50;
+}
+
+.icon_mid {
+  color: #ffc107;
+}
+
+.icon_high {
+  color: #f44336;
+}
