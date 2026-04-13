@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import useAuthStore from "../../store/useAuthStore";
 
-const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+const BACKSERVER = import.meta.env.VITE_BACKS;
 
 const MyPoint = () => {
   const { memberId } = useAuthStore();
