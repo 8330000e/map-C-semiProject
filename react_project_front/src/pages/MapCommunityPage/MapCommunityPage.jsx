@@ -75,6 +75,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
     sgg: "중구",
   };
   let detailMode = false;
+  let openMarker = true;
 
   const boardView = (boardNo) => {
     if (boardNo) {
@@ -129,7 +130,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
     markerList.map((marker, i) => {
       mapaddr = "선택된 위치 없음";
       const markerName = new naver.maps.Marker({
-        key: i,
+        key: `marker-${i}`,
         position: new window.naver.maps.LatLng(
           `${marker.boardLat}`,
           `${marker.boardLng}`,
@@ -153,7 +154,9 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
       });
       markerName.setTitle(marker.boardTitle || "제목 없음" || "Default Marker");
       markerName.setDraggable(false);
+
       naver.maps.Event.addListener(markerName, "click", (e) => {
+        detailMode = !detailMode;
         console.log("marker click");
         e.coord._lat = marker.boardLat;
         e.coord._lng = marker.boardLng;
@@ -170,18 +173,18 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
           },
         );
 
-        detailMode = true;
-        map.setCenter(
-          new window.naver.maps.LatLng(
-            markerName.getPosition().lat() + 0.003,
-            markerName.getPosition().lng(),
-          ),
-        );
-        map.setZoom(15);
+        console.log(markerName.key);
 
-        detailMode
-          ? markerName.setIcon({
-              content: `
+        if (detailMode) {
+          map.setCenter(
+            new window.naver.maps.LatLng(
+              markerName.getPosition().lat() + 0.003,
+              markerName.getPosition().lng(),
+            ),
+          );
+          map.setZoom(15);
+          markerName.setIcon({
+            content: `
             <div>
               <div style="position: relative; width: 100%;">
                 <div
@@ -278,7 +281,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                 </div>
               </div>
               <div style=" padding: 8px 4px; line-height: 1; ">
-                <div style=" text-align: left; ">${marker.boardTitle}</div>
+                <div style=" text-align: left; ">${marker.boardTitle.substring(0, 10)}</div>
                   <div
                     style="
                       width: 100%;
@@ -292,29 +295,31 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                       z-index=${5000 + 3};
                     "
                   >
-                    ${marker.boardContent.replace(/<img[^>]*>/gi, "")}
+                    ${marker.boardContent.replace(/<img[^>]*>/gi, "").substring(0, 30)}
                   </div>
                 </div>
               </div>
             </div>
           <div>
-      <img
-        src=${marker.memberThumb || defaultImg}
-        style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
-      />
-      <img
-        src='src/assets/img/defaultthumbmarker.png'
-        style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
-      />
-    </div>
-    </div>
-          `,
-              size: new naver.maps.Size(22, 35),
-              anchor: new naver.maps.Point(11, 35),
-              onClick: boardView(marker.boardNo),
-            })
-          : markerName.setIcon({
-              content: `
+            <img
+              src=${marker.memberThumb || defaultImg}
+              style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
+            />
+            <img
+              src='src/assets/img/defaultthumbmarker.png'
+              style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
+            />
+          </div>
+          </div>
+                `,
+            size: new naver.maps.Size(22, 35),
+            anchor: new naver.maps.Point(11, 35),
+            onClick: boardView(marker.boardNo),
+          });
+        } else {
+          navigate("/map-community");
+          markerName.setIcon({
+            content: `
           <div>
             <img
               src=${marker.memberThumb || defaultImg}
@@ -325,9 +330,10 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
               style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
             />
           </div>`,
-              size: new naver.maps.Size(22, 35),
-              anchor: new naver.maps.Point(11, 35),
-            });
+            size: new naver.maps.Size(22, 35),
+            anchor: new naver.maps.Point(11, 35),
+          });
+        }
       });
     });
 
