@@ -2,6 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.co.iei.store.model.dao.StoreBoardDAO">
 
+  <resultMap id="StoreCartResultMap" type="kr.co.iei.store.model.vo.StoreCart">
+    <id property="cartNo" column="CART_NO" />
+    <result property="memberId" column="MEMBER_ID" />
+    <result property="marketNo" column="MARKET_NO" />
+    <result property="quantity" column="QUANTITY" />
+    <result property="addedAt" column="ADDED_AT" />
+    <result property="marketTitle" column="MARKET_TITLE" />
+    <result property="productThumb" column="PRODUCT_THUMB" />
+    <result property="productPrice" column="PRODUCT_PRICE" />
+  </resultMap>
+
   <insert id="insertBoardForStore"
           parameterType="kr.co.iei.store.model.vo.StoreBoard">
     <selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
@@ -75,6 +86,7 @@
       S.MARKET_NO AS marketNo,
       S.BOARD_NO AS boardNo,
       S.MEMBER_ID AS memberId,
+      M.MEMBER_THUMB AS memberThumb,
       S.CTPVSGG_ID AS ctpvsggId,
       R.CTPV_NM AS ctpvNm,
       R.SGG_NM AS sggNm,
@@ -94,6 +106,8 @@
       S.CREATED_AT AS createdAt,
       S.TRADE_TYPE AS tradeType
     FROM STORE_BOARD_TBL S
+    LEFT JOIN MEMBER_TBL M
+      ON S.MEMBER_ID = M.MEMBER_ID
     LEFT JOIN CTPVSGG_TBL R
       ON S.CTPVSGG_ID = R.CTPVSGG_ID
     WHERE S.IS_DELETED = 0
@@ -105,6 +119,7 @@
       S.MARKET_NO AS marketNo,
       S.BOARD_NO AS boardNo,
       S.MEMBER_ID AS memberId,
+      M.MEMBER_THUMB AS memberThumb,
       S.CTPVSGG_ID AS ctpvsggId,
       R.CTPV_NM AS ctpvNm,
       R.SGG_NM AS sggNm,
@@ -122,6 +137,8 @@
       S.CREATED_AT AS createdAt,
       S.TRADE_TYPE AS tradeType
     FROM STORE_BOARD_TBL S
+    LEFT JOIN MEMBER_TBL M
+      ON S.MEMBER_ID = M.MEMBER_ID
     LEFT JOIN CTPVSGG_TBL R
       ON S.CTPVSGG_ID = R.CTPVSGG_ID
     WHERE S.MARKET_NO = #{marketNo}
@@ -170,6 +187,73 @@
         UPDATED_AT     = SYSDATE
     WHERE MARKET_NO = #{marketNo}
   </update>
+
+  <select id="selectCartItem" parameterType="map" resultType="kr.co.iei.store.model.vo.StoreCart">
+    SELECT
+      C.CART_NO AS cartNo,
+      C.MEMBER_ID AS memberId,
+      C.MARKET_NO AS marketNo,
+      C.QUANTITY AS quantity,
+      C.ADDED_AT AS addedAt,
+      S.MARKET_TITLE AS marketTitle,
+      S.PRODUCT_THUMB AS productThumb,
+      S.PRODUCT_PRICE AS productPrice
+    FROM CART_TBL C
+    LEFT JOIN STORE_BOARD_TBL S ON S.MARKET_NO = C.MARKET_NO
+    WHERE C.MEMBER_ID = #{memberId}
+      AND C.MARKET_NO = #{marketNo}
+  </select>
+
+  <select id="selectCartByMemberId" parameterType="string" resultMap="StoreCartResultMap">
+    SELECT
+      C.CART_NO,
+      C.MEMBER_ID,
+      C.MARKET_NO,
+      C.QUANTITY,
+      C.ADDED_AT,
+      S.MARKET_TITLE,
+      S.PRODUCT_THUMB,
+      S.PRODUCT_PRICE
+    FROM CART_TBL C
+    LEFT JOIN STORE_BOARD_TBL S ON S.MARKET_NO = C.MARKET_NO
+    WHERE C.MEMBER_ID = #{memberId}
+    ORDER BY C.ADDED_AT DESC
+  </select>
+
+  <insert id="insertCartItem" parameterType="kr.co.iei.store.model.vo.StoreCart">
+    <selectKey keyProperty="cartNo" resultType="long" order="BEFORE">
+      SELECT CART_SEQ.NEXTVAL FROM DUAL
+    </selectKey>
+    INSERT INTO CART_TBL
+    (
+      CART_NO,
+      MEMBER_ID,
+      MARKET_NO,
+      QUANTITY,
+      ADDED_AT
+    )
+    VALUES
+    (
+      #{cartNo},
+      #{memberId},
+      #{marketNo},
+      #{quantity},
+      SYSDATE
+    )
+  </insert>
+
+  <update id="updateCartQuantity">
+    UPDATE CART_TBL
+    SET QUANTITY = #{quantity}
+    WHERE CART_NO = #{cartNo}
+  </update>
+
+  <delete id="deleteCartItem" parameterType="map">
+    DELETE FROM CART_TBL
+    WHERE CART_NO = #{cartNo}
+      AND MEMBER_ID = #{memberId}
+  </delete>
+
   <update id="incrementReadCount" parameterType="long">
     UPDATE STORE_BOARD_TBL
     SET READ_COUNT = READ_COUNT + 1
@@ -182,6 +266,7 @@
       C.BOARD_COMMENT_NO      AS REVIEW_NO,
       S.MARKET_NO             AS MARKET_NO,
       C.BOARD_COMMENT_WRITER  AS MEMBER_ID,
+      M.MEMBER_THUMB           AS MEMBER_THUMB,
       C.MEMBER_NICKNAME       AS MEMBER_NICKNAME,
       C.BOARD_COMMENT_CONTENT AS REVIEW_CONTENT,
       C.PARENT_COMMENT_NO     AS PARENT_COMMENT_NO,
@@ -194,6 +279,8 @@
     FROM BOARD_COMMENT_TBL C
     JOIN STORE_BOARD_TBL S
       ON C.BOARD_NO = S.BOARD_NO
+    LEFT JOIN MEMBER_TBL M
+      ON C.BOARD_COMMENT_WRITER = M.MEMBER_ID
     WHERE S.MARKET_NO = #{marketNo}
     ORDER BY C.COMMENT_GROUP ASC, C.COMMENT_DEPTH ASC, C.BOARD_COMMENT_NO ASC
   </select>
@@ -269,6 +356,7 @@
         C.BOARD_COMMENT_NO      AS REVIEW_NO,
         S.MARKET_NO             AS MARKET_NO,
         C.BOARD_COMMENT_WRITER  AS MEMBER_ID,
+        M.MEMBER_THUMB           AS MEMBER_THUMB,
         C.MEMBER_NICKNAME       AS MEMBER_NICKNAME,
         C.BOARD_COMMENT_CONTENT AS REVIEW_CONTENT,
         C.PARENT_COMMENT_NO     AS PARENT_COMMENT_NO,
@@ -281,6 +369,8 @@
       FROM BOARD_COMMENT_TBL C
       JOIN STORE_BOARD_TBL S
         ON C.BOARD_NO = S.BOARD_NO
+      LEFT JOIN MEMBER_TBL M
+        ON C.BOARD_COMMENT_WRITER = M.MEMBER_ID
       WHERE C.IS_SECRET = 'N'
       ORDER BY C.BOARD_COMMENT_NO DESC
     )

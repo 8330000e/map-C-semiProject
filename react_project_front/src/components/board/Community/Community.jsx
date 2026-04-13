@@ -20,13 +20,13 @@ const getBoardNo = (board) =>
 // 이미지 src는 서버에서 여러 형태로 내려올 수 있습니다.
 // 예: 이미지 전체 URL, /upload/ 경로, /board/editor/ 경로, 파일명만 전달되는 경우.
 // 여기서 브라우저가 바로 요청 가능한 URL로 변환해 줍니다.
-const getImageUrl = (thumb) => {
+const getBoardImageUrl = (thumb) => {
   if (!thumb) return null;
   if (typeof thumb !== "string") return null;
   let trimmed = thumb.trim();
   if (!trimmed) return null;
 
-  trimmed = trimmed.replace(/\\/g, "/").replace(/\\/g, "/");
+  trimmed = trimmed.replace(/\\/g, "/");
 
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
     return trimmed;
@@ -50,6 +50,31 @@ const getImageUrl = (thumb) => {
   if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
     return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
   return `${BACKSERVER}/board/editor/${trimmed}`;
+};
+
+const getMemberImageUrl = (thumb) => {
+  if (!thumb) return null;
+  if (typeof thumb !== "string") return null;
+  let trimmed = thumb.trim();
+  if (!trimmed) return null;
+
+  trimmed = trimmed.replace(/\\/g, "/");
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
+    return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+  if (trimmed.startsWith("/member/thumb/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/member/thumb/"))
+    return `${BACKSERVER}/${trimmed.replace(/^\/+/, "")}`;
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
+    return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
+  return `${BACKSERVER}/member/thumb/${trimmed}`;
 };
 
 const Community = ({
@@ -698,7 +723,8 @@ const Community = ({
                 setBoardList={setBoardList}
                 startEdit={startEdit}
                 deleteBoard={deleteBoard}
-                getImageUrl={getImageUrl}
+                getImageUrl={getBoardImageUrl}
+                getAvatarUrl={getMemberImageUrl}
                 detailLoading={detailLoading}
               />
             </>

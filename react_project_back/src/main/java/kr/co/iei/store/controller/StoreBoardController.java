@@ -2,6 +2,7 @@ package kr.co.iei.store.controller;
 
 import kr.co.iei.store.model.service.StoreBoardService;
 import kr.co.iei.store.model.vo.StoreBoard;
+import kr.co.iei.store.model.vo.StoreCart;
 import kr.co.iei.store.model.vo.StoreRating;
 import kr.co.iei.store.model.vo.StoreReview;
 import kr.co.iei.store.model.vo.StoreTradeInfo;
@@ -142,6 +143,44 @@ public class StoreBoardController {
         } catch (Exception e) {
             log.error("댓글 등록 실패", e);
             return ResponseEntity.internalServerError().body("댓글 등록 실패: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/cart")
+    public ResponseEntity<?> addCartItem(@RequestBody StoreCart cart) {
+        try {
+            storeBoardService.addOrUpdateCartItem(cart);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            log.error("장바구니 추가 실패 payload={}", cart, e);
+            return ResponseEntity.internalServerError().body("장바구니 추가 실패: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/cart")
+    public ResponseEntity<?> getCartItems(@RequestParam String memberId) {
+        try {
+            return ResponseEntity.ok(storeBoardService.getCartByMemberId(memberId));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            log.error("장바구니 조회 실패 memberId={}", memberId, e);
+            return ResponseEntity.internalServerError().body("장바구니 조회 실패: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/cart/{cartNo}")
+    public ResponseEntity<?> deleteCartItem(@PathVariable Long cartNo, @RequestParam String memberId) {
+        try {
+            storeBoardService.removeCartItem(cartNo, memberId);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            log.error("장바구니 삭제 실패 cartNo={} memberId={}", cartNo, memberId, e);
+            return ResponseEntity.internalServerError().body("장바구니 삭제 실패: " + e.getMessage());
         }
     }
 

@@ -12,6 +12,7 @@ public class StoreBoard {
 
     private String memberId;
     private String memberNickname;
+    private String memberThumb;
     private String ctpvsggId;
     private String marketTitle;
     private String marketContent;
@@ -25,14 +26,4 @@ public class StoreBoard {
 
     private Date createdAt;
     private Date updatedAt;
-
-    // Lombok should generate this, but add explicitly for build stability
-    public String getProductStatus() {
-        return productStatus;
-    }
-
-    public void setProductStatus(String productStatus) {
-        this.productStatus = productStatus;
-    }
-
 }

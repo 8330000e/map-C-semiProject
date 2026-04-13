@@ -29,6 +29,7 @@ import kr.co.iei.admin.model.vo.ListResponse;
 import kr.co.iei.admin.model.vo.Log;
 import kr.co.iei.admin.model.vo.Notice;
 import kr.co.iei.admin.model.vo.Qna;
+import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.utils.FileUtils;
 
 // 관리자 전용 REST 컨트롤러 - 기본 URL: /admins
@@ -186,6 +187,12 @@ public class AdminController {
 		Map<String, Object> anomalyMap = adminService.getAnomalyCount(memberId);
 		System.out.println(anomalyMap);
 		return ResponseEntity.ok(anomalyMap);
+	}
+	
+	@GetMapping(value="board")
+	public ResponseEntity<?> selectBoardList() {
+		List<Board> boardList = adminService.getBoardList();
+		return ResponseEntity.ok(boardList);
 	}
 	
 

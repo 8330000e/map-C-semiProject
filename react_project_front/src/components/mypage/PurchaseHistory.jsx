@@ -9,6 +9,10 @@ const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 const PAGE_SIZE = 6;
 const getStatusPrefix = (status) => (status ? `[${status}] ` : "");
 
+// 구매내역 페이지임.
+//  - 로그인한 사용자의 구매한 상품 기록을 보여줌.
+//  - 서버에서 거래 정보와 연관 상품 정보를 함께 가져와서 렌더링함.
+
 const getImageUrl = (thumb) => {
   // thumb가 서버에서 여러 형태로 들어오기 때문에,
   // 여기서 브라우저가 바로 쓸 수 있는 주소로 바꿔줘요.
@@ -101,6 +105,9 @@ const PurchaseHistory = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
+    // 구매내역 데이터를 서버에서 조회하는 기능임.
+    //  - buyerId로 나의 구매 기록을 가져오고,
+    //  - 서버에 데이터가 없으면 로컬 저장된 완료 구매 내역을 보여줌.
     const fetchPurchaseHistory = async () => {
       if (!memberId) {
         setPurchaseHistory([]);

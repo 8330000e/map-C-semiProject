@@ -8,41 +8,44 @@ import axios from "axios";
 
 const DashBoardPage = () => {
   // 회원 통계 상태값들
-  const [totalMember, setTotalMember] = useState(null);
-  const [todayMember, setTodayMember] = useState(null);
-  const [yesterdayMember, setYesterdayMember] = useState(null);
-  const [thisMonthMember, setThisMonthMember] = useState(null);
-  const [lastMonthMember, setLastMonthMember] = useState(null);
+  const [totalMember, setTotalMember] = useState(null); // 전체회원
+  const [todayMember, setTodayMember] = useState(null); // 오늘가입
+  const [yesterdayMember, setYesterdayMember] = useState(null); // 어제가입
+  const [thisMonthMember, setThisMonthMember] = useState(null); // 이번달 가입
+  const [lastMonthMember, setLastMonthMember] = useState(null); // 저번달 가입
 
   // 신고 카테고리별 건수 배열 [광고, 욕설, 스팸, 기타]
-  const [categoryCount, setCategoryCount] = useState([]);
-  const [pendingReport, setPendingReport] = useState(null);
+  const [categoryCount, setCategoryCount] = useState([]); // 카테고리별 총 신고수
+  const [pendingReport, setPendingReport] = useState(null); // 미처리 신고수
 
   // 전체 신고 건수 - categoryCount 배열 합산
-  const totalReportCount = categoryCount.reduce((a, b) => a + b, 0);
+  const totalReportCount = categoryCount.reduce((a, b) => a + b, 0); // a: 누적값, b: 현재 요소 배열을 순회하면서 누적값을 만들기 0은 초기값
 
-  // 월별/일별 증감률 계산 - 이전 값이 0이면 나누기 방지용으로 0 반환
+  // 월별 증감률 (이번달 - 저번달) / 저번달 * 100,    0 나누기 방지
   const monthlyGrowthRate =
     lastMonthMember === 0
       ? 0
       : ((thisMonthMember - lastMonthMember) / lastMonthMember) * 100;
+  // 일별 증감률 (오늘 - 어제) / 어제 * 100,     0 나누기 방지
   const dailyGrowthRate =
     yesterdayMember === 0
       ? 0
       : ((todayMember - yesterdayMember) / yesterdayMember) * 100;
 
-  // 이번달 가입자가 전체 회원 중 몇 퍼센트인지
+  // 전체 회원 중 이번달 가입자 비율 > (이번달 / 전체) * 100   0나누기 방지
   const thisMonthRatio =
     thisMonthMember === 0 ? 0 : (thisMonthMember / totalMember) * 100;
 
-  // 증감률 앞에 붙는 부호 (양수면 +, 음수면 그냥 - 붙음)
+  // 증감률 앞에 붙는 부호 (양수면 +, 음수면 자동으로 붙여줌)
   const monthSign = monthlyGrowthRate >= 0 ? "+" : "";
   const dailySign = dailyGrowthRate >= 0 ? "+" : "";
 
-  // categoryCount 중 제일 큰 숫자 반환
+  // Math.max() 받은 숫자들 중 가장 큰 숫자 리턴, categoryCount는 배열이라 펼처서 넣어줌
   const maxCount = Math.max(...categoryCount);
-  // 제일 큰 숫자가 몇번째 인덱스에 있는지
+
+  // 위에서 계산한 maxCount가 몇번째 index에 있는지 찾아서 리턴
   const maxIndex = categoryCount.indexOf(maxCount);
+
   // 인덱스로 카테고리 이름 꺼냄
   const maxCategory = ["광고", "욕설", "스팸", "기타"][maxIndex];
 
@@ -50,7 +53,6 @@ const DashBoardPage = () => {
   const [weeklyCount, setWeeklyCount] = useState([]);
 
   useEffect(() => {
-    // 컴포넌트 마운트 시 대시보드 데이터 한 번만 불러옴
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/admins/dashdata`)
       .then((res) => {

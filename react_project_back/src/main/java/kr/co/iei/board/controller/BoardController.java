@@ -65,6 +65,7 @@ public class BoardController {
                 map.put("boardThumb", board.getBoardThumb());
                 map.put("boardDate", board.getBoardDate());
                 map.put("memberNickname", board.getMemberNickname());
+                map.put("memberThumb", board.getMemberThumb());
                 map.put("boardStatus", board.getBoardStatus());
                 map.put("boardLat", board.getBoardLat());
                 map.put("boardLng", board.getBoardLng());
