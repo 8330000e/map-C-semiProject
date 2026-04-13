@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
 import styles from "./TreeGrowMain.module.css";
@@ -290,18 +290,8 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
     }
   };
 
-  const currentStageProgress =
-    currentStage === 5
-      ? 100
-      : ((regionWater - currentStageStartWater) /
-          (currentStageTarget - currentStageStartWater)) *
-        100;
-  if (!selectedRegion) {
-    return null;
-  }
-
   const getSeason = () => {
-    const month = new Date().getMonth() + 1;
+    const month = 3;
 
     if (month >= 3 && month <= 5) return "spring";
     if (month >= 6 && month <= 8) return "summer";
@@ -318,6 +308,37 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
     return 12;
   };
 
+  const particleConfigs = useMemo(() => {
+    return Array.from({ length: getParticleCount() }).map((_, idx) => ({
+      id: `${season}-${idx}`,
+      left: `${5 + ((idx * 11) % 90)}%`,
+      animationDelay: `${idx * 0.9}s`,
+      animationDuration:
+        season === "winter" ? `${10 + (idx % 3)}s` : `${6 + (idx % 4)}s`,
+      driftX1: `${Math.random() * 80 - 40}px`,
+      driftX2: `${Math.random() * 80 - 40}px`,
+    }));
+  }, [season]);
+
+  const currentStageProgress =
+    currentStage === 5
+      ? 100
+      : ((regionWater - currentStageStartWater) /
+          (currentStageTarget - currentStageStartWater)) *
+        100;
+
+  if (!selectedRegion) {
+    return null;
+  }
+  const easterEggVariantClassMap = {
+    spring: styles.springEasterEgg,
+    summer: styles.summerEasterEgg,
+    autumn: styles.autumnEasterEgg,
+    winter: styles.winterEasterEgg,
+  };
+
+  const currentEasterEggVariantClass = easterEggVariantClassMap[season] || "";
+
   const handleTreeClick = () => {
     setShowAbsorbEffect(true);
     setShowTreeBounce(true);
@@ -333,7 +354,7 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
 
         setTimeout(() => {
           setShowEasterEgg(false);
-        }, 4000);
+        }, 8000);
 
         return 0;
       }
@@ -344,49 +365,77 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
 
   return (
     <div
-      className={`${styles.treeGrowMain} ${styles[`stage${currentStage}`]} ${styles[season]} ${showEasterEgg && season === "winter" ? styles.winterEasterCard : ""}`}
+      className={`${styles.treeGrowMain} ${styles[`stage${currentStage}`]} ${styles[season]} ${showEasterEgg ? currentEasterEggVariantClass : ""}`}
     >
       <section className={styles.topCard}>
-        {showEasterEgg && season === "winter" && (
+        {showEasterEgg && (
           <>
-            <div className={styles.easterEggSnowLayer}>
-              {Array.from({ length: 260 }).map((_, idx) => (
+            <div
+              className={`${styles.easterEggSnowLayer} ${currentEasterEggVariantClass}`}
+            >
+              {Array.from({ length: 140 }).map((_, idx) => (
                 <span
-                  key={idx}
+                  key={`snow-burst-${idx}`}
+                  className={`${styles.easterEggSnowflake} ${styles.easterEggSnowflakeBurst}`}
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 0.08}s`,
+                    animationDuration: `${2.2 + Math.random() * 0.9}s`,
+                    width: `${4 + Math.random() * 8}px`,
+                    height: `${4 + Math.random() * 8}px`,
+                  }}
+                />
+              ))}
+
+              {Array.from({ length: 120 }).map((_, idx) => (
+                <span
+                  key={`snow-base-a-${idx}`}
                   className={styles.easterEggSnowflake}
                   style={{
-                    left: `${(idx * 3.9) % 100}%`,
-                    animationDelay: `${(idx % 36) * 0.05}s`,
-                    animationDuration: `${2.4 + (idx % 6) * 0.22}s`,
-                    width: `${8 + (idx % 5) * 3}px`,
-                    height: `${8 + (idx % 5) * 3}px`,
+                    left: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 1.4}s`,
+                    animationDuration: `${3.2 + Math.random() * 2.2}s`,
+                    width: `${3 + Math.random() * 7}px`,
+                    height: `${3 + Math.random() * 7}px`,
+                  }}
+                />
+              ))}
+
+              {Array.from({ length: 120 }).map((_, idx) => (
+                <span
+                  key={`snow-base-b-${idx}`}
+                  className={styles.easterEggSnowflake}
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    animationDelay: `${0.7 + Math.random() * 1.6}s`,
+                    animationDuration: `${3.4 + Math.random() * 2.4}s`,
+                    width: `${3 + Math.random() * 7}px`,
+                    height: `${3 + Math.random() * 7}px`,
                   }}
                 />
               ))}
             </div>
 
-            <div className={styles.easterEggSnowFog}></div>
-            <div className={styles.easterEggSnowGround}></div>
+            <div className={styles.easterEggSnowRise}></div>
+            <div className={styles.easterEggSnowRiseFoam}></div>
           </>
         )}
+        <div className={styles.seasonLayer}>
+          {particleConfigs.map((particle) => (
+            <span
+              key={particle.id}
+              className={`${styles.particle} ${styles[season + "Particle"]}`}
+              style={{
+                left: particle.left,
+                animationDelay: particle.animationDelay,
+                animationDuration: particle.animationDuration,
+                "--drift-x1": particle.driftX1,
+                "--drift-x2": particle.driftX2,
+              }}
+            />
+          ))}
+        </div>
         <div className={styles.topHeader}>
-          <div className={styles.seasonLayer}>
-            {Array.from({ length: getParticleCount() }).map((_, idx) => (
-              <span
-                key={idx}
-                className={`${styles.particle} ${styles[season + "Particle"]}`}
-                style={{
-                  left: `${5 + ((idx * 11) % 90)}%`,
-                  animationDelay: `${idx * 0.9}s`,
-                  animationDuration:
-                    season === "winter"
-                      ? `${10 + (idx % 3)}s`
-                      : `${6 + (idx % 4)}s`,
-                }}
-              />
-            ))}
-          </div>
-
           <span className={styles.regionName}>{selectedRegion?.name}</span>
           <span className={styles.stageText}>{currentStageLabel}</span>
         </div>
