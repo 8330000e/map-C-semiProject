@@ -30,16 +30,20 @@ const CampaignDetailPage = () => {
   // const realtime = Date.now(); 로직이 back으로 감
   const [boardList, setBoardList] = useState([]);
   const data = readComplete && {
-    labels: ["남은기간", "지난기간"],
+    labels: ["지난기간", "남은기간"],
     datasets: [
       {
         data: [
+          new Date(campaignDetail.campaignExpireDate).getTime() - Date.now(),
           new Date(campaignDetail.campaignExpireDate).getTime() -
             new Date(campaignDetail.campaignStartDate).getTime(),
-          new Date(campaignDetail.campaignExpireDate).getTime() - Date.now(),
         ],
+        backgroundColor: ["#FA9B3B", "#fefefe"],
       },
     ],
+  };
+  const option = {
+    cutout: "83%",
   };
 
   useEffect(() => {
@@ -91,6 +95,7 @@ const CampaignDetailPage = () => {
         console.log(err);
       });
   }, []);
+
   return (
     memberId &&
     readComplete && (
@@ -100,15 +105,9 @@ const CampaignDetailPage = () => {
         </div>
         <div className={styles.campdetailpage_content_wrap}>
           <div className={styles.campdetailpage_details_wrap}>
-            <Doughnut data={data} />
-            <div>{campaignNo}</div>
-            <div>{campaignDetail.campaignTitle}</div>
-            <div>{campaignDetail.campaignStatus}</div>
-            <div>{campaignDetail.campaignGoalMember}</div>
-            <div>{campaignDetail.campaignStartDate}</div>
-            <div>{campaignDetail.memberCount}</div>
-            <div>{campaignDetail.memberId}</div>
-            <div>{new Date(campaignDetail.campaignExpireDate).getTime()}</div>
+            <div className={styles.campdetailpage_chart}>
+              <Doughnut data={data} options={option} />
+            </div>
             <div className={styles.camp_polygon_wrap}>
               <div
                 className={`${styles.camp_polygon1} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.1 ? styles.camp_success : ""}`}
@@ -242,6 +241,7 @@ const PostBoard = ({
   isCreator,
   boardList,
 }) => {
+  const deleteMemo = (campaignParticipanceNo) => {};
   return (
     boardList && (
       <div className={styles.campdetailpage_board_wrap}>
@@ -282,7 +282,9 @@ const PostBoard = ({
                       >
                         수정
                       </button>
-                      <button>삭제</button>
+                      <button onClick={deleteMemo(list.campaignParticipanceNo)}>
+                        삭제
+                      </button>
                     </div>
                   )}
                 </div>

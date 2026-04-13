@@ -13,8 +13,14 @@
 .campdetailpage_details_wrap {
   width: 800px;
   background-color: aqua;
-  height: 500px;
+  height: 700px;
 }
+.campdetailpage_chart {
+  position: relative;
+  width: 400px;
+  height: 400px;
+}
+
 .campdetailpage_sidebar {
   width: 300px;
   background-color: cadetblue;

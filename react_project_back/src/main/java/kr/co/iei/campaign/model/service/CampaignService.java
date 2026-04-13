@@ -78,6 +78,11 @@ public class CampaignService {
 		CampaignParticipance campPart = campaignDao.getCampBoardDetail(campaignParticipanceNo);
 		return campPart;
 	}
+	@Transactional
+	public int updateParticipanceBoard(CampaignParticipance campPart) {
+		int result = campaignDao.updateParticipanceBoard(campPart);
+		return result;
+	}
 
 	
 }

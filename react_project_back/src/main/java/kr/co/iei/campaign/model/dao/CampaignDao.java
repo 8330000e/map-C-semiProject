@@ -30,4 +30,6 @@ public interface CampaignDao {
 
 	CampaignParticipance getCampBoardDetail(Integer campaignParticipanceNo);
 
+	int updateParticipanceBoard(CampaignParticipance campPart);
+
 }
