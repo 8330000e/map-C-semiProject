@@ -135,21 +135,6 @@ public class AdminService {
 
 	public List<Board> getBoardList() {
 	    List<Board> boardList = adminDao.getBoardList();
-	    List<Keyword> keywordList = adminDao.getKeywordList();
-
-	    
-	    for (Board board : boardList) {
-	        StringJoiner matched = new StringJoiner(", ");
-	        
-	        for (Keyword keyword : keywordList) {
-	            String word = keyword.getKeyword();    
-	            if ((board.getBoardTitle() != null && board.getBoardTitle().contains(word)) || (board.getBoardContent() != null && board.getBoardContent().contains(word))) {
-	                matched.add(word); 
-	            }
-	        }
-	        board.setDetectedKeyword(matched.toString());
-	    }
-	    
 	    return boardList;
 	}
 

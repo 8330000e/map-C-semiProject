@@ -17,9 +17,10 @@ public class DashData {
 	private Integer todayMember;
 	private Integer yesterdayMember;
 	private Integer[] categoryCount;
-	private Integer ad;
-	private Integer hate;
 	private Integer spam;
+	private Integer hate;
+	private Integer falseInfo;
+	private Integer inappropriate;
 	private Integer etc;
 	private Integer pendingReport;
 	private Integer fourWeekAgo;

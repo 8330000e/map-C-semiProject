@@ -67,7 +67,7 @@ public interface AdminDao {
 
 	List<Board> getBoardList();
 
-	List<Keyword> getKeywordList();
+	
 
 	
 

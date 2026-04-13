@@ -104,13 +104,17 @@ const AdminMember = ({
                       {member.memberGrade === 2 ? "일반" : "관리자"}
                     </span>
                     <span
+                      // 중첩 삼항연산자
                       className={`${styles.badge} ${
+                        // 로그인실패 3회 이상 and 로그인 위치변경 1회 이상 = 위험도 높음
                         member.failCount >= 3 && member.locationChangeCount >= 1
                           ? styles.danger_high
-                          : member.failCount >= 3 ||
+                          : // 로그인실패 3회이상 or 로그인 위치변경 1회 이상 = 위험도 중간
+                            member.failCount >= 3 ||
                               member.locationChangeCount >= 1
                             ? styles.danger_mid
-                            : styles.danger_safe
+                            : // 아니면 안전
+                              styles.danger_safe
                       }`}
                     >
                       {member.failCount >= 3 && member.locationChangeCount >= 1
@@ -121,7 +125,7 @@ const AdminMember = ({
                           : "안전"}
                     </span>
                     <span className={styles.join_date}>
-                      가입 {member.enrollDate}
+                      가입일 {member.enrollDate}
                     </span>
                   </div>
                 </button>
@@ -140,7 +144,8 @@ const AdminMember = ({
               <section className={styles.profile_card}>
                 <div className={styles.profile_identity}>
                   <span className={styles.avatar_lg}>
-                    {selectedMember.memberName?.charAt(0)}
+                    {/* 회원이름 첫글자만 따옴 */}
+                    {selectedMember.memberName?.charAt(0)}{" "}
                   </span>
                   <div className={styles.profile_text}>
                     <span>{selectedMember.memberId}</span>
@@ -236,9 +241,9 @@ const AdminMember = ({
                 <button
                   className={styles.log_modal_btn}
                   onClick={() => {
-                    setIsModalOpen(true);
-                    setLogPage(0);
-                    selectLogList(selectedMember.memberId, logPage);
+                    setIsModalOpen(true); // 모달열기
+                    setLogPage(0); // page 0부터 시작 (스크롤)
+                    selectLogList(selectedMember.memberId, logPage); // logList 호출
                     console.log(logList);
                   }}
                 >
@@ -254,22 +259,23 @@ const AdminMember = ({
           <div
             className={styles.modal_bg}
             onClick={() => {
-              setIsModalOpen(false);
+              setIsModalOpen(false); // 모달 배경 클릭 시 false로 변경 -> 모달 닫힘
             }}
           >
             <div
               className={styles.modal_content}
               onClick={(e) => {
-                e.stopPropagation(); // 모달 내부 클릭 시 닫힘 방지
+                e.stopPropagation(); // 모달 내부 클릭 시 닫힘 방지 (모달 콘텐츠 영역은 클릭해도 닫히지 않음)
               }}
               onScroll={(e) => {
                 // 스크롤이 바닥에 닿으면 다음 페이지 로드 (무한 스크롤)
                 const { scrollTop, clientHeight, scrollHeight } = e.target;
                 if (scrollTop + clientHeight >= scrollHeight - 5) {
+                  // 바닥에 닿기 조금 전에 미리 요청
                   if (logList.length % 20 !== 0) return; // 이전 데이터 20개 미만이면 다음 요청 중단
                   const nextPage = logPage + 1;
-                  setLogPage(nextPage);
-                  selectLogList(selectedMember.memberId, nextPage);
+                  setLogPage(nextPage); // 현재 페이지 +1로 업데이트 해주고
+                  selectLogList(selectedMember.memberId, nextPage); // logList 호출
                 }
               }}
             >
@@ -278,6 +284,7 @@ const AdminMember = ({
                 <thead>
                   <tr>
                     <th>접속 IP</th>
+                    {/* 접속시간 클릭 시 toggleLogSort함수 실행 AdminMemberPage에 있음   */}
                     <th className={styles.sort_th} onClick={toggleLogSort}>
                       접속시간 {logFilter.sort === "DESC" ? "▼" : "▲"}
                     </th>

@@ -1,6 +1,17 @@
 import styles from "./AdminBoard.module.css";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import GppBadIcon from "@mui/icons-material/GppBad";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import CommunityDetail from "../board/Community/CommunityDetail";
 
-const AdminBoard = ({ boardList }) => {
+const AdminBoard = ({
+  boardList,
+  getBoardDetail,
+  isModalOpen,
+  setIsModalOpen,
+  selectedBoard,
+}) => {
   return (
     <>
       <section className={styles.board_wrap}>
@@ -30,17 +41,50 @@ const AdminBoard = ({ boardList }) => {
                     : board.detectedKeyword}
                 </td>
                 <td>
-                  {board.detectedKeyword !== "" && board.reportCount > 0
-                    ? "높음"
-                    : "낮음"}
+                  {board.detectedKeyword && board.reportCount > 0 ? (
+                    <GppBadIcon />
+                  ) : board.detectedKeyword || board.reportCount > 0 ? (
+                    <WarningAmberIcon />
+                  ) : (
+                    <CheckCircleIcon />
+                  )}
                 </td>
                 <td>{board.reportCount}</td>
-                <td>icon</td>
+                <td>
+                  <OpenInNewIcon
+                    onClick={() => {
+                      getBoardDetail(board.boardNo);
+                    }}
+                  />
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </section>
+      {isModalOpen && (
+        <div
+          className={styles.modal_bg}
+          onClick={() => {
+            setIsModalOpen(false);
+          }}
+        >
+          <div
+            className={styles.modal_content}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <CommunityDetail
+              board={selectedBoard}
+              onEdit={null}
+              onDelete={null}
+              onLikeChange={null}
+              onCommentCountChange={null}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 };

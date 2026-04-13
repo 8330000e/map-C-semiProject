@@ -68,13 +68,19 @@ const DashBoard = ({
   // 바 차트 - 카테고리별 신고 건수
   // <Bar /> 에 넘겨줄 데이터 객체
   const reportData = {
-    labels: ["광고", "욕설", "스팸", "기타"], // x축 텍스트
+    labels: ["광고/스팸", "욕설/비방", "부적절한 게시글", "허위정보", "기타"], // x축 텍스트
     datasets: [
       // 실제 차트 데이터
       {
         label: "카테고리별 신고", // 막대 범례
         data: categoryCount, // 실제 데이터
-        backgroundColor: ["#5B8CFF", "#4B5B78", "#F0B04B", "#8D6BFF"], // 막대 색깔 각각 지정 가능
+        backgroundColor: [
+          "#5B8CFF",
+          "#4B5B78",
+          "#F0B04B",
+          "#8D6BFF",
+          "#7a6B12",
+        ], // 막대 색깔 각각 지정 가능
         borderRadius: 8, // 막대 border값
         borderWidth: 0, // border: 0px
         maxBarThickness: 50, // 막대 최대 두께

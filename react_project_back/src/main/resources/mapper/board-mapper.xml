@@ -411,4 +411,29 @@
 		where board_no = #{boardNo} and report_id = #{reportId}
 	</select>
 	
+	<select id="getBoardDetail" resultType="board">
+		SELECT
+            b.BOARD_NO AS boardNo,
+            b.WRITER_ID AS writerId,
+            b.BOARD_TITLE AS boardTitle,
+            b.BOARD_CONTENT AS boardContent,
+            b.BOARD_THUMB AS boardThumb,
+            TO_CHAR(b.BOARD_DATE, 'YYYY-MM-DD') AS boardDate,
+            b.MEMBER_NICKNAME AS memberNickname,
+            b.BOARD_STATUS AS boardStatus,
+            b.BOARD_LAT AS boardLat,
+            b.BOARD_LNG AS boardLng,
+            b.READ_COUNT AS readCount,
+            NVL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0) AS likeCount,
+
+            b.MEMBER_NICKNAME AS writerNickname,
+            TO_CHAR(b.BOARD_DATE, 'YYYY-MM-DD') AS createDate,
+            <!-- 게시글 수정일을 프론트로 내려줌. 수정된 글이면 updatedAt 값이 채워짐. -->
+            TO_CHAR(b.UPDATED_AT, 'YYYY-MM-DD') AS updatedAt,
+            b.BOARD_THUMB AS thumbnailUrl,
+            (select count(*) from board_comment_tbl c where c.board_no = b.board_no) as commentCount
+        FROM BOARD_TBL b
+        where board_no = #{boardNo}
+	</select>
+	
 </mapper>

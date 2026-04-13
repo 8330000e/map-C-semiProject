@@ -168,6 +168,7 @@ public class BoardController {
 		// 댓글 등록 요청 처리
 		// front에서 boardNo는 URL 경로로, 댓글 내용과 작성자 정보는 body로 전달됩니다.
 		comment.setBoardNo(boardNo);
+		System.out.println("comment:" + comment);
 		
 		String ip = request.getRemoteAddr();
         if (ip.equals("0:0:0:0:0:0:0:1")) {
@@ -331,6 +332,12 @@ public class BoardController {
 	public ResponseEntity<?> insertBoardReport(@RequestBody BoardReport report) {
 		int result = boardService.insertBoardReport(report);
 		return ResponseEntity.ok(result);
+	}
+	
+	@GetMapping(value="/detail/{boardNo}")
+	public ResponseEntity<?> getBoardDetail(@PathVariable Integer boardNo) {
+		Board board = boardService.getBoardDetail(boardNo);
+		return ResponseEntity.ok(board);
 	}
 	 
 }

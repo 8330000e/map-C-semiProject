@@ -62,9 +62,10 @@
 			-- 어제 가입자
 			(select count (case when trunc(enroll_date) = trunc(sysdate - 1) then 1 end) from member_tbl1) as yesterdayMember,
 			-- 신고 카테고리별 건수
-			(select count(case when report_category = '광고' then 1 end) from board_report_tbl) as ad,
-			(select count(case when report_category = '욕설' then 1 end) from board_report_tbl) as hate,
-			(select count(case when report_category = '스팸' then 1 end) from board_report_tbl) as spam,
+			(select count(case when report_category = '광고/스팸' then 1 end) from board_report_tbl) as spam,
+			(select count(case when report_category = '욕설/비방' then 1 end) from board_report_tbl) as hate,
+			(select count(case when report_category = '부적절한 게시글' then 1 end) from board_report_tbl) as inappropriate,
+			(select count(case when report_category = '허위정보' then 1 end) from board_report_tbl) as falseInfo,
 			(select count(case when report_category = '기타' then 1 end) from board_report_tbl) as etc,
 			-- 미처리 신고 (status = 0)
 			(select count(*) from board_report_tbl where report_status = 0) as pendingReport,
@@ -229,15 +230,18 @@
 			b.board_no,
 			b.writer_id,
 			b.board_title,
+			b.board_content,
 			to_char(b.board_date, 'YYYY-MM-DD HH24:MI:SS') as boardDate,
 			b.board_status,
+			(select listagg(k.keyword, ', ')
+			from keyword_tbl k
+			where b.board_title like '%' || k.keyword || '%'
+			or b.board_content like '%' || k.keyword || '%') as detectedKeyword,
 			(select count(*) from board_report_tbl r where r.board_no = b.board_no) as reportCount
 		from board_tbl b
 		order by b.board_date desc
 	</select>
 	
-	<select id="getKeywordList" resultType="keyword">
-		select * from keyword_tbl
-	</select>
+
 
 </mapper>
