@@ -228,14 +228,7 @@ const Community = ({
       return;
     }
 
-    if (
-      getBoardNo(selectedBoard) &&
-      String(getBoardNo(selectedBoard)) === String(expandedBoardNo) &&
-      selectedBoard.boardContent
-    ) {
-      setDetailLoading(false);
-      return;
-    }
+
 
     setDetailLoading(true);
     axios
@@ -251,7 +244,7 @@ const Community = ({
       .finally(() => {
         setDetailLoading(false);
       });
-  }, [expandedBoardNo, selectedBoard]);
+  }, [expandedBoardNo]);
 
   useEffect(() => {
     if (!mapDivRef.current || !window.naver) {
@@ -716,11 +709,10 @@ const Community = ({
                   type="button"
                   className={styles.boardBackBtn}
                   onClick={() => {
-                    setMode("list");
-                    setSelectedBoard(null);
-                    setTitle("");
-                    setContent("");
-                    setAttachedFiles([]);
+                  setMode("list");
+                  setTitle("");
+                  setContent("");
+                  setAttachedFiles([]);
                   }}
                 >
                   <ArrowBackIosIcon />
