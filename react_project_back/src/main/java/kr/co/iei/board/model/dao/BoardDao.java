@@ -10,6 +10,7 @@ import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
+import kr.co.iei.member.model.vo.Member;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -73,6 +74,9 @@ public interface BoardDao {
 	int checkReport(BoardReport report);
 
 	Board getBoardDetail(Integer boardNo);
+	
+	List<Board> selectCtpvsgg();
+
     
 
 }

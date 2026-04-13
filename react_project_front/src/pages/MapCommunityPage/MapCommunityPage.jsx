@@ -9,6 +9,39 @@ import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import heart from "../../assets/img/heart.svg";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+
+const getImageUrl = (thumb) => {
+  if (!thumb || typeof thumb !== "string") return null;
+  let trimmed = thumb.trim();
+  if (!trimmed) return null;
+
+  trimmed = trimmed.replace(/\\/g, "/").replace(/\\/g, "/");
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
+    return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
+  if (driveMatch) {
+    const boardIndex = trimmed.indexOf("/board/editor/");
+    if (boardIndex !== -1) {
+      const suffix = trimmed.substring(boardIndex);
+      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
+    }
+    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
+  }
+
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
+    return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
+  return `${BACKSERVER}/member/thumb/${trimmed}`;
+};
 
 const MapCommunityPage = () => {
   const [addr, setAddr] = useState("서울특별시 중구");
@@ -60,6 +93,7 @@ const MapCommunityPage = () => {
 
 const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
   // const [detailMode, setDetailMode] = useState(false);
+  const navigate = useNavigate();
   const mapDivRef = useRef(null);
   const [markerList, setMarkerList] = useState([]);
   let mapMarkerList = [];
@@ -73,6 +107,15 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
     sgg: "중구",
   };
   let detailMode = false;
+  let openMarker = true;
+
+  const boardView = (boardNo) => {
+    if (boardNo) {
+      navigate(`/map-community?boardNo=${boardNo}`);
+    } else {
+      navigate("/map-community");
+    }
+  };
 
   useEffect(() => {
     axios
@@ -107,7 +150,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
       map: map,
       icon: {
         content:
-          '<img src="src/assets/img/marker.png" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">',
+          '<img src="src/assets/img/marker.png" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=99999; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">',
         size: new naver.maps.Size(22, 35),
         anchor: new naver.maps.Point(11, 35),
       },
@@ -118,8 +161,9 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
 
     markerList.map((marker, i) => {
       mapaddr = "선택된 위치 없음";
+      const writerAvatar = getImageUrl(marker.memberThumb) || defaultImg;
       const markerName = new naver.maps.Marker({
-        key: i,
+        key: `marker-${i}`,
         position: new window.naver.maps.LatLng(
           `${marker.boardLat}`,
           `${marker.boardLng}`,
@@ -143,7 +187,9 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
       });
       markerName.setTitle(marker.boardTitle || "제목 없음" || "Default Marker");
       markerName.setDraggable(false);
+
       naver.maps.Event.addListener(markerName, "click", (e) => {
+        detailMode = !detailMode;
         console.log("marker click");
         e.coord._lat = marker.boardLat;
         e.coord._lng = marker.boardLng;
@@ -157,99 +203,104 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
               return;
             }
             mapaddr = response.result.items[0].address;
+            ((mapctpvsgg.ctpv = response.result.items[0].addrdetail.sido),
+              (mapctpvsgg.sgg = response.result.items[0].addrdetail.sigugun));
           },
         );
 
-        detailMode = true;
-        map.setCenter(
-          new window.naver.maps.LatLng(
-            markerName.getPosition().lat() + 0.003,
-            markerName.getPosition().lng(),
-          ),
-        );
-        map.setZoom(15);
+        console.log(markerName.key);
 
-        detailMode
-          ? markerName.setIcon({
-              content: `<div><div style="position: relative; width: 100%;">
-            <div
-              style="
-                position: absolute;
-                width: 300px;
-                left: 50%;
-                bottom: 50%;
-                transform: translate(-42%, -260%);
-                height: max-content;
-                border-radius: 25px;
-                border: var(--border2);
-                z-index: 2;
-                padding: 15px 20px;
-                font-size: 15px;
-                font-weight: 600;
-                text-align: center;
-                background-color: var(--gray8);
-              "
-            >
-              <div>
-                <img
-                  src=${borderPin}
-                  style="
-                    position: absolute;
-                    width: 32px;
-                    z-index: 3;
-                    bottom: 80%;
-                    left: 50%;
-                    color: #ff593c;
-                  "
-                />
-              </div>
-              <p>${mapaddr}</p>
-            </div>
-            <div
-              style="
-                position: absolute;
-                left: 50%;
-                bottom: 50%;
-                transform: translate(-42%, -10%);
-                margin-top: 60px;
-                width: 300px;
-                height: max-content;
-                border-radius: 25px;
-                border: var(--border2);
-                z-index: 2;
-                padding: 15px 20px;
-                font-size: 15px;
-                font-weight: 600;
-                text-align: center;
-                background-color: var(--gray8);
-                display: flex;
-                flex-direction: column;
-                justify-items: center;
-                align-content: space-between;
-              "
-            >
-              <div
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  width: 100%;
-                "
-              >
+        if (detailMode) {
+          map.setCenter(
+            new window.naver.maps.LatLng(
+              markerName.getPosition().lat() + 0.003,
+              markerName.getPosition().lng(),
+            ),
+          );
+          map.setZoom(15);
+          markerName.setIcon({
+            content: `
+            <div>
+              <div style="position: relative; width: 100%;">
                 <div
-                  style=" display: flex; gap: 8px; align-items: center; "
+                style="
+                  position: absolute;
+                  width: 300px;
+                  left: 50%;
+                  bottom: 50%;
+                  transform: translate(-42%, -260%);
+                  height: max-content;
+                  border-radius: 25px;
+                  border: var(--border2);
+                  z-index: ${5000 + 2};
+                  padding: 15px 20px;
+                  font-size: 15px;
+                  font-weight: 600;
+                  text-align: center;
+                  background-color: var(--gray8);
+                "
                 >
+                <div>
                   <img
-                    src=${defaultImg}
+                    src=${borderPin}
                     alt=""
                     style="
-                      width: 35px;
-                      z-index: 3;
-                      border-radius: 50%;
-                      border: var(--border2);
+                      position: absolute;
+                      width: 32px;
+                      z-index: ${5000 + 3};
+                      bottom: 80%;
+                      left: 50%;
+                      color: #ff593c;
                     "
                   />
-                  <p>${marker.memberNickname}</p>
                 </div>
+                <p>${mapaddr}</p>
+              </div>
+              <div
+                style="
+                  position: absolute;
+                  left: 50%;
+                  bottom: 50%;
+                  transform: translate(-42%, -10%);
+                  margin-top: 60px;
+                  width: 300px;
+                  height: max-content;
+                  border-radius: 25px;
+                  border: var(--border2);
+                  z-index: ${5000 + 2};
+                  padding: 15px 20px;
+                  font-size: 15px;
+                  font-weight: 600;
+                  text-align: center;
+                  background-color: var(--gray8);
+                  display: flex;
+                  flex-direction: column;
+                  justify-items: center;
+                  align-content: space-between;
+                "
+                >
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      width: 100%;
+                    "
+                  >
+                    <div
+                      style=" display: flex; gap: 8px; align-items: center; "
+                    >
+                      <img
+                        src=${defaultImg}
+                        alt=""
+                        style="
+                          width: 35px;
+                          z-index: ${5000 + 3};
+                          border-radius: 50%;
+                          border: var(--border2);
+                        "
+                      />
+                    <p>${marker.memberNickname}</p>
+                  </div>
                 <div
                   style=" display: flex; gap: 1px; align-items: center; "
                 >
@@ -258,7 +309,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                     alt=""
                     style="
                       width: 25px;
-                      z-index: 3;
+                      z-index: ${5000 + 3};
                       border-radius: 50%;
                     "
                   />
@@ -266,54 +317,59 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                 </div>
               </div>
               <div style=" padding: 8px 4px; line-height: 1; ">
-                <div style=" text-align: left; ">${marker.boardTitle}</div>
-                <div
-                  style="
-                    width: 100%;
-                    padding: 5px 0;
-                    font-size: 14px;
-                    font-weight: 500;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    text-align: left;
-                  "
-                >
-                  ${marker.boardContent.replace(/<img[^>]*>/gi, "")}
+                <div style=" text-align: left; ">${marker.boardTitle.substring(0, 10)}</div>
+                  <div
+                    style="
+                      width: 100%;
+                      padding: 5px 0;
+                      font-size: 14px;
+                      font-weight: 500;
+                      white-space: nowrap;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      text-align: left;
+                      z-index=${5000 + 3};
+                    "
+                  >
+                    ${marker.boardContent.replace(/<img[^>]*>/gi, "").substring(0, 30)}
+                  </div>
                 </div>
               </div>
             </div>
+          <div>
+            <img
+              src=${marker.memberThumb || defaultImg}
+              style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
+            />
+            <img
+              src='src/assets/img/defaultthumbmarker.png'
+              style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
+            />
           </div>
+          </div>
+                `,
+            size: new naver.maps.Size(22, 35),
+            anchor: new naver.maps.Point(11, 35),
+            onClick: boardView(marker.boardNo),
+          });
+        } else {
+          navigate("/map-community");
+          markerName.setIcon({
+            content: `
           <div>
-      <img
-        src=${marker.boardThumb || defaultImg}
-        style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
-      />
-      <img
-        src='src/assets/img/defaultthumbmarker.png'
-        style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
-      />
-    </div>
-    </div>
-          `,
-              size: new naver.maps.Size(22, 35),
-              anchor: new naver.maps.Point(11, 35),
-            })
-          : markerName.setIcon({
-              content: `
-          <div>
-      <img
-        src=${marker.boardThumb || defaultImg}
-        style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
-      />
-      <img
-        src='src/assets/img/defaultthumbmarker.png'
-        style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
-      />
-    </div>`,
-              size: new naver.maps.Size(22, 35),
-              anchor: new naver.maps.Point(11, 35),
-            });
+            <img
+              src=${marker.memberThumb || defaultImg}
+              style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
+            />
+            <img
+              src='src/assets/img/defaultthumbmarker.png'
+              style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
+            />
+          </div>`,
+            size: new naver.maps.Size(22, 35),
+            anchor: new naver.maps.Point(11, 35),
+          });
+        }
       });
     });
 
@@ -362,7 +418,14 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                 <div>
                   <div className={styles.spot_box_top_posts}>
                     <DescriptionOutlinedIcon sx={{ fontSize: "24px" }} />
-                    <p>{markerList.length == 0 ? 0 : markerList.length}</p>
+                    <p>
+                      {ctpvsgg.ctpv + " " + ctpvsgg.sgg ==
+                      markerList.ctpv + " " + markerList.sgg
+                        ? ctpvsgg.length == 0
+                          ? 0
+                          : ctpvsgg.length
+                        : -1}
+                    </p>
                   </div>
                 </div>
               </div>

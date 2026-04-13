@@ -1,0 +1,8 @@
+.camp_update_img_wrap {
+  width: 400px;
+  height: 300px;
+}
+.camp_update_img_wrap > img {
+  width: 100%;
+  height: 80%;
+}

@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.iei.campaign.model.service.CampaignService;
 import kr.co.iei.campaign.model.vo.Campaign;
+import kr.co.iei.campaign.model.vo.CampaignNotice;
 import kr.co.iei.campaign.model.vo.CampaignParticipance;
 import kr.co.iei.utils.FileUtils;
 
@@ -97,6 +100,70 @@ public class CampaignController {
 		List<CampaignParticipance> campPart = campaignService.getCampBoardList(campaignNo);
 		return ResponseEntity.ok(campPart);
 	}
-	
-	
+	@GetMapping(value="/board/{campaignParticipanceNo}")
+	public ResponseEntity<?> getCampBoardDetail(@PathVariable Integer campaignParticipanceNo){
+		CampaignParticipance campPart = campaignService.getCampBoardDetail(campaignParticipanceNo);
+		return ResponseEntity.ok(campPart);
+	}
+	@PatchMapping(value="/{campaignParticipanceNo}")
+	public ResponseEntity<?> updateParticipanceBoard(@PathVariable Integer campaignParticipanceNo,@RequestParam String campaignMemo,
+			@RequestParam("file") MultipartFile file,@RequestParam String deletePath){
+//		if(file == null || file.isEmpty()) {
+//			throw new RuntimeException("보내진 파일 X");
+//		}
+		if(file != null) {
+			File saveFolder = new File(new File(root),"campaign/memo");
+			CampaignParticipance campPart = new CampaignParticipance();
+			String filename = FileUtils.upload(saveFolder.getAbsolutePath()+ File.separator,file);
+			campPart.setCampaignThumb(filename);
+			campPart.setCampaignMemo(campaignMemo);
+			campPart.setCampaignParticipanceNo(campaignParticipanceNo);
+			int result = campaignService.updateParticipanceBoard(campPart);
+			if(result>0) {
+				File terminatePath = new File(new File(root),"campaign/memo/"+deletePath);
+				if(terminatePath.exists()) {
+					terminatePath.delete();
+				}
+				
+			}
+			return ResponseEntity.ok(result);
+		}
+		return ResponseEntity.ok(0);
+	}
+	@DeleteMapping(value="/{campaignParticipanceNo}/board")
+	public ResponseEntity<?> deleteBoardMemo(@PathVariable int campaignParticipanceNo){
+		String deletePath = campaignService.deleteBoardMemo(campaignParticipanceNo);
+		if(deletePath == "f") {
+			return ResponseEntity.ok(0);
+		}else {
+			System.out.println(deletePath);
+			int result=0;
+			File terminatePath = new File(new File(root),"campaign/memo/"+deletePath);
+			if(terminatePath.exists()) {
+				boolean bool=terminatePath.delete();
+				if(bool) {
+					result=1;
+				}
+			}
+			return ResponseEntity.ok(result);
+		}
+	}
+	@PostMapping(value="/insertNotice")
+	public ResponseEntity<?> insertCampNotice(@RequestBody CampaignNotice campNotice){
+		int result = campaignService.insertCampNotice(campNotice);
+		return ResponseEntity.ok(result);
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

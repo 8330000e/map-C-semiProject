@@ -6,10 +6,9 @@ import MyBoard from "../../components/mypage/MyBoard.jsx";
 import MyLikeBoard from "../../components/mypage/MyLikeBoard";
 import MemberTip from "../../components/mypage/MemberTip";
 import LeaveMember from "../../components/mypage/LeaveMember";
-// import MyPoint from "../../components/mypage/MyPoint";
+import MyPoint from "../../components/mypage/MyPoint";
 import ChangePw from "../../components/mypage/ChangePw";
 
-import MyPoint from "../../components/mypage/MyPoint";
 import CartPage from "../../components/mypage/CartPage";
 import PurchaseHistory from "../../components/mypage/PurchaseHistory";
 import PurchaseDetail from "../../components/mypage/PurchaseDetail";

@@ -14,6 +14,7 @@
             b.BOARD_THUMB AS boardThumb,
             TO_CHAR(b.BOARD_DATE, 'YYYY-MM-DD') AS boardDate,
             b.MEMBER_NICKNAME AS memberNickname,
+            m.MEMBER_THUMB AS memberThumb,
             b.BOARD_STATUS AS boardStatus,
             b.BOARD_LAT AS boardLat,
             b.BOARD_LNG AS boardLng,
@@ -27,6 +28,7 @@
             b.BOARD_THUMB AS thumbnailUrl,
             0 AS commentCount
         FROM BOARD_TBL b
+        LEFT JOIN MEMBER_TBL m ON b.WRITER_ID = m.MEMBER_ID
         WHERE BOARD_STATUS = #{status}
         AND NOT EXISTS (
             SELECT 1 FROM STORE_BOARD_TBL s WHERE s.BOARD_NO = b.BOARD_NO
@@ -175,6 +177,7 @@
             C.BOARD_NO AS boardNo,
             C.BOARD_COMMENT_WRITER AS memberId,
             C.MEMBER_NICKNAME AS memberNickname,
+            M.MEMBER_THUMB AS memberThumb,
             C.BOARD_COMMENT_CONTENT AS content,
             TO_CHAR(C.BOARD_COMMENT_DATE, 'YYYY-MM-DD"T"HH24:MI:SS') AS createdAt,
             TO_CHAR(C.UPDATED_AT, 'YYYY-MM-DD"T"HH24:MI:SS') AS updatedAt,
@@ -183,6 +186,7 @@
             C.COMMENT_DEPTH AS commentDepth,
             CASE WHEN C.IS_SECRET = 'Y' THEN 1 ELSE 0 END AS isSecret
         FROM BOARD_COMMENT_TBL C
+        LEFT JOIN MEMBER_TBL M ON C.BOARD_COMMENT_WRITER = M.MEMBER_ID
         WHERE C.BOARD_NO = #{boardNo}
         ORDER BY C.COMMENT_GROUP ASC, C.COMMENT_DEPTH ASC, C.BOARD_COMMENT_NO ASC
     </select>
@@ -391,7 +395,11 @@
 	    WHERE MEMBER_ID = #{memberId}
 	</update>
 	<select id="selectMarkers" resultType="Board">
-		select b.board_no, b.board_title, b.board_content, b.board_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg, count(l.board_no) as likeCount from board_tbl b join board_like_tbl l on (b.board_no = l.board_no) where l.board_no = l.board_no group by b.board_no, b.board_title, b.board_content, b.board_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg
+		select b.board_no, b.board_title, b.board_content, m.member_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg, c.ctpvsgg_id, count(l.board_no) as likeCount 
+		from board_tbl b left join member_tbl1 m on (b.member_nickname = m.member_nickname) left join ctpvsgg_tbl c on (b.CTPV = c.ctpv_nm and b.sgg = c.sgg_nm) 
+		left join board_like_tbl l on (b.board_no = l.board_no) 
+		where b.board_no = b.board_no and b.board_status = 0
+		group by b.board_no, b.board_title, b.board_content, m.member_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg, c.ctpvsgg_id
 	</select>
 	
 	<insert id="insertBoardReport">

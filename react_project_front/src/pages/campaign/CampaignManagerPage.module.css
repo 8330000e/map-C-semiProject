@@ -1,0 +1,25 @@
+.camp_settings_wrap {
+  width: 1200px;
+}
+.camp_settings_title {
+  text-align: center;
+}
+.camp_settings_main_wrap {
+  display: flex;
+  gap: 100px;
+}
+.camp_settings_sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 400px;
+}
+.camp_settings_content_wrap {
+  width: 700px;
+  height: 700px;
+}
+
+/* .camp_settings_content_wrap {
+  min-height: 600px;
+  width: 200px;
+} */

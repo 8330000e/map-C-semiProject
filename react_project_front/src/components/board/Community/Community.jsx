@@ -1,14 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom"; // URL 쿼리값으로 mode(write/list)를 판단하므로 꼭 import 필요
+import { useLocation, useNavigate } from "react-router-dom"; // URL 쿼리값으로 mode(write/list)를 판단하므로 꼭 import 필요
 import styles from "./Community.module.css";
 import axios from "axios";
 import TextEditor from "./TextEditor";
 import BoardListBox from "./BoardListBox";
 import useAuthStore from "../../../store/useAuthStore";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ChatIcon from "@mui/icons-material/Chat";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import Swal from "sweetalert2";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
@@ -20,13 +16,13 @@ const getBoardNo = (board) =>
 // 이미지 src는 서버에서 여러 형태로 내려올 수 있습니다.
 // 예: 이미지 전체 URL, /upload/ 경로, /board/editor/ 경로, 파일명만 전달되는 경우.
 // 여기서 브라우저가 바로 요청 가능한 URL로 변환해 줍니다.
-const getImageUrl = (thumb) => {
+const getBoardImageUrl = (thumb) => {
   if (!thumb) return null;
   if (typeof thumb !== "string") return null;
   let trimmed = thumb.trim();
   if (!trimmed) return null;
 
-  trimmed = trimmed.replace(/\\/g, "/").replace(/\\/g, "/");
+  trimmed = trimmed.replace(/\\/g, "/");
 
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
     return trimmed;
@@ -50,6 +46,31 @@ const getImageUrl = (thumb) => {
   if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
     return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
   return `${BACKSERVER}/board/editor/${trimmed}`;
+};
+
+const getMemberImageUrl = (thumb) => {
+  if (!thumb) return null;
+  if (typeof thumb !== "string") return null;
+  let trimmed = thumb.trim();
+  if (!trimmed) return null;
+
+  trimmed = trimmed.replace(/\\/g, "/");
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
+    return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+  if (trimmed.startsWith("/member/thumb/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/member/thumb/"))
+    return `${BACKSERVER}/${trimmed.replace(/^\/+/, "")}`;
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
+    return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
+  return `${BACKSERVER}/member/thumb/${trimmed}`;
 };
 
 const Community = ({
@@ -88,6 +109,7 @@ const Community = ({
   const [attachedFiles, setAttachedFiles] = useState([]);
 
   const location = useLocation();
+  const navigate = useNavigate();
   const [missionType, setMissionType] = useState(null);
 
   useEffect(() => {
@@ -228,8 +250,6 @@ const Community = ({
       return;
     }
 
-
-
     setDetailLoading(true);
     axios
       .get(`${BACKSERVER}/boards/${expandedBoardNo}`)
@@ -345,10 +365,7 @@ const Community = ({
         sgg: ctpvsgg.sgg,
       };
 
-      const res = await axios.post(
-        `${BACKSERVER}/boards`,
-        requestData,
-      );
+      const res = await axios.post(`${BACKSERVER}/boards`, requestData);
       const savedBoard = res.data;
       const boardNo = savedBoard.boardNo;
       const pointAwarded = savedBoard.pointAwarded;
@@ -363,15 +380,11 @@ const Community = ({
 
           formData.append("memberId", memberId);
 
-          await axios.post(
-            `${BACKSERVER}/boards/${boardNo}/files`,
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
+          await axios.post(`${BACKSERVER}/boards/${boardNo}/files`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
             },
-          );
+          });
         }
 
         // ⭐ 추가 (핵심)
@@ -397,22 +410,25 @@ const Community = ({
         setTitle("");
         setContent("");
         setAttachedFiles([]);
+        //다시 미션목록으로
+        if (location.state?.fromMission && missionType === "board-write") {
+          navigate("/mission", { replace: true });
+          return;
+        }
+
         // 리스트로 이동
         setMode("list");
 
         // 목록 다시 불러오기
-        const listRes = await axios.get(
-          `${BACKSERVER}/boards`,
-          {
-            params: {
-              status: 0,
-              searchType,
-              searchKeyword,
-              sido,
-              sigungu,
-            },
+        const listRes = await axios.get(`${BACKSERVER}/boards`, {
+          params: {
+            status: 0,
+            searchType,
+            searchKeyword,
+            sido,
+            sigungu,
           },
-        );
+        });
 
         const items = Array.isArray(listRes.data.items)
           ? listRes.data.items
@@ -487,18 +503,15 @@ const Community = ({
         setContent("");
         setMode("list");
 
-        const listRes = await axios.get(
-          `${BACKSERVER}/boards`,
-          {
-            params: {
-              status: 0,
-              searchType,
-              searchKeyword,
-              sido,
-              sigungu,
-            },
+        const listRes = await axios.get(`${BACKSERVER}/boards`, {
+          params: {
+            status: 0,
+            searchType,
+            searchKeyword,
+            sido,
+            sigungu,
           },
-        );
+        });
 
         const items = Array.isArray(listRes.data.items)
           ? listRes.data.items
@@ -541,13 +554,10 @@ const Community = ({
     }
 
     try {
-      const res = await axios.delete(
-        `${BACKSERVER}/boards/${boardNo}`,
-        {
-          timeout: 5000,
-          params: { memberId },
-        },
-      );
+      const res = await axios.delete(`${BACKSERVER}/boards/${boardNo}`, {
+        timeout: 5000,
+        params: { memberId },
+      });
 
       if (res.data > 0) {
         setBoardList((prev) =>
@@ -698,7 +708,8 @@ const Community = ({
                 setBoardList={setBoardList}
                 startEdit={startEdit}
                 deleteBoard={deleteBoard}
-                getImageUrl={getImageUrl}
+                getImageUrl={getBoardImageUrl}
+                getAvatarUrl={getMemberImageUrl}
                 detailLoading={detailLoading}
               />
             </>
@@ -709,10 +720,10 @@ const Community = ({
                   type="button"
                   className={styles.boardBackBtn}
                   onClick={() => {
-                  setMode("list");
-                  setTitle("");
-                  setContent("");
-                  setAttachedFiles([]);
+                    setMode("list");
+                    setTitle("");
+                    setContent("");
+                    setAttachedFiles([]);
                   }}
                 >
                   <ArrowBackIosIcon />

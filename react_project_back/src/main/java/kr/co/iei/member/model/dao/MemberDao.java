@@ -61,5 +61,7 @@ public interface MemberDao {
 	
 	void updateLockUntil(String memberId);
 	
+	List<Member> selectClist();
+	
 	
 }

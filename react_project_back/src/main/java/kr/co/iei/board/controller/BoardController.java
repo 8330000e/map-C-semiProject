@@ -28,6 +28,7 @@ import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
+import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.utils.DeviceParser;
 import kr.co.iei.utils.FileUtils;
 
@@ -64,6 +65,7 @@ public class BoardController {
                 map.put("boardThumb", board.getBoardThumb());
                 map.put("boardDate", board.getBoardDate());
                 map.put("memberNickname", board.getMemberNickname());
+                map.put("memberThumb", board.getMemberThumb());
                 map.put("boardStatus", board.getBoardStatus());
                 map.put("boardLat", board.getBoardLat());
                 map.put("boardLng", board.getBoardLng());

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
 import kr.co.iei.member.model.service.MemberService;
+import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.mission.model.service.MissionService;
 import kr.co.iei.utils.FileUtils;
 
@@ -123,17 +125,28 @@ public class BoardService {
 	@Transactional // 없길래 붙임 
 	public BoardComment addBoardComment(BoardComment comment, String ip, String device) {
 		boardDao.insertBoardComment(comment);
-		 Map<String, Object> logParams = new HashMap<>();
-	        logParams.put("memberId", comment.getMemberId());
-	        logParams.put("logIp", ip);      
-	        logParams.put("logAction", "댓글작성");
-	        logParams.put("logDevice", device);
-	        String detail = comment.getContent();
-	        if (detail.length() > 10) {
-	        	detail = detail.substring(0, 10) + "...";
-	        }
-	        logParams.put("logDetail", comment.getBoardNo() + " | " + detail);
-	        memberService.insertLog(logParams);
+        // 새로 추가된 댓글에도 작성자 썸네일이 들어가도록 채워줌.
+        // 이 값은 프론트에서 댓글 리스트에 바로 아바타를 보여주기 위함임.
+        if (comment.getMemberId() != null) {
+            Member member = memberService.selectOneMember(comment.getMemberId());
+            if (member != null) {
+                comment.setMemberThumb(member.getMemberThumb());
+                if (comment.getMemberNickname() == null || comment.getMemberNickname().isEmpty()) {
+                    comment.setMemberNickname(member.getMemberNickname());
+                }
+            }
+        }
+        Map<String, Object> logParams = new HashMap<>();
+        logParams.put("memberId", comment.getMemberId());
+        logParams.put("logIp", ip);
+        logParams.put("logAction", "댓글작성");
+        logParams.put("logDevice", device);
+        String detail = comment.getContent();
+        if (detail.length() > 10) {
+            detail = detail.substring(0, 10) + "...";
+        }
+        logParams.put("logDetail", comment.getBoardNo() + " | " + detail);
+        memberService.insertLog(logParams);
 		return comment;
 	}
 
@@ -263,9 +276,11 @@ public class BoardService {
 		
 		return boardDao.insertBoardReport(report);
 	}
+
 	public Board getBoardDetail(Integer boardNo) {
 		Board board = boardDao.getBoardDetail(boardNo);
 		return board;
 	}
+
 }
 

@@ -211,6 +211,30 @@
   font-size: 14px;
 }
 
+.writerAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(70, 77, 62, 0.14);
+}
+
+.detailMetaAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(70, 77, 62, 0.14);
+}
+
+.commentAvatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(70, 77, 62, 0.16);
+}
+
 .boardDate {
   font-size: 12px;
   color: #888;
@@ -229,9 +253,23 @@
   font-size: 20px;
   line-height: 1.5;
   color: #2f3a2f;
-  word-break: keep-all;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  white-space: normal;
   flex: 1;
   min-width: 0;
+}
+.boardContentPreview {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  color: #424842;
+}
+
+/* HTML 태그 깨짐 방지 */
+.boardContentPreview * {
+  display: inline;
 }
 
 .boardUpdatedBadge {
@@ -569,7 +607,9 @@
   padding: 0;
   color: var(--danger);
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .reportIconButton:hover {
