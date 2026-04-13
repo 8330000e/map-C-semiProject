@@ -7,15 +7,19 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 //import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.iei.campaign.model.dao.CampaignDao;
 import kr.co.iei.campaign.model.vo.Campaign;
 
+@Transactional
 @Component
 public class CampaignSchedule {	
 	//return,매개변수 X (독립적으로 돌아가는 객체이기 때문)
@@ -47,17 +51,27 @@ public class CampaignSchedule {
 			DateTimeFormatter formatter =
 			    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-			LocalDateTime ldt = LocalDateTime.parse(campExpireDate, formatter);
 			int changeStatus;
+			//문자열을 localDateTime 객체로 변환
+			LocalDateTime ldt = LocalDateTime.parse(campExpireDate, formatter);
 			long expire = ldt
-			    .atZone(ZoneId.systemDefault())
-			    .toInstant()
-			    .toEpochMilli();
+			    .atZone(ZoneId.systemDefault())//시스템 시간대
+			    .toInstant()//utc기준 절대시간
+			    .toEpochMilli();//밀리초(1970)
 			if(expire-now<0 && campStatus ==2) {
 				if(memberCount >= campGoalMember) {
 					changeStatus = 3;
 					//멤버들에게 포인트 주는 로직
 					int successPoint=memberCount * 15;
+					int partPoint = 100;
+					Map<String, Object> map = new HashMap<String, Object>();
+					map.put("memberId", memberId);
+					map.put("pointChange", successPoint);
+					campaignService.giveManagerPoint(map);
+					Map<String,Integer> map1 = new HashMap<String,Integer>();
+					map1.put("campaignNo", campaignNo);
+					map1.put("pointChange", partPoint);
+					campaignService.givePartPoint(map1);
 				}else {
 					changeStatus = 4;
 				}

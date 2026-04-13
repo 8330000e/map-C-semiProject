@@ -29,14 +29,16 @@ const CampaignDetailPage = () => {
   const [dateOut, setDateout] = useState(true);
   // const realtime = Date.now(); 로직이 back으로 감
   const [boardList, setBoardList] = useState([]);
+  const [deleteBoard, setDeleteBoard] = useState(false);
   const data = readComplete && {
-    labels: ["지난기간", "남은기간"],
+    labels: ["남은기간", "지난기간"],
     datasets: [
       {
         data: [
           new Date(campaignDetail.campaignExpireDate).getTime() - Date.now(),
           new Date(campaignDetail.campaignExpireDate).getTime() -
-            new Date(campaignDetail.campaignStartDate).getTime(),
+            new Date(campaignDetail.campaignStartDate).getTime() -
+            (new Date(campaignDetail.campaignExpireDate) - Date.now()),
         ],
         backgroundColor: ["#FA9B3B", "#fefefe"],
       },
@@ -89,12 +91,11 @@ const CampaignDetailPage = () => {
       .then((res) => {
         // console.log(res.data);
         setBoardList([...res.data]);
-        // console.log(boardList);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [deleteBoard]);
 
   return (
     memberId &&
@@ -143,7 +144,6 @@ const CampaignDetailPage = () => {
           </div>
           <div className={styles.campdetailpage_sidebar}>
             <div>{campaignDetail.campaignExplanation}</div>
-            <p>히히</p>
             <CampaignDetailSideBar
               campaignDetail={campaignDetail}
               isCreator={isCreator}
@@ -164,6 +164,8 @@ const CampaignDetailPage = () => {
           memberId={memberId}
           isCreator={isCreator}
           boardList={boardList}
+          deleteBoard={deleteBoard}
+          setDeleteBoard={setDeleteBoard}
         />
       </div>
     )
@@ -195,7 +197,9 @@ const CampaignDetailSideBar = ({
             ? inCampaign
               ? (e.target.disabled = true)
               : isCreator
-                ? navigate("/campaign/settings/updateCamp")
+                ? navigate(
+                    `/campaign/settings/${campaignNo}/${memberId}/updateCamp`,
+                  )
                 : Swal.fire({
                     title: "캠페인을 참여하시겠습니까?",
                     icon: "question",
@@ -240,20 +244,9 @@ const PostBoard = ({
   dateOut,
   isCreator,
   boardList,
+  deleteBoard,
+  setDeleteBoard,
 }) => {
-  const deleteMemo = (campaignParticipanceNo) => {
-    Swal.fire({
-      title: "정말로 삭제하시겠습니까?",
-      text: "삭제 하시면 복구 불가능 합니다.",
-      icon: "warning",
-      showCancelButton: true,
-      showConfirmButton: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        console.log("몰라");
-      }
-    });
-  };
   return (
     boardList && (
       <div className={styles.campdetailpage_board_wrap}>
@@ -294,7 +287,48 @@ const PostBoard = ({
                       >
                         수정
                       </button>
-                      <button onClick={deleteMemo(list.campaignParticipanceNo)}>
+                      <button
+                        onClick={() => {
+                          const campaignParticipanceNo =
+                            list.campaignParticipanceNo;
+                          console.log(campaignParticipanceNo);
+                          Swal.fire({
+                            title: "정말로 삭제하시겠습니까?",
+                            text: "삭제시 복구 불가",
+                            icon: "warning",
+                            showCancelButton: true,
+                            cancelButtonText: "취소",
+                            confirmButtonText: "강행",
+                          }).then((res) => {
+                            if (res.isConfirmed) {
+                              axios
+                                .delete(
+                                  `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignParticipanceNo}/board`,
+                                )
+                                .then((res) => {
+                                  console.log(res.data);
+                                  if (res.data === 1) {
+                                    Swal.fire({
+                                      text: "삭제되었습니다",
+                                      title: "삭제완료",
+                                      icon: "info",
+                                    }).then((result) => {
+                                      if (result.isConfirmed) {
+                                        setDeleteBoard(!deleteBoard);
+                                        navigate(
+                                          `/campaign/detail/${list.campaignNo}`,
+                                        );
+                                      }
+                                    });
+                                  }
+                                })
+                                .catch((err) => {
+                                  console.log(err);
+                                });
+                            }
+                          });
+                        }}
+                      >
                         삭제
                       </button>
                     </div>

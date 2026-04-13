@@ -132,7 +132,7 @@ function App() {
             element={<CreateCampaignPage />}
           ></Route>
           <Route
-            path="/campaign/settings/*"
+            path="/campaign/settings/:campaignNo/:createId/*"
             element={<CampaignManagerPage />}
           ></Route>
           <Route
