@@ -47,7 +47,7 @@ const MyInformation = () => {
   // - 로그인된 사용자의 회원 정보를 불러오고,
   // - 프로필 사진 변경 기능을 제공합니다.
   // - 사용자 아이디, 이름, 별명, 이메일을 보여줍니다.
-  const { memberId, memberNickname, isReady, memberThumb } = useAuthStore();
+  const { memberId, memberNickname, isReady, memberThumb, setThumb } = useAuthStore();
 
   // member 정보 상태
   const [member, setMember] = useState();
@@ -63,12 +63,15 @@ const MyInformation = () => {
       .then((res) => {
         console.log(res.data);
         setMember(res.data);
+        if (res.data?.memberThumb && res.data.memberThumb !== memberThumb) {
+          setThumb(res.data.memberThumb);
+        }
       })
       .catch((err) => {
         console.log(memberId);
         console.log(err);
       });
-  }, [memberId]);
+  }, [memberId, memberThumb, setThumb]);
 
   // 프로필 사진 변경 버튼으로 선택한 파일을 서버에 업로드합니다.
   // - 파일이 없으면 아무 동작도 하지 않습니다.
