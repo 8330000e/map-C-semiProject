@@ -46,6 +46,10 @@
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(4px); /* 배경 살짝 흐리게 (고급스러움) */
 }
 
 .donation_page_content {
@@ -64,6 +68,16 @@
   z-index: 1000;
 }
 
+.point_input {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.2rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  margin: 15px 0;
+  text-align: right;
+}
+
 .content_body {
   flex: 1; /*남은 공간을 모두 차지하게 하여 버튼을 아래로 내리기*/
 }
@@ -74,7 +88,18 @@
   margin-top: 250px;
 }
 
-.buytree_title {
-  display: flex;
-  margin: 10px;
+.submit_btn {
+  background-color: #2ecc71; /* 싱그러운 초록색 */
+  color: white;
+  border: none;
+  padding: 15px;
+  width: 100%;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.submit_btn:hover {
+  background-color: #27ae60;
 }
