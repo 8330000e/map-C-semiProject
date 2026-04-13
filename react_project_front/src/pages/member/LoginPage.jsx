@@ -90,6 +90,8 @@ const Login = () => {
       })
       .catch((err) => {
         if (err.response?.status === 403) {
+          clearTimeout(timer); // 403 타이머 초기화 추가
+          setIsLoading(false); //로딩 끝내기
           Swal.fire({
             title: "로그인 불가",
             text: err.response.data,

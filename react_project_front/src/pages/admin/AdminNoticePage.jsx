@@ -1,8 +1,10 @@
-﻿import { useEffect, useState } from "react";
+// 공지사항 관리 페이지 - 등록/수정/삭제 API 처리 담당, UI는 AdminNotice.jsx에서
+import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import AdminNotice from "../../components/admin/AdminNotice";
 
+// 폼 초기값 - 등록 완료 후 초기화할 때도 이걸로 돌아옴
 const emptyNotice = {
   noticeNo: 0,
   noticeTitle: "",
@@ -14,22 +16,25 @@ const emptyNotice = {
 };
 
 const AdminNoticePage = () => {
-  const [isEdit, setIsEdit] = useState(false);
-  const [imageFile, setImageFile] = useState(null);
-  const [notice, setNotice] = useState({ ...emptyNotice });
-  const [noticeList, setNoticeList] = useState([]);
+  const [isEdit, setIsEdit] = useState(false); // true면 수정 모드, false면 등록 모드
+  const [imageFile, setImageFile] = useState(null); // 새로 선택한 이미지 파일
+  const [notice, setNotice] = useState({ ...emptyNotice }); // 폼 입력값
+  const [noticeList, setNoticeList] = useState([]); // 공지사항 목록
 
+  // 폼 초기화 - 등록/수정 완료 후 호출
   const resetNoticeForm = () => {
     setNotice({ ...emptyNotice });
     setImageFile(null);
     setIsEdit(false);
   };
 
+  // 입력값 변경 시 notice 상태 업데이트
   const changeNotice = (e) => {
     const { name, value } = e.target;
     setNotice((prev) => ({ ...prev, [name]: value }));
   };
 
+  // 공지사항 목록 조회
   const selectNoticeList = () => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/admins`)
@@ -41,6 +46,7 @@ const AdminNoticePage = () => {
       });
   };
 
+  // 공지사항 삭제 - swal로 확인받고 axios 날림
   const deleteNotice = (noticeNo) => {
     Swal.fire({
       title: "공지사항 삭제",
@@ -56,7 +62,7 @@ const AdminNoticePage = () => {
         .delete(`${import.meta.env.VITE_BACKSERVER}/admins/notice/${noticeNo}`)
         .then((res) => {
           if (res.data === 1) {
-            selectNoticeList();
+            selectNoticeList(); // 삭제 후 목록 갱신
             Swal.fire({ title: "삭제 성공", icon: "success" });
           }
         })
@@ -66,10 +72,12 @@ const AdminNoticePage = () => {
     });
   };
 
+  // 등록/수정 통합 함수 - isEdit 상태로 분기
   const insertNotice = (e) => {
     e.preventDefault();
 
     if (isEdit) {
+      // 수정 모드 - PATCH 요청
       Swal.fire({
         title: "공지사항 수정",
         text: "공지사항을 수정하시겠습니까?",
@@ -80,6 +88,7 @@ const AdminNoticePage = () => {
       }).then((result) => {
         if (!result.isConfirmed) return;
 
+        // 이미지 포함 가능하니까 FormData로 전송
         const formData = new FormData();
         formData.append("noticeNo", notice.noticeNo);
         formData.append("noticeTitle", notice.noticeTitle);
@@ -87,6 +96,7 @@ const AdminNoticePage = () => {
         formData.append("noticePublic", notice.noticePublic);
         formData.append("noticeFixed", notice.noticeFixed);
         formData.append("noticeCategory", notice.noticeCategory);
+        // 새 이미지 선택했을 때만 파일 추가
         if (imageFile) {
           formData.append("upfile", imageFile);
         }
@@ -109,6 +119,7 @@ const AdminNoticePage = () => {
       return;
     }
 
+    // 등록 모드 - POST 요청
     Swal.fire({
       title: "공지사항 등록",
       text: "공지사항을 등록하시겠습니까?",
@@ -146,6 +157,7 @@ const AdminNoticePage = () => {
     });
   };
 
+  // 첫 렌더링 시 공지사항 목록 불러옴
   useEffect(() => {
     selectNoticeList();
   }, []);

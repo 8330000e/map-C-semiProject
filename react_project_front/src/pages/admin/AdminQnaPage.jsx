@@ -1,3 +1,4 @@
+// 1:1 문의 관리 페이지 - 문의 목록 조회 + 관리자 답변 처리
 import { useEffect, useState } from "react";
 import AdminQna from "../../components/admin/AdminQna";
 import axios from "axios";
@@ -6,19 +7,20 @@ import Swal from "sweetalert2";
 const AdminQnaPage = () => {
   const [qnaList, setQnaList] = useState([]);
 
-  const [isOpen, setIsOpen] = useState(false); // 모달 조건부
-  const [selectedQna, setSelectedQna] = useState(null); // 모달에서 보여줄 문의
+  const [isOpen, setIsOpen] = useState(false); // 답변 모달 열림 여부
+  const [selectedQna, setSelectedQna] = useState(null); // 모달에서 보여줄 문의 항목
 
-  const [answer, setAnswer] = useState("");
+  const [answer, setAnswer] = useState(""); // 답변 입력값
+  const [imageFile, setImageFile] = useState(null); // 답변에 첨부할 이미지
 
-  const [imageFile, setImageFile] = useState(null);
-
+  // 페이지네이션
   const [page, setPage] = useState(0);
-  const size = 10;
+  const size = 10; // 한 페이지당 10개 고정
   const [totalPage, setTotalPage] = useState(null);
 
-  const [previewImage, setPreviewImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null); // 이미지 클릭 시 크게보기용
 
+  // 답변 등록 - swal 확인 후 FormData로 PATCH 요청
   const qnaAnswer = () => {
     Swal.fire({
       title: "1:1 문의 답변 등록",
@@ -31,6 +33,7 @@ const AdminQnaPage = () => {
         const formData = new FormData();
         formData.append("qnaNo", selectedQna.qnaNo);
         formData.append("qnaAnswer", answer);
+        // 이미지 첨부했을 때만 파일 추가
         if (imageFile) {
           formData.append("upfile", imageFile);
         }
@@ -46,7 +49,7 @@ const AdminQnaPage = () => {
                 icon: "success",
               }).then(() => {
                 setIsOpen(false);
-                selectQnaList();
+                selectQnaList(); // 답변 완료 후 목록 갱신
               });
             }
           })
@@ -61,6 +64,7 @@ const AdminQnaPage = () => {
     });
   };
 
+  // 문의 목록 조회 - 페이지/사이즈 파라미터로 페이지네이션
   const selectQnaList = () => {
     axios
       .get(
@@ -76,9 +80,11 @@ const AdminQnaPage = () => {
       });
   };
 
+  // 페이지 바뀔 때마다 목록 다시 불러옴
   useEffect(() => {
     selectQnaList();
   }, [page]);
+
   return (
     <AdminQna
       qnaList={qnaList}

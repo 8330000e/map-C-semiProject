@@ -1,20 +1,15 @@
-
 .dashboard_wrap {
   padding: 26px 26px 30px;
   background: transparent;
   min-height: 100%;
 }
 
-.dashboard_wrap :global(.content-title) {
+.content_title {
+  display: flex;
+  justify-content: center;
+  color: var(--admin-text);
   margin: 4px 0 18px;
   padding: 6px 0 2px;
-}
-
-.content_title {
-    display: flex;
-    justify-content: center;
-    color: #ffff;
-    
 }
 
 .card_wrap {

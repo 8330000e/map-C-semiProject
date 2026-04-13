@@ -119,7 +119,7 @@ public class Membercontroller {
 		
 		Date lockUntil = memberService.getLockUntil(member.getMemberId());
 		if (lockUntil != null && lockUntil.after(new Date())) { // null 아니고 lockUntil이 지금 시간보다 미래면 
-			return ResponseEntity.status(403).body("일시 정지되었습니다. 잠시 후 다시 시도해주세요."); // 403 + 메시지 반환 
+			return ResponseEntity.status(403).body("로그인이 일시적으로 차단되었습니다. 잠시 후 다시 시도해주세요."); // 403 + 메시지 반환 
 		}
 		
 	    LoginMember loginUser = memberService.login(member);
@@ -144,7 +144,6 @@ public class Membercontroller {
 	        
 	        
 	        params.put("logResult", 0);
-	        memberService.checkLocation(loginUser.getMemberId(), location, loginUser.getMemberEmail());
 	        memberService.insertLog(params);
 	        return ResponseEntity.ok(loginUser);
 	    } else {

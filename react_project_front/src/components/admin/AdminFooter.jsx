@@ -1,5 +1,4 @@
-// 하단 푸터 UI 컴포넌트입니다.
-// 약관 링크와 서비스 정보 문구를 표시합니다.
+// 관리자 페이지 푸터 - 약관 링크, 서비스 정보 표시
 import styles from "./AdminCommons.module.css";
 
 const Footer = () => {

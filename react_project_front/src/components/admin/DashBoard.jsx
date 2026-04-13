@@ -1,3 +1,5 @@
+// 대시보드 UI 컴포넌트 - KPI 카드, 라인/바 차트, 요약 정보 표시
+// 데이터 계산은 DashBoardPage.jsx에서 다 하고 여기선 props 받아서 렌더링만 함
 import styles from "../../pages/admin/DashBoardPage.module.css";
 import {
   Chart as ChartJS,
@@ -13,6 +15,7 @@ import {
 } from "chart.js";
 import { Line, Bar } from "react-chartjs-2";
 
+// Chart.js에서 쓸 요소들 등록 - 안 하면 차트 안 그려짐
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -41,7 +44,7 @@ const DashBoard = ({
   thisMonthRatio,
   weeklyCount,
 }) => {
-  // 라인 차트 데이터 (회원 증가 - 하드코딩)
+  // 라인 차트 - 주간 회원 증가 추이
   const lineData = {
     labels: ["4주전", "3주전", "2주전", "1주전"],
     datasets: [
@@ -60,7 +63,7 @@ const DashBoard = ({
     ],
   };
 
-  // 바 차트 데이터 (카테고리별 신고 - 하드코딩)
+  // 바 차트 - 카테고리별 신고 건수
   const reportData = {
     labels: ["광고", "욕설", "스팸", "기타"],
     datasets: [
@@ -75,7 +78,7 @@ const DashBoard = ({
     ],
   };
 
-  // 공통 차트 옵션
+  // 라인/바 차트 공통 옵션 - 반응형, 범례 숨김, 그리드 색상 설정
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -92,13 +95,14 @@ const DashBoard = ({
       },
     },
   };
+
   return (
     <div className={styles.dashboard_wrap}>
       <div className={styles.content_title}>
         <span>대시보드</span>
       </div>
 
-      {/* 상단 KPI 카드 영역 */}
+      {/* 상단 KPI 카드 - 전체 회원 수 / 오늘 가입자 / 미처리 신고 */}
       <div className={styles.card_wrap}>
         <div className={styles.card}>
           <p>전체 회원 수</p>
@@ -122,7 +126,7 @@ const DashBoard = ({
         </div>
       </div>
 
-      {/* 차트 영역 */}
+      {/* 차트 영역 - 왼쪽 라인차트(주간 회원), 오른쪽 바차트(신고 카테고리) */}
       <div className={styles.chart_wrap}>
         <div className={styles.line_chart}>
           <Line data={lineData} options={options} />
@@ -132,7 +136,7 @@ const DashBoard = ({
         </div>
       </div>
 
-      {/* 하단 요약 */}
+      {/* 하단 요약 텍스트 */}
       <div className={styles.totalInfo}>
         <div>
           전체 기간 총 신고건{" "}
