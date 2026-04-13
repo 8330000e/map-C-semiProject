@@ -58,6 +58,7 @@ import CampaignDetailPage from "./pages/campaign/CampaignDetailPage";
 import CreateCampaignPage from "./pages/campaign/CreateCampaignPage";
 import CampaignManagerPage from "./pages/campaign/CampaignManagerPage";
 import CampaignMemoWritePage from "./pages/campaign/CampaignMemoWritePage";
+import CampaignUpdateDeletePage from "./pages/campaign/CampaignUpdateDeletePage";
 import PointForGoodPage from "./pages/pointadmin/PointForGoodPage";
 
 function App() {
@@ -131,13 +132,19 @@ function App() {
             element={<CreateCampaignPage />}
           ></Route>
           <Route
-            path="/campaign/settings/*"
+            path="/campaign/settings/:campaignNo/:createId/*"
             element={<CampaignManagerPage />}
           ></Route>
           <Route
             path="/campaign/memoWrite/:campaignNo"
             element={<CampaignMemoWritePage />}
           />
+          <Route
+            path="campaign/update/:campaignParticipanceNo"
+            element={<CampaignUpdateDeletePage />}
+          ></Route>
+          <Route path="/admin/*" element={<AdminPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/support/*" element={<SupportPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
 
