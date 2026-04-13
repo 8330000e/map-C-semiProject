@@ -20,8 +20,7 @@ const Bestpostlist = () => {
         // 인기게시물은 맵커뮤니티의 기본 게시글 목록과 동일한 status=0 조건을 적용합니다.
         const bestPosts = Array.isArray(res.data) ? res.data : [];
         const validBestPosts = bestPosts.filter(
-          (bestPost) =>
-            bestPost?.boardNo || bestPost?.boardId || bestPost?.id,
+          (bestPost) => bestPost?.boardNo || bestPost?.boardId || bestPost?.id,
         );
         console.log(validBestPosts);
         setBestPostList(validBestPosts);
@@ -50,7 +49,8 @@ const Bestpostlist = () => {
     <div className={styles.bestpostlist}>
       <div>인기 게시글</div>
       {bestPostList.map((bestPost, i) => {
-        const boardNo = bestPost?.boardNo ?? bestPost?.boardId ?? bestPost?.id ?? null;
+        const boardNo =
+          bestPost?.boardNo ?? bestPost?.boardId ?? bestPost?.id ?? null;
         return (
           <ul key={`${bestPost}+${i}`} className={styles.list_wrap}>
             <li

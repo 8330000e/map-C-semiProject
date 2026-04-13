@@ -253,9 +253,23 @@
   font-size: 20px;
   line-height: 1.5;
   color: #2f3a2f;
-  word-break: keep-all;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  white-space: normal;
   flex: 1;
   min-width: 0;
+}
+.boardContentPreview {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  color: #424842;
+}
+
+/* HTML 태그 깨짐 방지 */
+.boardContentPreview * {
+  display: inline;
 }
 
 .boardUpdatedBadge {
@@ -593,7 +607,9 @@
   padding: 0;
   color: var(--danger);
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .reportIconButton:hover {
