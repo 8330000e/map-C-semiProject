@@ -224,5 +224,20 @@
 		and log_time >= sysdate - 1 
 	</select>
 	
+	<select id="getBoardList" resultType="board">
+		select 
+			b.board_no,
+			b.writer_id,
+			b.board_title,
+			to_char(b.board_date, 'YYYY-MM-DD HH24:MI:SS') as boardDate,
+			b.board_status,
+			(select count(*) from board_report_tbl r where r.board_no = b.board_no) as reportCount
+		from board_tbl b
+		order by b.board_date desc
+	</select>
+	
+	<select id="getKeywordList" resultType="keyword">
+		select * from keyword_tbl
+	</select>
 
 </mapper>
