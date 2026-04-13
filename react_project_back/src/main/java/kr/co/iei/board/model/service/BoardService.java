@@ -262,5 +262,6 @@ public class BoardService {
 		
 		return boardDao.insertBoardReport(report);
 	}
+	
 }
 

@@ -107,7 +107,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
       map: map,
       icon: {
         content:
-          '<img src="src/assets/img/marker.png" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">',
+          '<img src="src/assets/img/marker.png" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=1000; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">',
         size: new naver.maps.Size(22, 35),
         anchor: new naver.maps.Point(11, 35),
       },
@@ -182,7 +182,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                 height: max-content;
                 border-radius: 25px;
                 border: var(--border2);
-                z-index: 2;
+                z-index: ${5000 + 2};
                 padding: 15px 20px;
                 font-size: 15px;
                 font-weight: 600;
@@ -196,7 +196,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                   style="
                     position: absolute;
                     width: 32px;
-                    z-index: 3;
+                    z-index: ${5000 + 3};
                     bottom: 80%;
                     left: 50%;
                     color: #ff593c;
@@ -216,7 +216,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                 height: max-content;
                 border-radius: 25px;
                 border: var(--border2);
-                z-index: 2;
+                z-index: ${5000 + 2};
                 padding: 15px 20px;
                 font-size: 15px;
                 font-weight: 600;
@@ -243,7 +243,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                     alt=""
                     style="
                       width: 35px;
-                      z-index: 3;
+                      z-index: ${5000 + 3};
                       border-radius: 50%;
                       border: var(--border2);
                     "
@@ -258,7 +258,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                     alt=""
                     style="
                       width: 25px;
-                      z-index: 3;
+                      z-index: ${5000 + 3};
                       border-radius: 50%;
                     "
                   />
@@ -277,6 +277,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                     overflow: hidden;
                     text-overflow: ellipsis;
                     text-align: left;
+                    z-index=${5000 + 3};
                   "
                 >
                   ${marker.boardContent.replace(/<img[^>]*>/gi, "")}
@@ -362,7 +363,14 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                 <div>
                   <div className={styles.spot_box_top_posts}>
                     <DescriptionOutlinedIcon sx={{ fontSize: "24px" }} />
-                    <p>{markerList.length == 0 ? 0 : markerList.length}</p>
+                    <p>
+                      {ctpvsgg.ctpv + " " + ctpvsgg.sgg ==
+                      markerList.ctpv + " " + markerList.sgg
+                        ? ctpvsgg.length == 0
+                          ? 0
+                          : ctpvsgg.length
+                        : -1}
+                    </p>
                   </div>
                 </div>
               </div>

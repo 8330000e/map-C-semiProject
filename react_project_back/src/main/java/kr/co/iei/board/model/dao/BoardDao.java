@@ -71,6 +71,8 @@ public interface BoardDao {
 	int insertBoardReport(BoardReport report);
 
 	int checkReport(BoardReport report);
+
+	List<Board> selectCtpvsgg();
     
 
 }
