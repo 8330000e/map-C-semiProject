@@ -3,6 +3,9 @@ import styles from "./Bestpostlist.module.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+// 인기 게시물 목록 컴포넌트임.
+//  - 서버에서 인기 게시물 데이터를 가져와서 리스트로 보여줌.
+//  - 항목을 클릭하면 해당 게시물 상세 페이지로 이동함.
 const Bestpostlist = () => {
   const navigate = useNavigate();
   const [bestPostList, setBestPostList] = useState([]);

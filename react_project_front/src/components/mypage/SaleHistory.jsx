@@ -177,6 +177,9 @@ const SaleHistory = () => {
   const [completedPage, setCompletedPage] = useState(1);
 
   useEffect(() => {
+    // 판매내역 데이터를 서버에서 조회하는 기능임.
+    //  - sellerId로 나의 판매 거래 기록을 가져오고,
+    //  - 서버 호출 실패 시 로컬 임시 저장된 판매 내역을 표시함.
     const fetchSalesHistory = async () => {
       if (!memberId) {
         setSalesHistory([]);

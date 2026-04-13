@@ -42,6 +42,11 @@ const normalizeComments = (rawComments) =>
     isPrivate: isSecretComment(comment),
   }));
 
+// 중고거래 상세 페이지임.
+//  - 선택한 중고 상품의 상세 정보를 불러와서 보여줌.
+//  - 찜하기 버튼으로 관심 상품에 추가할 수 있음.
+//  - 댓글 작성, 답글 달기, 댓글 수정, 댓글 삭제, 댓글 신고 기능을 지원함.
+//  - 거래 후기와 판매자 평점을 함께 보여줌.
 const StoreDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -66,6 +71,10 @@ const StoreDetail = () => {
   const [deliveryMethod, setDeliveryMethod] = useState("");
   const [isCartLoading, setIsCartLoading] = useState(false);
 
+  // 찜하기 기능임.
+  //  - 로그인한 사용자만 찜할 수 있음.
+  //  - 상품을 찜한 상품 목록에 추가하는 API를 호출함.
+  //  - 성공하면 성공 메시지를 보여주고, 실패하면 오류 메시지를 보여줌.
   const handleAddToCart = async () => {
     if (!memberId) {
       Swal.fire({ icon: "info", title: "로그인 필요", text: "찜하기 위해 로그인해주세요." });
@@ -257,6 +266,10 @@ const StoreDetail = () => {
     }
   };
 
+  // 댓글 작성 기능임.
+  //  - 로그인한 사용자만 댓글을 작성할 수 있음.
+  //  - 답글을 작성할 때 parentCommentNo를 함께 서버에 저장함.
+  //  - 등록 후 댓글 목록을 새로고침해서 최신 댓글을 보여줌.
   const handleAddComment = async () => {
     if (!memberId) {
       Swal.fire({

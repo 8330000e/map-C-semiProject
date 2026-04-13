@@ -105,6 +105,9 @@ const PurchaseHistory = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
+    // 구매내역 데이터를 서버에서 조회하는 기능임.
+    //  - buyerId로 나의 구매 기록을 가져오고,
+    //  - 서버에 데이터가 없으면 로컬 저장된 완료 구매 내역을 보여줌.
     const fetchPurchaseHistory = async () => {
       if (!memberId) {
         setPurchaseHistory([]);

@@ -15,6 +15,10 @@ const MemberTip = () => {
   const [searchBoard, setSearchBoard] = useState("");
   const [filter, setFilter] = useState(2);
   const [boardSearch, setBoardSearch] = useState("");
+
+  // 스크랩한 팁 목록을 서버에서 가져오는 로직임.
+  //  - 검색어(searchBoard)와 정렬 필터(filter)에 따라 목록을 갱신함.
+  //  - 검색 버튼 클릭 시 boardSearch 상태를 searchBoard로 복사해서 상단 useEffect를 트리거함.
   useEffect(() => {
     axios
       .get(
