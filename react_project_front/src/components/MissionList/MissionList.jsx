@@ -178,7 +178,9 @@ const MissionList = () => {
 
     if (mission.missionType === "BASIC") {
       if (basicMissionCompleted) return;
-      navigate("/community?mode=write&mission=board-write");
+      navigate("/community?mode=write&mission=board-write", {
+        state: { fromMission: true },
+      });
       return;
     }
 

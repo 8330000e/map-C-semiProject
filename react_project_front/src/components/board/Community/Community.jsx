@@ -1,14 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom"; // URL 쿼리값으로 mode(write/list)를 판단하므로 꼭 import 필요
+import { useLocation, useNavigate } from "react-router-dom"; // URL 쿼리값으로 mode(write/list)를 판단하므로 꼭 import 필요
 import styles from "./Community.module.css";
 import axios from "axios";
 import TextEditor from "./TextEditor";
 import BoardListBox from "./BoardListBox";
 import useAuthStore from "../../../store/useAuthStore";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ChatIcon from "@mui/icons-material/Chat";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import Swal from "sweetalert2";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
@@ -113,6 +109,7 @@ const Community = ({
   const [attachedFiles, setAttachedFiles] = useState([]);
 
   const location = useLocation();
+  const navigate = useNavigate();
   const [missionType, setMissionType] = useState(null);
 
   useEffect(() => {
@@ -253,8 +250,6 @@ const Community = ({
       return;
     }
 
-
-
     setDetailLoading(true);
     axios
       .get(`${BACKSERVER}/boards/${expandedBoardNo}`)
@@ -370,10 +365,7 @@ const Community = ({
         sgg: ctpvsgg.sgg,
       };
 
-      const res = await axios.post(
-        `${BACKSERVER}/boards`,
-        requestData,
-      );
+      const res = await axios.post(`${BACKSERVER}/boards`, requestData);
       const savedBoard = res.data;
       const boardNo = savedBoard.boardNo;
       const pointAwarded = savedBoard.pointAwarded;
@@ -388,15 +380,11 @@ const Community = ({
 
           formData.append("memberId", memberId);
 
-          await axios.post(
-            `${BACKSERVER}/boards/${boardNo}/files`,
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
+          await axios.post(`${BACKSERVER}/boards/${boardNo}/files`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
             },
-          );
+          });
         }
 
         // ⭐ 추가 (핵심)
@@ -422,22 +410,25 @@ const Community = ({
         setTitle("");
         setContent("");
         setAttachedFiles([]);
+        //다시 미션목록으로
+        if (location.state?.fromMission && missionType === "board-write") {
+          navigate("/mission", { replace: true });
+          return;
+        }
+
         // 리스트로 이동
         setMode("list");
 
         // 목록 다시 불러오기
-        const listRes = await axios.get(
-          `${BACKSERVER}/boards`,
-          {
-            params: {
-              status: 0,
-              searchType,
-              searchKeyword,
-              sido,
-              sigungu,
-            },
+        const listRes = await axios.get(`${BACKSERVER}/boards`, {
+          params: {
+            status: 0,
+            searchType,
+            searchKeyword,
+            sido,
+            sigungu,
           },
-        );
+        });
 
         const items = Array.isArray(listRes.data.items)
           ? listRes.data.items
@@ -512,18 +503,15 @@ const Community = ({
         setContent("");
         setMode("list");
 
-        const listRes = await axios.get(
-          `${BACKSERVER}/boards`,
-          {
-            params: {
-              status: 0,
-              searchType,
-              searchKeyword,
-              sido,
-              sigungu,
-            },
+        const listRes = await axios.get(`${BACKSERVER}/boards`, {
+          params: {
+            status: 0,
+            searchType,
+            searchKeyword,
+            sido,
+            sigungu,
           },
-        );
+        });
 
         const items = Array.isArray(listRes.data.items)
           ? listRes.data.items
@@ -566,13 +554,10 @@ const Community = ({
     }
 
     try {
-      const res = await axios.delete(
-        `${BACKSERVER}/boards/${boardNo}`,
-        {
-          timeout: 5000,
-          params: { memberId },
-        },
-      );
+      const res = await axios.delete(`${BACKSERVER}/boards/${boardNo}`, {
+        timeout: 5000,
+        params: { memberId },
+      });
 
       if (res.data > 0) {
         setBoardList((prev) =>
@@ -735,10 +720,10 @@ const Community = ({
                   type="button"
                   className={styles.boardBackBtn}
                   onClick={() => {
-                  setMode("list");
-                  setTitle("");
-                  setContent("");
-                  setAttachedFiles([]);
+                    setMode("list");
+                    setTitle("");
+                    setContent("");
+                    setAttachedFiles([]);
                   }}
                 >
                   <ArrowBackIosIcon />
