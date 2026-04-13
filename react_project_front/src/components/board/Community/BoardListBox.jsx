@@ -96,6 +96,9 @@ const BoardListBox = ({
                 >
                   <div className={styles.boardItemTop}>
                     <div className={styles.boardWriter}>
+                      {/* 작성자 프로필 이미지 렌더링임.
+                          memberThumb 우선, 없으면 로그아웃된 본인일 경우 스토어의 memberThumb 사용,
+                          그도 없으면 기본 user.png로 대체함. */}
                       <img
                         src={
                           getAvatarUrl(

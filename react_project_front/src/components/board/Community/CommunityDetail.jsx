@@ -115,7 +115,7 @@ const CommunityDetail = ({
   onCommentCountChange,
 }) => {
   const safeBoard = board || {};
-  const { memberId } = useAuthStore();
+  const { memberId, memberNickname } = useAuthStore();
   const [comments, setComments] = useState([]);
   // 상세페이지에서 보여줄 댓글 개수를 별도 상태로 관리함.
   // board.commentCount가 있으면 초기값으로 사용하지만, 실제 로드된 댓글 개수로 동기화함.
@@ -238,10 +238,11 @@ const CommunityDetail = ({
     try {
       const payload = {
         memberId,
-        memberNickname: memberId,
+        memberNickname: memberNickname || memberId,
         content: text,
         isSecret: newPrivate ? 1 : 0,
-        parentCommentNo: replyTarget ? replyTarget.id : null,
+        parentCommentNo:
+          replyTarget?.commentNo ?? replyTarget?.id ?? null,
       };
 
       const res = await axios.post(
@@ -588,13 +589,15 @@ const CommunityDetail = ({
   };
 
   const renderComments = (items) =>
-    items.map((comment) => {
+    items.map((comment, index) => {
       const isOwn = comment.memberId === memberId;
       const isSecret = isSecretComment(comment);
       const displayText =
         isSecret && !canViewSecretComment(comment)
           ? "비공개 댓글입니다."
           : comment.content;
+      // 댓글 작성자 아바타 URL 처리임.
+      // 댓글 작성자의 memberThumb가 있으면 적용하고, 없으면 기본 이미지로 보여줌.
       const commentAvatarUrl =
         getMemberImageUrl(
           comment.memberThumb ||
@@ -604,7 +607,11 @@ const CommunityDetail = ({
         ) || userImg;
       return (
         <div
-          key={comment.id}
+          key={
+            comment.commentNo ??
+            comment.id ??
+            `${comment.memberId}-${comment.createdAt}-${index}`
+          }
           className={styles.commentItem}
           style={{ marginLeft: `${comment.depth * 18}px` }}
         >
@@ -711,6 +718,8 @@ const CommunityDetail = ({
         <div>
           <div className={styles.detailTitle}>{board.boardTitle}</div>
           <div className={styles.detailMeta}>
+            {/* 상세 페이지 작성자 아바타 처리임.
+                작성자 썸네일 값을 우선 사용하고 없으면 기본 이미지로 대체함. */}
             <img
               src={
                 getMemberImageUrl(

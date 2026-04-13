@@ -8,6 +8,7 @@ public class StoreReview {
     private Long marketNo;
     private String memberId;
     private String memberNickname;
+    private String memberThumb;
     private String reviewContent;
     private Long parentCommentNo;
     private Long commentGroup;
@@ -28,6 +29,9 @@ public class StoreReview {
 
     public String getMemberNickname() { return memberNickname; }
     public void setMemberNickname(String memberNickname) { this.memberNickname = memberNickname; }
+
+    public String getMemberThumb() { return memberThumb; }
+    public void setMemberThumb(String memberThumb) { this.memberThumb = memberThumb; }
 
     public String getReviewContent() { return reviewContent; }
     public void setReviewContent(String reviewContent) { this.reviewContent = reviewContent; }
