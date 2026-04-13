@@ -294,8 +294,7 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
   };
 
   const getSeason = () => {
-    const month = 9;
-    // const month = new Date().getMonth() + 1;
+    const month = new Date().getMonth() + 1;
 
     if (month >= 3 && month <= 5) return "spring";
     if (month >= 6 && month <= 8) return "summer";
@@ -349,14 +348,13 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
   const handleTreeClick = () => {
     setShowAbsorbEffect(true);
     setShowTreeBounce(true);
-
-    setTimeout(() => setShowAbsorbEffect(false), 700);
-    setTimeout(() => setShowTreeBounce(false), 500);
+    setTimeout(() => setShowAbsorbEffect(false), 1050);
+    setTimeout(() => setShowTreeBounce(false), 950);
 
     setTreeClickCount((prev) => {
       const next = prev + 1;
 
-      if (next >= 10) {
+      if (next >= 50) {
         setShowEasterEgg(true);
 
         setTimeout(() => {

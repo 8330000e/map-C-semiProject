@@ -1563,15 +1563,16 @@
     opacity: 0;
   }
 }
-
 .autumnEasterEgg .easterEggSnowflake {
   background: linear-gradient(
     135deg,
-    #f2a24f 0%,
-    #d56a27 56%,
-    rgba(181, 82, 28, 0.88) 84%,
-    rgba(181, 82, 28, 0.08) 100%
+    rgba(255, 232, 196, 0.98) 0%,
+    rgba(244, 176, 92, 0.96) 32%,
+    rgba(221, 116, 48, 0.92) 68%,
+    rgba(158, 76, 32, 0.18) 100%
   );
+
+  /* ✅ 핵심: 낙엽 모양 */
   clip-path: polygon(
     50% 0%,
     61% 28%,
@@ -1584,16 +1585,19 @@
     2% 20%,
     39% 28%
   );
-  border-radius: 0;
+
+  border-radius: 0; /* 꽃잎 둥근거 제거 */
+
   box-shadow:
-    0 3px 5px rgba(120, 64, 24, 0.18),
-    inset -1px -1px 1px rgba(255, 223, 180, 0.2);
-  animation-name: autumnLeafStorm;
+    inset -1px -1px 1px rgba(255, 238, 210, 0.24),
+    0 2px 4px rgba(140, 80, 28, 0.16);
+
+  animation-name: autumnEasterLeafFall;
 }
 
 .autumnEasterEgg .easterEggSnowflakeBurst {
   opacity: 1;
-  animation-name: autumnLeafBurst;
+  animation-name: autumnEasterLeafBurst;
 }
 
 .autumnLeafPileBack,
@@ -1603,215 +1607,307 @@
   right: 0;
   width: 100%;
   pointer-events: none;
-  opacity: 0;
-  transform-origin: bottom center;
-  overflow: visible;
+  opacity: 1;
+  transform: none;
+  animation: none;
 }
 
 .autumnLeafPileBack {
   bottom: 0;
-  height: 115px;
+  height: 120px;
   z-index: 20;
-  animation: autumnPileGrowBack 5.2s ease-out forwards;
+  transform-origin: bottom center;
+  animation: autumnPileGrowBackSoft 6s ease-out forwards;
 }
 
 .autumnLeafPileFront {
   bottom: 0;
-  height: 145px;
+  height: 132px;
   z-index: 21;
-  animation: autumnPileGrowFront 5.2s ease-out forwards;
+  transform-origin: bottom center;
+  animation:
+    autumnPileGrowFrontSoft 6s ease-out forwards,
+    autumnLeafStackPulse 2.8s ease-in-out 6s infinite;
 }
 
 .autumnLeafPileBack::before,
-.autumnLeafPileBack::after,
-.autumnLeafPileFront::before,
-.autumnLeafPileFront::after {
+.autumnLeafPileFront::before {
   content: "";
   position: absolute;
-  bottom: 0;
-  clip-path: polygon(
-    50% 0%,
-    61% 28%,
-    98% 20%,
-    73% 45%,
-    90% 80%,
-    50% 62%,
-    10% 80%,
-    27% 45%,
-    2% 20%,
-    39% 28%
-  );
+  inset: 0;
 }
 
-/* 뒤쪽 더미 1 */
 .autumnLeafPileBack::before {
-  left: 0;
-  width: 34px;
-  height: 24px;
-  background: linear-gradient(135deg, #efbc79 0%, #cf7638 55%, #a95525 100%);
-  box-shadow:
-    30px -2px 0 0 #f0bf7d,
-    64px 2px 0 0 #d98343,
-    100px -4px 0 0 #f2c98f,
-    138px 1px 0 0 #bf6a33,
-    176px -3px 0 0 #e7ab66,
-    214px 0 0 0 #c96d30,
-    252px -5px 0 0 #efbc79,
-    290px 1px 0 0 #cf7638,
-    328px -4px 0 0 #f2c98f,
-    366px 2px 0 0 #bc632c,
-    404px -3px 0 0 #eda95d,
-    442px 0 0 0 #c56b2f,
-    480px -4px 0 0 #efbb74;
+  background:
+    radial-gradient(
+      ellipse 30px 14px at 4% 96%,
+      #f9e1b8 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 22px 11px at 9% 91%,
+      #efb56e 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 28px 13px at 15% 98%,
+      #dd8a46 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 24px 12px at 21% 92%,
+      #f4c98b 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 30px 14px at 28% 99%,
+      #d56a27 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 22px 11px at 34% 93%,
+      #f1bf7a 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 28px 13px at 41% 98%,
+      #c96d30 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 24px 12px at 48% 92%,
+      #f7d7aa 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 30px 14px at 56% 99%,
+      #eda95d 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 22px 11px at 63% 93%,
+      #bc632c 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 28px 13px at 71% 98%,
+      #f2c98f 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 24px 12px at 79% 92%,
+      #cf7638 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 30px 14px at 87% 99%,
+      #efbb74 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 22px 11px at 95% 94%,
+      #a95525 0 68%,
+      transparent 72%
+    );
 }
 
-/* 뒤쪽 더미 2 */
-.autumnLeafPileBack::after {
-  left: 18px;
-  bottom: 16px;
-  width: 28px;
-  height: 20px;
-  background: linear-gradient(135deg, #f3c888 0%, #d56a27 58%, #9f4f22 100%);
-  box-shadow:
-    42px 0 0 0 #efbc79,
-    86px -2px 0 0 #cf7638,
-    130px 1px 0 0 #e7ab66,
-    174px -2px 0 0 #bc632c,
-    218px 0 0 0 #f0bf7d,
-    262px -3px 0 0 #c96d30,
-    306px 1px 0 0 #eda95d,
-    350px -2px 0 0 #cf7638,
-    394px 0 0 0 #efbb74,
-    438px -2px 0 0 #d98343;
-  opacity: 0.95;
-}
-
-/* 앞쪽 더미 1 */
 .autumnLeafPileFront::before {
-  left: 0;
-  width: 40px;
-  height: 28px;
-  background: linear-gradient(135deg, #f7d7aa 0%, #dd8a46 48%, #b95f2b 100%);
-  box-shadow:
-    36px -4px 0 0 #dd8a46,
-    78px 2px 0 0 #f1c07a,
-    122px -3px 0 0 #bc632c,
-    166px 1px 0 0 #eda95d,
-    210px -4px 0 0 #c56b2f,
-    254px 2px 0 0 #efbb74,
-    298px -3px 0 0 #cf7638,
-    342px 1px 0 0 #f7d7aa,
-    386px -4px 0 0 #dd8a46,
-    430px 2px 0 0 #f1c07a,
-    474px -3px 0 0 #bc632c;
+  background:
+    radial-gradient(
+      ellipse 38px 18px at 3% 98%,
+      #fff1d8 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 28px 13px at 8% 92%,
+      #f1c07a 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 34px 16px at 14% 100%,
+      #dd8a46 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 26px 12px at 21% 94%,
+      #f7d7aa 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 36px 17px at 29% 100%,
+      #d56a27 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 28px 13px at 36% 93%,
+      #efbc79 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 34px 16px at 44% 100%,
+      #bf6a33 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 26px 12px at 51% 94%,
+      #fde8c5 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 36px 17px at 59% 100%,
+      #eda95d 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 28px 13px at 67% 93%,
+      #bc632c 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 34px 16px at 75% 100%,
+      #f2c98f 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 26px 12px at 83% 94%,
+      #cf7638 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 36px 17px at 91% 100%,
+      #efbb74 0 68%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 26px 12px at 97% 95%,
+      #9e4c20 0 68%,
+      transparent 72%
+    );
+  filter: drop-shadow(0 -2px 4px rgba(140, 84, 32, 0.16));
 }
 
-/* 앞쪽 더미 2 */
-.autumnLeafPileFront::after {
-  left: 20px;
-  bottom: 20px;
-  width: 34px;
-  height: 24px;
-  background: linear-gradient(135deg, #f7d7aa 0%, #cf7638 54%, #9e4c20 100%);
-  box-shadow:
-    50px 0 0 0 #efbb74,
-    100px -3px 0 0 #dd8a46,
-    150px 1px 0 0 #f1c07a,
-    200px -2px 0 0 #bc632c,
-    250px 0 0 0 #eda95d,
-    300px -3px 0 0 #c56b2f,
-    350px 1px 0 0 #efbb74,
-    400px -2px 0 0 #cf7638,
-    450px 0 0 0 #f7d7aa;
-  opacity: 0.98;
-}
-
-@keyframes autumnLeafStorm {
+@keyframes autumnEasterLeafFall {
   0% {
-    transform: translate3d(0, -34px, 0) rotate(0deg) scale(0.76);
+    transform: translate3d(0, -24px, 0) rotate(0deg) scale(0.82);
     opacity: 0;
   }
   10% {
-    opacity: 0.96;
+    opacity: 0.95;
   }
   24% {
-    transform: translate3d(44px, 102px, 0) rotate(92deg) scale(0.96);
+    transform: translate3d(34px, 90px, 0) rotate(58deg) scale(0.98);
     opacity: 1;
   }
-  52% {
-    transform: translate3d(-30px, 228px, 0) rotate(182deg) scale(1);
-    opacity: 0.92;
+  50% {
+    transform: translate3d(-22px, 190px, 0) rotate(125deg) scale(1);
+    opacity: 0.95;
   }
-  78% {
-    transform: translate3d(26px, 360px, 0) rotate(270deg) scale(0.95);
+  70% {
+    transform: translate3d(18px, 290px, 0) rotate(188deg) scale(0.97);
+    opacity: 0.88;
+  }
+  85% {
+    transform: translate3d(-12px, 500px, 0) rotate(235deg) scale(0.92);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(-12px, 500px, 0) rotate(235deg) scale(0.92);
+    opacity: 0;
+  }
+}
+
+@keyframes autumnEasterLeafBurst {
+  0% {
+    transform: translate3d(0, -30px, 0) rotate(0deg) scale(0.78);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  24% {
+    transform: translate3d(38px, 82px, 0) rotate(68deg) scale(1);
+    opacity: 0.98;
+  }
+  48% {
+    transform: translate3d(-28px, 180px, 0) rotate(138deg) scale(1.04);
+    opacity: 0.94;
+  }
+  65% {
+    transform: translate3d(20px, 285px, 0) rotate(205deg) scale(0.98);
+    opacity: 0.84;
+  }
+  85% {
+    transform: translate3d(-16px, 500px, 0) rotate(255deg) scale(0.9);
     opacity: 0.8;
   }
   100% {
-    transform: translate3d(-18px, 505px, 0) rotate(344deg) scale(0.9);
+    transform: translate3d(-16px, 500px, 0) rotate(255deg) scale(0.9);
     opacity: 0;
   }
 }
 
-@keyframes autumnLeafBurst {
+@keyframes autumnPileGrowBackSoft {
   0% {
-    transform: translate3d(0, -42px, 0) rotate(0deg) scale(0.68);
-    opacity: 0;
+    transform: scaleY(0.7);
+    opacity: 0.7;
   }
-  10% {
-    opacity: 1;
+  15% {
+    transform: scaleY(0.85);
+    opacity: 0.8;
   }
-  24% {
-    transform: translate3d(52px, 88px, 0) rotate(104deg) scale(0.98);
+  35% {
+    transform: scaleY(1.05);
+    opacity: 0.9;
+  }
+  60% {
+    transform: scaleY(1.25);
+    opacity: 0.95;
+  }
+  80% {
+    transform: scaleY(1.45);
     opacity: 0.98;
   }
-  50% {
-    transform: translate3d(-36px, 224px, 0) rotate(198deg) scale(1.04);
+  100% {
+    transform: scaleY(1.6);
+    opacity: 1;
+  }
+}
+
+@keyframes autumnPileGrowFrontSoft {
+  0% {
+    transform: scaleY(0.45);
+    opacity: 0.45;
+  }
+  20% {
+    transform: scaleY(0.58);
+    opacity: 0.58;
+  }
+  40% {
+    transform: scaleY(0.72);
+    opacity: 0.72;
+  }
+  60% {
+    transform: scaleY(0.84);
+    opacity: 0.84;
+  }
+  80% {
+    transform: scaleY(0.94);
     opacity: 0.94;
   }
-  76% {
-    transform: translate3d(30px, 360px, 0) rotate(286deg) scale(0.96);
-    opacity: 0.82;
-  }
   100% {
-    transform: translate3d(-20px, 514px, 0) rotate(356deg) scale(0.9);
-    opacity: 0;
+    transform: scaleY(1);
+    opacity: 1;
   }
 }
 
-@keyframes autumnPileGrowBack {
+@keyframes autumnLeafStackPulse {
   0% {
-    opacity: 0;
-    transform: scaleY(0.18);
-  }
-  30% {
-    opacity: 0.5;
-    transform: scaleY(0.52);
-  }
-  65% {
-    opacity: 0.82;
-    transform: scaleY(0.82);
-  }
-  100% {
-    opacity: 1;
     transform: scaleY(1);
   }
-}
-
-@keyframes autumnPileGrowFront {
-  0% {
-    opacity: 0;
-    transform: scaleY(0.08);
-  }
-  25% {
-    opacity: 0.36;
-    transform: scaleY(0.36);
-  }
-  55% {
-    opacity: 0.72;
-    transform: scaleY(0.68);
+  50% {
+    transform: scaleY(1.03);
   }
   100% {
-    opacity: 1;
     transform: scaleY(1);
   }
 }
@@ -2117,75 +2213,126 @@
 .absorbEffect {
   position: absolute;
   left: 50%;
-  top: 120px;
+  top: 118px;
   bottom: auto;
   transform: translateX(-50%);
   pointer-events: none;
-  z-index: 5;
-  width: 42px;
-  height: 42px;
+  z-index: 6;
+  width: 90px;
+  height: 170px;
+  overflow: visible;
 }
+
 .absorbDrop {
   position: absolute;
   left: 50%;
-  top: 0;
-  width: 42px;
-  height: 42px;
+  bottom: -6px;
+  width: 34px;
+  height: 34px;
   object-fit: contain;
   transform: translateX(-50%);
-  animation: absorbToTree 0.7s ease-out forwards;
-  filter: drop-shadow(0 0 10px rgba(90, 170, 255, 0.5));
+  transform-origin: center center;
+  animation: absorbToTreeNatural 1.05s cubic-bezier(0.22, 0.8, 0.24, 1) forwards;
+  filter: drop-shadow(0 0 8px rgba(90, 170, 255, 0.28))
+    drop-shadow(0 0 18px rgba(90, 170, 255, 0.16));
 }
 
-@keyframes absorbToTree {
+@keyframes absorbToTreeNatural {
   0% {
-    transform: translateX(-50%) translateY(-60px) scale(0.7);
+    transform: translateX(-50%) translateY(24px) scale(0.92);
     opacity: 0;
   }
-  30% {
+  10% {
+    opacity: 0.95;
+  }
+  24% {
+    transform: translateX(-58%) translateY(8px) scale(0.98) rotate(-4deg);
     opacity: 1;
   }
-  60% {
-    transform: translateX(-50%) translateY(20px) scale(1);
+  42% {
+    transform: translateX(-45%) translateY(-26px) scale(1.02) rotate(3deg);
+    opacity: 1;
+  }
+  62% {
+    transform: translateX(-52%) translateY(-74px) scale(0.9) rotate(-2deg);
+    opacity: 0.96;
+  }
+  82% {
+    transform: translateX(-49%) translateY(-118px) scale(0.68) rotate(1deg);
+    opacity: 0.72;
   }
   100% {
-    transform: translateX(-50%) translateY(120px) scale(0.2);
+    transform: translateX(-50%) translateY(-138px) scale(0.22) rotate(0deg);
     opacity: 0;
   }
 }
+
 .treeBounce {
-  animation: treeEatBounce 0.5s ease;
+  animation: treeDrinkResponse 0.95s cubic-bezier(0.22, 0.8, 0.24, 1) forwards !important;
 }
 
-@keyframes treeEatBounce {
+@keyframes treeDrinkResponse {
   0% {
-    transform: scale(var(--tree-scale, 1)) translateY(0);
+    transform: scale(var(--tree-scale, 1)) translateY(0) rotate(0deg);
+    filter: brightness(1);
   }
-  35% {
-    transform: scale(calc(var(--tree-scale, 1) * 1.08)) translateY(-8px);
+  18% {
+    transform: scale(calc(var(--tree-scale, 1) * 0.985)) translateY(2px)
+      rotate(-0.2deg);
+    filter: brightness(1);
   }
-  70% {
-    transform: scale(calc(var(--tree-scale, 1) * 0.98)) translateY(2px);
+  42% {
+    transform: scale(calc(var(--tree-scale, 1) * 1.04)) translateY(-8px)
+      rotate(0.3deg);
+    filter: brightness(1.04);
+  }
+  68% {
+    transform: scale(calc(var(--tree-scale, 1) * 1.015)) translateY(-3px)
+      rotate(-0.15deg);
+    filter: brightness(1.02);
   }
   100% {
-    transform: scale(var(--tree-scale, 1)) translateY(0);
+    transform: scale(var(--tree-scale, 1)) translateY(0) rotate(0deg);
+    filter: brightness(1);
   }
 }
+
 .absorbSpark {
   position: absolute;
   left: 50%;
-  top: -145px;
-  width: 24px;
-  height: 24px;
+  top: -26px;
+  width: 72px;
+  height: 72px;
   transform: translateX(-50%);
   border-radius: 50%;
   background: radial-gradient(
     circle,
     rgba(255, 255, 255, 0.95) 0%,
-    rgba(180, 230, 255, 0.7) 40%,
-    rgba(180, 230, 255, 0) 75%
+    rgba(194, 234, 255, 0.55) 24%,
+    rgba(135, 205, 255, 0.18) 46%,
+    rgba(135, 205, 255, 0) 72%
   );
-  animation: absorbSparkFlash 0.45s ease-out forwards;
+  animation: absorbSparkNatural 0.75s cubic-bezier(0.22, 0.8, 0.24, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes absorbSparkNatural {
+  0% {
+    transform: translateX(-50%) scale(0.2);
+    opacity: 0;
+  }
+  32% {
+    transform: translateX(-50%) scale(0.9);
+    opacity: 0.95;
+  }
+  68% {
+    transform: translateX(-50%) scale(1.35);
+    opacity: 0.42;
+  }
+  100% {
+    transform: translateX(-50%) scale(1.7);
+    opacity: 0;
+  }
 }
 
 @keyframes absorbSparkFlash {
