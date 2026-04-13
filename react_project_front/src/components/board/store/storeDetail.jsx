@@ -788,7 +788,7 @@ const StoreDetail = () => {
 
       <div className={styles.section_box}>
         <h3>상품정보</h3>
-        <p>{item.marketContent || `${item.marketTitle} 상품 상세 안내 ...`}</p>
+        <p className={styles.productContent}>{item.marketContent || `${item.marketTitle} 상품 상세 안내 ...`}</p>
       </div>
 
       <div className={styles.section_box}>

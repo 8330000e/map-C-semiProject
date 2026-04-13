@@ -351,6 +351,14 @@
 	margin: 0 0 10px;
 }
 
+.productContent {
+	white-space: pre-wrap;
+	word-break: break-word;
+	line-height: 1.7;
+	font-size: 1rem;
+	color: #3b4237;
+}
+
 .same_items_section {
 	/* 같은 상품 추천 섹션(롤링 리스트) */
 	margin-bottom: 14px;
