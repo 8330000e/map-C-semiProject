@@ -97,6 +97,22 @@ public class CampaignController {
 		List<CampaignParticipance> campPart = campaignService.getCampBoardList(campaignNo);
 		return ResponseEntity.ok(campPart);
 	}
-	
-	
+	@GetMapping(value="/board/{campaignParticipanceNo}")
+	public ResponseEntity<?> getCampBoardDetail(@PathVariable Integer campaignParticipanceNo){
+		CampaignParticipance campPart = campaignService.getCampBoardDetail(campaignParticipanceNo);
+		return ResponseEntity.ok(campPart);
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

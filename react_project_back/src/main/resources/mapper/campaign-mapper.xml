@@ -65,4 +65,7 @@
 	<select id="getCampBoardList" resultType="campPart">
 		select * from campaign_participance_tbl where campaign_no =#{campaignNo}
 	</select>
+	<select id="getCampBoardDetail" resultType="campPart">
+		select * from campaign_participance_tbl where campaign_participance_no = #{campaignParticipanceNo}
+	</select>
 </mapper>

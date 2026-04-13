@@ -74,5 +74,10 @@ public class CampaignService {
 		return campPart;
 	}
 
+	public CampaignParticipance getCampBoardDetail(Integer campaignParticipanceNo) {
+		CampaignParticipance campPart = campaignDao.getCampBoardDetail(campaignParticipanceNo);
+		return campPart;
+	}
+
 	
 }

@@ -24,6 +24,7 @@
   position: relative;
   width: 1200px;
   min-height: 900px;
+  padding-bottom: 50px;
   background-color: #464d3e;
   border-radius: 15px;
   display: flex;
@@ -64,84 +65,103 @@
   display: flex;
   position: relative;
   width: 500px;
+  height: 300px;
+  background-color: var(--gray6);
 }
 .camp_polygon1 {
   position: absolute;
   width: 50px;
   height: 50px;
-  top: 2px;
-  left: 2px;
-  background-color: orangered;
+  top: 40px;
+  left: 40px;
+  background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
 .camp_polygon2 {
   position: absolute;
   width: 50px;
   height: 50px;
-  top: 10px;
-  left: 90px;
-  background-color: orangered;
+  top: 60px;
+  left: 130px;
+  background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
 .camp_polygon3 {
   position: absolute;
   width: 50px;
   height: 50px;
-  top: 6px;
-  left: 180px;
-  background-color: orangered;
+  top: 20px;
+  left: 220px;
+  background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
 .camp_polygon4 {
   position: absolute;
   width: 50px;
   height: 50px;
-  right: 180px;
-  top: 30px;
-  background-color: orangered;
+  right: 130px;
+  top: 40px;
+  background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
 .camp_polygon5 {
   position: absolute;
   width: 50px;
   height: 50px;
-  right: 60px;
+  right: 40px;
   top: 80px;
-  background-color: orangered;
+  background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
 .camp_polygon6 {
   position: absolute;
   width: 50px;
   height: 50px;
-  background-color: orangered;
+  bottom: 80px;
+  right: 40px;
+  background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
 .camp_polygon7 {
   position: absolute;
   width: 50px;
   height: 50px;
-  background-color: orangered;
+  bottom: 60px;
+  right: 130px;
+  background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
 .camp_polygon8 {
   position: absolute;
   width: 50px;
   height: 50px;
-  background-color: orangered;
+  bottom: 70px;
+  right: 220px;
+  background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
 .camp_polygon9 {
   position: absolute;
   width: 50px;
   height: 50px;
-  background-color: orangered;
+  bottom: 80px;
+  left: 130px;
+  background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
 .camp_polygon0 {
   position: absolute;
   width: 50px;
   height: 50px;
-  background-color: orangered;
+  bottom: 40px;
+  left: 40px;
+  background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_success {
+  background-color: orangered;
+}
+.camp_board_content_wrap {
+  display: flex;
+  justify-content: space-between;
 }

@@ -28,4 +28,6 @@ public interface CampaignDao {
 
 	List<CampaignParticipance> getCampBoardList(Integer campaignNo);
 
+	CampaignParticipance getCampBoardDetail(Integer campaignParticipanceNo);
+
 }

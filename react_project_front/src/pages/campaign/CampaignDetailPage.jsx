@@ -6,6 +6,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Button from "../../components/ui/Button";
 import Swal from "sweetalert2";
+import { Doughnut } from "react-chartjs-2";
+import {
+  Chart,
+  DoughnutController,
+  ArcElement,
+  Title,
+  Tooltip,
+} from "chart.js";
+
+Chart.register(DoughnutController, ArcElement, Title, Tooltip);
 
 const CampaignDetailPage = () => {
   const navigate = useNavigate();
@@ -19,6 +29,18 @@ const CampaignDetailPage = () => {
   const [dateOut, setDateout] = useState(true);
   // const realtime = Date.now(); 로직이 back으로 감
   const [boardList, setBoardList] = useState([]);
+  const data = readComplete && {
+    labels: ["남은기간", "지난기간"],
+    datasets: [
+      {
+        data: [
+          new Date(campaignDetail.campaignExpireDate).getTime() -
+            new Date(campaignDetail.campaignStartDate).getTime(),
+          new Date(campaignDetail.campaignExpireDate).getTime() - Date.now(),
+        ],
+      },
+    ],
+  };
 
   useEffect(() => {
     axios
@@ -78,6 +100,7 @@ const CampaignDetailPage = () => {
         </div>
         <div className={styles.campdetailpage_content_wrap}>
           <div className={styles.campdetailpage_details_wrap}>
+            <Doughnut data={data} />
             <div>{campaignNo}</div>
             <div>{campaignDetail.campaignTitle}</div>
             <div>{campaignDetail.campaignStatus}</div>
@@ -85,18 +108,38 @@ const CampaignDetailPage = () => {
             <div>{campaignDetail.campaignStartDate}</div>
             <div>{campaignDetail.memberCount}</div>
             <div>{campaignDetail.memberId}</div>
-            <div>{campaignDetail.campaignExpireDate}</div>
+            <div>{new Date(campaignDetail.campaignExpireDate).getTime()}</div>
             <div className={styles.camp_polygon_wrap}>
-              <div className={styles.camp_polygon1}></div>
-              <div className={styles.camp_polygon2}></div>
-              <div className={styles.camp_polygon3}></div>
-              <div className={styles.camp_polygon4}></div>
-              <div className={styles.camp_polygon5}></div>
-              <div className={styles.camp_polygon6}></div>
-              <div className={styles.camp_polygon7}></div>
-              <div className={styles.camp_polygon8}></div>
-              <div className={styles.camp_polygon9}></div>
-              <div className={styles.camp_polygon0}></div>
+              <div
+                className={`${styles.camp_polygon1} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.1 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon2} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.2 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon3} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.3 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon4} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.4 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon5} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.5 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon6} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.6 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon7} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.7 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon8} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.8 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon9} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.9 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon0} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.04 ? styles.camp_success : ""}`}
+              ></div>
             </div>
           </div>
           <div className={styles.campdetailpage_sidebar}>
@@ -226,13 +269,23 @@ const PostBoard = ({
                     src={`${import.meta.env.VITE_BACKSERVER}/campaign/memo/${list.campaignThumb}`}
                   />
                 </div>
-                <p>{list.campaignMemo}</p>
-                {list.memberId === memberId && (
-                  <div className={styles.board_btn_wrap}>
-                    <button>수정</button>
-                    <button>삭제</button>
-                  </div>
-                )}
+                <div className={styles.camp_board_content_wrap}>
+                  <p>{list.campaignMemo}</p>
+                  {list.memberId === memberId && (
+                    <div className={styles.board_btn_wrap}>
+                      <button
+                        onClick={() => {
+                          navigate(
+                            `/campaign/update/${list.campaignParticipanceNo}`,
+                          );
+                        }}
+                      >
+                        수정
+                      </button>
+                      <button>삭제</button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           );
