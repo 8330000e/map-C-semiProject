@@ -241,7 +241,19 @@ const PostBoard = ({
   isCreator,
   boardList,
 }) => {
-  const deleteMemo = (campaignParticipanceNo) => {};
+  const deleteMemo = (campaignParticipanceNo) => {
+    Swal.fire({
+      title: "정말로 삭제하시겠습니까?",
+      text: "삭제 하시면 복구 불가능 합니다.",
+      icon: "warning",
+      showCancelButton: true,
+      showConfirmButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("몰라");
+      }
+    });
+  };
   return (
     boardList && (
       <div className={styles.campdetailpage_board_wrap}>
