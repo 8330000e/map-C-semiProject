@@ -28,6 +28,7 @@ import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
+import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.utils.DeviceParser;
 import kr.co.iei.utils.FileUtils;
 

@@ -23,6 +23,8 @@ public class Member {
     private String memberEmail;
     private String memberThumb;
     private String enrollDate;                // SYSDATE 사용 예정
+    
+    private Double memberCo2;				//절약한 탄소배출량 총 값
 
     private Integer memberStatus = 0;      
     private Integer mannerScore = 0;       

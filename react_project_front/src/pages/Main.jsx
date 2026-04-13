@@ -12,6 +12,7 @@ import Bestpostlist from "../components/mainpage/Bestpostlist";
 import HorizontalScrollList from "../components/commons/HorizontalScrollList";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import Swal from "sweetalert2";
+import RankList from "../components/mainpage/RankList";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -489,8 +490,8 @@ const Main = () => {
           </div>
 
           <div className="rank_list roundBorder">
-            <p>랭킹 리스트</p>
-            {/*위치설명*/}
+            {/* <p>랭킹 리스트</p> */}
+            <RankList />
           </div>
         </div>
         {/*랜덤 미션*/}
