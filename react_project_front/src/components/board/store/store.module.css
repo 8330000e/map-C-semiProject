@@ -58,6 +58,7 @@
 .menu_list a {
 	color: #222;
 	text-decoration: none;
+	font-weight: 600;
 }
 
 .customer_box {
