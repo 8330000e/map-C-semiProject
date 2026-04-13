@@ -9,6 +9,10 @@ const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 const PAGE_SIZE = 6;
 const getStatusPrefix = (status) => (status ? `[${status}] ` : "");
 
+// 구매내역 페이지임.
+//  - 로그인한 사용자의 구매한 상품 기록을 보여줌.
+//  - 서버에서 거래 정보와 연관 상품 정보를 함께 가져와서 렌더링함.
+
 const getImageUrl = (thumb) => {
   // thumb가 서버에서 여러 형태로 들어오기 때문에,
   // 여기서 브라우저가 바로 쓸 수 있는 주소로 바꿔줘요.

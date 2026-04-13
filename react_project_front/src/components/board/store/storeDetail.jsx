@@ -508,6 +508,9 @@ const StoreDetail = () => {
     });
   };
 
+  // 게시글 신고 기능임.
+  //  - 사용자가 해당 상품 게시글이 규정에 어긋난다고 판단하면 신고 요청을 함.
+  //  - 여기서는 화면에서 신고 완료 메시지를 보여주는 방식으로 처리함.
   const handleReport = async () => {
     const result = await Swal.fire({
       icon: "warning",
@@ -525,6 +528,9 @@ const StoreDetail = () => {
     }
   };
 
+  // 댓글 신고 기능임.
+  //  - 댓글이 규정에 어긋나거나 불쾌할 때 신고할 수 있도록 함.
+  //  - 신고 후에는 화면에서 신고 완료 상태를 유지함.
   const handleReportComment = async (commentId) => {
     const result = await Swal.fire({
       icon: "warning",

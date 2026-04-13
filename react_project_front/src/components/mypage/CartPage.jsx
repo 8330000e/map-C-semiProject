@@ -21,6 +21,9 @@ const getImageUrl = (thumb) => {
 
 const formatPrice = (value) => `${Number(value || 0).toLocaleString("ko-KR")}원`;
 
+// 찜한 상품 페이지임.
+//  - 사용자가 관심 있어 하는 상품을 모아두는 목록임.
+//  - 상세 페이지로 이동하거나 원하는 항목을 삭제할 수 있음.
 const CartPage = () => {
   const { memberId, isReady } = useAuthStore();
   const [cartItems, setCartItems] = useState([]);

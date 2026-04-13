@@ -9,6 +9,10 @@ const PAGE_SIZE = 3;
 
 const normalizeStatus = (status) => String(status ?? "").replace(/\s+/g, "").trim();
 
+// 판매내역 페이지임.
+//  - 판매자가 등록한 상품과 거래 상태를 확인할 수 있는 화면.
+//  - 판매중/배송대기/판매완료 탭으로 구분해서 표시함.
+
 const getSaleStatusLabel = (productStatus) => {
   const normalized = normalizeStatus(productStatus);
   if (normalized === "0" || normalized === "판매중") return "판매중";
