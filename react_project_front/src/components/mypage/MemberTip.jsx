@@ -7,11 +7,18 @@ import { Input } from "../ui/Form";
 
 const MemberTip = () => {
   const checker = 3;
+  // 팁 스크랩 페이지임.
+  //  - 사용자가 스크랩한 팁을 검색하고 정렬해서 볼 수 있는 화면임.
+  //  - 검색어 입력 후 돋보기 버튼을 눌러서 목록을 갱신함.
   const { memberId } = useAuthStore();
   const [tipBoardList, setTipBoardList] = useState([]);
   const [searchBoard, setSearchBoard] = useState("");
   const [filter, setFilter] = useState(2);
   const [boardSearch, setBoardSearch] = useState("");
+
+  // 스크랩한 팁 목록을 서버에서 가져오는 로직임.
+  //  - 검색어(searchBoard)와 정렬 필터(filter)에 따라 목록을 갱신함.
+  //  - 검색 버튼 클릭 시 boardSearch 상태를 searchBoard로 복사해서 상단 useEffect를 트리거함.
   useEffect(() => {
     axios
       .get(

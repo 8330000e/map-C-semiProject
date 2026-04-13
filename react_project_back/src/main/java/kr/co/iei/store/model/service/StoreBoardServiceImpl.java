@@ -2,6 +2,7 @@ package kr.co.iei.store.model.service;
 
 import kr.co.iei.store.model.dao.StoreBoardDAO;
 import kr.co.iei.store.model.vo.StoreBoard;
+import kr.co.iei.store.model.vo.StoreCart;
 import kr.co.iei.store.model.vo.StoreRating;
 import kr.co.iei.store.model.vo.StoreReview;
 import kr.co.iei.store.model.vo.StoreTradeInfo;
@@ -110,6 +111,39 @@ public class StoreBoardServiceImpl implements StoreBoardService {
     @Override
     public List<StoreReview> getLatestReviews(int limit) {
         return storeBoardDAO.selectLatestReviews(limit);
+    }
+
+    @Override
+    public List<StoreCart> getCartByMemberId(String memberId) {
+        if (memberId == null || memberId.isBlank()) {
+            return List.of();
+        }
+        return storeBoardDAO.selectCartByMemberId(memberId);
+    }
+
+    @Override
+    public void addOrUpdateCartItem(StoreCart cart) {
+        if (cart == null || cart.getMemberId() == null || cart.getMemberId().isBlank() || cart.getMarketNo() == null) {
+            return;
+        }
+        if (cart.getQuantity() == null || cart.getQuantity() <= 0) {
+            cart.setQuantity(1);
+        }
+        StoreCart existing = storeBoardDAO.selectCartItem(cart.getMemberId(), cart.getMarketNo());
+        if (existing == null) {
+            storeBoardDAO.insertCartItem(cart);
+            return;
+        }
+        Integer nextQuantity = (existing.getQuantity() != null ? existing.getQuantity() : 0) + cart.getQuantity();
+        storeBoardDAO.updateCartQuantity(existing.getCartNo(), nextQuantity);
+    }
+
+    @Override
+    public void removeCartItem(Long cartNo, String memberId) {
+        if (cartNo == null || memberId == null || memberId.isBlank()) {
+            return;
+        }
+        storeBoardDAO.deleteCartItem(cartNo, memberId);
     }
 
     @Override

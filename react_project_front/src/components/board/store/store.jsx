@@ -6,6 +6,9 @@ import styles from "./store.module.css";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
+// 중고거래 목록 페이지임.
+//  - 서버에서 판매중인 상품 목록을 받아와서 화면에 보여줌.
+//  - 검색어를 입력하면 제목 또는 작성자 기준으로 상품을 필터링함.
 const formatPrice = (value) => `${Number(value || 0).toLocaleString("ko-KR")}원`;
 const formatDate = (value) => {
     if (!value) return "";

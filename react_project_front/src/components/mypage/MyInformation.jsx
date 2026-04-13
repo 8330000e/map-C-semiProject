@@ -6,6 +6,9 @@ import userImg from "../../assets/admin.png";
 import useAuthStore from "../../store/useAuthStore.js";
 const BACKSERVER = "http://localhost:9999";
 
+// 서버에 저장된 썸네일 경로를 실제 이미지 URL로 변환합니다.
+// - 절대 URL이면 그대로 사용하고
+// - 상대 경로 혹은 윈도우 드라이브 경로 등도 백엔드 서버 기준 URL로 변경합니다.
 const getImageUrl = (thumb) => {
   console.log(thumb);
   if (!thumb) return null;
@@ -40,24 +43,39 @@ const getImageUrl = (thumb) => {
 };
 
 const MyInformation = () => {
-  const { memberId, memberNickname, isReady, memberThumb } = useAuthStore();
+  // MyPage 왼쪽 카드의 사용자 정보 섹션입니다.
+  // - 로그인된 사용자의 회원 정보를 불러오고,
+  // - 프로필 사진 변경 기능을 제공합니다.
+  // - 사용자 아이디, 이름, 별명, 이메일을 보여줍니다.
+  const { memberId, memberNickname, isReady, memberThumb, setThumb } = useAuthStore();
+
+  // member 정보 상태
   const [member, setMember] = useState();
   const [readyMark, setReadyMark] = useState(false);
+
+  // 숨겨진 파일 입력을 제어하기 위한 ref
   const reference = useRef(null);
 
+  // 컴포넌트가 처음 렌더링될 때 회원 정보를 서버에서 가져옵니다.
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/members/${memberId}`)
       .then((res) => {
         console.log(res.data);
         setMember(res.data);
+        if (res.data?.memberThumb && res.data.memberThumb !== memberThumb) {
+          setThumb(res.data.memberThumb);
+        }
       })
       .catch((err) => {
         console.log(memberId);
         console.log(err);
       });
-  }, []);
+  }, [memberId, memberThumb, setThumb]);
 
+  // 프로필 사진 변경 버튼으로 선택한 파일을 서버에 업로드합니다.
+  // - 파일이 없으면 아무 동작도 하지 않습니다.
+  // - 업로드 후 공유 상태관리(useAuthStore)에 저장된 썸네일을 갱신합니다.
   const changeThumb = () => {
     const thumbFile = reference.current.files && reference.current.files[0]; //1번째 조건 불충족시 undefined,충족하면 그중에 [0], 즉 첫번째 파일
     if (!thumbFile) {
@@ -88,16 +106,19 @@ const MyInformation = () => {
     memberId && (
       // isReady &&
       <div className={styles.myinformation_main_wrap}>
-        <div className={styles.myinformation_img_wrap}>
-          <img
-            src={
-              member.memberThumb !== null
-                ? getImageUrl(
-                    memberThumb === null ? member.memberThumb : memberThumb,
-                  )
-                : userImg
-            }
-          />
+        {/* 프로필 이미지, 변경 버튼, 숨겨진 파일 입력 */}
+        <div className={styles.myinformation_img_outer}>
+          <div className={styles.myinformation_img_wrap}>
+            <img
+              src={
+                member.memberThumb !== null
+                  ? getImageUrl(
+                      memberThumb === null ? member.memberThumb : memberThumb,
+                    )
+                  : userImg
+              }
+            />
+          </div>
           <div
             className={styles.dag}
             onClick={() => {
@@ -106,7 +127,6 @@ const MyInformation = () => {
           >
             변경
           </div>
-          {/* accept="image"->이미지만 선택 가능하게 막아놓음 */}
         </div>
         <input
           type="file"
@@ -116,13 +136,29 @@ const MyInformation = () => {
           onChange={changeThumb}
         />
 
+        {/* 사용자 정보 텍스트 목록 */}
         <div className={styles.myinformation_content_wrap}>
           <ul>
-            <li>멤버 아이디{memberId}</li>
-            <li>멤버이름:{member.memberName}</li>
-            <li>멤버 별명{memberNickname}</li>
-            <li>멤버 이메일:{member.memberEmail}</li>
-            <li>멤버의 조회수:1234</li>
+            <li>
+              <span className={styles.item_label}>아이디</span>
+              <span className={styles.item_value}>{memberId}</span>
+            </li>
+            <li>
+              <span className={styles.item_label}>이름</span>
+              <span className={styles.item_value}>{member.memberName}</span>
+            </li>
+            <li>
+              <span className={styles.item_label}>별명</span>
+              <span className={styles.item_value}>{memberNickname}</span>
+            </li>
+            <li className={styles.email_row}>
+              <span className={styles.item_label}>이메일</span>
+              <span className={styles.item_value}>{member.memberEmail}</span>
+            </li>
+            <li>
+              <span className={styles.item_label}>조회수</span>
+              <span className={styles.item_value}>1234</span>
+            </li>
           </ul>
         </div>
         <div className={styles.myinformation_carbonfootprint_wrap}>

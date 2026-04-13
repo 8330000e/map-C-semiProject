@@ -11,8 +11,9 @@
   display: flex;
   min-height: 550px;
   gap: 150px;
+  align-items: flex-start;
 }
-.historyPane {
+.history_pane {
   flex: 1;
   background: #f8faf2;
   border: 1px solid #c8d0bf;
