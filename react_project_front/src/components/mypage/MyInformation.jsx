@@ -88,16 +88,18 @@ const MyInformation = () => {
     memberId && (
       // isReady &&
       <div className={styles.myinformation_main_wrap}>
-        <div className={styles.myinformation_img_wrap}>
-          <img
-            src={
-              member.memberThumb !== null
-                ? getImageUrl(
-                    memberThumb === null ? member.memberThumb : memberThumb,
-                  )
-                : userImg
-            }
-          />
+        <div className={styles.myinformation_img_outer}>
+          <div className={styles.myinformation_img_wrap}>
+            <img
+              src={
+                member.memberThumb !== null
+                  ? getImageUrl(
+                      memberThumb === null ? member.memberThumb : memberThumb,
+                    )
+                  : userImg
+              }
+            />
+          </div>
           <div
             className={styles.dag}
             onClick={() => {
@@ -106,7 +108,6 @@ const MyInformation = () => {
           >
             변경
           </div>
-          {/* accept="image"->이미지만 선택 가능하게 막아놓음 */}
         </div>
         <input
           type="file"
@@ -118,11 +119,26 @@ const MyInformation = () => {
 
         <div className={styles.myinformation_content_wrap}>
           <ul>
-            <li>멤버 아이디{memberId}</li>
-            <li>멤버이름:{member.memberName}</li>
-            <li>멤버 별명{memberNickname}</li>
-            <li>멤버 이메일:{member.memberEmail}</li>
-            <li>멤버의 조회수:1234</li>
+            <li>
+              <span className={styles.item_label}>아이디</span>
+              <span className={styles.item_value}>{memberId}</span>
+            </li>
+            <li>
+              <span className={styles.item_label}>이름</span>
+              <span className={styles.item_value}>{member.memberName}</span>
+            </li>
+            <li>
+              <span className={styles.item_label}>별명</span>
+              <span className={styles.item_value}>{memberNickname}</span>
+            </li>
+            <li className={styles.email_row}>
+              <span className={styles.item_label}>이메일</span>
+              <span className={styles.item_value}>{member.memberEmail}</span>
+            </li>
+            <li>
+              <span className={styles.item_label}>조회수</span>
+              <span className={styles.item_value}>1234</span>
+            </li>
           </ul>
         </div>
         <div className={styles.myinformation_carbonfootprint_wrap}>
