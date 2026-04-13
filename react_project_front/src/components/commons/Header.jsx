@@ -228,6 +228,17 @@ const Header = () => {
                       내 포인트
                     </NavLink>
                     <NavLink
+                      to="/mypage/cart"
+                      className={({ isActive }) =>
+                        isActive
+                          ? styles.drawer_link_active
+                          : styles.drawer_link
+                      }
+                      onClick={() => setDrawer(false)}
+                    >
+                      찜한 상품
+                    </NavLink>
+                    <NavLink
                       to="/mypage/history/purchase"
                       className={({ isActive }) =>
                         isActive

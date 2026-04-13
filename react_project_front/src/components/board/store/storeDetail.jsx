@@ -64,6 +64,37 @@ const StoreDetail = () => {
   const [editingPrivate, setEditingPrivate] = useState(false);
   const [saleStatus, setSaleStatus] = useState("판매중");
   const [deliveryMethod, setDeliveryMethod] = useState("");
+  const [isCartLoading, setIsCartLoading] = useState(false);
+
+  const handleAddToCart = async () => {
+    if (!memberId) {
+      Swal.fire({ icon: "info", title: "로그인 필요", text: "찜하기 위해 로그인해주세요." });
+      return;
+    }
+    if (!item?.marketNo) {
+      Swal.fire({ icon: "error", title: "오류", text: "상품 정보를 찾을 수 없습니다." });
+      return;
+    }
+
+    try {
+      setIsCartLoading(true);
+      await axios.post(`${BACKSERVER}/api/store/cart`, {
+        memberId,
+        marketNo: item.marketNo,
+        quantity: 1,
+      });
+      Swal.fire({ icon: "success", title: "찜하기 완료", text: "상품이 찜한 상품에 추가되었습니다." });
+    } catch (error) {
+      console.error("찜하기 실패", error);
+      Swal.fire({
+        icon: "error",
+        title: "찜하기 실패",
+        text: error.response?.data || "상품을 찜하는 중 오류가 발생했습니다.",
+      });
+    } finally {
+      setIsCartLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -682,8 +713,13 @@ const StoreDetail = () => {
             <div className={styles.button_group}>
               {saleStatus !== "판매완료" && (
                 <>
-                  <button type="button" className={styles.cart_button}>
-                    🛒 장바구니
+                  <button
+                    type="button"
+                    className={styles.cart_button}
+                    onClick={handleAddToCart}
+                    disabled={isCartLoading}
+                  >
+                    🛒 찜하기
                   </button>
                   <button type="button" className={styles.buy_button} onClick={handleGoToPayment}>
                     구매하기

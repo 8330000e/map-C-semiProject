@@ -1,6 +1,7 @@
 package kr.co.iei.store.model.service;
 
 import kr.co.iei.store.model.vo.StoreBoard;
+import kr.co.iei.store.model.vo.StoreCart;
 import kr.co.iei.store.model.vo.StoreRating;
 import kr.co.iei.store.model.vo.StoreReview;
 import kr.co.iei.store.model.vo.StoreTradeInfo;
@@ -34,6 +35,12 @@ public interface StoreBoardService {
     void removeReview(Long reviewNo, String memberId);
 
     List<StoreReview> getLatestReviews(int limit);
+
+    List<StoreCart> getCartByMemberId(String memberId);
+
+    void addOrUpdateCartItem(StoreCart cart);
+
+    void removeCartItem(Long cartNo, String memberId);
 
     void saveTradeInfo(StoreTradeInfo tradeInfo);
 
