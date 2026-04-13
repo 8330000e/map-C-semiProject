@@ -113,13 +113,13 @@
         attendance_seq.NEXTVAL,
         #{memberId},
         TRUNC(SYSDATE),
-        1
+        5
     )
 	</insert>
 	<!-- 포인트 지급 -->
 	<update id="updateMemberPoint" parameterType="string">
     UPDATE MEMBER_POINT_TBL
-    SET TOTAL_POINT = TOTAL_POINT + 1
+    SET TOTAL_POINT = TOTAL_POINT + 5
     WHERE MEMBER_ID = #{memberId}
 	</update>
 	
@@ -161,7 +161,7 @@
 	<!-- 포인트 지급 -->
 	<update id="updateMemberPointForBasic" parameterType="string">
     UPDATE MEMBER_POINT_TBL
-    SET TOTAL_POINT = TOTAL_POINT + 5
+    SET TOTAL_POINT = TOTAL_POINT + 10
     WHERE MEMBER_ID = #{memberId}
 	</update>
 
@@ -200,7 +200,7 @@
 	<!-- 랜덤 미션 완료 시 회원 포인트 지급 -->
 	<update id="updateMemberPointForRandom" parameterType="string">
 	    UPDATE MEMBER_POINT_TBL
-	    SET TOTAL_POINT = TOTAL_POINT + 10
+	    SET TOTAL_POINT = TOTAL_POINT + 20
 	    WHERE MEMBER_ID = #{memberId}
 	</update>
 	
