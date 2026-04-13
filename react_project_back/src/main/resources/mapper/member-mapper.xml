@@ -173,5 +173,9 @@ fetch first 1 row only
 	where member_id = #{memberId}	
 </update>
 
+<select id="selectClist" resultType="Member">
+	select member_thumb, member_nickname, member_co2 from member_tbl1 order by member_co2 desc
+	offset 0 rows fetch next 15 rows only
+</select>
 
 </mapper>

@@ -9,6 +9,7 @@ import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import heart from "../../assets/img/heart.svg";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const MapCommunityPage = () => {
   const [addr, setAddr] = useState("서울특별시 중구");
@@ -60,6 +61,7 @@ const MapCommunityPage = () => {
 
 const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
   // const [detailMode, setDetailMode] = useState(false);
+  const navigate = useNavigate();
   const mapDivRef = useRef(null);
   const [markerList, setMarkerList] = useState([]);
   let mapMarkerList = [];
@@ -73,6 +75,14 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
     sgg: "중구",
   };
   let detailMode = false;
+
+  const boardView = (boardNo) => {
+    if (boardNo) {
+      navigate(`/map-community?boardNo=${boardNo}`);
+    } else {
+      navigate("/map-community");
+    }
+  };
 
   useEffect(() => {
     axios
@@ -107,7 +117,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
       map: map,
       icon: {
         content:
-          '<img src="src/assets/img/marker.png" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=1000; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">',
+          '<img src="src/assets/img/marker.png" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=99999; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">',
         size: new naver.maps.Size(22, 35),
         anchor: new naver.maps.Point(11, 35),
       },
@@ -171,85 +181,87 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
 
         detailMode
           ? markerName.setIcon({
-              content: `<div><div style="position: relative; width: 100%;">
-            <div
-              style="
-                position: absolute;
-                width: 300px;
-                left: 50%;
-                bottom: 50%;
-                transform: translate(-42%, -260%);
-                height: max-content;
-                border-radius: 25px;
-                border: var(--border2);
-                z-index: ${5000 + 2};
-                padding: 15px 20px;
-                font-size: 15px;
-                font-weight: 600;
-                text-align: center;
-                background-color: var(--gray8);
-              "
-            >
-              <div>
-                <img
-                  src=${borderPin}
-                  style="
-                    position: absolute;
-                    width: 32px;
-                    z-index: ${5000 + 3};
-                    bottom: 80%;
-                    left: 50%;
-                    color: #ff593c;
-                  "
-                />
-              </div>
-              <p>${mapaddr}</p>
-            </div>
-            <div
-              style="
-                position: absolute;
-                left: 50%;
-                bottom: 50%;
-                transform: translate(-42%, -10%);
-                margin-top: 60px;
-                width: 300px;
-                height: max-content;
-                border-radius: 25px;
-                border: var(--border2);
-                z-index: ${5000 + 2};
-                padding: 15px 20px;
-                font-size: 15px;
-                font-weight: 600;
-                text-align: center;
-                background-color: var(--gray8);
-                display: flex;
-                flex-direction: column;
-                justify-items: center;
-                align-content: space-between;
-              "
-            >
-              <div
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  width: 100%;
-                "
-              >
+              content: `
+            <div>
+              <div style="position: relative; width: 100%;">
                 <div
-                  style=" display: flex; gap: 8px; align-items: center; "
+                style="
+                  position: absolute;
+                  width: 300px;
+                  left: 50%;
+                  bottom: 50%;
+                  transform: translate(-42%, -260%);
+                  height: max-content;
+                  border-radius: 25px;
+                  border: var(--border2);
+                  z-index: ${5000 + 2};
+                  padding: 15px 20px;
+                  font-size: 15px;
+                  font-weight: 600;
+                  text-align: center;
+                  background-color: var(--gray8);
+                "
                 >
+                <div>
                   <img
-                    src=${defaultImg}
-                    alt=""
+                    src=${borderPin}
                     style="
-                      width: 35px;
+                      position: absolute;
+                      width: 32px;
                       z-index: ${5000 + 3};
-                      border-radius: 50%;
-                      border: var(--border2);
+                      bottom: 80%;
+                      left: 50%;
+                      color: #ff593c;
                     "
                   />
-                  <p>${marker.memberNickname}</p>
                 </div>
+                <p>${mapaddr}</p>
+              </div>
+              <div
+                style="
+                  position: absolute;
+                  left: 50%;
+                  bottom: 50%;
+                  transform: translate(-42%, -10%);
+                  margin-top: 60px;
+                  width: 300px;
+                  height: max-content;
+                  border-radius: 25px;
+                  border: var(--border2);
+                  z-index: ${5000 + 2};
+                  padding: 15px 20px;
+                  font-size: 15px;
+                  font-weight: 600;
+                  text-align: center;
+                  background-color: var(--gray8);
+                  display: flex;
+                  flex-direction: column;
+                  justify-items: center;
+                  align-content: space-between;
+                "
+                >
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      width: 100%;
+                    "
+                  >
+                    <div
+                      style=" display: flex; gap: 8px; align-items: center; "
+                    >
+                      <img
+                        src=${defaultImg}
+                        alt=""
+                        style="
+                          width: 35px;
+                          z-index: ${5000 + 3};
+                          border-radius: 50%;
+                          border: var(--border2);
+                        "
+                      />
+                    <p>${marker.memberNickname}</p>
+                  </div>
                 <div
                   style=" display: flex; gap: 1px; align-items: center; "
                 >
@@ -267,27 +279,27 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
               </div>
               <div style=" padding: 8px 4px; line-height: 1; ">
                 <div style=" text-align: left; ">${marker.boardTitle}</div>
-                <div
-                  style="
-                    width: 100%;
-                    padding: 5px 0;
-                    font-size: 14px;
-                    font-weight: 500;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    text-align: left;
-                    z-index=${5000 + 3};
-                  "
-                >
-                  ${marker.boardContent.replace(/<img[^>]*>/gi, "")}
+                  <div
+                    style="
+                      width: 100%;
+                      padding: 5px 0;
+                      font-size: 14px;
+                      font-weight: 500;
+                      white-space: nowrap;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      text-align: left;
+                      z-index=${5000 + 3};
+                    "
+                  >
+                    ${marker.boardContent.replace(/<img[^>]*>/gi, "")}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
           <div>
       <img
-        src=${marker.boardThumb || defaultImg}
+        src=${marker.memberThumb || defaultImg}
         style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
       />
       <img
@@ -299,19 +311,20 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
           `,
               size: new naver.maps.Size(22, 35),
               anchor: new naver.maps.Point(11, 35),
+              onClick: boardView(marker.boardNo),
             })
           : markerName.setIcon({
               content: `
           <div>
-      <img
-        src=${marker.boardThumb || defaultImg}
-        style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
-      />
-      <img
-        src='src/assets/img/defaultthumbmarker.png'
-        style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
-      />
-    </div>`,
+            <img
+              src=${marker.memberThumb || defaultImg}
+              style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
+            />
+            <img
+              src='src/assets/img/defaultthumbmarker.png'
+              style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
+            />
+          </div>`,
               size: new naver.maps.Size(22, 35),
               anchor: new naver.maps.Point(11, 35),
             });

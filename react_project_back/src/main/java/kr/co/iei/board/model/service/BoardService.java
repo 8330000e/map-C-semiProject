@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
 import kr.co.iei.member.model.service.MemberService;
+import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.mission.model.service.MissionService;
 import kr.co.iei.utils.FileUtils;
 
@@ -262,6 +264,10 @@ public class BoardService {
 		
 		return boardDao.insertBoardReport(report);
 	}
+
+	
+	
+	
 	
 }
 

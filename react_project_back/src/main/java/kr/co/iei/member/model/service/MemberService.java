@@ -226,4 +226,9 @@ public class MemberService {
 		}
 
 	}
+
+	public List<Member> selectClist() {
+		List<Member> list = memberDao.selectClist();
+		return list;
+	}
 }

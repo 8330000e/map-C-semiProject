@@ -391,12 +391,11 @@
 	    WHERE MEMBER_ID = #{memberId}
 	</update>
 	<select id="selectMarkers" resultType="Board">
-		select b.board_no, b.board_title, b.board_content, b.board_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg, c.ctpv_nm, c.sgg_nm, count(l.board_no) as likeCount 
-from board_tbl b left join ctpvsgg_tbl c on (b.CTPV = c.ctpv_nm and b.sgg = c.sgg_nm) 
-left join board_like_tbl l on (b.board_no = l.board_no) 
-where b.board_no = b.board_no and b.board_status = 0
-group by b.board_no, b.board_title, b.board_content, b.board_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg, c.ctpv_nm, c.sgg_nm
-
+		select b.board_no, b.board_title, b.board_content, m.member_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg, c.ctpvsgg_id, count(l.board_no) as likeCount 
+		from board_tbl b left join member_tbl1 m on (b.member_nickname = m.member_nickname) left join ctpvsgg_tbl c on (b.CTPV = c.ctpv_nm and b.sgg = c.sgg_nm) 
+		left join board_like_tbl l on (b.board_no = l.board_no) 
+		where b.board_no = b.board_no and b.board_status = 0
+		group by b.board_no, b.board_title, b.board_content, m.member_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg, c.ctpvsgg_id
 	</select>
 	
 	<insert id="insertBoardReport">

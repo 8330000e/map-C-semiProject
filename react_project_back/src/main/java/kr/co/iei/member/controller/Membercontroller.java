@@ -333,4 +333,10 @@ public class Membercontroller {
 		 memberService.insertLog(params);
 		 return ResponseEntity.ok().build(); // 200 반환 
 	}
+	
+	@GetMapping(value="/rank")
+	public ResponseEntity<List<Member>> selectClist() {
+		List<Member> list = memberService.selectClist();
+		return ResponseEntity.ok(list);
+	}
 }
