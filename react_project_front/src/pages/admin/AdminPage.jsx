@@ -10,6 +10,8 @@ import DashBoardPage from "./DashBoardPage";
 import AdminMemberPage from "./AdminMemberPage";
 import AdminSupport from "./AdminSupport";
 
+import AdminBoardPage from "./AdminBoardPage.jsx";
+
 const AdminPage = () => {
   useEffect(() => {
     // 관리자 페이지 들어오면 body 배경 어둡게 바꿈
@@ -24,14 +26,14 @@ const AdminPage = () => {
   const { memberGrade, isReady, memberNickname } = useAuthStore();
   // if (!isReady) return null;
 
-  // grade가 1이 아니면 관리자 아님 - 메인으로 튕겨냄
+  // grade가 1이 아니면 메인으로 튕겨냄
   if (memberGrade !== 1) {
     alert("접근 권한이 없습니다.");
     return <Navigate to="/" replace />;
   }
   return (
     <>
-      <AdminHeader />
+      <AdminHeader /> {/* 관리자 전용 헤더,푸터 사용 */}
       <div className={styles.admin_outer}>
         <section className={styles.admin_wrap}>
           {/* 왼쪽 사이드메뉴 */}
@@ -46,6 +48,7 @@ const AdminPage = () => {
               <Route path="dashboard" element={<DashBoardPage />} />
               <Route path="members" element={<AdminMemberPage />} />
               <Route path="support/*" element={<AdminSupport />} />
+              <Route path="boards" element={<AdminBoardPage />} />
             </Routes>
           </div>
         </section>

@@ -15,6 +15,8 @@ import kr.co.iei.admin.model.vo.ListItem;
 import kr.co.iei.admin.model.vo.Log;
 import kr.co.iei.admin.model.vo.Notice;
 import kr.co.iei.admin.model.vo.Qna;
+import kr.co.iei.board.model.vo.Board;
+import kr.co.iei.board.model.vo.Keyword;
 
 @Mapper
 public interface AdminDao {
@@ -62,6 +64,10 @@ public interface AdminDao {
 	List<Log> getLogList(String memberId, Integer start, String action, Integer result, String sort);
 
 	Map<String, Object> getAnomalyCount(String memberId);
+
+	List<Board> getBoardList();
+
+	List<Keyword> getKeywordList();
 
 	
 
