@@ -1,5 +1,7 @@
 const MyPoint = () => {
-  return <div>MyPoint 페이지 (임시)</div>;
+  return(
+   <div>보유 포인트</div>
+  );
 };
 
 export default MyPoint;
