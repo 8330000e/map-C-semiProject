@@ -351,6 +351,14 @@
 	margin: 0 0 10px;
 }
 
+.productContent {
+	white-space: pre-wrap;
+	word-break: break-word;
+	line-height: 1.7;
+	font-size: 1rem;
+	color: #3b4237;
+}
+
 .same_items_section {
 	/* 같은 상품 추천 섹션(롤링 리스트) */
 	margin-bottom: 14px;
@@ -464,6 +472,49 @@
 	font-size: 12px;
 	color: #6d7768;
 	margin-bottom: 8px;
+}
+
+.commentAuthorRow {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.commentAvatar,
+.commentFormAvatar,
+.authorAvatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	background: #fff;
+}
+
+.commentFormAvatar {
+	width: 24px;
+	height: 24px;
+}
+
+.authorRow {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 12px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid rgba(68, 77, 62, 0.12);
+}
+
+.authorRow img {
+	width: 42px;
+	height: 42px;
+}
+
+.authorRow span {
+	font-size: 1rem;
+	font-weight: 700;
+	color: #2f3a2b;
+	line-height: 1.1;
 }
 
 .review_header {

@@ -12,6 +12,7 @@ public class StoreBoard {
 
     private String memberId;
     private String memberNickname;
+    private String memberThumb;
     private String ctpvsggId;
     private String marketTitle;
     private String marketContent;

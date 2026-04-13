@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import useAuthStore from "../../../store/useAuthStore";
+import userImg from "../../../assets/user.png";
 import styles from "./storeDetail.module.css";
 import storeStyles from "./store.module.css";
 
@@ -51,7 +52,7 @@ const StoreDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const itemId = Number(id);
-  const { memberId, memberNickname } = useAuthStore();
+  const { memberId, memberNickname, memberThumb } = useAuthStore();
   const [item, setItem] = useState(null);
   const [storeList, setStoreList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -208,6 +209,26 @@ const StoreDetail = () => {
     if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
     if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
     return `${BACKSERVER}/board/editor/${trimmed}`;
+  };
+
+  const getMemberImageUrl = (thumb) => {
+    if (!thumb) return userImg;
+    if (typeof thumb !== "string") return userImg;
+    let trimmed = thumb.trim();
+    if (!trimmed) return userImg;
+
+    trimmed = trimmed.replace(/\\/g, "/");
+
+    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+    if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+    if (trimmed.startsWith("/member/thumb/")) return `${BACKSERVER}${trimmed}`;
+    if (trimmed.includes("/member/thumb/")) return `${BACKSERVER}/${trimmed.replace(/^\/+/, "")}`;
+    if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+    if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+    if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+    if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
+    return `${BACKSERVER}/member/thumb/${trimmed}`;
   };
 
   const [supportDirect, setSupportDirect] = useState(true);
@@ -657,7 +678,17 @@ const StoreDetail = () => {
             )}
           </div>
           <div className={styles.region_badge}>{item.regionName || item.ctpvsggId || "미등록"}</div>
-          <p>작성자 : {item.memberId}</p>
+          <div className={styles.authorRow}>
+            <img
+              className={styles.authorAvatar}
+              src={getMemberImageUrl(item.memberThumb || (item.memberId === memberId ? memberThumb : null))}
+              alt="작성자 프로필"
+              onError={(e) => {
+                e.currentTarget.src = userImg;
+              }}
+            />
+            <span>{item.memberNickname || item.memberId}</span>
+          </div>
           <p>조회수 : {item.readCount || 0}</p>
           <p>댓글 : {comments.length}</p>
           {(item.updatedAt || item.updateAt) &&
@@ -757,7 +788,7 @@ const StoreDetail = () => {
 
       <div className={styles.section_box}>
         <h3>상품정보</h3>
-        <p>{item.marketContent || `${item.marketTitle} 상품 상세 안내 ...`}</p>
+        <p className={styles.productContent}>{item.marketContent || `${item.marketTitle} 상품 상세 안내 ...`}</p>
       </div>
 
       <div className={styles.section_box}>
@@ -868,6 +899,7 @@ const StoreDetail = () => {
               isBoardAuthor ||
               parentAuthorId === memberId;
             const displayContent = isSecret && !canViewSecret ? "비공개 댓글입니다." : comment.reviewContent;
+            const commentAvatarUrl = getMemberImageUrl(comment.memberThumb || (comment.memberId === memberId ? memberThumb : null));
             return (
               <div
                 key={comment.reviewNo}
@@ -875,14 +907,24 @@ const StoreDetail = () => {
                 style={{ marginLeft: `${(comment.commentDepth || 0) * 20}px` }}
               >
                 <p className={styles.comment_meta}>
-                  <span>
-                    {comment.memberNickname || comment.memberId} · {formatCommentDate(comment.createdAt)}
-                    {isSecret && <span className={styles.reply_badge}>비공개</span>}
-                    {isCommentEdited(comment) && (
-                      <span className={styles.comment_update_info}>
-                        수정됨 · {formatCommentDateTime(comment.updatedAt)}
-                      </span>
-                    )}
+                  <span className={styles.commentAuthorRow}>
+                    <img
+                      className={styles.commentAvatar}
+                      src={commentAvatarUrl}
+                      alt={`${comment.memberNickname || comment.memberId} 프로필`}
+                      onError={(e) => {
+                        e.currentTarget.src = userImg;
+                      }}
+                    />
+                    <span>
+                      {comment.memberNickname || comment.memberId} · {formatCommentDate(comment.createdAt)}
+                      {isSecret && <span className={styles.reply_badge}>비공개</span>}
+                      {isCommentEdited(comment) && (
+                        <span className={styles.comment_update_info}>
+                          수정됨 · {formatCommentDateTime(comment.updatedAt)}
+                        </span>
+                      )}
+                    </span>
                   </span>
                   {!isOwn && (
                     <button
@@ -946,7 +988,15 @@ const StoreDetail = () => {
 
         <div className={styles.comment_form}>
           <p className={styles.comment_meta}>
-            [프로필이미지] {memberNickname || memberId || "비회원"} | 절약점수 : 00
+            <img
+              className={styles.commentFormAvatar}
+              src={getMemberImageUrl(memberThumb)}
+              alt="내 프로필"
+              onError={(e) => {
+                e.currentTarget.src = userImg;
+              }}
+            />
+            {memberNickname || memberId || "비회원"} | 절약점수 : 00
           </p>
           {replyTarget && (
             <div className={styles.reply_form}>

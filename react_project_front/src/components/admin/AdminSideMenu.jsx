@@ -13,13 +13,13 @@ import HistoryIcon from "@mui/icons-material/History";
 const AdminSideMenu = ({ memberNickname }) => {
   return (
     <div className={styles.side_menu_wrap}>
-      {/* 관리자 프로필 영역 */}
+      {/* 관리자 프로필 */}
       <div className={styles.admin_profile}>
         <img src={adminProfile} />
         <span className={styles.name}>{memberNickname}</span>
       </div>
 
-      <NavLink
+      <NavLink // NavLink 현재 url과 일치하면 자동으로 active 클래스 붙여줌 모듈 스타일 적용을 위해 조건부로 붙여줌
         className={({ isActive }) => (isActive ? styles.active_menu : "")}
         to="/admin/dashboard"
       >
@@ -39,7 +39,6 @@ const AdminSideMenu = ({ memberNickname }) => {
         </div>
       </NavLink>
 
-      {/* 아직 미구현 메뉴들 - 추후 라우트 연결 예정 */}
       <NavLink
         className={({ isActive }) => (isActive ? styles.active_menu : "")}
         to="/admin/boards"
