@@ -1,8 +1,12 @@
 package kr.co.iei.member.model.service;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.iei.member.model.dao.MemberDao;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
+import kr.co.iei.utils.EmailSender;
 import kr.co.iei.utils.JwtUtils;
 
 @Service
@@ -25,6 +30,9 @@ public class MemberService {
 
 	@Autowired
 	private JwtUtils jwtUtils;
+
+	@Autowired
+	private EmailSender emailSender;
 
 	@Transactional
 	public int insertMember(Member member) {
@@ -64,12 +72,12 @@ public class MemberService {
 				// -> null로 처리해도 걱정할 필요 없음
 				// -> 이미 데이터베이스에 저장완료.
 				loginMember.setMemberPw(null);
-				loginMember.setMemberStatus(loginMember.getMemberStatus());
+				login.setMemberStatus(loginMember.getMemberStatus());
+				login.setMemberEmail(loginMember.getMemberEmail());
 
 				return login;
 			}
-			
-			
+
 		}
 		return null;
 
@@ -81,18 +89,15 @@ public class MemberService {
 	 * 
 	 * return null; }
 	 */
-	
-	
-	
 
 	// 회원 1명 조회
-	
+
 	public Member getOneMemberInfo(String memberId) {
 		Member member = memberDao.getOneMemberInfo(memberId);
 		return member;
 	}
 
-	//아이디 찾기 로직 (김경건)
+	// 아이디 찾기 로직 (김경건)
 	public String findIdByEmail(String memberEmail) {
 		String memberId = memberDao.findIdByEmail(memberEmail);
 		return memberId;
@@ -104,43 +109,39 @@ public class MemberService {
 		return m;
 	}
 
-	
 	// boolean이기 떄문에 return도 !형식으로 줘야함.
 	// 비밀번호 찾기를 위한 아이디 검증 및 이메일 인증 신청 로직(김경건)
 	public boolean existsByIdAndEmail(String memberId, String memberEmail) {
 		Integer result = memberDao.existsByIdAndEmail(memberId, memberEmail);
-		//DAO / Mapper에서 값 못 받아 오는 경우 null이 되면서 에러가 터짐. 나는 0으로 설정해놨으니까.
-		
-		if(result != null && result > 0) {
-			
+		// DAO / Mapper에서 값 못 받아 오는 경우 null이 되면서 에러가 터짐. 나는 0으로 설정해놨으니까.
+
+		if (result != null && result > 0) {
+
 			return true;
 		}
 		return false;
 	}
-	
-	
 
-	//비밀번호 변경창 설정 로직
+	// 비밀번호 변경창 설정 로직
 	public int resetPw(Member member) {
-		Member m = memberDao.selectOneMember(member.getMemberId()); 
+		Member m = memberDao.selectOneMember(member.getMemberId());
 		// 해당하는 아이디를 가진 사용자가 없으면 작업 중단
-		//존재하지 않는 사용자 방지 
-		if(m == null)
-		return 0;
-		
-		//다시 재암호화.
-		//member에서 평문 형식의 비밀번호를 꺼내온다
+		// 존재하지 않는 사용자 방지
+		if (m == null)
+			return 0;
+
+		// 다시 재암호화.
+		// member에서 평문 형식의 비밀번호를 꺼내온다
 		String memberPw = member.getMemberPw();
-		//평문 형태의 비밀번호를 암호와 형태로 바꾼다.
+		// 평문 형태의 비밀번호를 암호와 형태로 바꾼다.
 		String encPw = bcrypt.encode(memberPw);
-		//암호화형태로 member객체에 셋팅완료
+		// 암호화형태로 member객체에 셋팅완료
 		member.setMemberPw(encPw);
-		
-		int result = memberDao.resetPw(member.getMemberId(),encPw);
+
+		int result = memberDao.resetPw(member.getMemberId(), encPw);
 		return result;
 	}
 
-	
 	////////////////////////////////////////////////////////////////////////
 
 	public List<Member> selectMemberList() {
@@ -169,7 +170,7 @@ public class MemberService {
 	// 회원정보 수정
 	@Transactional
 	public int updateMemberInfo(Member member) {
-	
+
 		int result = memberDao.updateMemberInfo(member);
 		return result;
 	}
@@ -184,12 +185,45 @@ public class MemberService {
 	public Integer selectMemberPoint(String memberId) {
 		return memberDao.selectMemberPoint(memberId);
 	}
+
 	@Transactional
 	public int leaveMember(String memberId) {
 		int result = memberDao.leaveMember(memberId);
 		return result;
 	}
-	
-	
 
+	@Transactional
+	public void insertLog(Map<String, Object> params) {
+	    Member m = memberDao.selectOneMember((String) params.get("memberId"));
+	    if (m == null) return;
+	    
+	    String logAction = (String) params.get("logAction");
+	    if ("로그인".equals(logAction)) {
+	        String lastLocation = memberDao.getLastLocation((String) params.get("memberId"));
+	        if (lastLocation != null && !lastLocation.equals((String) params.get("logLocation"))) {
+	            params.put("logAlert", "위치변경");
+	            // 이메일 발송
+	            String email = m.getMemberEmail();
+	            String location = (String) params.get("logLocation");
+	            emailSender.sendMail("비정상 로그인 감지", email, "새로운 위치에서 로그인이 감지되었습니다: " + location);
+	        }
+	    }
+	    
+	    memberDao.insertLog(params);
+	}
+
+
+	public Date getLockUntil(String memberId) {
+		Date lockUntil = memberDao.getLockUntil(memberId);
+		return lockUntil;
+	}
+
+	public void checkFailCount(String memberId) {
+		int failCount = memberDao.getFailCount(memberId);
+		System.out.println(failCount);
+		if (failCount >= 3) {
+			memberDao.updateLockUntil(memberId);
+		}
+
+	}
 }

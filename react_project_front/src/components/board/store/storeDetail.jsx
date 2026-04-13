@@ -42,6 +42,11 @@ const normalizeComments = (rawComments) =>
     isPrivate: isSecretComment(comment),
   }));
 
+// 중고거래 상세 페이지임.
+//  - 선택한 중고 상품의 상세 정보를 불러와서 보여줌.
+//  - 찜하기 버튼으로 관심 상품에 추가할 수 있음.
+//  - 댓글 작성, 답글 달기, 댓글 수정, 댓글 삭제, 댓글 신고 기능을 지원함.
+//  - 거래 후기와 판매자 평점을 함께 보여줌.
 const StoreDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -64,6 +69,41 @@ const StoreDetail = () => {
   const [editingPrivate, setEditingPrivate] = useState(false);
   const [saleStatus, setSaleStatus] = useState("판매중");
   const [deliveryMethod, setDeliveryMethod] = useState("");
+  const [isCartLoading, setIsCartLoading] = useState(false);
+
+  // 찜하기 기능임.
+  //  - 로그인한 사용자만 찜할 수 있음.
+  //  - 상품을 찜한 상품 목록에 추가하는 API를 호출함.
+  //  - 성공하면 성공 메시지를 보여주고, 실패하면 오류 메시지를 보여줌.
+  const handleAddToCart = async () => {
+    if (!memberId) {
+      Swal.fire({ icon: "info", title: "로그인 필요", text: "찜하기 위해 로그인해주세요." });
+      return;
+    }
+    if (!item?.marketNo) {
+      Swal.fire({ icon: "error", title: "오류", text: "상품 정보를 찾을 수 없습니다." });
+      return;
+    }
+
+    try {
+      setIsCartLoading(true);
+      await axios.post(`${BACKSERVER}/api/store/cart`, {
+        memberId,
+        marketNo: item.marketNo,
+        quantity: 1,
+      });
+      Swal.fire({ icon: "success", title: "찜하기 완료", text: "상품이 찜한 상품에 추가되었습니다." });
+    } catch (error) {
+      console.error("찜하기 실패", error);
+      Swal.fire({
+        icon: "error",
+        title: "찜하기 실패",
+        text: error.response?.data || "상품을 찜하는 중 오류가 발생했습니다.",
+      });
+    } finally {
+      setIsCartLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -226,6 +266,10 @@ const StoreDetail = () => {
     }
   };
 
+  // 댓글 작성 기능임.
+  //  - 로그인한 사용자만 댓글을 작성할 수 있음.
+  //  - 답글을 작성할 때 parentCommentNo를 함께 서버에 저장함.
+  //  - 등록 후 댓글 목록을 새로고침해서 최신 댓글을 보여줌.
   const handleAddComment = async () => {
     if (!memberId) {
       Swal.fire({
@@ -477,6 +521,9 @@ const StoreDetail = () => {
     });
   };
 
+  // 게시글 신고 기능임.
+  //  - 사용자가 해당 상품 게시글이 규정에 어긋난다고 판단하면 신고 요청을 함.
+  //  - 여기서는 화면에서 신고 완료 메시지를 보여주는 방식으로 처리함.
   const handleReport = async () => {
     const result = await Swal.fire({
       icon: "warning",
@@ -494,6 +541,9 @@ const StoreDetail = () => {
     }
   };
 
+  // 댓글 신고 기능임.
+  //  - 댓글이 규정에 어긋나거나 불쾌할 때 신고할 수 있도록 함.
+  //  - 신고 후에는 화면에서 신고 완료 상태를 유지함.
   const handleReportComment = async (commentId) => {
     const result = await Swal.fire({
       icon: "warning",
@@ -682,8 +732,13 @@ const StoreDetail = () => {
             <div className={styles.button_group}>
               {saleStatus !== "판매완료" && (
                 <>
-                  <button type="button" className={styles.cart_button}>
-                    🛒 장바구니
+                  <button
+                    type="button"
+                    className={styles.cart_button}
+                    onClick={handleAddToCart}
+                    disabled={isCartLoading}
+                  >
+                    🛒 찜하기
                   </button>
                   <button type="button" className={styles.buy_button} onClick={handleGoToPayment}>
                     구매하기

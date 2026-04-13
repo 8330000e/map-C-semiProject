@@ -118,6 +118,8 @@ const Main = () => {
   const [realtimeComments, setRealtimeComments] = useState([]);
   const [tipBoards, setTipBoards] = useState([]);
   const [tipIndex, setTipIndex] = useState(0);
+  // 팁 리스트는 초보자도 참고할 수 있는 꿀팁 모음임.
+  //  - 메인 화면에서 자동으로 한 개씩 보여주고, 클릭하면 해당 팁 상세로 이동함.
 
   useEffect(() => {
     axios
@@ -369,11 +371,17 @@ const Main = () => {
                 나무 키우기
               </Link>
             </li>
+            {/*포인트 나눔 새로 추가 */}
+            <li>
+              <Link to="/point-give">포인트 나눔</Link>
+            </li>
+
             <li>
               <span>
                 <hr />
               </span>
             </li>
+
             <li>
               <a href="#">공지사항</a>
             </li>
@@ -436,9 +444,9 @@ const Main = () => {
                 </div>
                 <div className="tip_date">
                   {tipBoards[tipIndex]?.boardDate
-                    ? new Date(tipBoards[tipIndex].boardDate).toLocaleDateString(
-                        "ko-KR",
-                      )
+                    ? new Date(
+                        tipBoards[tipIndex].boardDate,
+                      ).toLocaleDateString("ko-KR")
                     : "날짜 정보 없음"}
                 </div>
               </div>
@@ -498,7 +506,10 @@ const Main = () => {
 
       <div className="main_btm">
         <div className="used_list roundBorder">
-          <HorizontalScrollList scrollClassName="used_list_scroll" showButtons={false}>
+          <HorizontalScrollList
+            scrollClassName="used_list_scroll"
+            showButtons={false}
+          >
             <ul>
               {usedGoods.map((item, index) => {
                 const imageUrl = getImageUrl(item.productThumb);

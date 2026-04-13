@@ -1,3 +1,4 @@
+/* 회원 관리 - 전체 레이아웃 */
 .member_wrap {
   min-height: 100%;
   display: grid;
@@ -11,25 +12,29 @@
   border: 1px solid var(--admin-stroke);
   border-radius: 16px;
   box-shadow: 0 12px 20px var(--admin-card-shadow);
+  padding: 12px 16px;
 }
 
-.member_left {
-  height: calc(100vh - 200px);
-  overflow-y: auto;
-}
-
+/* 좌우 패널 공통 */
+.member_left,
 .member_right {
   height: calc(100vh - 200px);
   overflow-y: auto;
 }
 
-.member_title {
-  margin: 2px 0 12px;
-  color: var(--admin-text);
-  font-size: 28px;
-  line-height: 1.15;
+/* 오른쪽 상세 패널 추가 속성 */
+.member_right {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
+.member_right > * {
+  flex-shrink: 0; 
+}
+
+/* ---- 필터 바 ---- */
 .filter_bar {
   display: grid;
   grid-template-columns: 110px 110px minmax(0, 1fr) 116px;
@@ -54,67 +59,12 @@
   outline-offset: 1px;
 }
 
-.add_btn {
-  min-height: 36px;
-  border: 1px solid var(--admin-accent);
-  border-radius: 10px;
-  background-color: var(--admin-accent);
-  color: var(--admin-text);
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.sort_row {
-  margin-top: 10px;
-  border: 1px solid var(--admin-stroke);
-  border-radius: 10px;
-  background-color: #2f4868;
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 1.9fr 1fr 0.8fr 0.8fr 0.7fr;
-  gap: 0;
-  overflow: hidden;
-}
-
-.sort_btn {
-  min-height: 34px;
-  border: none;
-  border-right: 1px solid rgba(159, 182, 211, 0.18);
-  background: transparent;
-  color: #dce8f7;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.sort_btn:last-child {
-  border-right: none;
-}
-
-.sort_btn:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-.sort_btn_active {
-  background-color: rgba(26, 38, 58, 0.5);
-}
-
-.sort_arrow {
-  color: #a8c3e8;
-  font-size: 11px;
-}
-
+/* ---- 회원 목록 ---- */
 .member_list {
   margin-top: 10px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  flex: 1;
-  min-height: 0;
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -122,16 +72,15 @@
 .member_list::-webkit-scrollbar {
   width: 6px;
 }
-
 .member_list::-webkit-scrollbar-track {
   background: transparent;
 }
-
 .member_list::-webkit-scrollbar-thumb {
   background: var(--admin-stroke);
   border-radius: 10px;
 }
 
+/* 회원 아이템 */
 .member_item {
   width: 100%;
   border: 1px solid var(--admin-stroke);
@@ -148,55 +97,85 @@
   text-align: left;
 }
 
-.member_item:hover {
+.member_item:hover,
+.member_item_active {
   border-color: var(--admin-accent);
 }
 
 .member_item_active {
-  border-color: var(--admin-accent);
   box-shadow: 0 0 0 1px var(--admin-accent);
 }
 
-.member_identity {
+/* ---- 공통 레이아웃 & 텍스트 요소 ---- */
+/* 레이아웃: 멤버/프로필 식별자 */
+.member_identity,
+.profile_identity {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.member_identity {
   min-width: 0;
+}
+
+/* 텍스트 컨테이너 정렬 공통 */
+.identity_text,
+.profile_text,
+.log_text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.identity_text {
+  min-width: 0;
+}
+
+/* 텍스트 디테일 */
+.identity_text > span,
+.profile_text > span {
+  font-size: 14px;
+}
+
+.identity_text > span { color: var(--admin-muted); }
+.profile_text > span { color: var(--admin-text); }
+
+.identity_text > strong { font-size: 18px; line-height: 1.15; color: var(--admin-text); }
+.profile_text > strong { font-size: 22px; line-height: 1.1; color: var(--admin-text); }
+
+.log_text > strong { color: var(--admin-text); font-size: 17px; }
+.log_text > span, .log_text > em { color: var(--admin-muted); font-size: 13px; }
+.log_text > em { font-style: normal; }
+
+/* 아바타 공통 */
+.avatar,
+.avatar_lg {
+  border-radius: 50%;
+  border: 1px solid var(--admin-stroke-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
 }
 
 .avatar {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  border: 1px solid var(--admin-stroke-strong);
-  background-color: var(--admin-highlight);
+  background-color: var(--admin-accent-soft);
   color: var(--admin-text);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   font-size: 18px;
-  font-weight: 700;
   flex-shrink: 0;
 }
 
-.identity_text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
+.avatar_lg {
+  width: 56px;
+  height: 56px;
+  background-color: var(--admin-stroke-strong);
+  font-size: 24px;
 }
 
-.identity_text > span {
-  font-size: 14px;
-  color: #c6d4e8;
-}
-
-.identity_text > strong {
-  font-size: 18px;
-  line-height: 1.15;
-  color: #f3f7ff;
-}
-
+/* ---- 뱃지 ---- */
 .member_meta {
   display: flex;
   align-items: center;
@@ -213,62 +192,24 @@
   line-height: 1;
 }
 
-.status_active {
-  background-color: #a8f251;
-  color: #0f2f0d;
-}
+/* 상태 및 권한 뱃지 */
+.status_active { background-color: var(--admin-status-active); color: #0f2f0d; }
+.status_banned { background-color: var(--admin-status-banned); color: #450e0e; }
+.status_dormant { background-color: var(--admin-status-dormant); color: #1c2433; }
+.badge_role { background-color: var(--admin-badge-role); color: #1a2245; }
 
-.status_banned {
-  background-color: #f36464;
-  color: #450e0e;
-}
-
-.status_dormant {
-  background-color: #a2afc4;
-  color: #1c2433;
-}
-
-.badge_role {
-  background-color: #95a4ff;
-  color: #1a2245;
-}
+/* 위험도 뱃지 */
+.danger_high { background-color: var(--admin-status-banned); color: #450e0e; }
+.danger_mid { background-color: var(--admin-warning); color: #2a1f00; }
+.danger_safe { background-color: var(--admin-status-active); color: #0f2f0d; }
 
 .join_date {
   color: var(--admin-muted);
   font-size: 13px;
 }
 
-.pagination {
-  margin-top: 10px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 6px;
-}
-
-.page_btn {
-  min-width: 38px;
-  height: 32px;
-  border: 1px solid var(--admin-stroke);
-  border-radius: 8px;
-  background-color: var(--admin-input-bg);
-  color: var(--admin-text);
-  cursor: pointer;
-  font-size: 13px;
-}
-
-.current {
-  border-color: var(--admin-accent);
-  color: #fff;
-}
-
-.member_right {
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
+/* ---- 우측 카드 및 그리드 ---- */
+/* 프로필 카드 */
 .profile_card {
   border: 1px solid var(--admin-stroke);
   border-radius: 12px;
@@ -279,42 +220,6 @@
   padding: 12px;
 }
 
-.profile_identity {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.avatar_lg {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background-color: #5b6578;
-  border: 1px solid var(--admin-stroke-strong);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  font-weight: 700;
-}
-
-.profile_text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.profile_text > span {
-  color: var(--admin-text);
-  font-size: 14px;
-}
-
-.profile_text > strong {
-  color: var(--admin-text);
-  font-size: 22px;
-  line-height: 1.1;
-}
-
 .profile_badges {
   display: flex;
   flex-direction: column;
@@ -322,6 +227,7 @@
   gap: 6px;
 }
 
+/* 회원 정보 그리드 */
 .info_grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -331,7 +237,7 @@
 .info_item {
   border: 1px solid var(--admin-stroke);
   border-radius: 10px;
-  background-color: #202a3f;
+  background-color: var(--admin-panel);
   padding: 10px;
   min-height: 74px;
   display: flex;
@@ -351,15 +257,16 @@
   word-break: break-all;
 }
 
+/* 신고 수 - 위험 강조 */
 .info_danger {
   border-color: #924050;
   background-color: #372835;
 }
-
 .info_danger > strong {
   color: #ff7f92;
 }
 
+/* 활동 카드 */
 .activity_card {
   border: 1px solid var(--admin-stroke);
   border-radius: 12px;
@@ -374,6 +281,50 @@
   font-size: 22px;
 }
 
+/* ---- 이상기록 섹션 ---- */
+.anomaly {
+  border: 1px solid #4a2f3c;
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: linear-gradient(145deg, #1c1828 0%, #221e2e 100%);
+}
+
+.anomaly > h3 {
+  margin: 0 0 10px;
+  color: var(--admin-text);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--admin-stroke);
+}
+
+.loginFail {
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  background-color: #2b1520;
+  border: 1px solid #7a3040;
+  color: var(--admin-status-banned);
+  margin-bottom: 6px;
+}
+
+.loginLocation {
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  background-color: #272010;
+  border: 1px solid #6b5010;
+  color: var(--admin-warning);
+}
+
+/* ---- 로그 타임라인 ---- */
 .log_list {
   list-style: none;
   margin: 0;
@@ -397,43 +348,11 @@
   flex-shrink: 0;
 }
 
-.log_join {
-  background-color: #a8f251;
-}
-
-.log_login {
-  background-color: #58b2ff;
-}
-
-.log_report {
-  background-color: #ff6f7a;
-}
-
-.log_post {
-  background-color: #c6d2e4;
-}
-
-.log_text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.log_text > strong {
-  color: var(--admin-text);
-  font-size: 17px;
-}
-
-.log_text > span {
-  color: var(--admin-muted);
-  font-size: 13px;
-}
-
-.log_text > em {
-  color: #a8b5c9;
-  font-size: 13px;
-  font-style: normal;
-}
+/* 로그 타입별 색상 */
+.log_join { background-color: var(--admin-status-active); }
+.log_login { background-color: var(--admin-accent); }
+.log_report { background-color: var(--admin-status-banned); }
+.log_post { background-color: var(--admin-muted); }
 
 .empty_state {
   min-height: 140px;
@@ -446,6 +365,160 @@
   background-color: var(--admin-input-bg);
 }
 
+/* ---- 테이블 공통 (로그 & 모달) ---- */
+.member_log {
+  border: 1px solid var(--admin-stroke);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.member_log table,
+.modal_content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.modal_content table {
+  table-layout: fixed;
+}
+
+.member_log table thead {
+  background-color: var(--admin-table-header);
+  font-size: 13px;
+  color: var(--admin-text);
+}
+
+.member_log table tbody tr:hover,
+.modal_content tbody tr:hover {
+  background-color: var(--admin-table-header);
+  cursor: pointer;
+}
+
+.member_log th,
+.member_log td,
+.modal_content th,
+.modal_content td {
+  text-align: left;
+  border-bottom: 1px solid var(--admin-stroke);
+}
+
+.member_log th,
+.member_log td {
+  padding: 6px 10px;
+}
+
+.member_log th {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--admin-text);
+}
+
+.member_log td {
+  font-size: 13px;
+  color: var(--admin-muted);
+}
+
+.modal_content th,
+.modal_content td {
+  padding: 8px 10px;
+  font-size: 13px;
+  white-space: nowrap;
+  color: var(--admin-text);
+}
+
+.modal_content th {
+  font-weight: 600;
+}
+
+/* 모달 thead select 스타일 - 전체 테마에 맞게 */
+.modal_content thead select {
+  border: 1px solid var(--admin-stroke);
+  border-radius: 6px;
+  background-color: var(--admin-input-bg);
+  color: var(--admin-text);
+  padding: 4px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+.modal_content thead select:focus-visible {
+  outline: 2px solid var(--admin-accent);
+  outline-offset: 1px;
+}
+
+/* 정렬 가능한 th */
+.sort_th {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.sort_th:hover {
+  color: var(--admin-accent);
+}
+
+/* 기타 버튼 & 모달 컨테이너 */
+.log_modal_btn {
+  width: 100%;
+  background-color: var(--admin-accent);
+  color: var(--admin-text);
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: background-color 0.15s;
+}
+
+.log_modal_btn:hover {
+  background-color: #7aaaff;
+}
+
+.modal_bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--admin-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal_content {
+  background: var(--admin-panel);
+  border-radius: 12px;
+  padding: 24px;
+  width: 1200px;
+  min-height: 450px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal_content h3 {
+  color: var(--admin-text);
+  margin: 0 0 16px;
+  font-size: 20px;
+}
+
+.modal_content thead {
+  background-color: var(--admin-table-header);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* 로그인 실패 행 강조 */
+.fail_row {
+  background-color: #383f50;
+}
+
+/* ---- 반응형 ---- */
 @media (max-width: 1400px) {
   .member_wrap {
     grid-template-columns: 1fr;
@@ -456,25 +529,8 @@
   .member_wrap {
     padding: 12px 8px 8px;
   }
-
-  .member_title {
-    font-size: 24px;
-  }
-
   .filter_bar {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .sort_row {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .sort_btn {
-    border-bottom: 1px solid rgba(159, 182, 211, 0.18);
-  }
-
-  .sort_btn:nth-child(4n) {
-    border-right: none;
   }
 }
 
@@ -483,17 +539,14 @@
     flex-direction: column;
     align-items: flex-start;
   }
-
   .member_meta {
     justify-content: flex-start;
   }
-
   .profile_card {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
-
   .profile_badges {
     align-items: flex-start;
   }

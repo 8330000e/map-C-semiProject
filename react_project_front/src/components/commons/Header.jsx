@@ -8,14 +8,52 @@ import Swal from "sweetalert2";
 
 import useAuthStore from "../../store/useAuthStore";
 import { useState, useEffect, useRef } from "react";
+
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
+
+// memberThumb의 경로를 실제 이미지 URL로 변환하는 함수임.
+// - 백엔드에서 내려오는 값이 절대 URL일 수도 있고,
+// - /upload/, /board/editor/ 같은 상대 경로 형태일 수도 있으며,
+// - 드라이브 경로로 저장된 경우에도 정상적으로 백엔드 호출 URL로 변환함.
+const getImageUrl = (thumb) => {
+  if (!thumb || typeof thumb !== "string") return null;
+  let trimmed = thumb.trim();
+  if (!trimmed) return null;
+
+  trimmed = trimmed.replace(/\\/g, "/").replace(/\\/g, "/");
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
+  if (driveMatch) {
+    const boardIndex = trimmed.indexOf("/board/editor/");
+    if (boardIndex !== -1) {
+      const suffix = trimmed.substring(boardIndex);
+      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
+    }
+    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
+  }
+
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
+  return `${BACKSERVER}/member/thumb/${trimmed}`;
+};
 // 로고 이미지는 Vite 정상 로딩을 위해 import 방식으로 참조함.
 import logo from "../../assets/logo/logo.svg";
+import axios from "axios";
 
 const Header = () => {
   const navigate = useNavigate();
   const [drawer, setDrawer] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
   const drawerRef = useRef(null);
-  const { memberId, memberNickname, logout, memberGrade } = useAuthStore();
+  const { memberId, memberNickname, memberThumb, logout, memberGrade } = useAuthStore();
+
+  // avatarError는 Header 이미지 로딩 실패 시 기본 아이콘으로 폴백하기 위한 상태임.
+  // memberThumb가 있어도 이미지가 깨지면 아이콘으로 바꿔줌.
 
   //location : 현재 나의 위치가 어느페이지에 있는지를 알려주는 일종의 네비게이션
   const location = useLocation();
@@ -33,8 +71,18 @@ const Header = () => {
     });
 
     if (result.isConfirmed) {
-      logout();
-      navigate("/");
+      axios
+        .post(`${import.meta.env.VITE_BACKSERVER}/members/logout/${memberId}`)
+        .then((res) => {
+          console.log(res);
+          logout();
+          navigate("/");
+        })
+        .catch((err) => {
+          console.log(err);
+          logout();
+          navigate("/");
+        });
     }
   };
 
@@ -60,6 +108,10 @@ const Header = () => {
     // 다른 페이지로 이동했을 때 드로어가 그대로 열려 있지 않도록 함.
     setDrawer(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    setAvatarError(false);
+  }, [memberThumb]);
 
   return (
     <>
@@ -92,7 +144,17 @@ const Header = () => {
                   className={styles.profile_item}
                   onClick={() => navigate("/admin")}
                 >
-                  <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
+                  {memberThumb && !avatarError ? (
+                    <img
+                      src={getImageUrl(memberThumb)}
+                      alt="프로필"
+                      className={styles.profile_image}
+                      onError={() => setAvatarError(true)}
+                      onLoad={() => setAvatarError(false)}
+                    />
+                  ) : (
+                    <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
+                  )}
                   <span>{memberNickname}</span>
                 </div>
               ) : (
@@ -102,7 +164,17 @@ const Header = () => {
                     setDrawer((prev) => !prev);
                   }}
                 >
-                  <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
+                  {memberThumb && !avatarError ? (
+                    <img
+                      src={getImageUrl(memberThumb)}
+                      alt="프로필"
+                      className={styles.profile_image}
+                      onError={() => setAvatarError(true)}
+                      onLoad={() => setAvatarError(false)}
+                    />
+                  ) : (
+                    <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
+                  )}
                   <span>{memberNickname}</span>
                 </div>
               )}
@@ -215,6 +287,17 @@ const Header = () => {
                       onClick={() => setDrawer(false)}
                     >
                       내 포인트
+                    </NavLink>
+                    <NavLink
+                      to="/mypage/cart"
+                      className={({ isActive }) =>
+                        isActive
+                          ? styles.drawer_link_active
+                          : styles.drawer_link
+                      }
+                      onClick={() => setDrawer(false)}
+                    >
+                      찜한 상품
                     </NavLink>
                     <NavLink
                       to="/mypage/history/purchase"

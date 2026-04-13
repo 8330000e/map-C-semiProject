@@ -27,4 +27,12 @@ public class BoardComment {
     private Long commentGroup;
     private Integer commentDepth;
     private Integer isSecret;
+	public void setBoardNo(int boardNo2) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void setCommentNo(long commentNo2) {
+		// TODO Auto-generated method stub
+		
+	}
 }

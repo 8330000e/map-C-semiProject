@@ -1,4 +1,6 @@
-﻿import styles from "../../pages/admin/AdminNoticePage.module.css";
+// 공지사항 관리 UI - 위쪽 작성 폼 + 아래쪽 목록 테이블
+// 실제 API 호출은 AdminNoticePage.jsx에서 담당
+import styles from "../../pages/admin/AdminNoticePage.module.css";
 import Button from "../ui/Button";
 import { Input, TextArea } from "../ui/Form";
 
@@ -14,6 +16,8 @@ const AdminNotice = ({
   setImageFile,
   imageFile,
 }) => {
+  // 여러 형태의 값을 0/1 플래그로 통일
+  // DB에서 공개/비공개가 숫자로 오기도 하고 문자열로 오기도 해서 방어용으로 만든 함수
   const toFlag = (value, defaultValue = 0) => {
     if (
       value === 1 ||
@@ -42,6 +46,7 @@ const AdminNotice = ({
 
   return (
     <>
+      {/* 공지사항 작성/수정 폼 */}
       <section className={styles.notice_write_wrap}>
         <form onSubmit={insertNotice}>
           <section className={styles.notice_input_wrap}>
@@ -66,6 +71,7 @@ const AdminNotice = ({
             </div>
           </section>
 
+          {/* 오른쪽 옵션 패널 - 공개/고정/카테고리/이미지 설정 */}
           <section className={styles.notice_option_wrap}>
             <div className={styles.notice_public}>
               <label htmlFor="noticePublic">공개 설정</label>
@@ -111,15 +117,19 @@ const AdminNotice = ({
               </select>
             </div>
 
+            {/* 이미지 파일 선택 - 커스텀 스타일 위해 input 숨기고 label로 클릭 트리거 */}
             <div className={styles.notice_image}>
               <label htmlFor="noticeImage">대표 이미지</label>
               <div className={styles.file_input_wrap}>
                 <label htmlFor="noticeImage" className={styles.file_btn}>
                   파일 선택
                 </label>
+                {/* 파일 선택 상태에 따라 텍스트/스타일 변경 */}
                 <span
                   className={`${styles.file_name} ${
-                    imageFile || notice.hasOldImage ? styles.file_name_active : ""
+                    imageFile || notice.hasOldImage
+                      ? styles.file_name_active
+                      : ""
                   }`}
                 >
                   {imageFile
@@ -138,6 +148,7 @@ const AdminNotice = ({
               </div>
             </div>
 
+            {/* isEdit 상태에 따라 버튼 텍스트 변경 */}
             <Button className="btn admin" type="submit">
               {isEdit ? "수정하기" : "등록하기"}
             </Button>
@@ -145,6 +156,7 @@ const AdminNotice = ({
         </form>
       </section>
 
+      {/* 공지사항 목록 테이블 */}
       <section className={styles.notice_list_wrap}>
         <div className={styles.table_wrap}>
           <table className={styles.notice_table}>
@@ -182,6 +194,7 @@ const AdminNotice = ({
                     <td className={styles.col_title}>{item.noticeTitle}</td>
                     <td className={styles.col_date}>{item.noticeDate}</td>
                     <td className={styles.col_edit}>
+                      {/* 수정 클릭 시 해당 공지 데이터 폼에 채우고 수정 모드로 전환 */}
                       <Button
                         className="btn admin sm"
                         type="button"
@@ -194,6 +207,7 @@ const AdminNotice = ({
                             noticePublic: toFlag(item.noticePublic, 1),
                             noticeFixed: toFlag(item.noticeFixed, 0),
                             noticeCategory: item.noticeCategory || "이벤트",
+                            // 이미지 경로가 어떤 필드명으로 오든 체크해서 hasOldImage 설정
                             hasOldImage: !!(
                               item.noticeImagePath ||
                               item.noticeImage ||

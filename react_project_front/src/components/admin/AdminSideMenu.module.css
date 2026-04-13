@@ -3,8 +3,8 @@
 }
 
 .admin_profile {
-  background-color: #161f33;
-  border: 1px solid #334c69;
+  background-color: var(--admin-panel-2);
+  border: 1px solid var(--admin-stroke);
   border-radius: 14px;
   padding: 16px;
   margin-bottom: 32px;
@@ -19,8 +19,8 @@
   height: 120px;
   object-fit: cover;
   border-radius: 50%;
-  background-color: #0a1224;;
-  border: 1px solid #5f7694;
+  background-color: var(--admin-bg);
+  border: 1px solid var(--admin-stroke-strong);
 }
 
 .side_menu_wrap a {
@@ -29,26 +29,28 @@
   padding: 12px 14px;
   margin: 8px 0;
   border-radius: 8px;
-  color: #9aa7bd;
+  color: var(--admin-muted);
   transition: all 0.2s;
 }
 
 .side_menu_wrap a:hover {
-  background-color: #1f2f53;;
-  color: #e6edf7;
+  background-color: var(--admin-accent-soft);
+  color: var(--admin-text);
 }
 
 .active_menu {
-  background-color: #5b8cff;;
+  background-color: var(--admin-accent);
   color: #ffffff;
   font-weight: 700;
-  box-shadow: 0 6px 12px #111827;
+  box-shadow: 0 6px 12px var(--admin-card-shadow);
 }
+
 .menu_item > span {
-    display: block;
-    width: 150px;
+  display: block;
+  width: 150px;
 }
+
 .menu_item {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }

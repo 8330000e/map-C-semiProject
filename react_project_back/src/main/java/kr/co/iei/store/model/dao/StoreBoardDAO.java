@@ -1,6 +1,7 @@
 package kr.co.iei.store.model.dao;
 
 import kr.co.iei.store.model.vo.StoreBoard;
+import kr.co.iei.store.model.vo.StoreCart;
 import kr.co.iei.store.model.vo.StoreRating;
 import kr.co.iei.store.model.vo.StoreReview;
 import kr.co.iei.store.model.vo.StoreTradeInfo;
@@ -58,6 +59,16 @@ public interface StoreBoardDAO {
 
     StoreTradeInfo selectTradeInfoByMarketNoAndBuyerId(@Param("marketNo") Long marketNo,
                                                        @Param("buyerId") String buyerId);
+
+    StoreCart selectCartItem(@Param("memberId") String memberId, @Param("marketNo") Long marketNo);
+
+    List<StoreCart> selectCartByMemberId(@Param("memberId") String memberId);
+
+    int insertCartItem(StoreCart cart);
+
+    int updateCartQuantity(@Param("cartNo") Long cartNo, @Param("quantity") Integer quantity);
+
+    int deleteCartItem(@Param("cartNo") Long cartNo, @Param("memberId") String memberId);
 
     StoreTradeInfo selectTradeInfoByTradeNo(@Param("tradeNo") Long tradeNo);
 

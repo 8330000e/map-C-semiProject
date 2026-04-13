@@ -8,7 +8,7 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  /* 내부 요소들을 세로축 중앙 정렬 */
+  /* 내부 요소들을 세로 축 중앙 정렬 */
   align-items: center;
   justify-content: flex-start; /* 위에서부터 차례대로 배치 */
   padding-top: 60px;
@@ -20,9 +20,7 @@
 .page_title {
   text-align: center;
   width: 100%;
-  /* !important를 붙여서 다른 스타일이 방해하지 못하게 강제해 보세요 */
-  margin-bottom: 80px !important;
-  display: block;
+  margin-bottom: 30px;
 }
 
 .input_wrap {

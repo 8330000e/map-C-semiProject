@@ -22,16 +22,21 @@ public class Member {
     private String memberNickname;          // NOT NULL
     private String memberEmail;
     private String memberThumb;
-    private Date enrollDate;                // SYSDATE 사용 예정
+    private String enrollDate;                // SYSDATE 사용 예정
 
-    private Integer memberStatus = 0;     // 기본값 1 // 기본값 0임 
-    private Integer mannerScore = 0;       // 기본값 0 // 기본값 36.5임 
+    private Integer memberStatus = 0;      
+    private Integer mannerScore = 0;       
 
     private Integer tradeCount = 0;        // 기본값 0
     
     private Integer boardCount;					// 게시글 수 추가 
     private Integer commentCount;				// 댓글 수 추가 
     private Integer reportCount;				// 게시글이 신고당한 횟수 
+    
+    private Date lockUntil;						// 정지관련 
+    
+    private Integer failCount;
+    private Integer locationChangeCount;
 
     public Integer getMemberStatus() {
         return memberStatus;

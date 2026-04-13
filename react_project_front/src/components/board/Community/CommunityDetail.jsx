@@ -303,13 +303,16 @@ const CommunityDetail = ({
       if (!scrapped) {
         // 사용자가 스크랩하지 않은 상태이면 서버에 스크랩 추가 요청을 보냅니다.
         // 스크랩을 등록하면 버튼 UI는 활성화 상태로 바뀝니다.
-        await axios.post(
-          `${BACKSERVER}/boards/${board.boardNo}/tips`,
-          null,
-          { params: { memberId } },
-        );
+        await axios.post(`${BACKSERVER}/boards/${board.boardNo}/tips`, null, {
+          params: { memberId },
+        });
         setScrapped(true);
-        Swal.fire({ icon: "success", title: "스크랩 되었습니다.", timer: 1000, showConfirmButton: false });
+        Swal.fire({
+          icon: "success",
+          title: "스크랩 되었습니다.",
+          timer: 1000,
+          showConfirmButton: false,
+        });
       } else {
         // 이미 스크랩 상태이면 서버에 스크랩 취소 요청을 보냅니다.
         // 취소 성공 시 버튼 UI도 비활성화 상태로 갱신됩니다.
@@ -317,7 +320,12 @@ const CommunityDetail = ({
           params: { memberId },
         });
         setScrapped(false);
-        Swal.fire({ icon: "success", title: "스크랩이 취소되었습니다.", timer: 1000, showConfirmButton: false });
+        Swal.fire({
+          icon: "success",
+          title: "스크랩이 취소되었습니다.",
+          timer: 1000,
+          showConfirmButton: false,
+        });
       }
     } catch (err) {
       console.error("스크랩 처리 실패", err);
@@ -330,17 +338,59 @@ const CommunityDetail = ({
   };
 
   const handleReport = async () => {
-    const result = await Swal.fire({
+    const { value: category } = await Swal.fire({
       icon: "warning",
       title: "신고하기",
-      text: "해당 게시글을 신고하시겠습니까?",
+      input: "select",
+      inputOptions: {
+        "부적절한 게시글": "부적절한 게시글",
+        "스팸/광고": "스팸/광고",
+        "욕설/비방": "욕설/비방",
+        허위정보: "허위정보",
+        기타: "기타",
+      },
+      inputPlaceholder: "신고 사유를 선택해주세요",
       showCancelButton: true,
-      confirmButtonText: "신고",
+      confirmButtonText: "다음",
       cancelButtonText: "취소",
       confirmButtonColor: "#c0392b",
     });
-    if (result.isConfirmed) {
-      Swal.fire({ icon: "success", title: "신고 접수되었습니다." });
+
+    if (category) {
+      const { value: content } = await Swal.fire({
+        title: "신고 상세 내용",
+        input: "textarea",
+        inputPlaceholder: "신고 사유를 상세하게 작성해주세요",
+        showCancelButton: true,
+        confirmButtonText: "신고 접수",
+        cancelButtonText: "취소",
+        confirmButtonColor: "#c0392b",
+      });
+
+      if (content) {
+        axios
+          .post(`${import.meta.env.VITE_BACKSERVER}/boards/report`, {
+            boardNo: board.boardNo,
+            reportId: memberId,
+            reportCategory: category,
+            reportContent: content,
+          })
+          .then((res) => {
+            if (res.data === 1) {
+              Swal.fire({ icon: "success", title: "신고 접수되었습니다." });
+            } else if (res.data === -1) {
+              Swal.fire({ icon: "warning", title: "신고는 한번만 하세요" });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            Swal.fire({
+              icon: "error",
+              title: "신고 실패",
+              text: "다시 시도해주세요.",
+            });
+          });
+      }
     }
   };
 
@@ -530,9 +580,11 @@ const CommunityDetail = ({
               <span>{comment.memberNickname || comment.memberId}</span>
               <span>{formatTime(comment.createdAt)}</span>
               {(comment.updatedAt || comment.updateAt) &&
-                (comment.updatedAt || comment.updateAt) !== comment.createdAt && (
+                (comment.updatedAt || comment.updateAt) !==
+                  comment.createdAt && (
                   <span className={styles.commentUpdateMeta}>
-                    수정됨 · {formatDateTime(comment.updatedAt || comment.updateAt)}
+                    수정됨 ·{" "}
+                    {formatDateTime(comment.updatedAt || comment.updateAt)}
                   </span>
                 )}
               {isSecret && <span className={styles.commentBadge}>비공개</span>}
@@ -544,7 +596,9 @@ const CommunityDetail = ({
               title="댓글 신고"
             >
               <span className="material-icons">
-                {reportedCommentIds.includes(comment.id) ? "report" : "report_gmailerrorred"}
+                {reportedCommentIds.includes(comment.id)
+                  ? "report"
+                  : "report_gmailerrorred"}
               </span>
             </button>
           </div>

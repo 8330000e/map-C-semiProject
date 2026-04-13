@@ -59,10 +59,12 @@ import CreateCampaignPage from "./pages/campaign/CreateCampaignPage";
 import CampaignManagerPage from "./pages/campaign/CampaignManagerPage";
 import CampaignMemoWritePage from "./pages/campaign/CampaignMemoWritePage";
 import CampaignUpdateDeletePage from "./pages/campaign/CampaignUpdateDeletePage";
+import PointForGoodPage from "./pages/pointadmin/PointForGoodPage";
 
 function App() {
   const location = useLocation();
-  const isAdmin = location.pathname.startsWith("/admin");
+  const isAdmin = location.pathname.startsWith("/admin"); // 현재 url이 /admin 으로 시작하면 ture 반환
+  const { memberGrade } = useAuthStore();
   {
     /*1. 로그인로직 
     2. 로그인 후 null이 아닌 memeber state를 useAthsore에 저장*/
@@ -90,7 +92,8 @@ function App() {
 
   return (
     <div className="carbonconnect wrap">
-      {!isAdmin && <Header />}
+      {!isAdmin && <Header />}{" "}
+      {/* isAdmin이 true면 헤더 컴포넌트 실행 안함 (푸터도 동일)*/}
       <main className={isAdmin ? "" : "main"}>
         <Routes>
           <Route path="/" element={<Main />} />
@@ -112,6 +115,13 @@ function App() {
           <Route path="/tree-grow" element={<TreeGrowMainPage />} />
           <Route path="/mission" element={<MissionListPage />} />
           <Route path="/community" element={<MapCommunityPage />} />
+
+          <Route
+            path="/admin/*"
+            element={
+              memberGrade === 1 ? <AdminPage /> : <Navigate to="/" replace />
+            } // 관리자 아니면 메인으로 날리기
+          />
           <Route path="/campaign/main" element={<CampaignMainPage />}></Route>
           <Route
             path="/campaign/detail/:campaignNo"
@@ -136,6 +146,9 @@ function App() {
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/support/*" element={<SupportPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+
+          <Route path="/point-give/*" element={<PointForGoodPage />}></Route>
         </Routes>
       </main>
       {!isAdmin && <Footer />}

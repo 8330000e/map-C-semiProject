@@ -34,7 +34,6 @@ public class Board {
 	    // 수정할 때마다 DB에 SYSDATE로 저장해서 프론트에서 "수정됨" 표시를 할 수 있도록 함.
 	    private String updatedAt;
 	    
-	    
 	 
 	    
 	    
@@ -69,5 +68,9 @@ public class Board {
     /*이거는 마이페이지 작업을 위한 거니 신경 안 쓰셔도 됩니다.*/
     private String searchBoard;
     private Integer filter;
+    
+    // 관리자용 
+    private Integer reportCount;
+    private String detectedKeyword;
 }
 

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,8 @@ import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
+import kr.co.iei.board.model.vo.BoardReport;
+import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.mission.model.service.MissionService;
 import kr.co.iei.utils.FileUtils;
 
@@ -26,6 +29,9 @@ public class BoardService {
 	
 	@Autowired
 	private MissionService missionService;
+	
+	@Autowired
+	private MemberService memberService;
 
 	@Value("${file.root}")
 	private String root;
@@ -45,7 +51,7 @@ public class BoardService {
 	}
 	//게시글 작성
 	@Transactional
-	public HashMap<String, Object> insertBoard(Board board) {
+	public HashMap<String, Object> insertBoard(Board board, String ip, String device) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
 
 	    int result = boardDao.insertBoard(board);
@@ -55,6 +61,14 @@ public class BoardService {
 	    if (result > 0) {
 	        int missionResult = missionService.completeBasicMission(board.getWriterId());
 	        pointAwarded = missionResult == 1;
+	        
+	        Map<String, Object> logParams = new HashMap<>();
+	        logParams.put("memberId", board.getWriterId());
+	        logParams.put("logIp", ip);      
+	        logParams.put("logAction", "게시글작성");
+	        logParams.put("logDevice", device);
+	        logParams.put("logDetail", board.getBoardNo() + " | " + board.getBoardTitle());
+	        memberService.insertLog(logParams);
 	    }
 
 	    resultMap.put("boardNo", board.getBoardNo());
@@ -106,8 +120,19 @@ public class BoardService {
 	// 댓글 등록 기능임. 새 댓글을 DB에 저장하고 저장된 댓글 객체를 리턴함.
 	//  - 댓글 번호는 MyBatis selectKey로 자동 생성됨.
 	//  - 부모 댓글 번호가 있으면 대댓글로 저장됨.
-	public BoardComment addBoardComment(BoardComment comment) {
+	public BoardComment addBoardComment(BoardComment comment, String ip, String device) {
 		boardDao.insertBoardComment(comment);
+		 Map<String, Object> logParams = new HashMap<>();
+	        logParams.put("memberId", comment.getMemberId());
+	        logParams.put("logIp", ip);      
+	        logParams.put("logAction", "댓글작성");
+	        logParams.put("logDevice", device);
+	        String detail = comment.getContent();
+	        if (detail.length() > 10) {
+	        	detail = detail.substring(0, 10) + "...";
+	        }
+	        logParams.put("logDetail", comment.getBoardNo() + " | " + detail);
+	        memberService.insertLog(logParams);
 		return comment;
 	}
 
@@ -226,6 +251,16 @@ public class BoardService {
 	public List<Board> selectMarkers() {
 		List<Board> list = boardDao.selectMarkers();
 		return list;
+	}
+	
+	@Transactional
+	public int insertBoardReport(BoardReport report) {
+		int check = boardDao.checkReport(report);
+		if (check > 0) {
+			return -1;
+		}
+		
+		return boardDao.insertBoardReport(report);
 	}
 }
 

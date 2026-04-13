@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.iei.member.model.dao.MemberDao">
 
-
+	
 <!--김경건-->
 
 <insert id="insertMember"
@@ -14,7 +14,7 @@
 	enroll_date, member_status, manner_score, trade_count)
 	VALUES
 	(#{memberId}, #{memberPw}, #{memberName}, 2, #{memberNickname},
-	#{memberEmail}, #{memberThumb}, SYSDATE, 1,
+	#{memberEmail}, #{memberThumb}, SYSDATE, 0,
 	0, 0)
 </insert>
 
@@ -128,4 +128,50 @@ fetch first 1 row only
 <update id="leaveMember">
 	update member_tbl1 set member_status = 2 where member_id =#{memberId}
 </update>
+
+<insert id ="insertLog">
+	insert into member_log_tbl (member_log_no, member_id, log_ip, log_time, log_action, log_device, log_result, log_location, log_detail, log_alert)
+	values (
+		log_seq.nextval,
+		#{memberId},
+		#{logIp},
+		sysdate,
+		#{logAction},
+		#{logDevice},
+		#{logResult},
+		#{logLocation},
+		#{logDetail},
+		#{logAlert}
+	)
+</insert>
+
+<select id="getLastLocation" resultType="String">
+	<![CDATA[
+	select * from (
+    	select log_location 
+    	from member_log_tbl 
+    	where member_id = #{memberId} and log_action = '로그인'
+    	order by log_time desc
+) where rownum <= 1
+]]>
+</select>
+
+<select id="getLockUntil" resultType="java.util.Date">
+	select lock_until from member_tbl1 where member_id = #{memberId}
+</select>
+
+<select id="getFailCount">
+	SELECT COUNT(*) FROM member_log_tbl
+    WHERE member_id = #{memberId}
+    AND log_action = '로그인실패'
+    AND log_time > SYSDATE - (1/1440)	<!-- 60분 * 24 = 1440 sysdate - (1/1440) = 현재시간 1분전  -->
+</select>
+
+<update id="updateLockUntil">
+	update member_tbl1 
+	set lock_until = sysdate + (5/1440) <!-- 현재시간 5분후 -->
+	where member_id = #{memberId}	
+</update>
+
+
 </mapper>

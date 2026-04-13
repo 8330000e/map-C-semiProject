@@ -9,6 +9,8 @@ import LeaveMember from "../../components/mypage/LeaveMember";
 // import MyPoint from "../../components/mypage/MyPoint";
 import ChangePw from "../../components/mypage/ChangePw";
 
+import MyPoint from "../../components/mypage/MyPoint";
+import CartPage from "../../components/mypage/CartPage";
 import PurchaseHistory from "../../components/mypage/PurchaseHistory";
 import PurchaseDetail from "../../components/mypage/PurchaseDetail";
 import SaleHistory from "../../components/mypage/SaleHistory";
@@ -56,8 +58,8 @@ const Mypage = () => {
               <Route path="changePw" element={<ChangePw />} />
               <Route path="myLikeBoard" element={<MyLikeBoard />} />
               <Route path="tipScrap" element={<MemberTip />} />
-              {/* 
-            <Route path="myPoint" element={<MyPoint />} /> */}
+              <Route path="myPoint" element={<MyPoint />} />
+              <Route path="cart" element={<CartPage />} />
               <Route path="leaveMember" element={<LeaveMember />} />
               <Route path="history/purchase" element={<PurchaseHistory />} />
               <Route path="history/purchase/:id" element={<PurchaseDetail />} />

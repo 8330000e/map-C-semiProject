@@ -1,3 +1,5 @@
+// 1:1 문의 관리 UI - 목록 테이블 + 답변 모달
+// 실제 API 호출은 AdminQnaPage.jsx에서 담당
 import styles from "../../pages/admin/AdminQnaPage.module.css";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { Input, TextArea } from "../ui/Form";
@@ -15,7 +17,6 @@ const AdminQna = ({
   setAnswer,
   qnaAnswer,
   setImageFile,
-
   page,
   setPage,
   totalPage,
@@ -23,8 +24,9 @@ const AdminQna = ({
   setPreviewImage,
   previewImage,
 }) => {
-  const fileRef = useRef(null);
+  const fileRef = useRef(null); // 숨겨진 파일 input 접근용
 
+  // 목록에서 아이콘 클릭 시 모달 열기 + 상태 초기화
   const openDetailModal = (item) => {
     setSelectedQna(item);
     setAnswer("");
@@ -34,6 +36,7 @@ const AdminQna = ({
 
   return (
     <>
+      {/* 문의 목록 테이블 */}
       <section className={styles.qna_list_wrap}>
         <div className={styles.table_wrap}>
           <table className={styles.qna_table}>
@@ -42,7 +45,6 @@ const AdminQna = ({
               <col className={styles.col_title} />
               <col className={styles.col_category} />
               <col className={styles.col_writer} />
-
               <col className={styles.col_date} />
               <col className={styles.col_status} />
               <col className={styles.col_answer} />
@@ -74,6 +76,7 @@ const AdminQna = ({
                     <td className={styles.col_writer}>{item.memberId}</td>
                     <td className={styles.col_date}>{item.qnaDate}</td>
                     <td className={styles.col_status}>
+                      {/* qnaStatus 0 = 미답변, 1 = 답변완료 */}
                       <span
                         className={
                           item.qnaStatus === 0
@@ -84,6 +87,7 @@ const AdminQna = ({
                         {item.qnaStatus === 0 ? "미답변" : "답변완료"}
                       </span>
                     </td>
+                    {/* 아이콘 클릭으로 상세/답변 모달 열기 - 키보드 접근성도 처리 */}
                     <td
                       className={styles.col_answer}
                       role="button"
@@ -109,14 +113,16 @@ const AdminQna = ({
         </div>
       </section>
 
+      {/* 답변 모달 - 배경 클릭 시 닫힘 */}
       {isOpen && selectedQna && (
         <div className={styles.modal_overlay} onClick={() => setIsOpen(false)}>
           <div
             className={styles.modal_content}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 닫힘 방지
           >
             <h3>상세보기 및 답변</h3>
             <div className={styles.modal_body}>
+              {/* 왼쪽: 문의 내용 (읽기 전용) */}
               <div className={styles.qna_detail}>
                 <label htmlFor="qnaTitle">문의 제목</label>
                 <Input
@@ -135,8 +141,8 @@ const AdminQna = ({
                   readOnly
                 />
               </div>
+              {/* 오른쪽: 질문 이미지 - 클릭 시 크게보기 */}
               <div className={styles.qna_image}>
-                {" "}
                 {selectedQna.qnaQuestionImage ? (
                   <img
                     src={`${import.meta.env.VITE_BACKSERVER}${selectedQna.qnaQuestionImage}`}
@@ -154,6 +160,7 @@ const AdminQna = ({
               </div>
             </div>
 
+            {/* 답변 작성 영역 */}
             <div className={styles.modal_answer}>
               <label htmlFor="qnaAnswer">답변 작성</label>
               <TextArea
@@ -162,6 +169,7 @@ const AdminQna = ({
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
               />
+              {/* 이미지 첨부 - input 숨기고 버튼으로 클릭 트리거 */}
               <input
                 type="file"
                 accept="image/*"
@@ -199,6 +207,7 @@ const AdminQna = ({
           </div>
         </div>
       )}
+
       <Pagination
         page={page}
         setPage={setPage}
@@ -206,6 +215,7 @@ const AdminQna = ({
         naviSize={5}
       />
 
+      {/* 이미지 크게보기 모달 - 클릭하면 닫힘 */}
       {previewImage && (
         <div
           className={styles.image_modal}

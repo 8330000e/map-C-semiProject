@@ -74,14 +74,17 @@ const ResetPw = () => {
 
   return (
     <div className={styles.reset_pw_wrap}>
-      <h1 className="page-title">비밀번호 변경 페이지</h1>
+      <h1 className={styles.page_title}>비밀번호 변경 페이지</h1>
       <form>
         <div className={styles.input_wrap}>
-          <label htmlFor="memberId">아이디</label>
+          <label htmlFor="memberId" className={styles.label_id}>
+            아이디
+          </label>
           <input
             type="text"
             name="memberId"
             value={member.memberId}
+            className={styles.input_id}
             onChange={(e) => setMember({ ...member, memberId: e.target.value })}
             placeholder="아이디 입력"
           />
@@ -95,6 +98,7 @@ const ResetPw = () => {
             id="memberPw"
             name="memberPw"
             value={member.memberPw}
+            className={styles.input_pw}
             onChange={handleNewPwChange}
             placeholder="새 비밀번호를 입력하세요"
           />
@@ -112,11 +116,12 @@ const ResetPw = () => {
             id="confirmPassword"
             name="confirmPassword"
             value={memberPwRe}
+            className={styles.input_repw}
             onChange={handleRePwChange}
             placeholder="비밀번호를 다시 입력하세요"
           />
         </div>
-      
+
         {/* 비밀번호 일치 여부 메시지 */}
 
         {checkPw === 1 && (
@@ -126,7 +131,11 @@ const ResetPw = () => {
           <span style={{ color: "red" }}>비밀번호가 일치하지 않습니다</span>
         )}
 
-        <button type="submit" onClick={requestResetPw}>
+        <button
+          type="submit"
+          className={styles.reset_pw_btn}
+          onClick={requestResetPw}
+        >
           비밀번호 변경
         </button>
       </form>

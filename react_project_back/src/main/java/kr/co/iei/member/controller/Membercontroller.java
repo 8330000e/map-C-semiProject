@@ -6,6 +6,8 @@ import java.util.Random;
 import org.apache.ibatis.annotations.Param;
 
 import java.io.File;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +29,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpServletRequest;
+import kr.co.iei.member.model.dao.MemberDao;
 import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
-
+import kr.co.iei.utils.DeviceParser;
 import kr.co.iei.utils.EmailSender;
 import lombok.Getter;
 
 import kr.co.iei.utils.FileUtils;
+import kr.co.iei.utils.LocationParser;
 
 
 @CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
@@ -110,21 +115,44 @@ public class Membercontroller {
 
 	// 로그인 로직(김경건)
 	@PostMapping(value = "/login")
-	public ResponseEntity<?> loginMember(@RequestBody Member member) {
-
-		// 경로 설정 잘하기
-		// package kr.co.iei.member.model.vo;
-		LoginMember loginUser = memberService.login(member);
-
-		if (loginUser != null) {
-			//회원의 상태가 정상이면 0, 탈퇴하거나 문제의 회원일 경우에는 1로 설정, 로그인에서 접근 제한
-			if (loginUser.getMemberStatus() != null && loginUser.getMemberStatus() == 1) {
-				return ResponseEntity.status(403).body("정지된 계정입니다. 고객센터로 문의해주세요.");
-			}
-			return ResponseEntity.ok(loginUser); // 로그인 성공
-		} else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다."); // 문제가 생기면 에러 404발생
+	public ResponseEntity<?> loginMember(@RequestBody Member member, HttpServletRequest request) {
+		
+		Date lockUntil = memberService.getLockUntil(member.getMemberId());
+		if (lockUntil != null && lockUntil.after(new Date())) { // null 아니고 lockUntil이 지금 시간보다 미래면 
+			return ResponseEntity.status(403).body("로그인이 일시적으로 차단되었습니다. 잠시 후 다시 시도해주세요."); // 403 + 메시지 반환 
 		}
+		
+	    LoginMember loginUser = memberService.login(member);
+	    
+	    String ip = request.getRemoteAddr();
+        if (ip.equals("0:0:0:0:0:0:0:1")) {
+            ip = "127.0.0.1";
+        }
+        String device = DeviceParser.parse(request.getHeader("User-Agent"));
+        String location = LocationParser.getLocation(ip);
+        Map<String, Object> params = new HashMap<>();
+        params.put("memberId", member.getMemberId());
+        params.put("logIp", ip);
+        params.put("logAction", "로그인");
+        params.put("logDevice", device);
+        params.put("logLocation", location);
+
+	    if (loginUser != null) {
+	        if (loginUser.getMemberStatus() != null && loginUser.getMemberStatus() == 1) {
+	            return ResponseEntity.status(403).body("정지된 계정입니다. 고객센터로 문의해주세요.");
+	        }   
+	        
+	        
+	        params.put("logResult", 0);
+	        memberService.insertLog(params);
+	        return ResponseEntity.ok(loginUser);
+	    } else {
+	    	params.put("logResult", 1);
+	    	params.put("logAction", "로그인실패");
+	    	memberService.insertLog(params);
+	    	memberService.checkFailCount(member.getMemberId());
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다.");
+	    }
 	}
 
 	// 아이디 찾기 설정(김경건)
@@ -286,5 +314,23 @@ public class Membercontroller {
 	public ResponseEntity<?> leaveMember(@PathVariable String memberId) {
 		int result = memberService.leaveMember(memberId);
 		return ResponseEntity.ok(result);
+	}
+	
+	@PostMapping(value="logout/{memberId}")
+	public ResponseEntity<?> logoutMember(@PathVariable String memberId, HttpServletRequest request) {
+		String ip = request.getRemoteAddr();
+		 if (ip.equals("0:0:0:0:0:0:0:1")) {
+	            ip = "127.0.0.1";
+	        }
+		 String device = DeviceParser.parse(request.getHeader("User-Agent"));
+		 String location = LocationParser.getLocation(ip);
+		 Map<String, Object> params = new HashMap<>();
+		 params.put("memberId", memberId);
+		 params.put("logIp", ip);
+		 params.put("logAction", "로그아웃");
+		 params.put("logDevice", device);
+		 params.put("logLocation", location);
+		 memberService.insertLog(params);
+		 return ResponseEntity.ok().build(); // 200 반환 
 	}
 }
