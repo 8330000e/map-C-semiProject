@@ -170,6 +170,8 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
               return;
             }
             mapaddr = response.result.items[0].address;
+            ((mapctpvsgg.ctpv = response.result.items[0].addrdetail.sido),
+              (mapctpvsgg.sgg = response.result.items[0].addrdetail.sigugun));
           },
         );
 
