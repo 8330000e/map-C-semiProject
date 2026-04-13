@@ -4,13 +4,6 @@ import styles from "./AdminMemberPage.module.css";
 import axios from "axios";
 import AdminMember from "../../components/admin/AdminMember";
 
-// 회원 상태 숫자 → 텍스트 매핑
-const statusText = {
-  0: "정상",
-  1: "정지",
-  2: "탈퇴",
-};
-
 const AdminMemberPage = () => {
   const [memberList, setMemberList] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null); // 오른쪽 패널에 표시할 회원
@@ -144,7 +137,6 @@ const AdminMemberPage = () => {
         memberList={memberList}
         selectedMember={selectedMember}
         setSelectedMember={setSelectedMember}
-        statusText={statusText}
         filter={filter}
         changeFilter={changeFilter}
         selectRecentLogList={selectRecentLogList}

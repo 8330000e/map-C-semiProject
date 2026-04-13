@@ -20,6 +20,7 @@ public class BoardComment {
     private Integer boardNo;
     private String memberId;
     private String memberNickname;
+    private String memberThumb;
     private String content;
     private String createdAt;
     private String updatedAt;

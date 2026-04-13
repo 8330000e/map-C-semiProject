@@ -3,6 +3,7 @@ package kr.co.iei.admin.model.service;
 import java.lang.reflect.Member;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,8 @@ import kr.co.iei.admin.model.vo.ListResponse;
 import kr.co.iei.admin.model.vo.Log;
 import kr.co.iei.admin.model.vo.Notice;
 import kr.co.iei.admin.model.vo.Qna;
+import kr.co.iei.board.model.vo.Board;
+import kr.co.iei.board.model.vo.Keyword;
 import kr.co.iei.utils.FileUtils;
 
 @Service
@@ -128,6 +131,26 @@ public class AdminService {
 	public Map<String, Object> getAnomalyCount(String memberId) {
 		Map<String, Object> anomalyMap = adminDao.getAnomalyCount(memberId);
 		return anomalyMap;
+	}
+
+	public List<Board> getBoardList() {
+	    List<Board> boardList = adminDao.getBoardList();
+	    List<Keyword> keywordList = adminDao.getKeywordList();
+
+	    
+	    for (Board board : boardList) {
+	        StringJoiner matched = new StringJoiner(", ");
+	        
+	        for (Keyword keyword : keywordList) {
+	            String word = keyword.getKeyword();    
+	            if ((board.getBoardTitle() != null && board.getBoardTitle().contains(word)) || (board.getBoardContent() != null && board.getBoardContent().contains(word))) {
+	                matched.add(word); 
+	            }
+	        }
+	        board.setDetectedKeyword(matched.toString());
+	    }
+	    
+	    return boardList;
 	}
 
 

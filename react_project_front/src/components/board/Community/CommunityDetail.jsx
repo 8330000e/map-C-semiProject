@@ -8,6 +8,7 @@ import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import FlagIcon from "@mui/icons-material/Flag";
 import styles from "./Community.module.css";
+import userImg from "../../../assets/user.png";
 import Swal from "sweetalert2";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
@@ -74,6 +75,31 @@ const getImageUrl = (thumb) => {
   return `${BACKSERVER}/board/editor/${trimmed}`;
 };
 
+const getMemberImageUrl = (thumb) => {
+  if (!thumb) return null;
+  if (typeof thumb !== "string") return null;
+  let trimmed = thumb.trim();
+  if (!trimmed) return null;
+
+  trimmed = trimmed.replace(/\\/g, "/").replace(/\\/g, "/");
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
+    return trimmed;
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+
+  if (trimmed.startsWith("/member/thumb/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/member/thumb/"))
+    return `${BACKSERVER}/${trimmed.replace(/^\/+/, "")}`;
+  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
+  if (trimmed.includes("/upload/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.includes("/board/editor/"))
+    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
+    return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
+  return `${BACKSERVER}/member/thumb/${trimmed}`;
+};
+
 const hasImageInContent = (html) => {
   if (!html) return false;
   const parser = new DOMParser();
@@ -89,7 +115,7 @@ const CommunityDetail = ({
   onCommentCountChange,
 }) => {
   const safeBoard = board || {};
-  const { memberId } = useAuthStore();
+  const { memberId, memberNickname } = useAuthStore();
   const [comments, setComments] = useState([]);
   // 상세페이지에서 보여줄 댓글 개수를 별도 상태로 관리함.
   // board.commentCount가 있으면 초기값으로 사용하지만, 실제 로드된 댓글 개수로 동기화함.
@@ -212,10 +238,11 @@ const CommunityDetail = ({
     try {
       const payload = {
         memberId,
-        memberNickname: memberId,
+        memberNickname: memberNickname || memberId,
         content: text,
         isSecret: newPrivate ? 1 : 0,
-        parentCommentNo: replyTarget ? replyTarget.id : null,
+        parentCommentNo:
+          replyTarget?.commentNo ?? replyTarget?.id ?? null,
       };
 
       const res = await axios.post(
@@ -562,21 +589,44 @@ const CommunityDetail = ({
   };
 
   const renderComments = (items) =>
-    items.map((comment) => {
+    items.map((comment, index) => {
       const isOwn = comment.memberId === memberId;
       const isSecret = isSecretComment(comment);
       const displayText =
         isSecret && !canViewSecretComment(comment)
           ? "비공개 댓글입니다."
           : comment.content;
+      // 댓글 작성자 아바타 URL 처리임.
+      // 댓글 작성자의 memberThumb가 있으면 적용하고, 없으면 기본 이미지로 보여줌.
+      const commentAvatarUrl =
+        getMemberImageUrl(
+          comment.memberThumb ||
+          comment.commentThumb ||
+          comment.thumb ||
+          comment.profileThumb,
+        ) || userImg;
       return (
         <div
-          key={comment.id}
+          key={
+            comment.commentNo ??
+            comment.id ??
+            `${comment.memberId}-${comment.createdAt}-${index}`
+          }
           className={styles.commentItem}
           style={{ marginLeft: `${comment.depth * 18}px` }}
         >
           <div className={styles.commentMeta}>
             <div className={styles.commentMetaLeft}>
+              <img
+                src={commentAvatarUrl}
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  target.onerror = null;
+                  target.src = userImg;
+                }}
+                alt="댓글 작성자"
+                className={styles.commentAvatar}
+              />
               <span>{comment.memberNickname || comment.memberId}</span>
               <span>{formatTime(comment.createdAt)}</span>
               {(comment.updatedAt || comment.updateAt) &&
@@ -668,6 +718,25 @@ const CommunityDetail = ({
         <div>
           <div className={styles.detailTitle}>{board.boardTitle}</div>
           <div className={styles.detailMeta}>
+            {/* 상세 페이지 작성자 아바타 처리임.
+                작성자 썸네일 값을 우선 사용하고 없으면 기본 이미지로 대체함. */}
+            <img
+              src={
+                getMemberImageUrl(
+                  board.writerThumb ||
+                  board.memberThumb ||
+                  board.profileThumb ||
+                  board.thumb,
+                ) || userImg
+              }
+              onError={(e) => {
+                const target = e.currentTarget;
+                target.onerror = null;
+                target.src = userImg;
+              }}
+              alt="작성자"
+              className={styles.detailMetaAvatar}
+            />
             <span>{board.writerNickname || board.writerId}</span>
             <span>·</span>
             <span>{formatTime(board.createDate)}</span>

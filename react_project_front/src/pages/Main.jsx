@@ -119,6 +119,8 @@ const Main = () => {
   const [realtimeComments, setRealtimeComments] = useState([]);
   const [tipBoards, setTipBoards] = useState([]);
   const [tipIndex, setTipIndex] = useState(0);
+  // 팁 리스트는 초보자도 참고할 수 있는 꿀팁 모음임.
+  //  - 메인 화면에서 자동으로 한 개씩 보여주고, 클릭하면 해당 팁 상세로 이동함.
 
   useEffect(() => {
     axios
@@ -382,7 +384,7 @@ const Main = () => {
             </li>
 
             <li>
-              <a href="#">공지사항</a>
+              <Link to="/support/notice">공지사항</Link>
             </li>
           </ul>
           <div className="main_quest_wrap">
