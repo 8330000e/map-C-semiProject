@@ -226,7 +226,8 @@
 	</select>
 	
 	<select id="getBoardList" resultType="board">
-		select 
+	select * from <!-- 인라인 뷰 안쓰면 조건절에서 별칭 사용 불가능 서브쿼리로 도배해야함 가상테이블을 만들어 동작 순서 문제를 해결해서 별칭 사용 -->
+		(select 
 			b.board_no,
 			b.writer_id,
 			b.board_title,
@@ -238,8 +239,43 @@
 			where b.board_title like '%' || k.keyword || '%'
 			or b.board_content like '%' || k.keyword || '%') as detectedKeyword,
 			(select count(*) from board_report_tbl r where r.board_no = b.board_no) as reportCount
-		from board_tbl b
-		order by b.board_date desc
+		from board_tbl b) v
+		<where>
+			<if test="keyword == 'Y'.toString()">
+				and detectedKeyword is not null
+			</if>
+			<if test="keyword == 'N'.toString()">
+				and detectedKeyword is null
+			</if>
+			<choose> <!-- 스위치, if else true 나오면 멈춤 -->
+				<when test="risk == 'high'">
+					and detectedKeyword is not null and reportCount > 0
+				</when>
+				<when test="risk == 'mid'">
+					and detectedKeyword is not null or reportCount > 0
+				</when>
+				<when test="risk == 'low'">
+					and detectedKeyword is null and reportCount = 0
+				</when>
+			</choose>
+		</where>
+		order by <!-- order by는 동작 순서가 select 이후라서 인라인 뷰 없어도 그냥 별칭 사용 가능함 -->
+			<choose>
+				<when test="reportSort == 'low'">
+					reportCount asc,
+				</when>
+				<when test="reportSort == 'high'">
+					reportCount desc,
+				</when>
+			</choose>
+			<choose>
+				<when test="sort == 'asc'">
+					boardDate asc
+				</when>
+				<otherwise> <!-- 스위치 default와 동일 -->
+					boardDate desc
+				</otherwise>
+			</choose>
 	</select>
 	
 

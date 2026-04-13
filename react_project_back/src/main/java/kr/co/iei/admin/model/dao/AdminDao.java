@@ -65,7 +65,7 @@ public interface AdminDao {
 
 	Map<String, Object> getAnomalyCount(String memberId);
 
-	List<Board> getBoardList();
+	List<Board> getBoardList(String keyword, String risk, String reportSort, String sort);
 
 	
 

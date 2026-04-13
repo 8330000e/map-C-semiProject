@@ -190,8 +190,12 @@ public class AdminController {
 	}
 	
 	@GetMapping(value="board")
-	public ResponseEntity<?> selectBoardList() {
-		List<Board> boardList = adminService.getBoardList();
+	public ResponseEntity<?> selectBoardList(@RequestParam(required = false) String keyword,
+											 @RequestParam(required = false) String risk,
+											 @RequestParam(required = false) String reportSort,
+											 @RequestParam(required = false, defaultValue = "desc") String sort
+			) {
+		List<Board> boardList = adminService.getBoardList(keyword, risk, reportSort, sort);
 		return ResponseEntity.ok(boardList);
 	}
 	

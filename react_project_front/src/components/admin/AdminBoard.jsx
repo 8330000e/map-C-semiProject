@@ -13,6 +13,9 @@ const AdminBoard = ({
   isModalOpen,
   setIsModalOpen,
   selectedBoard,
+  boardFilter,
+  toggleSort,
+  changeBoardFilter,
 }) => {
   // 작성일시를 날짜/시간으로 분리해서 보여줌.
   // 날짜는 위, 시간은 아래 줄로 내려서 화면이 넓어지지 않도록 처리함.
@@ -36,10 +39,43 @@ const AdminBoard = ({
               <th>번호</th>
               <th>작성자</th>
               <th>제목</th>
-              <th>작성일시</th>
-              <th>감지 키워드</th>
-              <th>위험도</th>
-              <th>신고수</th>
+              <th className={styles.sort_th} onClick={toggleSort}>
+                작성일시 {boardFilter.sort === "desc" ? "▼" : "▲"}
+              </th>
+              <th>
+                <select
+                  value={boardFilter.keyword}
+                  onChange={changeBoardFilter}
+                  name="keyword"
+                >
+                  <option value="all">감지된 키워드</option>
+                  <option value="Y">Y</option>
+                  <option value="N">N</option>
+                </select>
+              </th>
+              <th>
+                <select
+                  value={boardFilter.risk}
+                  onChange={changeBoardFilter}
+                  name="risk"
+                >
+                  <option value="all">위험도</option>
+                  <option value="low">낮음</option>
+                  <option value="mid">중간</option>
+                  <option value="high">높음</option>
+                </select>
+              </th>
+              <th>
+                <select
+                  value={boardFilter.reportSort}
+                  onChange={changeBoardFilter}
+                  name="reportSort"
+                >
+                  <option value="all">신고수</option>
+                  <option value="low">낮음</option>
+                  <option value="high">높음</option>
+                </select>
+              </th>
               <th>상세보기</th>
             </tr>
           </thead>

@@ -133,8 +133,8 @@ public class AdminService {
 		return anomalyMap;
 	}
 
-	public List<Board> getBoardList() {
-	    List<Board> boardList = adminDao.getBoardList();
+	public List<Board> getBoardList(String keyword, String risk, String reportSort, String sort) {
+	    List<Board> boardList = adminDao.getBoardList(keyword, risk, reportSort, sort);
 	    return boardList;
 	}
 

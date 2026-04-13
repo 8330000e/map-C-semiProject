@@ -187,6 +187,41 @@
   white-space: nowrap;
 }
 
+/* thead select 스타일 */
+.board_table thead select {
+  border: 1px solid var(--admin-stroke);
+  border-radius: 6px;
+  background-color: var(--admin-input-bg);
+  color: var(--admin-text);
+  padding: 4px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+.board_table thead select:focus-visible {
+  outline: 2px solid var(--admin-accent);
+  outline-offset: 1px;
+}
+
+/* 작성일시 정렬 th */
+.sort_th {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.sort_th:hover {
+  color: var(--admin-accent);
+}
+
+/* 위험도 아이콘 td 중앙 정렬 */
+.board_table th:nth-child(6),
+.board_table td:nth-child(6) {
+  text-align: center;
+}
+
 /* 위험도 아이콘 색상 */
 .icon_safe {
   color: #4caf50;
