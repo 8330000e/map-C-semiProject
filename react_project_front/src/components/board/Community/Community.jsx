@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom"; // URL 쿼리값으로 mode(write/list)를 판단하므로 꼭 import 필요
+import { useLocation, useNavigate } from "react-router-dom"; // URL 쿼리값으로 mode(write/list)를 판단하므로 꼭 import 필요
 import styles from "./Community.module.css";
 import axios from "axios";
 import TextEditor from "./TextEditor";
@@ -109,6 +109,7 @@ const Community = ({
   const [attachedFiles, setAttachedFiles] = useState([]);
 
   const location = useLocation();
+  const navigate = useNavigate();
   const [missionType, setMissionType] = useState(null);
 
   useEffect(() => {
@@ -409,6 +410,12 @@ const Community = ({
         setTitle("");
         setContent("");
         setAttachedFiles([]);
+        //다시 미션목록으로
+        if (location.state?.fromMission && missionType === "board-write") {
+          navigate("/mission", { replace: true });
+          return;
+        }
+
         // 리스트로 이동
         setMode("list");
 
