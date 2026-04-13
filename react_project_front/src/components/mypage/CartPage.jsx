@@ -59,6 +59,7 @@ const CartPage = () => {
   );
 
   const handleGoToDetail = (marketNo) => {
+    if (!marketNo) return;
     navigate(`/store/${marketNo}`);
   };
 
@@ -136,7 +137,7 @@ const CartPage = () => {
                       className={styles.cart_button}
                       onClick={() => handleGoToDetail(item.marketNo)}
                     >
-                      구매
+                      바로가기
                     </button>
                     <button
                       type="button"
