@@ -20,6 +20,7 @@ public class BoardComment {
     private Integer boardNo;
     private String memberId;
     private String memberNickname;
+    private String memberThumb;
     private String content;
     private String createdAt;
     private String updatedAt;
@@ -27,12 +28,4 @@ public class BoardComment {
     private Long commentGroup;
     private Integer commentDepth;
     private Integer isSecret;
-	public void setBoardNo(int boardNo2) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void setCommentNo(long commentNo2) {
-		// TODO Auto-generated method stub
-		
-	}
 }

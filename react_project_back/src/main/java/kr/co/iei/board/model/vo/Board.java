@@ -24,6 +24,7 @@ public class Board {
 	    private String boardThumb;
 	    private String boardDate;
 	    private String memberNickname;
+	    private String memberThumb;
 	    private Integer boardStatus;
 	    private Double boardLat;
 	    private Double boardLng;

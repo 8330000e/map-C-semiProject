@@ -383,7 +383,7 @@ const Main = () => {
             </li>
 
             <li>
-              <a href="#">공지사항</a>
+              <Link to="/support/notice">공지사항</Link>
             </li>
           </ul>
           <div className="main_quest_wrap">
