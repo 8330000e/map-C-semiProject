@@ -25,14 +25,4 @@ public class StoreBoard {
 
     private Date createdAt;
     private Date updatedAt;
-
-    // Lombok should generate this, but add explicitly for build stability
-    public String getProductStatus() {
-        return productStatus;
-    }
-
-    public void setProductStatus(String productStatus) {
-        this.productStatus = productStatus;
-    }
-
 }
