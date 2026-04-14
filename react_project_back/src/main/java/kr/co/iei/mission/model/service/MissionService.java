@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.mission.model.dao.MissionDao;
 import kr.co.iei.mission.model.vo.MemberMission;
 import kr.co.iei.mission.model.vo.Mission;
@@ -24,6 +25,9 @@ public class MissionService {
 	
 	@Value("${file.root}")
 	private String root;
+	
+	@Autowired
+	private MemberService memberService;
 
 	public List<Mission> selectMissionList() {
 		return missionDao.selectMissionList();
@@ -76,6 +80,7 @@ public class MissionService {
 	    if (result1 == 0 || result2 == 0) {
 	        throw new RuntimeException("출석 처리 실패");
 	    }
+	    memberService.insertPointHistory(memberId, 5, "EARN", "출석체크");
 
 	    List<String> attendanceDates = missionDao.selectRecentAttendanceDates(memberId);
 	    int streak = calculateAttendanceStreak(attendanceDates);
@@ -94,6 +99,8 @@ public class MissionService {
 	        if (bonusResult == 0) {
 	            throw new RuntimeException("연속 출석 보너스 포인트 지급 실패");
 	        }
+	        
+	        memberService.insertPointHistory(memberId, bonusPoint, "EARN", streak + "일 연속 출석 보너스");
 	    }
 
 	    HashMap<String, Object> result = new HashMap<>();
@@ -153,6 +160,8 @@ public class MissionService {
 	    if (result1 == 0 || result2 == 0) {
 	        throw new RuntimeException("기본 미션 포인트 지급 실패");
 	    }
+	    
+	    memberService.insertPointHistory(memberId, 10, "EARN", "기본 미션 완료");
 
 	    return 1;
 	}
@@ -196,6 +205,7 @@ public class MissionService {
 	    if (result2 == 0) {
 	        throw new RuntimeException("랜덤 미션 포인트 지급 실패");
 	    }
+	    memberService.insertPointHistory(memberId, 10, "EARN", "랜덤 미션 완료");
 
 	    return Map.of(
 	        "result", 1,
@@ -246,6 +256,8 @@ public class MissionService {
 		if (result2 == 0) {
 			throw new RuntimeException("보너스 포인트 지급 실패");
 		}
+		
+		memberService.insertPointHistory(memberId, bonusMission.getRewardPoint(), "EARN", "보너스 미션 완료");
 
 		return 1;
 	}

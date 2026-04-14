@@ -9,60 +9,103 @@ const MyPoint = () => {
   const { memberId } = useAuthStore();
 
   const [point, setPoint] = useState(0);
-  const [history, setHistory] = useState([]); // 🔥 추가
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const formatDate = (date) => {
+    if (!date) return "-";
+    return String(date).slice(0, 10);
+  };
 
   useEffect(() => {
-    if (!memberId) return;
+    if (!memberId) {
+      setPoint(0);
+      setHistory([]);
+      setLoading(false);
+      return;
+    }
 
-    // 총 포인트
-    axios
-      .get(`${BACKSERVER}/point-give/${memberId}`)
-      .then((res) => {
-        setPoint(res.data);
-      })
-      .catch((err) => {
-        console.error("포인트 조회 실패", err);
-      });
+    const fetchPointData = async () => {
+      try {
+        setLoading(true);
 
-    // 🔥 포인트 사용 내역
-    axios
-      .get(`${BACKSERVER}/point-history/${memberId}`)
-      .then((res) => {
-        console.log("포인트 내역:", res.data);
-        setHistory(res.data);
-      })
-      .catch((err) => {
-        console.error("포인트 내역 조회 실패", err);
-      });
+        const [pointRes, historyRes] = await Promise.all([
+          axios.get(`${BACKSERVER}/members/${memberId}/point`),
+          axios.get(`${BACKSERVER}/members/${memberId}/point-history`),
+        ]);
+
+        setPoint(pointRes.data ?? 0);
+        setHistory(Array.isArray(historyRes.data) ? historyRes.data : []);
+      } catch (err) {
+        console.error("포인트 데이터 조회 실패", err);
+        setPoint(0);
+        setHistory([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPointData();
   }, [memberId]);
 
   return (
-    <div className={styles.pointCard}>
-      <h2 className={styles.pointTitle}>포인트 사용내역</h2>
+    <section className={styles.pointCard}>
+      <div className={styles.pointHeader}>
+        <h2 className={styles.pointTitle}>포인트 이력</h2>
+        <p className={styles.pointDesc}>
+          활동으로 적립되거나 사용된 포인트를 한눈에 확인해보세요.
+        </p>
+      </div>
 
       <div className={styles.pointSummary}>
-        <p>총 포인트: {point}p</p>
-        <p>포인트 내역</p>
+        <div className={styles.summaryText}>
+          <p className={styles.summaryLabel}>현재 보유 포인트</p>
+          <p className={styles.summaryValue}>{point.toLocaleString()}p</p>
+        </div>
+        <div className={styles.summaryBadge}>친환경 활동 중</div>
+      </div>
+
+      <div className={styles.listHeader}>
+        <span>최근 내역</span>
+        <span>{history.length}건</span>
       </div>
 
       <div className={styles.pointListBox}>
-        {history.length === 0 ? (
-          <p>내역이 없습니다.</p>
+        {loading ? (
+          <p className={styles.message}>포인트 내역을 불러오는 중입니다.</p>
+        ) : history.length === 0 ? (
+          <p className={styles.message}>아직 포인트 내역이 없습니다.</p>
         ) : (
-          history.map((item) => (
-            <div className={styles.pointItem} key={item.contributionNo}>
-              <div>
-                <p className={styles.date}>{item.contributedAt}</p>
-                <p>나무 키우기</p> {/* 필요하면 regionName으로 변경 */}
+          history.map((item, index) => {
+            const isPlus = item.pointChange > 0;
+
+            return (
+              <div
+                className={styles.pointItem}
+                key={item.pointNo ?? `${item.createdDate}-${index}`}
+              >
+                <div className={styles.itemLeft}>
+                  <p className={styles.date}>{formatDate(item.createdDate)}</p>
+                  <p className={styles.reason}>
+                    {item.pointReason || "포인트 변동"}
+                  </p>
+                </div>
+
+                <span
+                  className={`${styles.pointValue} ${
+                    isPlus ? styles.pointPlus : styles.pointMinus
+                  }`}
+                >
+                  {isPlus
+                    ? `+${item.pointChange.toLocaleString()}p`
+                    : `${item.pointChange.toLocaleString()}p`}
+                </span>
               </div>
-              <span className={styles.pointValue}>
-                -{item.contributedPoint}p
-              </span>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
-    </div>
+    </section>
   );
 };
 

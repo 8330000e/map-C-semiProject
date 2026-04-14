@@ -178,4 +178,36 @@ fetch first 1 row only
 	offset 0 rows fetch next 15 rows only
 </select>
 
+	<!-- 포인트 이력 조회 -->
+	<select id="selectPointHistory" parameterType="string" resultType="pointHistory">
+	    SELECT
+	        POINT_NO AS pointNo,
+	        MEMBER_ID AS memberId,
+	        POINT_CHANGE AS pointChange,
+	        POINT_TYPE AS pointType,
+	        POINT_REASON AS pointReason,
+	        TO_CHAR(CREATED_DATE, 'YYYY-MM-DD HH24:MI') AS createdDate
+	    FROM POINT_TBL
+	    WHERE MEMBER_ID = #{memberId}
+	    ORDER BY POINT_NO DESC
+	</select>
+
+		<insert id="insertPointHistory" parameterType="map">
+		    INSERT INTO POINT_TBL (
+		        POINT_NO,
+		        MEMBER_ID,
+		        POINT_CHANGE,
+		        POINT_TYPE,
+		        POINT_REASON,
+		        CREATED_DATE
+		    ) VALUES (
+		        POINT_SEQ.NEXTVAL,
+		        #{memberId},
+		        #{pointChange},
+		        #{pointType},
+		        #{pointReason},
+		        SYSDATE
+		    )
+		</insert>
+
 </mapper>
