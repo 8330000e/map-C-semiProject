@@ -148,21 +148,21 @@ const PointForGoodPage = () => {
       title: "글로벌 6K 마라톤에 참여하고 깨끗한 물을 선물해요!",
       category: "해외사업후원",
       period: "2026-04-10 ~ 2026-04-30",
-      image: "/images/marathon.jpg", // 실제 이미지 경로
+      image: "/pointimages/point1.jpg", // 실제 이미지 경로
     },
     {
-      group_id: "emergency_relief",
-      title: "최수영과 함께 전쟁 속 아이의 하루를 지켜주세요!",
+      group_id: "forest",
+      title: "forest: 우리 나무들을 지켜줘요!",
       category: "긴급구호사업후원",
       period: "2026-04-02 ~ 2026-06-30",
-      image: "/images/relief.jpg",
+      image: "/pointimages/point2.jpg",
     },
     {
-      group_id: "emergency_relief",
-      title: "최수영과 함께 전쟁 속 아이의 하루를 지켜주세요!",
+      group_id: "forest",
+      title: "forest: 자연의 훼손은 나를 죽이는 일입니다.",
       category: "긴급구호사업후원",
       period: "2026-04-02 ~ 2026-06-30",
-      image: "/images/relief.jpg",
+      image: "/pointimages/point3.jpg",
     },
     {
       group_id: "global_6k",
@@ -284,6 +284,7 @@ const PointForGoodPage = () => {
               {/* 이미지 영역 */}
               <div className={styles.card_image_wrap}>
                 <img
+                  //위에서 카드 영역에서 들어간 이미지를 여기서 꺼내어 보여주는 것
                   src={item.image}
                   alt={item.title}
                   loading="lazy"
