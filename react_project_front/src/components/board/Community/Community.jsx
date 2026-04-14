@@ -31,6 +31,10 @@ const Community = ({
   setAddr,
   setLnglat,
   setCtpvsgg,
+  sido,
+  setSido,
+  sigungu,
+  setSigungu,
 }) => {
   const { memberId, memberNickname } = useAuthStore();
   const isLogin = !!memberId;
@@ -47,9 +51,6 @@ const Community = ({
 
   const [searchType, setSearchType] = useState(1);
   const [searchKeyword, setSearchKeyword] = useState("");
-
-  const [sido, setSido] = useState("");
-  const [sigungu, setSigungu] = useState("");
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -318,6 +319,7 @@ const Community = ({
         boardLng: lnglat.lng,
         ctpv: ctpvsgg.ctpv,
         sgg: ctpvsgg.sgg,
+        addr: addr,
       };
 
       const res = await axios.post(`${BACKSERVER}/boards`, requestData);
