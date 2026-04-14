@@ -52,7 +52,14 @@
             </choose>
         </if>
 
-        ORDER BY (b.READ_COUNT + NVL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0)) DESC
+		<choose>
+		    <when test="sortType == 'popular'">
+		        ORDER BY (b.READ_COUNT + NVL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0)) DESC
+		    </when>
+		    <otherwise>
+		        ORDER BY b.BOARD_DATE DESC, b.BOARD_NO DESC
+		    </otherwise>
+		</choose>
     </select>
 
     <!-- 게시글 등록 -->

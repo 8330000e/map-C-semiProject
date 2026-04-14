@@ -56,7 +56,7 @@ const MyPoint = () => {
                 <p>나무 키우기</p> {/* 필요하면 regionName으로 변경 */}
               </div>
               <span className={styles.pointValue}>
-                +{item.contributedPoint}p
+                -{item.contributedPoint}p
               </span>
             </div>
           ))

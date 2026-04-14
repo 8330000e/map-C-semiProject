@@ -51,11 +51,12 @@ public class BoardController {
 	        @RequestParam(defaultValue = "1") int searchType,
 	        @RequestParam(defaultValue = "") String searchKeyword,
 	        @RequestParam(required = false) String sido,
-	        @RequestParam(required = false) String sigungu
+	        @RequestParam(required = false) String sigungu,
+	        @RequestParam(defaultValue = "popular") String sortType 
 	) {
-	    List<Board> list = boardService.selectBoardList(
-	            status, searchType, searchKeyword, sido, sigungu
-	    );
+		List<Board> list = boardService.selectBoardList(
+		        status, searchType, searchKeyword, sido, sigungu, sortType
+		);
 
 	    List<HashMap<String, Object>> mapped = list.stream()
 	        .map(board -> {

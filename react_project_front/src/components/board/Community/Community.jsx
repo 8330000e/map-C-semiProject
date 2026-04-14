@@ -112,6 +112,7 @@ const Community = ({
   const location = useLocation();
   const navigate = useNavigate();
   const [missionType, setMissionType] = useState(null);
+  const [sortType, setSortType] = useState("popular");
 
   const sigunguOptions = sido ? REGION_DATA[sido] || [] : [];
 
@@ -196,6 +197,7 @@ const Community = ({
           searchKeyword,
           sido,
           sigungu,
+          sortType,
         },
       })
       .then(async (res) => {
@@ -213,7 +215,7 @@ const Community = ({
         console.error("게시글 조회 실패:", err);
         setBoardList([]);
       });
-  }, [searchType, searchKeyword, sido, sigungu, memberId]);
+  }, [searchType, searchKeyword, sido, sigungu, sortType, memberId]);
 
   useEffect(() => {
     if (!highlightBoardNo || !boardList.length) return;
@@ -430,6 +432,7 @@ const Community = ({
             searchKeyword,
             sido,
             sigungu,
+            sortType,
           },
         });
 
@@ -638,6 +641,15 @@ const Community = ({
                       {district}
                     </option>
                   ))}
+                </select>
+
+                <select
+                  className={styles.mapCommunitySelect}
+                  value={sortType}
+                  onChange={(e) => setSortType(e.target.value)}
+                >
+                  <option value="popular">인기순</option>
+                  <option value="latest">최신순</option>
                 </select>
               </div>
 
