@@ -216,7 +216,8 @@ const PurchaseDetail = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      setReviewImageUrl(res.data);
+      const uploadedUrl = normalizeImageUrl(res.data, "board/editor");
+      setReviewImageUrl(uploadedUrl || "");
     } catch (error) {
       console.error("후기 이미지 업로드 실패", error);
       alert("후기 이미지 업로드에 실패했습니다.");
