@@ -253,8 +253,6 @@ const Community = ({
       return;
     }
 
-
-
     setDetailLoading(true);
     axios
       .get(`${BACKSERVER}/boards/${expandedBoardNo}`)
@@ -368,12 +366,10 @@ const Community = ({
         boardLng: lnglat.lng,
         ctpv: ctpvsgg.ctpv,
         sgg: ctpvsgg.sgg,
+        addr: addr,
       };
 
-      const res = await axios.post(
-        `${BACKSERVER}/boards`,
-        requestData,
-      );
+      const res = await axios.post(`${BACKSERVER}/boards`, requestData);
       const savedBoard = res.data;
       const boardNo = savedBoard.boardNo;
       const pointAwarded = savedBoard.pointAwarded;
@@ -388,15 +384,11 @@ const Community = ({
 
           formData.append("memberId", memberId);
 
-          await axios.post(
-            `${BACKSERVER}/boards/${boardNo}/files`,
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
+          await axios.post(`${BACKSERVER}/boards/${boardNo}/files`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
             },
-          );
+          });
         }
 
         // ⭐ 추가 (핵심)
@@ -426,18 +418,15 @@ const Community = ({
         setMode("list");
 
         // 목록 다시 불러오기
-        const listRes = await axios.get(
-          `${BACKSERVER}/boards`,
-          {
-            params: {
-              status: 0,
-              searchType,
-              searchKeyword,
-              sido,
-              sigungu,
-            },
+        const listRes = await axios.get(`${BACKSERVER}/boards`, {
+          params: {
+            status: 0,
+            searchType,
+            searchKeyword,
+            sido,
+            sigungu,
           },
-        );
+        });
 
         const items = Array.isArray(listRes.data.items)
           ? listRes.data.items
@@ -512,18 +501,15 @@ const Community = ({
         setContent("");
         setMode("list");
 
-        const listRes = await axios.get(
-          `${BACKSERVER}/boards`,
-          {
-            params: {
-              status: 0,
-              searchType,
-              searchKeyword,
-              sido,
-              sigungu,
-            },
+        const listRes = await axios.get(`${BACKSERVER}/boards`, {
+          params: {
+            status: 0,
+            searchType,
+            searchKeyword,
+            sido,
+            sigungu,
           },
-        );
+        });
 
         const items = Array.isArray(listRes.data.items)
           ? listRes.data.items
@@ -566,13 +552,10 @@ const Community = ({
     }
 
     try {
-      const res = await axios.delete(
-        `${BACKSERVER}/boards/${boardNo}`,
-        {
-          timeout: 5000,
-          params: { memberId },
-        },
-      );
+      const res = await axios.delete(`${BACKSERVER}/boards/${boardNo}`, {
+        timeout: 5000,
+        params: { memberId },
+      });
 
       if (res.data > 0) {
         setBoardList((prev) =>
@@ -735,10 +718,10 @@ const Community = ({
                   type="button"
                   className={styles.boardBackBtn}
                   onClick={() => {
-                  setMode("list");
-                  setTitle("");
-                  setContent("");
-                  setAttachedFiles([]);
+                    setMode("list");
+                    setTitle("");
+                    setContent("");
+                    setAttachedFiles([]);
                   }}
                 >
                   <ArrowBackIosIcon />

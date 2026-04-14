@@ -50,6 +50,7 @@ public class BoardController {
             @RequestParam(defaultValue = "0") int status,
             @RequestParam(defaultValue = "1") int searchType,
             @RequestParam(defaultValue = "") String searchKeyword,
+            @RequestParam(defaultValue = "") String addr,
             @RequestParam(required = false) String sido,
             @RequestParam(required = false) String sigungu
     ) {
@@ -72,6 +73,7 @@ public class BoardController {
                 map.put("readCount", board.getReadCount());
                 map.put("ctpv", board.getCtpv());
                 map.put("sgg", board.getSgg());
+                map.put("addr", board.getAddr());
                 map.put("updatedAt", board.getUpdatedAt());
                 map.put("writerNickname", board.getWriterNickname());
                 map.put("createDate", board.getCreateDate());

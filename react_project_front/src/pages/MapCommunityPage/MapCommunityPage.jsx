@@ -173,7 +173,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
           content: `
           <div>
         <img
-        src=${marker.boardThumb || defaultImg}
+        src=${writerAvatar}
         style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
         />
         <img
@@ -253,7 +253,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                     "
                   />
                 </div>
-                <p>${mapaddr}</p>
+                <p>${marker.addr}</p>
               </div>
               <div
                 style="
@@ -289,10 +289,11 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                       style=" display: flex; gap: 8px; align-items: center; "
                     >
                       <img
-                        src=${defaultImg}
+                        src=${writerAvatar}
                         alt=""
                         style="
                           width: 35px;
+                          height:35px;
                           z-index: ${5000 + 3};
                           border-radius: 50%;
                           border: var(--border2);
@@ -337,7 +338,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
             </div>
           <div>
             <img
-              src=${marker.memberThumb || defaultImg}
+              src=${writerAvatar}
               style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
             />
             <img
@@ -357,7 +358,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
             content: `
           <div>
             <img
-              src=${marker.memberThumb || defaultImg}
+              src=${writerAvatar}
               style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
             />
             <img

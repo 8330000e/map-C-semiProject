@@ -19,6 +19,7 @@
             b.BOARD_LAT AS boardLat,
             b.BOARD_LNG AS boardLng,
             b.READ_COUNT AS readCount,
+            b.ADDR AS addr,
             NVL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0) AS likeCount,
 
             b.MEMBER_NICKNAME AS writerNickname,
@@ -74,7 +75,8 @@
             BOARD_LAT,
             BOARD_LNG,
             CTPV,
-            SGG
+            SGG,
+            ADDR
         ) VALUES (
             #{boardNo},
             #{writerId},
@@ -86,7 +88,8 @@
             #{boardLat},
             #{boardLng},
             #{ctpv},
-            #{sgg}
+            #{sgg},
+            #{addr}
         )
     </insert>
 
