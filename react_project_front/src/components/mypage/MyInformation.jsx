@@ -87,6 +87,8 @@ const MyInformation = () => {
         <div className={styles.myinformation_img_outer}>
           <div className={styles.myinformation_img_wrap}>
             <img
+              loading="lazy"
+              decoding="async"
               src={
                 member.memberThumb !== null
                   ? getImageUrl(

@@ -622,6 +622,8 @@ const StoreDetail = () => {
                     src={imageUrl}
                     alt={item.marketTitle || "상품 이미지"}
                     className={styles.product_image}
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       e.currentTarget.style.display = "none";
                     }}
@@ -825,6 +827,8 @@ const StoreDetail = () => {
                       <img
                         src={imageUrl}
                         alt={same.marketTitle || "상품 이미지"}
+                        loading="lazy"
+                        decoding="async"
                         onError={(e) => {
                           e.currentTarget.style.display = "none";
                         }}

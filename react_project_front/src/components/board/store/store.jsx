@@ -225,8 +225,18 @@ const Store = () => {
                             <Link key={item.marketNo ?? item.boardNo ?? index} to={`/store/${item.marketNo}`} className={styles.cardLink}>
                                 <article className={styles.card}>
                                     <div className={styles.image}>
+                                        {/*
+                                            목록 이미지에는 지연 로딩을 적용함.
+                                            화면에 보여질 때만 다운로드해서
+                                            초기 렌더링 속도를 빠르게 함.
+                                        */}
                                         {imageUrl ? (
-                                            <img src={imageUrl} alt={item.marketTitle || "상품 이미지"} />
+                                            <img
+                                                src={imageUrl}
+                                                alt={item.marketTitle || "상품 이미지"}
+                                                loading="lazy"
+                                                decoding="async"
+                                            />
                                         ) : (
                                             "이미지"
                                         )}

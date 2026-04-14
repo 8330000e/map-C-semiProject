@@ -31,6 +31,8 @@ const NoticeCardList = ({ noticeList }) => {
               <img
                 src={normalizeImageUrl(notice.noticeImagePath, "notice")}
                 alt="공지 이미지"
+                loading="lazy"
+                decoding="async"
               />
             ) : (
               <div className={styles.no_image}>탄소커넥트</div>

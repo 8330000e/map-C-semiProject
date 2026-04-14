@@ -81,6 +81,9 @@ const CampaignUpdateDeletePage = () => {
         </div>
         <div className={styles.camp_update_img_wrap}>
           <img
+            loading="lazy"
+            decoding="async"
+            alt="캠페인 이미지"
             src={
               imgChange ? imgUrl : normalizeImageUrl(campBoardList.campaignThumb)
             }

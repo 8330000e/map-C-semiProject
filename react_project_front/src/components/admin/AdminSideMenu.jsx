@@ -15,7 +15,7 @@ const AdminSideMenu = ({ memberNickname }) => {
     <div className={styles.side_menu_wrap}>
       {/* 관리자 프로필 */}
       <div className={styles.admin_profile}>
-        <img src={adminProfile} />
+        <img src={adminProfile} loading="lazy" decoding="async" />
         <span className={styles.name}>{memberNickname}</span>
       </div>
 

@@ -245,6 +245,8 @@ const PurchaseHistory = () => {
               <div className={styles.purchase_card_image_wrap}>
                 {imageUrl ? (
                   <img
+                    loading="lazy"
+                    decoding="async"
                     src={imageUrl}
                     alt={itemTitle}
                     className={styles.purchase_card_image}

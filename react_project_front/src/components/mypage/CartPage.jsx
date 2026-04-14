@@ -109,7 +109,13 @@ const CartPage = () => {
                   <Link to={`/store/${item.marketNo}`} className={styles.cart_link}>
                     <div className={styles.cart_item_image_wrap}>
                       {imageUrl ? (
-                        <img className={styles.cart_item_image} src={imageUrl} alt={item.marketTitle || "상품 이미지"} />
+                        <img
+                          className={styles.cart_item_image}
+                          src={imageUrl}
+                          alt={item.marketTitle || "상품 이미지"}
+                          loading="lazy"
+                          decoding="async"
+                        />
                       ) : (
                         <span>이미지 없음</span>
                       )}

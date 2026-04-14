@@ -169,7 +169,13 @@ const Login = () => {
       </div>
 
       {/* 이미지는 맨 아래에 배치 (CSS에서 absolute로 띄움) */}
-      <img src={loginBg} className={styles.login_img} alt="배경 이미지" />
+      <img
+        src={loginBg}
+        className={styles.login_img}
+        alt="배경 이미지"
+        loading="lazy"
+        decoding="async"
+      />
     </div>
   );
 };

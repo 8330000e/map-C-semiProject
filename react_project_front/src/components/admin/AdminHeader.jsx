@@ -22,7 +22,7 @@ const AdminHeader = () => {
       <header className={styles.admin_header}>
         <div className={styles.admin_header_inner}>
           <NavLink to="/" className={styles.logo}>
-            <img src={logo} alt="logo" />
+            <img src={logo} alt="logo" loading="lazy" decoding="async" />
             <h1>탄소커넥트</h1>
           </NavLink>
           <div className={styles.header_wrap}>

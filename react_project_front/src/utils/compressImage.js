@@ -4,9 +4,12 @@ export async function compressImageFile(file, options = {}) {
   if (!file || !file.type.startsWith("image/")) return file;
 
   const {
-    maxWidth = 1200,
-    maxHeight = 1200,
-    quality = 0.8,
+    // 최대 해상도를 낮춰서 업로드 전 트래픽을 줄임.
+    // 목록용 이미지는 1000px 정도로 충분하기 때문에 기본값을 더 보수적으로 설정함.
+    maxWidth = 1000,
+    maxHeight = 1000,
+    // 압축 품질도 약간 낮춰서 데이터 사용량을 절감함.
+    quality = 0.75,
     mimeType = file.type === "image/png" ? "image/png" : "image/jpeg",
   } = options;
 
