@@ -15,7 +15,9 @@ const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 // memberThumb의 경로를 실제 이미지 URL로 변환하는 함수임.
 // - 백엔드에서 내려오는 값이 절대 URL일 수도 있고,
 // - /upload/, /board/editor/ 같은 상대 경로 형태일 수도 있으며,
-// - 드라이브 경로로 저장된 경우에도 정상적으로 백엔드 호출 URL로 변환함.
+// - 드라이브 경로로 저장된 경우에도 정상적으로 Firebase 또는 백엔드 URL로 변환함.
+// - 로컬 정적 경로는 더 이상 백엔드로 직접 서빙하지 않으므로,
+//   normalizeImageUrl에서 가능한 경우 Firebase URL로 변경하도록 처리함.
 const getImageUrl = (thumb) => normalizeImageUrl(thumb, "member/thumb");
 // 로고 이미지는 Vite 정상 로딩을 위해 import 방식으로 참조함.
 import logo from "../../assets/logo/logo.svg";

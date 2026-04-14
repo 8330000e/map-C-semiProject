@@ -65,6 +65,8 @@ const ProductRegistration = () => {
                 : uploadResult?.url || uploadResult?.fileUrl || uploadResult?.path || "";
             // 업로드 API가 파일명만 반환할 수도 있고, Firebase URL을 반환할 수도 있으므로,
             // 브라우저가 바로 사용할 수 있는 형태로 변환합니다.
+            // 여기선 파일명만 내려오면 임시로 /board/editor/ 경로를 붙여두지만,
+            // 실제 렌더링 시 normalizeImageUrl에서 Firebase URL로 바꿔서 사용합니다.
             setProductThumb(
                 fileUrl && !fileUrl.startsWith("/") && !fileUrl.startsWith("http")
                     ? `/board/editor/${fileUrl}`
@@ -102,6 +104,9 @@ const ProductRegistration = () => {
     }, []);
 
     const normalizeStoredProductThumb = (thumb) => {
+        // 편집 화면에서 editItem.productThumb를 화면에 표시하기 위한 전처리 함수.
+        // 서버에 저장된 값이 다양한 형태로 올 수 있기 때문에,
+        // 가능한 경우 브라우저가 곧바로 쓸 수 있는 경로로 변환함.
         if (!thumb || typeof thumb !== "string") return "";
         let normalized = thumb.replace(/\\\\/g, "/").replace(/\\/g, "/").trim();
         if (!normalized) return "";

@@ -18,6 +18,7 @@ const getBoardNo = (board) =>
 // 이미지 src는 서버에서 여러 형태로 내려올 수 있습니다.
 // 예: 이미지 전체 URL, /upload/ 경로, /board/editor/ 경로, 파일명만 전달되는 경우.
 // 여기서 브라우저가 바로 요청 가능한 URL로 변환해 줍니다.
+// 로컬 경로는 이제 백엔드 정적 서빙 대신 Firebase URL로 바꾸는 것을 우선함.
 const getBoardImageUrl = normalizeImageUrl;
 
 const getMemberImageUrl = (thumb) => normalizeImageUrl(thumb, "member/thumb");

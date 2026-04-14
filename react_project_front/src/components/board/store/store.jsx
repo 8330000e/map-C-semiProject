@@ -7,6 +7,9 @@ import { normalizeImageUrl } from "../../../utils/getImageUrl";
 import userImg from "../../../assets/user.png";
 import styles from "./store.module.css";
 
+// 스토어 상품 이미지 변환은 normalizeImageUrl에서 처리함.
+// 로컬 /board/editor 경로 대신 Firebase URL 변환을 우선함.
+
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
 // 중고거래 목록 페이지임.
@@ -45,8 +48,13 @@ const getSaleStatusLabel = (productStatus) => {
   return "판매중";
 };
 
+// getImageUrl은 thumb 문자열을 normalizeImageUrl에 위임함.
+// 로컬 경로는 더 이상 백엔드로 직접 요청하지 않고,
+// 가능한 경우 Firebase URL로 바꿔서 이미지 로딩함.
 const getImageUrl = (thumb) => normalizeImageUrl(thumb);
 
+// getMemberImageUrl은 member/thumb 기본 경로를 사용함.
+// 프로필 이미지가 없으면 기본 userImg로 대체함.
 const getMemberImageUrl = (thumb) => {
   const url = normalizeImageUrl(thumb, "member/thumb");
   return url || userImg;

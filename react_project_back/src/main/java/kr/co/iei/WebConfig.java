@@ -4,7 +4,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-
+// WebConfig는 CORS 정책만 처리함.
+// 로컬 정적 이미지 경로(/board/editor, /member/thumb)는 더 이상 백엔드에서 서빙하지 않음.
+// 지금은 Firebase 업로드된 이미지 URL만 사용하도록 처리했음.
 @Configuration
 public class WebConfig implements WebMvcConfigurer {//MVC 관련 설정
 	@Override
