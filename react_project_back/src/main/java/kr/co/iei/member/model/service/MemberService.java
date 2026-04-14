@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.iei.member.model.dao.MemberDao;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
+import kr.co.iei.point.vo.PointHistory;
 import kr.co.iei.utils.EmailSender;
 import kr.co.iei.utils.JwtUtils;
 
@@ -230,5 +231,19 @@ public class MemberService {
 	public List<Member> selectClist() {
 		List<Member> list = memberDao.selectClist();
 		return list;
+	}
+	
+	public List<PointHistory> selectPointHistory(String memberId) {
+	    return memberDao.selectPointHistory(memberId);
+	}
+	
+	
+	public int insertPointHistory(String memberId, int pointChange, String pointType, String pointReason) {
+	    Map<String, Object> param = new HashMap<>();
+	    param.put("memberId", memberId);
+	    param.put("pointChange", pointChange);
+	    param.put("pointType", pointType);
+	    param.put("pointReason", pointReason);
+	    return memberDao.insertPointHistory(param);
 	}
 }

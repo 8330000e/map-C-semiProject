@@ -17,6 +17,8 @@ const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 const getImageUrl = normalizeImageUrl;
 
 const MapCommunityPage = () => {
+  const [sido, setSido] = useState("");
+  const [sigungu, setSigungu] = useState("");
   const [addr, setAddr] = useState("서울특별시 중구");
   const [lnglat, setLnglat] = useState({
     lat: 37.5665 - 0.001,
@@ -40,6 +42,10 @@ const MapCommunityPage = () => {
         <div className={styles.left}>
           <div className={styles.mapBox}>
             <Map
+              sido={sido}
+              setSido={setSido}
+              sigungu={sigungu}
+              setSigungu={setSigungu}
               addr={addr}
               lnglat={lnglat}
               ctpvsgg={ctpvsgg}
@@ -65,7 +71,18 @@ const MapCommunityPage = () => {
   );
 };
 
-const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
+const Map = ({
+  addr,
+  lnglat,
+  ctpvsgg,
+  setAddr,
+  setLnglat,
+  setCtpvsgg,
+  sido,
+  setSido,
+  sigungu,
+  setSigungu,
+}) => {
   // const [detailMode, setDetailMode] = useState(false);
   const navigate = useNavigate();
   const mapDivRef = useRef(null);
@@ -81,7 +98,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
     sgg: "중구",
   };
   let detailMode = false;
-  let openMarker = true;
+  let ctpvsgglength = 0;
 
   const boardView = (boardNo) => {
     if (boardNo) {
@@ -234,7 +251,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                     "
                   />
                 </div>
-                <p>${mapaddr}</p>
+                <p>${marker.addr}</p>
               </div>
               <div
                 style="
@@ -276,6 +293,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                         alt=""
                         style="
                           width: 35px;
+                          height:35px;
                           z-index: ${5000 + 3};
                           border-radius: 50%;
                           border: var(--border2);
@@ -315,12 +333,15 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                       z-index=${5000 + 3};
                     "
                   >
-                    ${marker.boardContent.replace(/<img[^>]*>/gi, "").substring(0, 30)}
+                    ${marker.boardContent
+                      .replace(/<img[^>]*>/gi, "")
+                      .replace(/<[^>]*>?/g, "")
+                      .substring(0, 30)}
                   </div>
                 </div>
               </div>
             </div>
-          <div>
+          <div style="position: relative;">
             <img
               loading="lazy"
               decoding="async"
@@ -410,14 +431,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                 <div>
                   <div className={styles.spot_box_top_posts}>
                     <DescriptionOutlinedIcon sx={{ fontSize: "24px" }} />
-                    <p>
-                      {ctpvsgg.ctpv + " " + ctpvsgg.sgg ==
-                      markerList.ctpv + " " + markerList.sgg
-                        ? ctpvsgg.length == 0
-                          ? 0
-                          : ctpvsgg.length
-                        : -1}
-                    </p>
+                    <p>{}</p>
                   </div>
                 </div>
               </div>

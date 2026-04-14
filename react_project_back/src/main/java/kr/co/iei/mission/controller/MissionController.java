@@ -38,20 +38,16 @@ public class MissionController {
     }
     
     @PostMapping("/attendance/check")
-    public ResponseEntity<Map<String, String>> checkAttendance(@RequestBody Map<String, String> param) {
+    public ResponseEntity<Map<String, Object>> checkAttendance(@RequestBody Map<String, String> param) {
         String memberId = param.get("memberId");
 
-        int result = missionService.checkAttendance(memberId);
+        Map<String, Object> result = missionService.checkAttendance(memberId);
 
-        if (result == -1) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "message", "이미 오늘 출석체크를 완료했습니다."
-            ));
+        if ((int) result.get("result") == -1) {
+            return ResponseEntity.badRequest().body(result);
         }
 
-        return ResponseEntity.ok(Map.of(
-            "message", "출석체크 완료! 1포인트 지급"
-        ));
+        return ResponseEntity.ok(result);
     }
     @GetMapping("/attendance/today")
     public Map<String, Boolean> getTodayAttendance(@RequestParam String memberId) {
