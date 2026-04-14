@@ -44,8 +44,13 @@ const DonationPage = ({
     }
   };
   return (
-    <div className={styles.donation_overlay}>
-      <div className={styles.donation_page_content}>
+    //onClick={onClose}--> 팝업창 외부를 클릭하면 화면이 닫히게 설정
+    <div className={styles.donation_overlay} onClick={onClose}>
+      <div
+        className={styles.donation_page_content}
+        //팝업 안쪽 내부를 클릭했을 때는 창이 닫히지 않게 하는 것
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className={styles.content_body}>
           <h3>신청 정보 확인</h3>
         </div>
@@ -152,6 +157,13 @@ const PointForGoodPage = () => {
       period: "2026-04-02 ~ 2026-06-30",
       image: "/images/relief.jpg",
     },
+    {
+      group_id: "emergency_relief",
+      title: "최수영과 함께 전쟁 속 아이의 하루를 지켜주세요!",
+      category: "긴급구호사업후원",
+      period: "2026-04-02 ~ 2026-06-30",
+      image: "/images/relief.jpg",
+    },
     // ... 이런 식으로 총 9개를 채웁니다.
   ];
 
@@ -219,29 +231,39 @@ const PointForGoodPage = () => {
       <HomeBanner />
 
       <div className={styles.campaign_container}>
+        {/* 1. 상단 타이틀 섹션 */}
+        <div className={styles.header_section}>
+          <h2 className={styles.main_title}>더 늦기 전에 지켜주세요</h2>
+        </div>
+
+        {/* 2. 캠페인 카드 그리드 */}
         <div className={styles.campaign_grid}>
-          {donationCardList.map((item) => (
-            <div key={item.group_id} className={styles.campaign_card}>
-              {/* 조건1: 이미지 */}
+          {donationCardList.map((item, index) => (
+            <div
+              key={`${item.group_id}-${index}`}
+              className={styles.campaign_card}
+            >
+              {/* 이미지 영역 */}
               <div className={styles.card_image_wrap}>
                 <img src={item.image} alt={item.title} />
               </div>
 
-              {/* 조건2: 설명 및 정보 */}
+              {/* 정보 영역 */}
               <div className={styles.card_content}>
-                <p className={styles.card_title}>{item.title}</p>
+                <h4 className={styles.card_subject}>{item.category}</h4>
+                <p className={styles.card_description}>{item.title}</p>
+
                 <div className={styles.card_footer}>
-                  <span className={styles.category}>{item.category}</span>
                   <span className={styles.period}>{item.period}</span>
                 </div>
               </div>
 
-              {/* 조건3: 기부버튼 */}
+              {/* 기부 버튼 */}
               <button
                 className={styles.donate_open_btn}
                 onClick={() => {
-                  setSelectedGroup(item); // 여기서 단체 정보를 셋팅!
-                  setIsOpen(true); // 팝업 오픈!
+                  setSelectedGroup(item);
+                  setIsOpen(true);
                 }}
               >
                 기부하기
