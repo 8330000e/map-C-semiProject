@@ -2,6 +2,8 @@ package kr.co.iei.point.controller;
 
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import kr.co.iei.point.service.PointService;
+import kr.co.iei.region.model.vo.RegionContribution;
 
 @CrossOrigin("origins = \"http://localhost:5173\", allowCredentials = \"true\"")
 @RestController
@@ -29,5 +32,13 @@ public class PointController {
 		Integer totalPoint = pointService.selectTotalPoint(memberId);
 		return ResponseEntity.ok(totalPoint);
 	}
+	// 나무 키우기에 사용한 포인트 내역 조회
+		@GetMapping(value = "/point-history/{memberId}")
+		public ResponseEntity<?> selectPointHistory(@PathVariable String memberId){
+			System.out.println("★포인트 내역 조회 요청★ ID : " + memberId);
+			
+			List<RegionContribution> historyList = pointService.selectPointHistory(memberId);
+			return ResponseEntity.ok(historyList);
+		}
 	
 }

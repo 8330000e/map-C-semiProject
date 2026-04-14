@@ -7,6 +7,7 @@ import BoardListBox from "./BoardListBox";
 import useAuthStore from "../../../store/useAuthStore";
 import Swal from "sweetalert2";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import { REGION_DATA } from "./regionData";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -111,6 +112,8 @@ const Community = ({
   const location = useLocation();
   const navigate = useNavigate();
   const [missionType, setMissionType] = useState(null);
+
+  const sigunguOptions = sido ? REGION_DATA[sido] || [] : [];
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -614,10 +617,11 @@ const Community = ({
                   }}
                 >
                   <option value="">시/도 선택</option>
-                  <option value="서울">서울특별시</option>
-                  <option value="경기">경기도</option>
-                  <option value="인천">인천광역시</option>
-                  <option value="부산">부산광역시</option>
+                  {Object.keys(REGION_DATA).map((region) => (
+                    <option key={region} value={region}>
+                      {region}
+                    </option>
+                  ))}
                 </select>
 
                 <select
@@ -626,12 +630,14 @@ const Community = ({
                   onChange={(e) => {
                     setSigungu(e.target.value);
                   }}
+                  disabled={!sido}
                 >
                   <option value="">시/군/구 선택</option>
-                  <option value="종로구">종로구</option>
-                  <option value="강남구">강남구</option>
-                  <option value="수원시">수원시</option>
-                  <option value="부평구">부평구</option>
+                  {sigunguOptions.map((district) => (
+                    <option key={district} value={district}>
+                      {district}
+                    </option>
+                  ))}
                 </select>
               </div>
 

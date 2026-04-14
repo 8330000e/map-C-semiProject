@@ -42,11 +42,14 @@ public class BoardService {
 	//게시글 조회
 	// 검색 조건을 받아서 BoardDao.selectBoardList()에 전달하고,
 	// DB에서 게시글 리스트를 조회해서 결과를 반환함.
-	public List<Board> selectBoardList(int status, int searchType, String searchKeyword) {
+	public List<Board> selectBoardList(int status, int searchType, String searchKeyword, String sido,
+	        String sigungu) {
 		HashMap<String, Object> param = new HashMap<>();
         param.put("status", status);
         param.put("searchType", searchType);
         param.put("searchKeyword", searchKeyword);
+        param.put("sido", sido);       
+        param.put("sigungu", sigungu); 
 
         return boardDao.selectBoardList(param);
 		

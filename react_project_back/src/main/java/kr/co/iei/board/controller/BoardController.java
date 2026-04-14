@@ -46,46 +46,48 @@ public class BoardController {
 
 	//게시글 조회
 	@GetMapping
-    public HashMap<String, Object> selectBoardList(
-            @RequestParam(defaultValue = "0") int status,
-            @RequestParam(defaultValue = "1") int searchType,
-            @RequestParam(defaultValue = "") String searchKeyword,
-            @RequestParam(required = false) String sido,
-            @RequestParam(required = false) String sigungu
-    ) {
-        List<Board> list = boardService.selectBoardList(status, searchType, searchKeyword);
+	public HashMap<String, Object> selectBoardList(
+	        @RequestParam(defaultValue = "0") int status,
+	        @RequestParam(defaultValue = "1") int searchType,
+	        @RequestParam(defaultValue = "") String searchKeyword,
+	        @RequestParam(required = false) String sido,
+	        @RequestParam(required = false) String sigungu
+	) {
+	    List<Board> list = boardService.selectBoardList(
+	            status, searchType, searchKeyword, sido, sigungu
+	    );
 
-        List<HashMap<String, Object>> mapped = list.stream()
-            .map(board -> {
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("boardNo", board.getBoardNo());
-                map.put("writerId", board.getWriterId());
-                map.put("boardTitle", board.getBoardTitle());
-                map.put("boardContent", board.getBoardContent());
-                map.put("boardThumb", board.getBoardThumb());
-                map.put("boardDate", board.getBoardDate());
-                map.put("memberNickname", board.getMemberNickname());
-                map.put("memberThumb", board.getMemberThumb());
-                map.put("boardStatus", board.getBoardStatus());
-                map.put("boardLat", board.getBoardLat());
-                map.put("boardLng", board.getBoardLng());
-                map.put("readCount", board.getReadCount());
-                map.put("ctpv", board.getCtpv());
-                map.put("sgg", board.getSgg());
-                map.put("updatedAt", board.getUpdatedAt());
-                map.put("writerNickname", board.getWriterNickname());
-                map.put("createDate", board.getCreateDate());
-                map.put("thumbnailUrl", board.getThumbnailUrl());
-                map.put("likeCount", board.getLikeCount());
-                map.put("commentCount", board.getCommentCount());
-                return map;
-            })
-            .collect(Collectors.toList());
+	    List<HashMap<String, Object>> mapped = list.stream()
+	        .map(board -> {
+	            HashMap<String, Object> map = new HashMap<>();
+	            map.put("boardNo", board.getBoardNo());
+	            map.put("writerId", board.getWriterId());
+	            map.put("boardTitle", board.getBoardTitle());
+	            map.put("boardContent", board.getBoardContent());
+	            map.put("boardThumb", board.getBoardThumb());
+	            map.put("boardDate", board.getBoardDate());
+	            map.put("memberNickname", board.getMemberNickname());
+	            map.put("memberThumb", board.getMemberThumb());
+	            map.put("boardStatus", board.getBoardStatus());
+	            map.put("boardLat", board.getBoardLat());
+	            map.put("boardLng", board.getBoardLng());
+	            map.put("readCount", board.getReadCount());
+	            map.put("ctpv", board.getCtpv());
+	            map.put("sgg", board.getSgg());
+	            map.put("updatedAt", board.getUpdatedAt());
+	            map.put("writerNickname", board.getWriterNickname());
+	            map.put("createDate", board.getCreateDate());
+	            map.put("thumbnailUrl", board.getThumbnailUrl());
+	            map.put("likeCount", board.getLikeCount());
+	            map.put("commentCount", board.getCommentCount());
+	            return map;
+	        })
+	        .collect(Collectors.toList());
 
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("items", mapped);
-        return result;
-    }
+	    HashMap<String, Object> result = new HashMap<>();
+	    result.put("items", mapped);
+	    return result;
+	}
 	//게시글 작성
 	@PostMapping
 	public HashMap<String, Object> insertBoard(@RequestBody Board board, HttpServletRequest request) {
