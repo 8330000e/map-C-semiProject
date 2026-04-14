@@ -46,6 +46,24 @@ public interface CampaignDao {
 
 	int insertCampNotice(CampaignNotice campNotice);
 
+	List<String> selectAdminMembers();
+
+	int inheritManager(Campaign camp);
+
+	int banPartMember(Campaign camp);
+
+	int deletePartMember(Campaign camp);
+
+	int alarmBanMember(Map<String, String> map);
+
+	List<String> selectBannedMember(int campaignNo);
+
+	Campaign selectCampForUpdate(Integer campaignNo);
+
+	int InsertIntoUpdateTbl(Campaign camp);
+
+	int insertIntoUpdateTbl(Campaign camp);
+
 	
 
 }

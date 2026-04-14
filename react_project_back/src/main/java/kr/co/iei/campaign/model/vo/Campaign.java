@@ -19,4 +19,5 @@ public class Campaign {
 	private String campaignStartDate;
 	private String memberId;
 	private Integer memberCount;
+	private String campaignExileReason;
 }

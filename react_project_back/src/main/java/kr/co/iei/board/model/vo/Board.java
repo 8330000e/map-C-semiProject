@@ -31,6 +31,7 @@ public class Board {
 	    private Integer readCount;
 	    private String ctpv;
 	    private String sgg;
+		private String addr;
 	    // 게시글이 수정된 날짜를 담는 필드임.
 	    // 수정할 때마다 DB에 SYSDATE로 저장해서 프론트에서 "수정됨" 표시를 할 수 있도록 함.
 	    private String updatedAt;

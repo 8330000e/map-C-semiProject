@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.iei.member.model.dao.MemberDao;
+import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.region.model.dao.RegionDao;
 import kr.co.iei.region.model.vo.Region;
 import kr.co.iei.region.model.vo.RegionContribution;
@@ -19,6 +20,9 @@ public class RegionService {
     
     @Autowired
     private MemberDao memberDao;
+    
+	@Autowired
+	private MemberService memberService;
 
     public List<Region> selectRegionList() {
         return regionDao.selectRegionList();
@@ -44,6 +48,7 @@ public class RegionService {
         if (result1 == 0 || result2 == 0 || result3 == 0) {
             throw new RuntimeException("DB 처리 실패");
         }
+        memberService.insertPointHistory(memberId, -point, "USE", "나무 물주기");
 
         return 1;
     }

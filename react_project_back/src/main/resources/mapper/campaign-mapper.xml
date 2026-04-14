@@ -63,7 +63,7 @@
 				)
 	</insert>
 	<select id="getCampBoardList" resultType="campPart">
-		select * from campaign_participance_tbl where campaign_no =#{campaignNo}
+		select * from campaign_participance_tbl where campaign_no =#{campaignNo} order by 1 asc
 	</select>
 	<select id="getCampBoardDetail" resultType="campPart">
 		select * from campaign_participance_tbl where campaign_participance_no = #{campaignParticipanceNo}
@@ -85,5 +85,26 @@
 	</update>
 	<insert id="insertCampNotice">
 		insert into campaign_notice_tbl values(campaign_notice_seq.nextval,#{campaignNoticeTitle},#{campaignNoticeContent},#{campaignNoticeWriter},#{campaignNo},sysdate)
+	</insert>
+	<update id="inheritManager">
+		update create_campaign_tbl set member_id=#{memberId} where campaign_no=#{campaignNo}
+	</update>
+	<delete id="deletePartMember">
+		delete from campaign_member_tbl where member_id=#{memberId} and campaign_no=#{campaignNo}
+	</delete>
+	<insert id="banPartMember">
+		insert into campaign_exile_tbl values(#{memberId},#{campaignNo},#{campaignExileReason})
+	</insert>
+	<insert id="alarmBanMember">
+		insert into alarm_tbl values (alarm_seq.nextval,#{memberId},3,'캠페인 추방',#{alarmData},0,sysdate,1,null)
+	</insert>
+	<select id="selectBannedMember" resultType="String">
+		select member_id from campaign_exile_tbl where campaign_no = #{campaignNo} 
+	</select>
+	<select id="selectCampForUpdate" resultType="camp">
+		select campaign_title,campaign_explanation,campaign_goal_member from create_campaign_tbl where campaign_no=#{campaignNo}
+	</select>
+	<insert id="insertIntoUpdateTbl">
+		insert into campaign_update_tbl values(campaign_update_seq.nextval,#{campaignTitle},#{campaignExplanation},#{campaignGoalMember},#{campaignNo})
 	</insert>
 </mapper>

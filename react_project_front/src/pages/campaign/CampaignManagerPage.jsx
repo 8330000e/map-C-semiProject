@@ -19,7 +19,7 @@ const CampaignManagerPage = () => {
         <div className={styles.camp_settings_main_wrap}>
           <div className={styles.camp_settings_sidebar}>
             <div className={styles.camp_setting_sidebar_title}>
-              <h4>설정</h4>
+              <h3>설정</h3>
             </div>
             <NavLink
               to={`/campaign/settings/${campaignNo}/${memberId}/updateCamp`}

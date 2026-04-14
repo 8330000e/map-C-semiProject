@@ -26,6 +26,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
+import kr.co.iei.point.vo.PointHistory;
 import kr.co.iei.utils.DeviceParser;
 import kr.co.iei.utils.EmailSender;
 import kr.co.iei.utils.FileUtils;
@@ -298,6 +299,12 @@ public class Membercontroller {
 	public ResponseEntity<?> selectMemberPoint(@PathVariable String memberId) {
 	Integer totalPoint = memberService.selectMemberPoint(memberId);
 		return ResponseEntity.ok(totalPoint);
+	}
+	
+	@GetMapping(value = "/{memberId}/point-history")
+	public ResponseEntity<?> selectPointHistory(@PathVariable String memberId) {
+	    List<PointHistory> pointHistory = memberService.selectPointHistory(memberId);
+	    return ResponseEntity.ok(pointHistory);
 	}
 
 	@PatchMapping(value = "/{memberId}/leave")

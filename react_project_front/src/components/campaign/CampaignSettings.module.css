@@ -1,0 +1,66 @@
+.camp_settings_content_wrap {
+  width: 100%;
+  min-height: 600px;
+  border: 1.5px solid var(--gray4);
+  border-radius: 20px;
+}
+.camp_settings_content_title {
+  margin-top: 30px;
+  text-align: center;
+}
+.camp_settings_content_main_wrap {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  gap: 10px;
+}
+/* 공지사항 */
+.camp_settings_content_main_wrap > input {
+  width: 85%;
+  margin: 10px auto;
+}
+.camp_settings_content_main_wrap > textarea {
+  width: 85%;
+  margin: 10px auto;
+}
+.camp_settings_content_main_wrap > label {
+  padding-left: 50px;
+}
+/* 권한승계 */
+.camp_settings_content_inherit {
+  padding-top: 100px;
+  margin-bottom: 200px;
+  text-align: center;
+}
+/* 멤버 추방 */
+.camp_settings_content_ban_memberId > p {
+  padding-left: 50px;
+}
+.camp_settings_content_ban_memberId > label {
+  padding-left: 33px;
+}
+.camp_settings_content_ban_memberId > div {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.camp_settings_content_ban_memberId > div > input {
+  width: 80%;
+}
+.camp_settings_content_ban_reason {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.camp_settings_content_ban_reason > label {
+  padding-left: 33px;
+}
+.camp_settings_content_ban_reason > textarea {
+  width: 88%;
+  margin: 10px auto;
+}
+/* 캠페인 수정 */
+
+.camp_settings_content_btn_wrap {
+  align-self: center;
+}

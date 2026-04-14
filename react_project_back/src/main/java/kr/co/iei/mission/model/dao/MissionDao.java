@@ -70,5 +70,9 @@ public interface MissionDao {
 			    @Param("missionNo") int missionNo
 			);
 
+		List<String> selectRecentAttendanceDates(String memberId);
+
+		int addAttendanceBonusPoint(String memberId, int bonusPoint);
+
 	
 }

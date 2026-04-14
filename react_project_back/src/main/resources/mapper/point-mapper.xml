@@ -7,4 +7,17 @@
 		from member_point_tbl
 		where member_id = #{memberId}
 	</select>
+	
+	 <!-- 나무 키우기 포인트 사용 내역 조회 -->
+    <select id="selectPointHistory" parameterType="string" resultType="contribution">
+        SELECT
+            CONTRIBUTION_NO AS contributionNo,
+            MEMBER_ID AS memberId,
+            REGION_NO AS regionNo,
+            CONTRIBUTED_POINT AS contributedPoint,
+            TO_CHAR(CONTRIBUTED_AT, 'YYYY-MM-DD') AS contributedAt
+        FROM REGION_CONTRIBUTION_TBL
+        WHERE MEMBER_ID = #{memberId}
+        ORDER BY CONTRIBUTED_AT DESC, CONTRIBUTION_NO DESC
+    </select>
 </mapper>
