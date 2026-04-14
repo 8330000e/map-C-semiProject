@@ -62,6 +62,7 @@ public class StoreBoardServiceImpl implements StoreBoardService {
         StoreBoard sb = storeBoardDAO.selectStoreBoard(marketNo);
         if (sb != null) {
             sb.setProductStatus(convertStatus(sb.getProductStatus()));
+            // 상세 페이지 불러오기 시 작성자 썸네일이 없으면 회원 정보에서 추가로 채워줌.
             if (isBlank(sb.getMemberThumb()) && sb.getMemberId() != null) {
                 Member member = memberService.selectOneMember(sb.getMemberId());
                 if (member != null && !isBlank(member.getMemberThumb())) {
@@ -111,6 +112,7 @@ public class StoreBoardServiceImpl implements StoreBoardService {
             return reviews;
         }
 
+        // 리뷰 목록에서 작성자 썸네일이 누락된 경우, 회원 정보로 보강함.
         Map<String, Member> memberCache = new HashMap<>();
         for (StoreReview review : reviews) {
             if (isBlank(review.getMemberThumb()) && review.getMemberId() != null) {
@@ -127,6 +129,7 @@ public class StoreBoardServiceImpl implements StoreBoardService {
     @Override
     public StoreReview addReview(StoreReview review) {
         storeBoardDAO.insertReview(review);
+        // 댓글 등록 후에도 작성자 썸네일이 빈 경우, 회원 정보로 채워서 반환함.
         if (isBlank(review.getMemberThumb()) && review.getMemberId() != null) {
             Member member = memberService.selectOneMember(review.getMemberId());
             if (member != null && !isBlank(member.getMemberThumb())) {

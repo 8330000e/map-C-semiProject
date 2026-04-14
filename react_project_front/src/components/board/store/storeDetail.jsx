@@ -156,6 +156,7 @@ const StoreDetail = () => {
     setSaleStatus(getSaleStatusLabel(item.productStatus));
   }, [item]);
 
+  // 상세페이지 로딩 시 작성자 썸네일이 비어 있으면 회원 API에서 추가로 가져와서 채워줌.
   useEffect(() => {
     if (!item || item.memberThumb) return;
     if (!item.memberId) return;
