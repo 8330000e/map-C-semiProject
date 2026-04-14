@@ -62,12 +62,14 @@
 			-- 어제 가입자
 			(select count (case when trunc(enroll_date) = trunc(sysdate - 1) then 1 end) from member_tbl1) as yesterdayMember,
 			-- 신고 카테고리별 건수
-			(select count(case when report_category = '광고' then 1 end) from board_report_tbl) as ad,
-			(select count(case when report_category = '욕설' then 1 end) from board_report_tbl) as hate,
-			(select count(case when report_category = '스팸' then 1 end) from board_report_tbl) as spam,
-			(select count(case when report_category = '기타' then 1 end) from board_report_tbl) as etc,
+			(select count(case when report_category = '광고/스팸' then 1 end) from report_tbl) as spam,
+			(select count(case when report_category = '욕설/비방' then 1 end) from report_tbl) as hate,
+			(select count(case when report_category = '부적절한 게시글' then 1 end) from report_tbl) as inappropriateBoard,
+			(select count(case when report_category = '부적절한 댓글' then 1 end) from report_tbl) as inappropriateComment,
+			(select count(case when report_category = '허위정보' then 1 end) from report_tbl) as falseInfo,
+			(select count(case when report_category = '기타' then 1 end) from report_tbl) as etc,
 			-- 미처리 신고 (status = 0)
-			(select count(*) from board_report_tbl where report_status = 0) as pendingReport,
+			(select count(*) from report_tbl where report_status = 0) as pendingReport,
 			-- 주간 가입자 추이 (4주 전부터 1주 전까지)
 			(select count(*) from member_tbl1 where enroll_date >= sysdate -28 and enroll_date < sysdate - 21) as fourWeekAgo,
 			(select count(*) from member_tbl1 where enroll_date >= sysdate -21 and enroll_date < sysdate - 14) as threeWeekAgo,
@@ -157,7 +159,7 @@
         -- 게시글/댓글/신고 수는 서브쿼리로 각각 카운트
         (SELECT COUNT(*) FROM board_tbl b WHERE b.writer_id = m.member_id) AS boardCount,
         (SELECT COUNT(*) FROM board_comment_tbl c WHERE c.board_comment_writer = m.member_id) AS commentCount,
-        (SELECT COUNT(*) FROM board_report_tbl r JOIN board_tbl b ON r.board_no = b.board_no WHERE b.writer_id = m.member_id) AS reportCount,
+        (SELECT COUNT(*) FROM report_tbl r JOIN board_tbl b ON r.target_no = b.board_no WHERE b.writer_id = m.member_id) AS reportCount,
         (SELECT COUNT(*) FROM member_log_tbl l WHERE l.member_id = m.member_id AND l.log_action = '로그인실패' AND l.log_time >= SYSDATE - 1) AS failCount,
 		(SELECT COUNT(*) FROM member_log_tbl l WHERE l.member_id = m.member_id AND l.log_alert = '위치변경' AND l.log_time >= SYSDATE - 1) AS locationChangeCount
     FROM member_tbl1 m
@@ -225,19 +227,95 @@
 	</select>
 	
 	<select id="getBoardList" resultType="board">
-		select 
+	select * from <!-- 인라인 뷰 안쓰면 조건절에서 별칭 사용 불가능 서브쿼리로 도배해야함 가상테이블을 만들어 동작 순서 문제를 해결해서 별칭 사용 -->
+		(select 
 			b.board_no,
 			b.writer_id,
 			b.board_title,
+			b.board_content,
 			to_char(b.board_date, 'YYYY-MM-DD HH24:MI:SS') as boardDate,
 			b.board_status,
-			(select count(*) from board_report_tbl r where r.board_no = b.board_no) as reportCount
-		from board_tbl b
-		order by b.board_date desc
+			(select listagg(k.keyword, ', ')
+			from keyword_tbl k
+			where b.board_title like '%' || k.keyword || '%'
+			or b.board_content like '%' || k.keyword || '%') as detectedKeyword,
+			(select count(*) from report_tbl r where r.report_no = b.board_no) as reportCount
+		from board_tbl b) v
+		<where>
+			<if test="keyword == 'Y'.toString()">
+				and detectedKeyword is not null
+			</if>
+			<if test="keyword == 'N'.toString()">
+				and detectedKeyword is null
+			</if>
+			<choose> <!-- 스위치, if else true 나오면 멈춤 -->
+				<when test="risk == 'high'">
+					and detectedKeyword is not null and reportCount > 0
+				</when>
+				<when test="risk == 'mid'">
+					and detectedKeyword is not null or reportCount > 0
+				</when>
+				<when test="risk == 'low'">
+					and detectedKeyword is null and reportCount = 0
+				</when>
+			</choose>
+		</where>
+		order by <!-- order by는 동작 순서가 select 이후라서 인라인 뷰 없어도 그냥 별칭 사용 가능함 -->
+			<choose>
+				<when test="reportSort == 'low'">
+					reportCount asc,
+				</when>
+				<when test="reportSort == 'high'">
+					reportCount desc,
+				</when>
+			</choose>
+			<choose>
+				<when test="sort == 'asc'">
+					boardDate asc
+				</when>
+				<otherwise> <!-- 스위치 default와 동일 -->
+					boardDate desc
+				</otherwise>
+			</choose>
 	</select>
 	
-	<select id="getKeywordList" resultType="keyword">
-		select * from keyword_tbl
-	</select>
+	<update id="updateBoardStatus">
+		<if test="boardAction != '미처리'">
+			update board_tbl set board_status = 
+				<choose>
+					<when test="boardAction == '비공개 처리'">1</when>
+					<when test="boardAction == '삭제 처리'">2</when>
+				</choose>
+			where board_no = #{targetNo}
+		</if>
+	</update>
+	
+	<update id="updateMemberStatus">
+		<if test="memberAction != '미처리'">
+			update member_tbl1 set 
+				<choose>
+					<when test="memberAction == '1일 정지'">lock_until = sysdate + 1</when>
+					<when test="memberAction == '3일 정지'">lock_until = sysdate + 3</when>
+					<when test="memberAction == '7일 정지'">lock_until = sysdate + 7</when>
+					<when test="memberAction == '영구정지'">member_status = 1</when>
+				</choose>
+			where member_id = #{targetId}
+		</if>
+	</update>
+	
+	<update id="updateReportStatus">
+		update report_tbl set
+			report_status = 1
+		where report_no = #{reportNo}
+	</update>
+	
+	<insert id="insertAdminLog">
+		insert into admin_log_tbl values(
+			admin_log_seq.nextval,
+			
+		)
+	</insert>
+	
+
 
 </mapper>

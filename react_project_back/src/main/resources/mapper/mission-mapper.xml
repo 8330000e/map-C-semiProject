@@ -113,17 +113,33 @@
         attendance_seq.NEXTVAL,
         #{memberId},
         TRUNC(SYSDATE),
-        1
+        5
     )
 	</insert>
 	<!-- 포인트 지급 -->
 	<update id="updateMemberPoint" parameterType="string">
     UPDATE MEMBER_POINT_TBL
-    SET TOTAL_POINT = TOTAL_POINT + 1
+    SET TOTAL_POINT = TOTAL_POINT + 5
     WHERE MEMBER_ID = #{memberId}
 	</update>
 	
+	<!-- 최근 출석일 조회 (최대 7개) -->
+	<select id="selectRecentAttendanceDates" resultType="string">
+	    SELECT TO_CHAR(ATTEND_YMD, 'YYYY-MM-DD')
+	    FROM ATTENDANCE_TBL
+	    WHERE MEMBER_ID = #{memberId}
+	      AND ATTEND_YMD = TRUNC(SYSDATE)
+	    ORDER BY ATTEND_YMD DESC
+	    FETCH FIRST 7 ROWS ONLY
+	</select>
 	
+	<!-- 연속 출석 보너스 포인트 지급 -->
+	<update id="addAttendanceBonusPoint">
+	    UPDATE MEMBER_POINT_TBL
+	    SET TOTAL_POINT = TOTAL_POINT + #{point}
+	    WHERE MEMBER_ID = #{memberId}
+	</update>
+			
 		<!-- 오늘 기본 미션 했는지 -->
 	<select id="existsTodayBasicMission" resultType="int">
     SELECT COUNT(*)
@@ -161,7 +177,7 @@
 	<!-- 포인트 지급 -->
 	<update id="updateMemberPointForBasic" parameterType="string">
     UPDATE MEMBER_POINT_TBL
-    SET TOTAL_POINT = TOTAL_POINT + 5
+    SET TOTAL_POINT = TOTAL_POINT + 10
     WHERE MEMBER_ID = #{memberId}
 	</update>
 
@@ -200,7 +216,7 @@
 	<!-- 랜덤 미션 완료 시 회원 포인트 지급 -->
 	<update id="updateMemberPointForRandom" parameterType="string">
 	    UPDATE MEMBER_POINT_TBL
-	    SET TOTAL_POINT = TOTAL_POINT + 10
+	    SET TOTAL_POINT = TOTAL_POINT + 20
 	    WHERE MEMBER_ID = #{memberId}
 	</update>
 	

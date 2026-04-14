@@ -29,6 +29,7 @@ import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
 import kr.co.iei.board.model.vo.Marker;
+import kr.co.iei.board.model.vo.Report;
 import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.utils.DeviceParser;
 import kr.co.iei.utils.FileUtils;
@@ -47,14 +48,17 @@ public class BoardController {
 
 	//게시글 조회
 	@GetMapping
-    public HashMap<String, Object> selectBoardList(
-            @RequestParam(defaultValue = "0") int status,
-            @RequestParam(defaultValue = "1") int searchType,
-            @RequestParam(defaultValue = "") String searchKeyword,
-            @RequestParam(required = false) String sido,
-            @RequestParam(required = false) String sigungu
-    ) {
-        List<Board> list = boardService.selectBoardList(status, searchType, searchKeyword);
+	public HashMap<String, Object> selectBoardList(
+	        @RequestParam(defaultValue = "0") int status,
+	        @RequestParam(defaultValue = "1") int searchType,
+	        @RequestParam(defaultValue = "") String searchKeyword,
+	        @RequestParam(required = false) String sido,
+	        @RequestParam(required = false) String sigungu,
+	        @RequestParam(defaultValue = "popular") String sortType 
+	) {
+		List<Board> list = boardService.selectBoardList(
+		        status, searchType, searchKeyword, sido, sigungu, sortType
+		);
 
         List<HashMap<String, Object>> mapped = list.stream()
             .map(board -> {
@@ -84,10 +88,10 @@ public class BoardController {
             })
             .collect(Collectors.toList());
 
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("items", mapped);
-        return result;
-    }
+	    HashMap<String, Object> result = new HashMap<>();
+	    result.put("items", mapped);
+	    return result;
+	}
 	//게시글 작성
 	@PostMapping
 	public HashMap<String, Object> insertBoard(@RequestBody Board board, HttpServletRequest request) {
@@ -170,6 +174,7 @@ public class BoardController {
 		// 댓글 등록 요청 처리
 		// front에서 boardNo는 URL 경로로, 댓글 내용과 작성자 정보는 body로 전달됩니다.
 		comment.setBoardNo(boardNo);
+		System.out.println("comment:" + comment);
 		
 		String ip = request.getRemoteAddr();
         if (ip.equals("0:0:0:0:0:0:0:1")) {
@@ -329,10 +334,30 @@ public class BoardController {
 		return ResponseEntity.ok(list);
 	}
 	
-	@PostMapping(value="report")
-	public ResponseEntity<?> insertBoardReport(@RequestBody BoardReport report) {
+	@PostMapping(value="board-report")
+	public ResponseEntity<?> insertBoardReport(@RequestBody Report report) {
+		System.out.println("report: " + report);
 		int result = boardService.insertBoardReport(report);
 		return ResponseEntity.ok(result);
+	}
+	@PostMapping(value="comment-report")
+	public ResponseEntity<?> insertCommentReport(@RequestBody Report report) {
+		System.out.println("report: " + report);
+		int result = boardService.insertBoardReport(report);
+		return ResponseEntity.ok(result);
+	}
+	
+	
+	@GetMapping(value="/detail/{boardNo}")
+	public ResponseEntity<?> getBoardDetail(@PathVariable Integer boardNo) {
+		Board board = boardService.getBoardDetail(boardNo);
+		return ResponseEntity.ok(board);
+	}
+	
+	@GetMapping(value="/report")
+	public ResponseEntity<?> getReportList() {
+		List<Report> reportList = boardService.getReportList();
+		return ResponseEntity.ok(reportList);
 	}
 	 
 }

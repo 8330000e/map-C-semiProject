@@ -3,61 +3,83 @@
   padding: 10px 20px;
   box-sizing: border-box;
 }
-
 .topSection {
   width: 1200px;
-  margin: 0 auto 12px;
+  margin: 0 auto 16px;
   padding: 0;
   box-sizing: border-box;
 
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
+/* 홈으로 버튼 (카드형 + 살짝 떠있는 느낌) */
 .backButton {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 13px 16px;
-  border: 1px solid #8e9684;
-  border-radius: 10px;
-  background: #ffffff;
-  color: #2f372b;
+  min-width: 100px;
+  height: 52px;
+  padding: 0 18px;
+
+  border: 1px solid #c9d0c0;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.9);
+
+  color: #2d3828;
   font-size: 14px;
   font-weight: 700;
+
   cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
+
+  box-shadow: 0 8px 20px rgba(44, 56, 40, 0.06);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
 .backButton:hover {
-  background: #f3f6ee;
-  transform: translateY(-1px);
+  background: #ffffff;
+  box-shadow: 0 12px 24px rgba(44, 56, 40, 0.1);
+  transform: translateY(-2px);
 }
 
+/* 공지 박스 (홈페이지 느낌 핵심) */
 .noticeBox {
   flex: 1;
   max-width: 1100px;
-  min-height: 52px;
+  min-height: 56px;
+
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 16px;
-  border: 1px solid #b8c0ae;
-  border-radius: 14px;
-  background: #f8fbf4;
+  gap: 14px;
+
+  padding: 0 18px;
+
+  border: 1px solid #d8decf;
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.85);
+
+  box-shadow: 0 10px 26px rgba(44, 56, 40, 0.06);
+
   box-sizing: border-box;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
 }
 
+/* 공지 라벨 */
 .noticeLabel {
   flex-shrink: 0;
-  padding: 6px 10px;
+  padding: 7px 12px;
   border-radius: 999px;
-  background: #e4efda;
-  color: #4c6440;
-  font-size: 13px;
+
+  background: linear-gradient(180deg, #e6f1dc 0%, #dceacf 100%);
+
+  color: #4a6840;
+  font-size: 12px;
   font-weight: 800;
 }
 

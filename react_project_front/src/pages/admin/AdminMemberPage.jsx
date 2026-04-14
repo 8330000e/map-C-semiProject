@@ -7,25 +7,27 @@ import AdminMember from "../../components/admin/AdminMember";
 const AdminMemberPage = () => {
   const [memberList, setMemberList] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null); // 오른쪽 패널에 표시할 회원
-  const [isModalOpen, setIsModalOpen] = useState(false); // 전체 로그 모달 열림 여부
+  const [isModalOpen, setIsModalOpen] = useState(false); // 전체 로그 모달 상태값
 
+  // 회원 로그 필터 객체로 한번에 묶음
   const [logFilter, setLogFilter] = useState({
-    action: "ALL",
-    result: "ALL",
-    sort: "DESC",
+    action: "ALL", // 행동 유형 초기값 전체
+    result: "ALL", // 성공 실패 여부 초기값 전체
+    sort: "DESC", // 초기값 최신순
   });
 
-  // 필터 상태 - ALL이면 조건 없이 전체 조회
+  // 회원 리스트 필터 객체
   const [filter, setFilter] = useState({
-    status: "ALL",
-    grade: "ALL",
-    keyword: "",
+    status: "ALL", // 정상/정지/탈퇴 초기값 전체
+    grade: "ALL", // 일반/관리자 초기값 전체
+    keyword: "", // 검색어
   });
 
-  const [recentLogList, setRecentLogList] = useState([]); // 회원 클릭 시 최근 4개 로그
+  const [recentLogList, setRecentLogList] = useState([]); // 회원 클릭 시 최근 4개 로그만 가져옴
   const [logList, setLogList] = useState([]); // 모달에서 보여줄 전체 로그
   const [logPage, setLogPage] = useState(0); // 무한 스크롤 페이지 번호
 
+  // 이상징후 로그인실패 카운트, 로그인 위치변경 카운트
   const [anomalyData, setAnomalyData] = useState({
     failCount: 0,
     locationChangeCount: 0,
@@ -38,25 +40,30 @@ const AdminMemberPage = () => {
     setFilter({ ...filter, [name]: value });
   };
 
+  // logFilter 상태 업데이트
   const changeLogFilter = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     setLogFilter({ ...logFilter, [name]: value });
   };
 
+  // 회원 로그 모달 접속시간 토글
   const toggleLogSort = () => {
+    // setState에 값 대신 함수를 넣으면 리액트가 현재 state를 첫번째 인자 (prev)로 자동으로 넘겨줌
     setLogFilter((prev) => ({
+      // logFilter 스프레드 연산자로 복사
       ...prev,
+      // logFilter에 sort만 현재값 반대로 바꿔주고 변경
       sort: prev.sort === "DESC" ? "ASC" : "DESC",
     }));
   };
 
-  // 필터 조건으로 회원 목록 조회 - ALL이면 파라미터에서 제외
+  // 백엔드에서 required = false로 받고 있기 때문에 ALL이면 굳이 안보냄
   const selectMemberList = () => {
-    const params = {};
-    if (filter.status !== "ALL") params.status = filter.status;
-    if (filter.grade !== "ALL") params.grade = filter.grade;
-    if (filter.keyword.trim()) params.keyword = filter.keyword;
+    const params = {}; // 빈 객체로 시작
+    if (filter.status !== "ALL") params.status = filter.status; // filter status가 ALL이 아니라면 status값을 params에 담음
+    if (filter.grade !== "ALL") params.grade = filter.grade; // 동일
+    if (filter.keyword.trim()) params.keyword = filter.keyword; // trim으로 공백만 있는 경우 제거, 공백만 있거나 빈문자열 일때 false 처리 params에 안담김
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/admins/member`, { params })
       .then((res) => {
@@ -87,7 +94,7 @@ const AdminMemberPage = () => {
     const params = {};
     if (logFilter.action !== "ALL") params.action = logFilter.action;
     if (logFilter.result !== "ALL") params.result = logFilter.result;
-    params.sort = logFilter.sort;
+    params.sort = logFilter.sort; // sort는 무조건 보냄 asc/desc
     axios
       .get(
         `${import.meta.env.VITE_BACKSERVER}/admins/log/${memberId}/${page}`,
@@ -96,9 +103,9 @@ const AdminMemberPage = () => {
       .then((res) => {
         console.log(res);
         if (page === 0) {
-          setLogList(res.data);
+          setLogList(res.data); // 페이지가 0이면 새로 불러옴 필터변경, 새로 열때
         } else {
-          setLogList([...logList, ...res.data]); // 기존 목록에 추가
+          setLogList([...logList, ...res.data]); // 기존 목록에 다음 데이터 추가 두 배열 합침
         }
       })
       .catch((err) => {
@@ -118,16 +125,17 @@ const AdminMemberPage = () => {
       });
   };
 
-  // 회원 목록 필터
+  // 회원 목록 필터 바뀔때마다 회원 목록 api 호출
   useEffect(() => {
     selectMemberList();
   }, [filter]);
 
   // 모달 로그 필터
   useEffect(() => {
+    // 회원 목록에서 선택된 회원이 있고 모달이 열려 있을때만 동작
     if (selectedMember && isModalOpen) {
-      setLogPage(0);
-      selectLogList(selectedMember.memberId, 0);
+      setLogPage(0); // 로그 필터가 변경되면 다시 조회 해야하니까 logPage0으로 돌림
+      selectLogList(selectedMember.memberId, 0); // logList 다시 호출
     }
   }, [logFilter]);
 

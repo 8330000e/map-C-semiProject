@@ -11,6 +11,7 @@ import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
 import kr.co.iei.board.model.vo.Marker;
+import kr.co.iei.board.model.vo.Report;
 import kr.co.iei.member.model.vo.Member;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -54,6 +55,8 @@ public interface BoardDao {
 
 	List<BoardComment> selectBoardComments(@Param("boardNo") int boardNo);
 
+	BoardComment selectBoardCommentByNo(@Param("commentNo") Long commentNo);
+
 	int insertBoardComment(BoardComment comment);
 
 	int updateBoardComment(BoardComment comment);
@@ -72,11 +75,15 @@ public interface BoardDao {
 
 	Marker selectBoardCount(String sgg);
 
-	int insertBoardReport(BoardReport report);
+	int insertBoardReport(Report report);
 
-	int checkReport(BoardReport report);
+	int checkReport(Report report);
 
+	Board getBoardDetail(Integer boardNo);
+	
 	List<Board> selectCtpvsgg();
+
+	List<Report> getReportList();
 
     
 

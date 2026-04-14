@@ -47,7 +47,14 @@ const DashBoardPage = () => {
   const maxIndex = categoryCount.indexOf(maxCount);
 
   // 인덱스로 카테고리 이름 꺼냄
-  const maxCategory = ["광고", "욕설", "스팸", "기타"][maxIndex];
+  const maxCategory = [
+    "부적절한 게시글",
+    "부적절한 댓글",
+    "광고/스팸",
+    "욕설/비방",
+    "허위정보",
+    "기타",
+  ][maxIndex];
 
   // 주간 회원 증가 추이 [4주전, 3주전, 2주전, 1주전]
   const [weeklyCount, setWeeklyCount] = useState([]);
@@ -64,9 +71,12 @@ const DashBoardPage = () => {
         setLastMonthMember(res.data.lastMonthMember);
         // 신고 카테고리 순서 맞춰서 배열로 넣음
         setCategoryCount([
-          res.data.ad,
-          res.data.hate,
+          res.data.inappropriateBoard,
+          res.data.inappropriateComment,
           res.data.spam,
+          res.data.hate,
+
+          res.data.falseInfo,
           res.data.etc,
         ]);
         setWeeklyCount([

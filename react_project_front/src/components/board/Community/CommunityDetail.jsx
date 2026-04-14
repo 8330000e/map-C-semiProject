@@ -190,8 +190,7 @@ const CommunityDetail = ({
         memberNickname: memberNickname || memberId,
         content: text,
         isSecret: newPrivate ? 1 : 0,
-        parentCommentNo:
-          replyTarget?.commentNo ?? replyTarget?.id ?? null,
+        parentCommentNo: replyTarget?.commentNo ?? replyTarget?.id ?? null,
       };
 
       const res = await axios.post(
@@ -345,9 +344,10 @@ const CommunityDetail = ({
 
       if (content) {
         axios
-          .post(`${import.meta.env.VITE_BACKSERVER}/boards/report`, {
-            boardNo: board.boardNo,
-            reportId: memberId,
+          .post(`${import.meta.env.VITE_BACKSERVER}/boards/board-report`, {
+            targetNo: board.boardNo,
+            targetType: "board",
+            memberId: memberId,
             reportCategory: category,
             reportContent: content,
           })
@@ -355,7 +355,10 @@ const CommunityDetail = ({
             if (res.data === 1) {
               Swal.fire({ icon: "success", title: "신고 접수되었습니다." });
             } else if (res.data === -1) {
-              Swal.fire({ icon: "warning", title: "신고는 한번만 하세요" });
+              Swal.fire({
+                icon: "warning",
+                title: "이미 신고한 게시글입니다.",
+              });
             }
           })
           .catch((err) => {
@@ -363,7 +366,7 @@ const CommunityDetail = ({
             Swal.fire({
               icon: "error",
               title: "신고 실패",
-              text: "다시 시도해주세요.",
+              text: "잠시 후 다시 시도해주세요.",
             });
           });
       }
@@ -371,19 +374,60 @@ const CommunityDetail = ({
   };
 
   const handleReportComment = async (commentId) => {
-    const result = await Swal.fire({
+    const { value: category } = await Swal.fire({
       icon: "warning",
       title: "댓글 신고",
-      text: "이 댓글을 신고하시겠습니까?",
+      input: "select",
+      inputOptions: {
+        "부적절한 댓글": "부적절한 댓글",
+        "스팸/광고": "스팸/광고",
+        "욕설/비방": "욕설/비방",
+        허위정보: "허위정보",
+        기타: "기타",
+      },
+      inputPlaceholder: "신고 사유를 선택해주세요",
       showCancelButton: true,
-      confirmButtonText: "신고",
+      confirmButtonText: "다음",
       cancelButtonText: "취소",
       confirmButtonColor: "#c0392b",
     });
 
-    if (result.isConfirmed) {
-      setReportedCommentIds((prev) => [...prev, commentId]);
-      Swal.fire({ icon: "success", title: "신고 접수되었습니다." });
+    if (category) {
+      const { value: content } = await Swal.fire({
+        title: "신고 상세 내용",
+        input: "textarea",
+        inputPlaceholder: "신고 사유를 상세하게 작성해주세요",
+        showCancelButton: true,
+        confirmButtonText: "신고 접수",
+        cancelButtonText: "취소",
+        confirmButtonColor: "#c0392b",
+      });
+
+      if (content) {
+        axios
+          .post(`${import.meta.env.VITE_BACKSERVER}/boards/comment-report`, {
+            targetNo: commentId,
+            targetType: "comment",
+            memberId: memberId,
+            reportCategory: category,
+            reportContent: content,
+          })
+          .then((res) => {
+            if (res.data === 1) {
+              Swal.fire({ icon: "success", title: "신고 접수되었습니다." });
+            } else if (res.data === -1) {
+              Swal.fire({ icon: "warning", title: "이미 신고한 댓글입니다." });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            Swal.fire({
+              icon: "error",
+              title: "신고 실패",
+              text: "잠시 후 다시 시도해주세요.",
+            });
+          });
+      }
     }
   };
 
@@ -550,9 +594,9 @@ const CommunityDetail = ({
       const commentAvatarUrl =
         getMemberImageUrl(
           comment.memberThumb ||
-          comment.commentThumb ||
-          comment.thumb ||
-          comment.profileThumb,
+            comment.commentThumb ||
+            comment.thumb ||
+            comment.profileThumb,
         ) || userImg;
       return (
         <div
@@ -675,9 +719,9 @@ const CommunityDetail = ({
               src={
                 getMemberImageUrl(
                   board.writerThumb ||
-                  board.memberThumb ||
-                  board.profileThumb ||
-                  board.thumb,
+                    board.memberThumb ||
+                    board.profileThumb ||
+                    board.thumb,
                 ) || userImg
               }
               onError={(e) => {

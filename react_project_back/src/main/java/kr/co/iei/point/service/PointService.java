@@ -1,9 +1,12 @@
 package kr.co.iei.point.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.iei.point.dao.PointDao;
+import kr.co.iei.region.model.vo.RegionContribution;
 
 @Service
 public class PointService {
@@ -21,5 +24,9 @@ public class PointService {
 		// 2. DB가 준 값이 뭔지 확인
 	    System.out.println("DB 조회 결과 포인트: " + totalPoint);
 		return (totalPoint != null) ? totalPoint:0;
+	}
+
+	public List<RegionContribution> selectPointHistory(String memberId) {
+		return pointDao.selectPointHistory(memberId);
 	}
 }

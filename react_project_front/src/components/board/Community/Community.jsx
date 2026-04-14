@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // URL 쿼리값으로 mode(write/list)를 판단하므로 꼭 import 필요
+import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Community.module.css";
 import axios from "axios";
 import TextEditor from "./TextEditor";
@@ -9,6 +9,7 @@ import { normalizeImageUrl } from "../../../utils/getImageUrl";
 import { compressImageFile } from "../../../utils/compressImage";
 import Swal from "sweetalert2";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import { REGION_DATA } from "./regionData";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -62,6 +63,9 @@ const Community = ({
   const location = useLocation();
   const navigate = useNavigate();
   const [missionType, setMissionType] = useState(null);
+  const [sortType, setSortType] = useState("popular");
+
+  const sigunguOptions = sido ? REGION_DATA[sido] || [] : [];
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -144,6 +148,7 @@ const Community = ({
           searchKeyword,
           sido,
           sigungu,
+          sortType,
         },
       })
       .then(async (res) => {
@@ -161,7 +166,7 @@ const Community = ({
         console.error("게시글 조회 실패:", err);
         setBoardList([]);
       });
-  }, [searchType, searchKeyword, sido, sigungu, memberId]);
+  }, [searchType, searchKeyword, sido, sigungu, sortType, memberId]);
 
   useEffect(() => {
     if (!highlightBoardNo || !boardList.length) return;
@@ -387,6 +392,7 @@ const Community = ({
             searchKeyword,
             sido,
             sigungu,
+            sortType,
           },
         });
 
@@ -574,10 +580,11 @@ const Community = ({
                   }}
                 >
                   <option value="">시/도 선택</option>
-                  <option value="서울">서울특별시</option>
-                  <option value="경기">경기도</option>
-                  <option value="인천">인천광역시</option>
-                  <option value="부산">부산광역시</option>
+                  {Object.keys(REGION_DATA).map((region) => (
+                    <option key={region} value={region}>
+                      {region}
+                    </option>
+                  ))}
                 </select>
 
                 <select
@@ -586,12 +593,23 @@ const Community = ({
                   onChange={(e) => {
                     setSigungu(e.target.value);
                   }}
+                  disabled={!sido}
                 >
                   <option value="">시/군/구 선택</option>
-                  <option value="종로구">종로구</option>
-                  <option value="강남구">강남구</option>
-                  <option value="수원시">수원시</option>
-                  <option value="부평구">부평구</option>
+                  {sigunguOptions.map((district) => (
+                    <option key={district} value={district}>
+                      {district}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  className={styles.mapCommunitySelect}
+                  value={sortType}
+                  onChange={(e) => setSortType(e.target.value)}
+                >
+                  <option value="popular">인기순</option>
+                  <option value="latest">최신순</option>
                 </select>
               </div>
 

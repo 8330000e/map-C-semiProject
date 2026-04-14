@@ -14,6 +14,7 @@ import kr.co.iei.admin.model.vo.Faq;
 import kr.co.iei.admin.model.vo.ListItem;
 import kr.co.iei.admin.model.vo.Log;
 import kr.co.iei.admin.model.vo.Notice;
+import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.Keyword;
@@ -65,9 +66,21 @@ public interface AdminDao {
 
 	Map<String, Object> getAnomalyCount(String memberId);
 
-	List<Board> getBoardList();
+	List<Board> getBoardList(String keyword, String risk, String reportSort, String sort);
 
-	List<Keyword> getKeywordList();
+	int updateBoardStatus(ProcessReport pr);
+
+	int updateMemberStatus(ProcessReport pr);
+
+	int updateReportStatus(ProcessReport pr);
+
+	int insertAdminLog(ProcessReport pr);
+	
+	
+
+	
+
+	
 
 	
 

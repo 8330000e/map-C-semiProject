@@ -1,6 +1,7 @@
 package kr.co.iei.member.model.dao;
 
 import java.util.Date;
+import kr.co.iei.point.vo.PointHistory;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +63,10 @@ public interface MemberDao {
 	void updateLockUntil(String memberId);
 	
 	List<Member> selectClist();
+	
+	List<PointHistory> selectPointHistory(String memberId);
+	
+	int insertPointHistory(Map<String, Object> param);
 	
 	
 }

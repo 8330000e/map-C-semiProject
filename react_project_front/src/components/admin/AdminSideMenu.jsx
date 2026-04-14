@@ -51,7 +51,7 @@ const AdminSideMenu = ({ memberNickname }) => {
 
       <NavLink
         className={({ isActive }) => (isActive ? styles.active_menu : "")}
-        to="/admin/report"
+        to="/admin/reports"
       >
         <div className={styles.menu_item}>
           <span>신고센터</span>

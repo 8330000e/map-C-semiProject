@@ -1,4 +1,58 @@
 .board_wrap {
+  padding: 16px 12px;
+}
+
+.board_wrap table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.board_wrap thead {
+  background-color: var(--admin-table-header);
+  font-size: 13px;
+  color: var(--admin-text);
+}
+
+.board_wrap th,
+.board_wrap td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--admin-stroke);
+  font-size: 13px;
+  color: var(--admin-text);
+}
+
+.board_wrap th {
+  font-weight: 600;
+}
+
+.board_wrap tbody tr:hover {
+  background-color: var(--admin-table-header);
+  cursor: pointer;
+}
+
+/* 모달 배경 */
+.modal_bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--admin-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* 모달 컨텐츠 */
+.modal_content {
+  background: var(--admin-panel);
+  border-radius: 12px;
+  padding: 24px;
+  width: 900px;
+  max-height: 85vh;
+  overflow-y: auto;
   padding: 20px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 14px;
@@ -131,4 +185,52 @@
 .board_table th:last-child,
 .board_table td:last-child {
   white-space: nowrap;
+}
+
+/* thead select 스타일 */
+.board_table thead select {
+  border: 1px solid var(--admin-stroke);
+  border-radius: 6px;
+  background-color: var(--admin-input-bg);
+  color: var(--admin-text);
+  padding: 4px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+.board_table thead select:focus-visible {
+  outline: 2px solid var(--admin-accent);
+  outline-offset: 1px;
+}
+
+/* 작성일시 정렬 th */
+.sort_th {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.sort_th:hover {
+  color: var(--admin-accent);
+}
+
+/* 위험도 아이콘 td 중앙 정렬 */
+.board_table th:nth-child(6),
+.board_table td:nth-child(6) {
+  text-align: center;
+}
+
+/* 위험도 아이콘 색상 */
+.icon_safe {
+  color: #4caf50;
+}
+
+.icon_mid {
+  color: #ffc107;
+}
+
+.icon_high {
+  color: #f44336;
 }

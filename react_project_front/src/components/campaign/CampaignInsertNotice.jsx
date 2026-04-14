@@ -44,7 +44,7 @@ const CampaignInsertNotice = () => {
   return (
     <div className={styles.camp_settings_content_wrap}>
       <div className={styles.camp_settings_content_title}>
-        <h1>공지사항 등록</h1>
+        <h2>공지사항 등록</h2>
       </div>
       <div className={styles.camp_settings_content_main_wrap}>
         <label htmlFor="noticeTitle">공지 제목</label>

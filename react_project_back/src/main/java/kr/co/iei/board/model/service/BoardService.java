@@ -20,6 +20,7 @@ import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
 import kr.co.iei.board.model.vo.Marker;
+import kr.co.iei.board.model.vo.Report;
 import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.mission.model.service.MissionService;
@@ -43,14 +44,17 @@ public class BoardService {
 	//게시글 조회
 	// 검색 조건을 받아서 BoardDao.selectBoardList()에 전달하고,
 	// DB에서 게시글 리스트를 조회해서 결과를 반환함.
-	public List<Board> selectBoardList(int status, int searchType, String searchKeyword) {
-		HashMap<String, Object> param = new HashMap<>();
-        param.put("status", status);
-        param.put("searchType", searchType);
-        param.put("searchKeyword", searchKeyword);
+	public List<Board> selectBoardList(int status, int searchType, String searchKeyword, String sido,
+	        String sigungu, String sortType) {
+	    HashMap<String, Object> param = new HashMap<>();
+	    param.put("status", status);
+	    param.put("searchType", searchType);
+	    param.put("searchKeyword", searchKeyword);
+	    param.put("sido", sido);
+	    param.put("sigungu", sigungu);
+	    param.put("sortType", sortType);
 
-        return boardDao.selectBoardList(param);
-		
+	    return boardDao.selectBoardList(param);
 	}
 	//게시글 작성
 	@Transactional
@@ -146,6 +150,7 @@ public class BoardService {
 	// 댓글 등록 기능임. 새 댓글을 DB에 저장하고 저장된 댓글 객체를 리턴함.
 	//  - 댓글 번호는 MyBatis selectKey로 자동 생성됨.
 	//  - 부모 댓글 번호가 있으면 대댓글로 저장됨.
+	@Transactional // 없길래 붙임 
 	public BoardComment addBoardComment(BoardComment comment, String ip, String device) {
 		boardDao.insertBoardComment(comment);
         // 새로 추가된 댓글에도 작성자 썸네일이 들어가도록 채워줌.
@@ -293,7 +298,7 @@ public class BoardService {
 	}
 	
 	@Transactional
-	public int insertBoardReport(BoardReport report) {
+	public int insertBoardReport(Report report) {
 		int check = boardDao.checkReport(report);
 		if (check > 0) {
 			return -1;
@@ -302,9 +307,14 @@ public class BoardService {
 		return boardDao.insertBoardReport(report);
 	}
 
-	
-	
-	
-	
+	public Board getBoardDetail(Integer boardNo) {
+		Board board = boardDao.getBoardDetail(boardNo);
+		return board;
+	}
+	public List<Report> getReportList() {
+		List<Report> reportList = boardDao.getReportList();
+		return reportList;
+	}
+
 }
 
