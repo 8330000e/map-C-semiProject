@@ -331,15 +331,18 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                       z-index=${5000 + 3};
                     "
                   >
-                    ${marker.boardContent.replace(/<img[^>]*>/gi, "").substring(0, 30)}
+                    ${marker.boardContent
+                      .replace(/<img[^>]*>/gi, "")
+                      .replace(/<[^>]*>?/g, "")
+                      .substring(0, 30)}
                   </div>
                 </div>
               </div>
             </div>
-          <div>
+          <div style="position: relative;">
             <img
               src=${writerAvatar}
-              style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
+              style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%; margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
             />
             <img
               src='src/assets/img/defaultthumbmarker.png'

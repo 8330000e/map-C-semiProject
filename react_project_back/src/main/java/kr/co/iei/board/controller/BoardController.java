@@ -50,7 +50,6 @@ public class BoardController {
             @RequestParam(defaultValue = "0") int status,
             @RequestParam(defaultValue = "1") int searchType,
             @RequestParam(defaultValue = "") String searchKeyword,
-            @RequestParam(defaultValue = "") String addr,
             @RequestParam(required = false) String sido,
             @RequestParam(required = false) String sigungu
     ) {
