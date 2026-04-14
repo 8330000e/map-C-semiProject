@@ -1,6 +1,8 @@
 package kr.co.iei.mission.model.service;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,26 +59,71 @@ public class MissionService {
 	}
 
 	// 출석체크 포인트 지급
-	public int checkAttendance(String memberId) {
-		int count = missionDao.existsTodayAttendance(memberId);
+	@Transactional
+	public Map<String, Object> checkAttendance(String memberId) {
+	    int count = missionDao.existsTodayAttendance(memberId);
 
 	    if (count > 0) {
-	        return -1;
+	        return Map.of(
+	            "result", -1,
+	            "message", "이미 오늘 출석했습니다."
+	        );
 	    }
 
 	    int result1 = missionDao.insertAttendance(memberId);
-	    int result2 = missionDao.updateMemberPoint(memberId);
+	    int result2 = missionDao.updateMemberPoint(memberId); // 기본 5포인트
 
 	    if (result1 == 0 || result2 == 0) {
 	        throw new RuntimeException("출석 처리 실패");
 	    }
 
-	    return 1;
-	}
+	    List<String> attendanceDates = missionDao.selectRecentAttendanceDates(memberId);
+	    int streak = calculateAttendanceStreak(attendanceDates);
 
-	public boolean isTodayAttendance(String memberId) {
-		int count = missionDao.existsTodayAttendance(memberId);
-		return count > 0;
+	    int bonusPoint = 0;
+	    if (streak == 3) {
+	        bonusPoint = 10;
+	    } else if (streak == 5) {
+	        bonusPoint = 20;
+	    } else if (streak == 7) {
+	        bonusPoint = 30;
+	    }
+
+	    if (bonusPoint > 0) {
+	        int bonusResult = missionDao.addAttendanceBonusPoint(memberId, bonusPoint);
+	        if (bonusResult == 0) {
+	            throw new RuntimeException("연속 출석 보너스 포인트 지급 실패");
+	        }
+	    }
+
+	    HashMap<String, Object> result = new HashMap<>();
+	    result.put("result", 1);
+	    result.put("message", "출석 완료");
+	    result.put("streak", streak);
+	    result.put("basePoint", 5);
+	    result.put("bonusPoint", bonusPoint);
+	    result.put("totalPoint", 5 + bonusPoint);
+
+	    return result;
+	}
+	
+	
+	
+	private int calculateAttendanceStreak(List<String> attendanceDates) {
+	    LocalDate today = LocalDate.now();
+	    int streak = 0;
+
+	    for (int i = 0; i < attendanceDates.size(); i++) {
+	        LocalDate attendDate = LocalDate.parse(attendanceDates.get(i));
+
+	        if (attendDate.equals(today.minusDays(i))) {
+	            streak++;
+	        } else {
+	            break;
+	        }
+	    }
+
+	    return streak;
 	}
 
 	@Transactional
@@ -216,5 +263,12 @@ public class MissionService {
 	        "completed", count > 0,
 	        "certImageUrl", certImageUrl == null ? "" : certImageUrl
 	    );
+	}
+
+
+
+	public boolean isTodayAttendance(String memberId) {
+	    int count = missionDao.existsTodayAttendance(memberId);
+	    return count > 0;
 	}
 }
