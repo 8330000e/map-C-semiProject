@@ -113,7 +113,7 @@ const MissionList = () => {
         html: `
           <div style="line-height:1.7;">
             오늘도 탄소 실천에 참여해주셨네요.<br/>
-            <strong style="font-size:18px; color:#89a93f;">+1 포인트 지급</strong>
+            <strong style="font-size:18px; color:#89a93f;">+5 포인트 지급</strong>
           </div>
         `,
         confirmButtonText: "확인",
@@ -438,7 +438,7 @@ const MissionList = () => {
           onClick={handleAttendanceCheck}
           disabled={attendanceLoading || attendanceChecked}
         >
-          {attendanceChecked ? "출석완료" : "출석체크(1포인트)"}
+          {attendanceChecked ? "출석완료" : "출석체크(5포인트)"}
         </button>
       </div>
 
