@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./RankList.module.css";
 import axios from "axios";
 import defaultImg from "../../assets/img/defaultImg.png";
-import { normalizeImageUrl } from "../utils/getImageUrl";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 
 const RankList = () => {
   const [rankList, setRankList] = useState([]);
