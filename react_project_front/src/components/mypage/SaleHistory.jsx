@@ -325,26 +325,32 @@ const SaleHistory = () => {
     if (completedPage > completedPageCount) setCompletedPage(completedPageCount);
   }, [completedPage, completedPageCount]);
 
-  const renderPagination = (page, pageCount, onChange) => (
-    <div className={styles.pagination}>
-      <button type="button" disabled={page === 1} onClick={() => onChange(page - 1)}>
-        &lt;
-      </button>
-      {Array.from({ length: pageCount }, (_, index) => index + 1).map((pageNumber) => (
-        <button
-          key={pageNumber}
-          type="button"
-          className={pageNumber === page ? styles.activePage : ""}
-          onClick={() => onChange(pageNumber)}
-        >
-          {pageNumber}
+  const renderPagination = (page, pageCount, onChange) => {
+    const PAGE_BUTTONS = 5;
+    const groupStart = Math.floor((page - 1) / PAGE_BUTTONS) * PAGE_BUTTONS + 1;
+    const groupEnd = Math.min(pageCount, groupStart + PAGE_BUTTONS - 1);
+
+    return (
+      <div className={styles.pagination}>
+        <button type="button" disabled={page === 1} onClick={() => onChange(page - 1)}>
+          &lt;
         </button>
-      ))}
-      <button type="button" disabled={page === pageCount} onClick={() => onChange(page + 1)}>
-        &gt;
-      </button>
-    </div>
-  );
+        {Array.from({ length: groupEnd - groupStart + 1 }, (_, index) => groupStart + index).map((pageNumber) => (
+          <button
+            key={pageNumber}
+            type="button"
+            className={pageNumber === page ? styles.activePage : ""}
+            onClick={() => onChange(pageNumber)}
+          >
+            {pageNumber}
+          </button>
+        ))}
+        <button type="button" disabled={page === pageCount} onClick={() => onChange(page + 1)}>
+          &gt;
+        </button>
+      </div>
+    );
+  };
 
   const renderSaleCard = (item) => {
     const marketNo = item.marketNo ?? item.id;
