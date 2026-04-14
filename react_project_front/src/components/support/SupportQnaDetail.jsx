@@ -50,10 +50,16 @@ const SupportQnaDetail = ({ qna }) => {
           {qna.qnaQuestionImage && (
             <div className={styles.image_box}>
               <p className={styles.image_label}>첨부 이미지</p>
+              {/*
+                문의 상세 이미지도 lazy loading을 적용함.
+                화면에 보일 때만 다운로드해서 트래픽을 줄임.
+              */}
               <img
                 src={normalizeImageUrl(qna.qnaQuestionImage)}
                 alt="문의 첨부 이미지"
                 className={styles.preview_img}
+                loading="lazy"
+                decoding="async"
                 onClick={() => setPreviewImage(normalizeImageUrl(qna.qnaQuestionImage))}
               />
             </div>
@@ -67,10 +73,16 @@ const SupportQnaDetail = ({ qna }) => {
 
             {qna.qnaAnswerImage && (
               <div className={styles.answer_image}>
+                {/*
+                  답변 이미지도 lazy loading으로 처리함.
+                  필요할 때만 다운로드되어 데이터 사용을 줄임.
+                */}
                 <img
                   src={normalizeImageUrl(qna.qnaAnswerImage)}
                   alt="답변 첨부 이미지"
                   className={styles.preview_img}
+                  loading="lazy"
+                  decoding="async"
                   onClick={() => setPreviewImage(normalizeImageUrl(qna.qnaAnswerImage))}
                 />
               </div>

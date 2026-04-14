@@ -487,6 +487,8 @@ const Main = () => {
                       <div className="used_item_image" aria-hidden="true">
                         {imageUrl ? (
                           <img
+                            loading="lazy"
+                            decoding="async"
                             src={imageUrl}
                             alt={item.marketTitle || "상품 이미지"}
                           />

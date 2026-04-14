@@ -26,7 +26,7 @@ public class DonationController {
 		// 유저가 기부 포인트를 사용하는 로직 설정. 
 		int result = donationService.userExecuteDonate(donation);
 		
-		
+		//결과가 잘 들어와서 1이면 실행되게 하기
 		if(result > 0) {
 			
 			return ResponseEntity.ok(result);

@@ -8,5 +8,9 @@ import kr.co.iei.donation.model.vo.PointDonation;
 public interface DonationDao {
 
 	int updateMemberPoint(PointDonation donation);
+
+	int updateGroupTotalPoint(PointDonation donation);
+
+	int insertPointRecordResult(PointDonation donation);
 	
 }

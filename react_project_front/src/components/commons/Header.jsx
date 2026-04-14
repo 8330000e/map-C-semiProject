@@ -96,7 +96,7 @@ const Header = () => {
       <header className={styles.header}>
         <NavLink to="/" className={styles.logo}>
           {/* import된 로고를 src 속성으로 전달함. 백슬래시 경로 문자열 대신 안정적 로딩을 위해 수정함. */}
-          <img src={logo} alt="logo" />
+          <img src={logo} alt="logo" loading="lazy" decoding="async" />
           <h1>탄소커넥트</h1>
         </NavLink>
 
@@ -127,6 +127,8 @@ const Header = () => {
                       src={getImageUrl(memberThumb)}
                       alt="프로필"
                       className={styles.profile_image}
+                      loading="lazy"
+                      decoding="async"
                       onError={() => setAvatarError(true)}
                       onLoad={() => setAvatarError(false)}
                     />
@@ -147,6 +149,8 @@ const Header = () => {
                       src={getImageUrl(memberThumb)}
                       alt="프로필"
                       className={styles.profile_image}
+                      loading="lazy"
+                      decoding="async"
                       onError={() => setAvatarError(true)}
                       onLoad={() => setAvatarError(false)}
                     />

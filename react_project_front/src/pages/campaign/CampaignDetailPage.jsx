@@ -271,7 +271,16 @@ const PostBoard = ({
                 }}
               >
                 <div className={styles.camp_board_img}>
-                  <img src={normalizeImageUrl(list.campaignThumb)} />
+                  {/*
+                    캠페인 리스트 이미지도 lazy loading을 적용함.
+                    보이지 않는 이미지는 로딩을 늦춰서 데이터 사용을 줄임.
+                  */}
+                  <img
+                    src={normalizeImageUrl(list.campaignThumb)}
+                    loading="lazy"
+                    decoding="async"
+                    alt="캠페인 이미지"
+                  />
                 </div>
                 <div className={styles.camp_board_content_wrap}>
                   <p>{list.campaignMemo}</p>

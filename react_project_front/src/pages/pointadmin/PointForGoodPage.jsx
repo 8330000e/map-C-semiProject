@@ -288,7 +288,12 @@ const PointForGoodPage = () => {
             >
               {/* 이미지 영역 */}
               <div className={styles.card_image_wrap}>
-                <img src={item.image} alt={item.title} />
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
 
               {/* 정보 영역 */}
