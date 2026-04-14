@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import AdminNotice from "../../components/admin/AdminNotice";
+import { compressImageFile } from "../../utils/compressImage";
 
 // 폼 초기값 - 등록 완료 후 초기화할 때도 이걸로 돌아옴
 const emptyNotice = {
@@ -85,7 +86,7 @@ const AdminNoticePage = () => {
         showCancelButton: true,
         confirmButtonText: "수정",
         cancelButtonText: "취소",
-      }).then((result) => {
+      }).then(async (result) => {
         if (!result.isConfirmed) return;
 
         // 이미지 포함 가능하니까 FormData로 전송
@@ -96,9 +97,14 @@ const AdminNoticePage = () => {
         formData.append("noticePublic", notice.noticePublic);
         formData.append("noticeFixed", notice.noticeFixed);
         formData.append("noticeCategory", notice.noticeCategory);
-        // 새 이미지 선택했을 때만 파일 추가
+        // 새 이미지 선택했을 때만 용량을 줄인 파일을 추가함
         if (imageFile) {
-          formData.append("upfile", imageFile);
+          const compressedImage = await compressImageFile(imageFile, {
+            maxWidth: 1200,
+            maxHeight: 1200,
+            quality: 0.75,
+          });
+          formData.append("upfile", compressedImage, compressedImage.name);
         }
 
         axios
@@ -127,7 +133,7 @@ const AdminNoticePage = () => {
       showCancelButton: true,
       confirmButtonText: "등록",
       cancelButtonText: "취소",
-    }).then((result) => {
+    }).then(async (result) => {
       if (!result.isConfirmed) return;
 
       const formData = new FormData();
@@ -137,7 +143,12 @@ const AdminNoticePage = () => {
       formData.append("noticeFixed", notice.noticeFixed);
       formData.append("noticeCategory", notice.noticeCategory);
       if (imageFile) {
-        formData.append("upfile", imageFile);
+        const compressedImage = await compressImageFile(imageFile, {
+          maxWidth: 1200,
+          maxHeight: 1200,
+          quality: 0.75,
+        });
+        formData.append("upfile", compressedImage, compressedImage.name);
       }
 
       axios

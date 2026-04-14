@@ -48,6 +48,12 @@
     		<version>2.13.2</version>
     		<scope>compile</scope>
 		</dependency>
+		<!-- Firebase Admin SDK: 서버에서 Firebase Storage, 인증, DB 등 Firebase 서비스에 접근하기 위한 SDK -->
+		<dependency>
+    		<groupId>com.google.firebase</groupId>
+    		<artifactId>firebase-admin</artifactId>
+    		<version>9.1.1</version>
+		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>

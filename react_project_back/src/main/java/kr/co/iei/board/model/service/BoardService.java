@@ -114,9 +114,32 @@ public class BoardService {
 
 	// 댓글 목록 조회 기능임. 게시글 번호로 댓글 리스트를 가져옴.
 	//  - BoardDao.selectBoardComments()를 통해 DB에서 데이터를 읽어옴.
-	//  - 반환된 값은 상세 페이지에서 댓글 렌더링에 쓰임.
+	//  - 작성자 썸네일이 누락된 경우 회원 정보를 통해 보강함.
 	public List<BoardComment> getBoardComments(int boardNo) {
-		return boardDao.selectBoardComments(boardNo);
+		List<BoardComment> comments = boardDao.selectBoardComments(boardNo);
+		if (comments == null || comments.isEmpty()) {
+			return comments;
+		}
+
+		Map<String, Member> memberCache = new HashMap<>();
+		for (BoardComment comment : comments) {
+			String memberId = comment.getMemberId();
+			String thumb = comment.getMemberThumb();
+			if (memberId == null || (thumb != null && !thumb.trim().isEmpty() && !thumb.trim().equalsIgnoreCase("null") && !thumb.trim().equalsIgnoreCase("undefined"))) {
+				continue;
+			}
+
+			Member member = memberCache.computeIfAbsent(memberId, id -> memberService.selectOneMember(id));
+			if (member != null) {
+				if (comment.getMemberThumb() == null || comment.getMemberThumb().trim().isEmpty() || comment.getMemberThumb().trim().equalsIgnoreCase("null") || comment.getMemberThumb().trim().equalsIgnoreCase("undefined")) {
+					comment.setMemberThumb(member.getMemberThumb());
+				}
+				if (comment.getMemberNickname() == null || comment.getMemberNickname().isEmpty()) {
+					comment.setMemberNickname(member.getMemberNickname());
+				}
+			}
+		}
+		return comments;
 	}
 
 	// 댓글 등록 기능임. 새 댓글을 DB에 저장하고 저장된 댓글 객체를 리턴함.

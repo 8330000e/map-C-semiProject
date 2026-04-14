@@ -147,14 +147,20 @@ const BoardListBox = ({
                         )}
                     </div>
 
-                    {board.thumbnailUrl && (
+                    {(board.thumbnailUrl || board.boardThumb) && (
                       <div className={styles.boardThumbnailBox}>
+                        {/*
+                          게시글 리스트 썸네일은 lazy loading으로 처리함.
+                          대역폭을 아끼고 스크롤 성능을 개선함.
+                        */}
                         <img
                           src={getImageUrl(
                             board.thumbnailUrl || board.boardThumb,
                           )}
                           alt="썸네일"
                           className={styles.boardThumbnail}
+                          loading="lazy"
+                          decoding="async"
                         />
                       </div>
                     )}

@@ -6,6 +6,7 @@ import Button from "../../components/ui/Button";
 import { TextArea } from "../../components/ui/Form";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { compressImageFile } from "../../utils/compressImage";
 
 const CampaignMemoWritePage = () => {
   const { memberId } = useAuthStore();
@@ -17,10 +18,18 @@ const CampaignMemoWritePage = () => {
   const [writeMemo, setWriteMemo] = useState({
     campaignMemo: "",
   });
-  const insertMemo = () => {
-    const thumb = ref.current.files && ref.current.files[0];
+  const insertMemo = async () => {
+    let thumb = ref.current.files && ref.current.files[0];
     console.log(fileExist);
     console.log(memberId);
+    // 캠페인 메모 이미지도 업로드 전에 압축해서 전송함
+    if (thumb && thumb.type.startsWith("image/")) {
+      thumb = await compressImageFile(thumb, {
+        maxWidth: 1200,
+        maxHeight: 1200,
+        quality: 0.75,
+      });
+    }
     const data = new FormData();
     data.append("campaignThumb", thumb);
     data.append("campaignMemo", writeMemo.campaignMemo);

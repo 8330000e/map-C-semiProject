@@ -3,21 +3,11 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
 import styles from "./CartPage.module.css";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-const getImageUrl = (thumb) => {
-  if (!thumb || typeof thumb !== "string") return null;
-  let trimmed = thumb.trim();
-  if (!trimmed) return null;
-  trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.match(/^.+\\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
-  return `${BACKSERVER}/board/editor/${trimmed}`;
-};
+const getImageUrl = normalizeImageUrl;
 
 const formatPrice = (value) => `${Number(value || 0).toLocaleString("ko-KR")}원`;
 
@@ -119,7 +109,13 @@ const CartPage = () => {
                   <Link to={`/store/${item.marketNo}`} className={styles.cart_link}>
                     <div className={styles.cart_item_image_wrap}>
                       {imageUrl ? (
-                        <img className={styles.cart_item_image} src={imageUrl} alt={item.marketTitle || "상품 이미지"} />
+                        <img
+                          className={styles.cart_item_image}
+                          src={imageUrl}
+                          alt={item.marketTitle || "상품 이미지"}
+                          loading="lazy"
+                          decoding="async"
+                        />
                       ) : (
                         <span>이미지 없음</span>
                       )}

@@ -6,6 +6,7 @@ import { Input, TextArea } from "../ui/Form";
 import Button from "../ui/Button";
 import { useRef } from "react";
 import Pagination from "../ui/Pagination";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 
 const AdminQna = ({
   qnaList,
@@ -145,12 +146,12 @@ const AdminQna = ({
               <div className={styles.qna_image}>
                 {selectedQna.qnaQuestionImage ? (
                   <img
-                    src={`${import.meta.env.VITE_BACKSERVER}${selectedQna.qnaQuestionImage}`}
+                    src={normalizeImageUrl(selectedQna.qnaQuestionImage)}
                     alt="질문 이미지"
+                    loading="lazy"
+                    decoding="async"
                     onClick={() =>
-                      setPreviewImage(
-                        `${import.meta.env.VITE_BACKSERVER}${selectedQna.qnaQuestionImage}`,
-                      )
+                      setPreviewImage(normalizeImageUrl(selectedQna.qnaQuestionImage))
                     }
                     style={{ cursor: "pointer" }}
                   />
@@ -221,7 +222,12 @@ const AdminQna = ({
           className={styles.image_modal}
           onClick={() => setPreviewImage(null)}
         >
-          <img src={previewImage} alt="이미지 크게보기" />
+          <img
+            src={previewImage}
+            alt="이미지 크게보기"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       )}
     </>
