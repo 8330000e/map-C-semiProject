@@ -48,9 +48,10 @@ const DashBoardPage = () => {
 
   // 인덱스로 카테고리 이름 꺼냄
   const maxCategory = [
+    "부적절한 게시글",
+    "부적절한 댓글",
     "광고/스팸",
     "욕설/비방",
-    "부적절한 게시글",
     "허위정보",
     "기타",
   ][maxIndex];
@@ -70,9 +71,11 @@ const DashBoardPage = () => {
         setLastMonthMember(res.data.lastMonthMember);
         // 신고 카테고리 순서 맞춰서 배열로 넣음
         setCategoryCount([
+          res.data.inappropriateBoard,
+          res.data.inappropriateComment,
           res.data.spam,
           res.data.hate,
-          res.data.inappropriate,
+
           res.data.falseInfo,
           res.data.etc,
         ]);

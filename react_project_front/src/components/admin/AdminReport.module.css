@@ -1,0 +1,319 @@
+.report_wrap {
+  padding: 16px 12px;
+}
+
+/* 현황판 */
+.report_header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: rgba(46, 60, 109, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  color: #eef2ff;
+}
+
+.report_header h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+  margin-right: 8px;
+}
+
+.report_header span {
+  font-size: 13px;
+  color: #aab4d4;
+}
+
+/* 테이블 */
+.report_table {
+  width: 100%;
+}
+
+.report_table table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.report_table th,
+.report_table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: left;
+  font-size: 13px;
+  color: #eef2ff;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.report_table thead th {
+  background: rgba(46, 60, 109, 0.95);
+  color: #ffffff;
+  font-weight: 600;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.18);
+}
+
+.report_table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.report_table tbody tr:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.report_table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.report_table tbody tr:hover {
+  background: rgba(115, 103, 240, 0.18);
+}
+
+/* 컬럼 너비 */
+.report_table th:nth-child(1),
+.report_table td:nth-child(1) {
+  width: 60px;
+  text-align: center;
+}
+
+.report_table th:nth-child(2),
+.report_table td:nth-child(2) {
+  width: 110px;
+}
+
+.report_table th:nth-child(3),
+.report_table td:nth-child(3) {
+  width: 70px;
+  text-align: center;
+}
+
+.report_table th:nth-child(4),
+.report_table td:nth-child(4) {
+  width: 130px;
+}
+
+.report_table th:nth-child(5),
+.report_table td:nth-child(5) {
+  width: 60px;
+  text-align: center;
+}
+
+.report_table th:nth-child(6),
+.report_table td:nth-child(6) {
+  width: 150px;
+}
+
+.report_table th:nth-child(7),
+.report_table td:nth-child(7) {
+  width: 80px;
+  text-align: center;
+}
+
+.report_table th:nth-child(8),
+.report_table td:nth-child(8) {
+  width: 80px;
+  text-align: center;
+}
+
+/* 처리여부 뱃지 */
+.badge_pending {
+  color: #f44336;
+  font-weight: 600;
+}
+
+.badge_done {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+/* 상세보기 아이콘 */
+.report_table td:last-child {
+  cursor: pointer;
+}
+
+.report_table td:last-child:hover {
+  color: var(--admin-accent);
+}
+
+/* 모달 배경 */
+.modal_bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--admin-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* 모달 컨텐츠 */
+.modal_content {
+  background: var(--admin-panel);
+  border-radius: 14px;
+  padding: 28px;
+  width: 620px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--admin-stroke);
+  color: var(--admin-text);
+}
+
+/* 신고 상세 정보 섹션 */
+.detail_section {
+  background: var(--admin-panel-2);
+  border: 1px solid var(--admin-stroke);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.detail_section h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  color: var(--admin-text);
+  text-align: center;
+}
+
+.detail_row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.detail_label {
+  width: 100px;
+  color: #aab4d4;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  padding-right: 12px;
+}
+
+.detail_value {
+  color: #eef2ff;
+  flex: 1;
+}
+
+/* 조치 섹션 2단 */
+.action_wrap {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.action_section {
+  flex: 1;
+  background: var(--admin-panel-2);
+  border: 1px solid var(--admin-stroke);
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+.action_section h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 14px 0;
+  color: var(--admin-text);
+  text-align: center;
+}
+
+.action_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 13px;
+  color: #eef2ff;
+}
+
+.action_row input[type="radio"] {
+  accent-color: var(--admin-accent);
+  cursor: pointer;
+}
+
+/* 처리 사유 */
+.reason_section {
+  background: var(--admin-panel-2);
+  border: 1px solid var(--admin-stroke);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.reason_section h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: var(--admin-text);
+  text-align: center;
+}
+
+.reason_section textarea {
+  width: 100%;
+  height: 80px;
+  background: var(--admin-input-bg);
+  border: 1px solid var(--admin-stroke);
+  border-radius: 8px;
+  color: var(--admin-text);
+  font-size: 13px;
+  padding: 10px;
+  resize: none;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.reason_section textarea:focus {
+  border-color: var(--admin-accent);
+}
+
+/* 버튼 영역 */
+.modal_btn_wrap {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.btn_cancel {
+  padding: 8px 24px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #eef2ff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn_reject {
+  padding: 8px 24px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(115, 103, 240, 0.5);
+  color: #ffffff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn_confirm {
+  padding: 8px 24px;
+  border-radius: 8px;
+  border: none;
+  background: #f44336;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn_cancel:hover { background: rgba(255, 255, 255, 0.18); }
+.btn_reject:hover { background: rgba(115, 103, 240, 0.7); }
+.btn_confirm:hover { background: #d32f2f; }

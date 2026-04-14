@@ -28,6 +28,7 @@ import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
+import kr.co.iei.board.model.vo.Report;
 import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.utils.DeviceParser;
 import kr.co.iei.utils.FileUtils;
@@ -330,16 +331,30 @@ public class BoardController {
 		return ResponseEntity.ok(list);
 	}
 	
-	@PostMapping(value="report")
-	public ResponseEntity<?> insertBoardReport(@RequestBody BoardReport report) {
+	@PostMapping(value="board-report")
+	public ResponseEntity<?> insertBoardReport(@RequestBody Report report) {
+		System.out.println("report: " + report);
 		int result = boardService.insertBoardReport(report);
 		return ResponseEntity.ok(result);
 	}
+	@PostMapping(value="comment-report")
+	public ResponseEntity<?> insertCommentReport(@RequestBody Report report) {
+		System.out.println("report: " + report);
+		int result = boardService.insertBoardReport(report);
+		return ResponseEntity.ok(result);
+	}
+	
 	
 	@GetMapping(value="/detail/{boardNo}")
 	public ResponseEntity<?> getBoardDetail(@PathVariable Integer boardNo) {
 		Board board = boardService.getBoardDetail(boardNo);
 		return ResponseEntity.ok(board);
+	}
+	
+	@GetMapping(value="/report")
+	public ResponseEntity<?> getReportList() {
+		List<Report> reportList = boardService.getReportList();
+		return ResponseEntity.ok(reportList);
 	}
 	 
 }

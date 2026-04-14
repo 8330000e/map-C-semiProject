@@ -19,6 +19,7 @@ import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
+import kr.co.iei.board.model.vo.Report;
 import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.mission.model.service.MissionService;
@@ -268,7 +269,7 @@ public class BoardService {
 	}
 	
 	@Transactional
-	public int insertBoardReport(BoardReport report) {
+	public int insertBoardReport(Report report) {
 		int check = boardDao.checkReport(report);
 		if (check > 0) {
 			return -1;
@@ -280,6 +281,10 @@ public class BoardService {
 	public Board getBoardDetail(Integer boardNo) {
 		Board board = boardDao.getBoardDetail(boardNo);
 		return board;
+	}
+	public List<Report> getReportList() {
+		List<Report> reportList = boardDao.getReportList();
+		return reportList;
 	}
 
 }

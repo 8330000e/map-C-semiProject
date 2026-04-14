@@ -20,7 +20,8 @@ public class DashData {
 	private Integer spam;
 	private Integer hate;
 	private Integer falseInfo;
-	private Integer inappropriate;
+	private Integer inappropriateBoard;
+	private Integer inappropriateComment;
 	private Integer etc;
 	private Integer pendingReport;
 	private Integer fourWeekAgo;

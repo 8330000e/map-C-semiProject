@@ -11,6 +11,8 @@ import AdminMemberPage from "./AdminMemberPage";
 import AdminSupport from "./AdminSupport";
 
 import AdminBoardPage from "./AdminBoardPage.jsx";
+import AdminReport from "../../components/admin/AdminReport.jsx";
+import AdminReportPage from "./AdminReportPage.jsx";
 
 const AdminPage = () => {
   useEffect(() => {
@@ -49,6 +51,7 @@ const AdminPage = () => {
               <Route path="members" element={<AdminMemberPage />} />
               <Route path="support/*" element={<AdminSupport />} />
               <Route path="boards" element={<AdminBoardPage />} />
+              <Route path="reports" element={<AdminReportPage />} />
             </Routes>
           </div>
         </section>

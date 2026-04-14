@@ -17,6 +17,7 @@ import kr.co.iei.admin.model.vo.ListItem;
 import kr.co.iei.admin.model.vo.ListResponse;
 import kr.co.iei.admin.model.vo.Log;
 import kr.co.iei.admin.model.vo.Notice;
+import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.Keyword;
@@ -32,7 +33,6 @@ public class AdminService {
 
 	@Value("${file.root}")
 	private String root;
-
 
 	// 공지사항 등록 - DB 변경이라 트랜잭션 적용
 	@Transactional
@@ -92,7 +92,7 @@ public class AdminService {
 	public ListResponse selectQnaList(ListItem listItem) {
 		int totalCount = adminDao.getTotalCount();
 		// 올림 처리 - 나머지 있으면 페이지 하나 더
-		int totalPage = (int)Math.ceil((double)totalCount / listItem.getSize());
+		int totalPage = (int) Math.ceil((double) totalCount / listItem.getSize());
 
 		List<Qna> qnaList = adminDao.selectQnaList(listItem);
 		ListResponse response = new ListResponse(qnaList, totalPage);
@@ -120,7 +120,7 @@ public class AdminService {
 
 	// 전체 로그 조회 - start(offset)부터 20개씩 가져옴
 	public List<Log> getLogList(String memberId, Integer start, String action, Integer result, String sort) {
-		// SQL injection 방지 - ASC/DESC만 허용	
+		// SQL injection 방지 - ASC/DESC만 허용
 		if (!"ASC".equalsIgnoreCase(sort) && !"DESC".equalsIgnoreCase(sort)) {
 			sort = "DESC";
 		}
@@ -134,10 +134,38 @@ public class AdminService {
 	}
 
 	public List<Board> getBoardList(String keyword, String risk, String reportSort, String sort) {
-	    List<Board> boardList = adminDao.getBoardList(keyword, risk, reportSort, sort);
-	    return boardList;
+		List<Board> boardList = adminDao.getBoardList(keyword, risk, reportSort, sort);
+		return boardList;
 	}
 
+	@Transactional
+	public int processReport(ProcessReport pr) {
+		if (!pr.getBoardAction().equals("미처리")) {
+			int boardResult = adminDao.updateBoardStatus(pr);
+			if (boardResult == 0) {
+				throw new RuntimeException("게시글 조치 실패");
+			}
+		}
+		
+		if (!pr.getBoardAction().equals("미처리")) {
+			int memberResult = adminDao.updateMemberStatus(pr);
+				if (memberResult == 0) {
+					throw new RuntimeException("회원 조치 실패");
+				}
+		}
+		
+		int reportResult = adminDao.updateReportStatus(pr);
+			if (reportResult == 0) {
+				throw new RuntimeException("신고 처리 실패");
+		}
+		
+		int logResult = adminDao.insertAdminLog(pr);
+			if (logResult == 0) {
+				throw new RuntimeException("로그 저장 실패");
+			}
+		
 
+		return 0;
+	}
 
 }

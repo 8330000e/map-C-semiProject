@@ -403,10 +403,11 @@
 	</select>
 	
 	<insert id="insertBoardReport">
-		insert into board_report_tbl values (
+		insert into report_tbl values (
 			report_seq.nextval,
-			#{boardNo},
-			#{reportId},
+			#{targetNo},
+			#{targetType},
+			#{memberId},
 			#{reportCategory},
 			#{reportContent},
 			sysdate,
@@ -415,8 +416,8 @@
 	</insert>
 	
 	<select id="checkReport">
-		select count(*) from board_report_tbl
-		where board_no = #{boardNo} and report_id = #{reportId}
+		select count(*) from report_tbl
+		where report_no = #{reportNo} and member_id = #{memberId}
 	</select>
 	
 	<select id="getBoardDetail" resultType="board">
@@ -443,5 +444,35 @@
         FROM BOARD_TBL b
         where board_no = #{boardNo}
 	</select>
+	
+	<select id="getReportList" resultType="report">
+		select
+			r.report_no,
+			r.target_no,
+			r.target_type,
+			r.member_id,
+			r.report_category,
+			r.report_content,
+			r.report_date,
+			r.report_status,
+			case
+				when r.target_type = 'board' then b.board_title
+				when r.target_type = 'comment' then c.board_comment_content
+			end as targetTitle,
+			case 
+				when r.target_type = 'board' then b.writer_id
+				when r.target_type = 'comment' then c.board_comment_writer
+			end as targetId,
+			(select count(*) from report_tbl where target_no = r.target_no and target_type = r.target_type) as reportCount
+		from report_tbl r
+		left join board_tbl b on r.target_no = b.board_no and r.target_type = 'board'
+		left join board_comment_tbl c on r.target_no = c.board_comment_no and r.target_type = 'comment'
+		order by r.report_date desc
+	</select>
+	
+	
+	
+	
+	
 	
 </mapper>

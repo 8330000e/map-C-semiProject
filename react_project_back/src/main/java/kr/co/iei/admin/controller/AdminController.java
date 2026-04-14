@@ -28,6 +28,7 @@ import kr.co.iei.admin.model.vo.ListItem;
 import kr.co.iei.admin.model.vo.ListResponse;
 import kr.co.iei.admin.model.vo.Log;
 import kr.co.iei.admin.model.vo.Notice;
+import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.utils.FileUtils;
@@ -198,6 +199,14 @@ public class AdminController {
 		List<Board> boardList = adminService.getBoardList(keyword, risk, reportSort, sort);
 		return ResponseEntity.ok(boardList);
 	}
+	
+	@PostMapping(value="processReport")
+	public ResponseEntity<?> processReport(@RequestBody ProcessReport pr) {
+		int result = adminService.processReport(pr);
+		return ResponseEntity.ok(result);
+	}
+	
+	
 	
 
 
