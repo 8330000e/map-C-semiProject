@@ -67,22 +67,25 @@
   border-radius: 10px;
   z-index: 1000;
 }
-
+/*   ----------------------------------  */
 /* 전체 컨테이너 */
 .campaign_container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 50px 20px;
+  padding: 20px;
+  border: 2px solid lightgrey;
+  margin-top: 20px;
+  border-radius: 20px;
 }
 
 /* 상단 타이틀 */
 .header_section {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .main_title {
-  font-size: 2.5rem;
+  font-size: 1.8rem;
   font-weight: 800;
   color: #1a1a1a;
 }
@@ -91,7 +94,7 @@
 .campaign_grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3열 구조 */
-  gap: 30px; /* 카드 사이 간격 */
+  gap: 20px; /* 카드 사이 간격 */
 }
 
 /* 카드 개별 스타일 */
@@ -111,7 +114,7 @@
 /* 이미지 스타일 */
 .card_image_wrap {
   width: 100%;
-  aspect-ratio: 16 / 10; /* 이미지 비율 고정 */
+  aspect-ratio: 2 / 1; /* 이미지 비율 고정 */
   overflow: hidden;
   border-radius: 12px; /* 이미지 자체 라운딩 */
 }
@@ -124,21 +127,21 @@
 
 /* 텍스트 스타일 */
 .card_content {
-  padding: 20px 5px; /* 양옆 여백은 이미지와 맞춤 */
+  padding: 12px 10px; /* 양옆 여백은 이미지와 맞춤 */
 }
 
 .card_subject {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   color: #333;
 }
 
 .card_description {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #666;
-  line-height: 1.5;
-  margin-bottom: 15px;
+  line-height: 1.4;
+  margin-bottom: 10px;
   /* 말줄임표 설정 (두 줄 이상일 때) */
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -148,14 +151,15 @@
 
 /* 버튼 스타일 */
 .donate_open_btn {
-  margin-top: auto;
-  padding: 12px;
+  margin-top: 5px;
+  padding: 8px;
   background-color: #2ecc71; /* 이미지의 자연 느낌과 어울리는 녹색 */
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
+  font-size: 0.9rem;
 }
 
 .donate_open_btn:hover {
