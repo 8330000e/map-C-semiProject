@@ -30,6 +30,8 @@ const CampaignDetailPage = () => {
   // const realtime = Date.now(); 로직이 back으로 감
   const [boardList, setBoardList] = useState([]);
   const [deleteBoard, setDeleteBoard] = useState(false);
+  const [banMember, setBanMember] = useState(true);
+  const [readBan, setReadBan] = useState(false);
   const data = readComplete && {
     labels: ["남은기간", "지난기간"],
     datasets: [
@@ -47,6 +49,22 @@ const CampaignDetailPage = () => {
   const option = {
     cutout: "83%",
   };
+  useEffect(() => {
+    axios
+      .get(
+        `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNo}/noBanMember?memberId=${memberId}`,
+      )
+      .then((res) => {
+        console.log(res.data);
+        if (res.data === 1) {
+          setBanMember(false);
+        }
+        setReadBan(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   useEffect(() => {
     axios
@@ -96,80 +114,98 @@ const CampaignDetailPage = () => {
         console.log(err);
       });
   }, [deleteBoard]);
-
-  return (
-    memberId &&
-    readComplete && (
-      <div className={styles.campdetailpage_wrap}>
-        <div className={styles.campdetailpage_title}>
-          <h2>캠페인 상세보기</h2>
-        </div>
-        <div className={styles.campdetailpage_content_wrap}>
-          <div className={styles.campdetailpage_details_wrap}>
-            <div className={styles.campdetailpage_chart}>
-              <Doughnut data={data} options={option} />
+  if (readBan && banMember) {
+    return (
+      memberId &&
+      readComplete && (
+        <div className={styles.campdetailpage_wrap}>
+          <div className={styles.campdetailpage_title}>
+            <h2>캠페인 상세보기</h2>
+          </div>
+          <div className={styles.campdetailpage_content_wrap}>
+            <div className={styles.campdetailpage_details_wrap}>
+              <div className={styles.campdetailpage_chart}>
+                <Doughnut data={data} options={option} />
+              </div>
+              <div className={styles.camp_polygon_wrap}>
+                <div
+                  className={`${styles.camp_polygon1} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.1 ? styles.camp_success : ""}`}
+                ></div>
+                <div
+                  className={`${styles.camp_polygon2} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.2 ? styles.camp_success : ""}`}
+                ></div>
+                <div
+                  className={`${styles.camp_polygon3} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.3 ? styles.camp_success : ""}`}
+                ></div>
+                <div
+                  className={`${styles.camp_polygon4} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.4 ? styles.camp_success : ""}`}
+                ></div>
+                <div
+                  className={`${styles.camp_polygon5} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.5 ? styles.camp_success : ""}`}
+                ></div>
+                <div
+                  className={`${styles.camp_polygon6} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.6 ? styles.camp_success : ""}`}
+                ></div>
+                <div
+                  className={`${styles.camp_polygon7} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.7 ? styles.camp_success : ""}`}
+                ></div>
+                <div
+                  className={`${styles.camp_polygon8} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.8 ? styles.camp_success : ""}`}
+                ></div>
+                <div
+                  className={`${styles.camp_polygon9} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.9 ? styles.camp_success : ""}`}
+                ></div>
+                <div
+                  className={`${styles.camp_polygon0} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.04 ? styles.camp_success : ""}`}
+                ></div>
+              </div>
             </div>
-            <div className={styles.camp_polygon_wrap}>
-              <div
-                className={`${styles.camp_polygon1} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.1 ? styles.camp_success : ""}`}
-              ></div>
-              <div
-                className={`${styles.camp_polygon2} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.2 ? styles.camp_success : ""}`}
-              ></div>
-              <div
-                className={`${styles.camp_polygon3} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.3 ? styles.camp_success : ""}`}
-              ></div>
-              <div
-                className={`${styles.camp_polygon4} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.4 ? styles.camp_success : ""}`}
-              ></div>
-              <div
-                className={`${styles.camp_polygon5} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.5 ? styles.camp_success : ""}`}
-              ></div>
-              <div
-                className={`${styles.camp_polygon6} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.6 ? styles.camp_success : ""}`}
-              ></div>
-              <div
-                className={`${styles.camp_polygon7} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.7 ? styles.camp_success : ""}`}
-              ></div>
-              <div
-                className={`${styles.camp_polygon8} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.8 ? styles.camp_success : ""}`}
-              ></div>
-              <div
-                className={`${styles.camp_polygon9} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.9 ? styles.camp_success : ""}`}
-              ></div>
-              <div
-                className={`${styles.camp_polygon0} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.04 ? styles.camp_success : ""}`}
-              ></div>
+            <div className={styles.campdetailpage_sidebar}>
+              <div>{campaignDetail.campaignExplanation}</div>
+              <CampaignDetailSideBar
+                campaignDetail={campaignDetail}
+                isCreator={isCreator}
+                inCampaign={inCampaign}
+                dateOut={dateOut}
+                memberId={memberId}
+                campaignNo={campaignNo}
+                setInCampaign={setInCampaign}
+                navigate={navigate}
+              />
             </div>
           </div>
-          <div className={styles.campdetailpage_sidebar}>
-            <div>{campaignDetail.campaignExplanation}</div>
-            <CampaignDetailSideBar
-              campaignDetail={campaignDetail}
-              isCreator={isCreator}
-              inCampaign={inCampaign}
-              dateOut={dateOut}
-              memberId={memberId}
-              campaignNo={campaignNo}
-              setInCampaign={setInCampaign}
-              navigate={navigate}
-            />
-          </div>
+          <PostBoard
+            navigate={navigate}
+            inCampaign={inCampaign}
+            campaignNo={campaignNo}
+            dateOut={dateOut}
+            memberId={memberId}
+            isCreator={isCreator}
+            boardList={boardList}
+            deleteBoard={deleteBoard}
+            setDeleteBoard={setDeleteBoard}
+          />
         </div>
-        <PostBoard
-          navigate={navigate}
-          inCampaign={inCampaign}
-          campaignNo={campaignNo}
-          dateOut={dateOut}
-          memberId={memberId}
-          isCreator={isCreator}
-          boardList={boardList}
-          deleteBoard={deleteBoard}
-          setDeleteBoard={setDeleteBoard}
-        />
+      )
+    );
+  } else {
+    return (
+      <div>
+        <p>
+          당신은 추방된 멤버입니다.법적인 문제는 변호사와 상담하시고,문의는
+          고객센터로 해주시기 바랍니다.
+        </p>
+        <Button
+          className="btn primary sm"
+          onClick={() => {
+            navigate(`/`);
+          }}
+        >
+          돌아가기
+        </Button>
       </div>
-    )
-  );
+    );
+  }
 };
 export default CampaignDetailPage;
 

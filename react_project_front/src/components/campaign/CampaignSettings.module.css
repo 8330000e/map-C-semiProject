@@ -1,0 +1,38 @@
+.camp_settings_content_wrap {
+  width: 100%;
+  min-height: 600px;
+  border: 1.5px solid var(--gray4);
+  border-radius: 20px;
+}
+.camp_settings_content_title {
+  margin-top: 30px;
+  text-align: center;
+}
+.camp_settings_content_main_wrap {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  gap: 10px;
+}
+/* 공지사항 */
+.camp_settings_content_main_wrap > input {
+  width: 85%;
+  margin: 10px auto;
+}
+.camp_settings_content_main_wrap > textarea {
+  width: 85%;
+  margin: 10px auto;
+}
+.camp_settings_content_main_wrap > label {
+  padding-left: 50px;
+}
+/* 권한승계 */
+.camp_settings_content_inherit {
+  padding-top: 100px;
+  margin-bottom: 200px;
+  text-align: center;
+}
+
+.camp_settings_content_btn_wrap {
+  align-self: center;
+}

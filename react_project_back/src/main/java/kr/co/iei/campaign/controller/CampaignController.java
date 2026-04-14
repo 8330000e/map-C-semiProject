@@ -153,6 +153,25 @@ public class CampaignController {
 		int result = campaignService.insertCampNotice(campNotice);
 		return ResponseEntity.ok(result);
 	}
+	@PatchMapping(value="/{campaignNo}/inherit")
+	public ResponseEntity<?> inheritManager(@PathVariable Integer campaignNo){
+		int result = campaignService.inheritManager(campaignNo);
+		return ResponseEntity.ok(result);
+	}
+	@PostMapping(value="/ban")
+	public ResponseEntity<?> banPartMember(@RequestBody Campaign camp){
+		int result = campaignService.banPartMember(camp);
+		return ResponseEntity.ok(result);
+	}
+	@GetMapping(value="/{campaignNo}/noBanMember")
+	public ResponseEntity<?> checkBannedMember(@PathVariable Integer campaignNo,@RequestParam String memberId){
+		Campaign camp = new Campaign();
+		camp.setMemberId(memberId);
+		camp.setCampaignNo(campaignNo);
+		int result = campaignService.checkBannedMember(camp);
+		return ResponseEntity.ok(result);
+	}
+	
 }
 
 

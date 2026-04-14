@@ -6,8 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import kr.co.iei.campaign.model.dao.CampaignDao;
 import kr.co.iei.campaign.model.vo.Campaign;
@@ -137,5 +141,50 @@ public class CampaignService {
 		int result = campaignDao.insertCampNotice(campNotice);
 		return result;
 	}
+	@Transactional
+	public int inheritManager(Integer campaignNo) {
+		String memberId= "admin00";
+			Campaign camp = new Campaign();
+			camp.setCampaignNo(campaignNo);
+			camp.setMemberId(memberId);
+			int result=campaignDao.inheritManager(camp);
+		return result;
+	}
+	@Transactional
+	public int banPartMember(Campaign camp) {
+		int result=0;
+		result=campaignDao.deletePartMember(camp);
+		if(result==1) {
+			System.out.println(camp.getCampaignExileReason());
+			result = campaignDao.banPartMember(camp);
+			if(result==1) {
+				String alarmData = camp.getCampaignExileReason();
+				String memberId = camp.getMemberId();
+				System.out.println(memberId);
+				System.out.println(alarmData);
+				Map<String,String> map = new HashMap<String,String>();
+				map.put("alarmData", alarmData);
+				map.put("memberId", memberId);
+				result = campaignDao.alarmBanMember(map);
+			}
+		
+		}
+		return result;
+	}
+
+	public int checkBannedMember(Campaign camp) {
+		int campaignNo=camp.getCampaignNo();
+		String currentId=camp.getMemberId();
+		int result =0;
+		List<String> bannedMembers= campaignDao.selectBannedMember(campaignNo);
+		for(String memberId : bannedMembers) {
+			if(currentId.equals(memberId)) {
+				result=1;
+				break;
+			}
+		}
+		return result;
+	}
+	
 
 }
