@@ -6,6 +6,7 @@ import { Input, TextArea } from "../ui/Form";
 import Button from "../ui/Button";
 import { useRef } from "react";
 import Pagination from "../ui/Pagination";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 
 const AdminQna = ({
   qnaList,
@@ -145,12 +146,10 @@ const AdminQna = ({
               <div className={styles.qna_image}>
                 {selectedQna.qnaQuestionImage ? (
                   <img
-                    src={`${import.meta.env.VITE_BACKSERVER}${selectedQna.qnaQuestionImage}`}
+                    src={normalizeImageUrl(selectedQna.qnaQuestionImage)}
                     alt="질문 이미지"
                     onClick={() =>
-                      setPreviewImage(
-                        `${import.meta.env.VITE_BACKSERVER}${selectedQna.qnaQuestionImage}`,
-                      )
+                      setPreviewImage(normalizeImageUrl(selectedQna.qnaQuestionImage))
                     }
                     style={{ cursor: "pointer" }}
                   />

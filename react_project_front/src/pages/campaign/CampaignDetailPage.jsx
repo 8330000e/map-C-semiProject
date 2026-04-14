@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Button from "../../components/ui/Button";
 import Swal from "sweetalert2";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 import { Doughnut } from "react-chartjs-2";
 import {
   Chart,
@@ -270,9 +271,7 @@ const PostBoard = ({
                 }}
               >
                 <div className={styles.camp_board_img}>
-                  <img
-                    src={`${import.meta.env.VITE_BACKSERVER}/campaign/memo/${list.campaignThumb}`}
-                  />
+                  <img src={normalizeImageUrl(list.campaignThumb)} />
                 </div>
                 <div className={styles.camp_board_content_wrap}>
                   <p>{list.campaignMemo}</p>

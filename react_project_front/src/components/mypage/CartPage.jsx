@@ -3,21 +3,11 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
 import styles from "./CartPage.module.css";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-const getImageUrl = (thumb) => {
-  if (!thumb || typeof thumb !== "string") return null;
-  let trimmed = thumb.trim();
-  if (!trimmed) return null;
-  trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.match(/^.+\\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
-  return `${BACKSERVER}/board/editor/${trimmed}`;
-};
+const getImageUrl = normalizeImageUrl;
 
 const formatPrice = (value) => `${Number(value || 0).toLocaleString("ko-KR")}원`;
 

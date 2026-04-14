@@ -3,8 +3,12 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
 import useAuthStore from "../../../store/useAuthStore";
+import { normalizeImageUrl } from "../../../utils/getImageUrl";
 import userImg from "../../../assets/user.png";
 import styles from "./store.module.css";
+
+// 스토어 상품 이미지 변환은 normalizeImageUrl에서 처리함.
+// 로컬 /board/editor 경로 대신 Firebase URL 변환을 우선함.
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -44,64 +48,16 @@ const getSaleStatusLabel = (productStatus) => {
   return "판매중";
 };
 
-const getImageUrl = (thumb) => {
-  // 상품 이미지가 여러 형태로 들어올 수 있어서,
-  // 여기서 브라우저가 바로 쓸 수 있는 URL로 바꿔줘요.
-  // 파일명만 들어오면 /upload/ 경로로 연결합니다.
-  if (!thumb) return null;
-  if (typeof thumb !== "string") return null;
-  let trimmed = thumb.trim();
-  if (!trimmed) return null;
+// getImageUrl은 thumb 문자열을 normalizeImageUrl에 위임함.
+// 로컬 경로는 더 이상 백엔드로 직접 요청하지 않고,
+// 가능한 경우 Firebase URL로 바꿔서 이미지 로딩함.
+const getImageUrl = (thumb) => normalizeImageUrl(thumb);
 
-  trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
-
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
-    return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
-  if (driveMatch) {
-    const boardIndex = trimmed.indexOf("/board/editor/");
-    if (boardIndex !== -1) {
-      const suffix = trimmed.substring(boardIndex);
-      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
-    }
-    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
-  }
-
-  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.includes("/board/editor/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
-    return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
-  return `${BACKSERVER}/board/editor/${trimmed}`;
-};
-
+// getMemberImageUrl은 member/thumb 기본 경로를 사용함.
+// 프로필 이미지가 없으면 기본 userImg로 대체함.
 const getMemberImageUrl = (thumb) => {
-  if (!thumb) return userImg;
-  if (typeof thumb !== "string") return userImg;
-  let trimmed = thumb.trim();
-  if (!trimmed) return userImg;
-
-  trimmed = trimmed.replace(/\\/g, "/");
-
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
-    return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-  if (trimmed.startsWith("/member/thumb/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/member/thumb/"))
-    return `${BACKSERVER}/${trimmed.replace(/^\/+/, "")}`;
-  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.includes("/board/editor/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
-    return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
-  return `${BACKSERVER}/member/thumb/${trimmed}`;
+  const url = normalizeImageUrl(thumb, "member/thumb");
+  return url || userImg;
 };
 
 const Store = () => {
@@ -178,196 +134,153 @@ const Store = () => {
   };
 
   return (
-    <div className={`${styles.store_layout} common_wrap`}>
-      {/* 레이아웃: 왼쪽 메뉴 + 오른쪽 중고장터 컨텐츠 */}
-      <aside className={styles.menu_panel}>
-        {/* 메뉴 섹션 */}
+        <div className={`${styles.store_layout} common_wrap`}>
+            {/* 레이아웃: 왼쪽 메뉴 + 오른쪽 중고장터 컨텐츠 */}
+            <aside className={styles.menu_panel}>
+                {/* 메뉴 섹션 */}
 
-        <div className={styles.menu_title}>메뉴</div>
-        <ul className={styles.menu_list}>
-          <li>
-            <Link to="/map-community">맵 커뮤니티</Link>
-          </li>
-          <li>
-            <a href="#">회원끼리 캠페인</a>
-          </li>
-          <li>
-            <Link to="/store">중고거래</Link>
-          </li>
-          <li>
-            <Link to="/mission">미션(출석체크)</Link>
-          </li>
-          <li>
-            <Link to="/tree-grow" className={styles.treeGrow}>
-              나무 키우기
-            </Link>
-          </li>
+                <div className={styles.menu_title}>메뉴</div>
+                <ul className={styles.menu_list}>
+                    <li>
+                        <Link to="/map-community">맵 커뮤니티</Link>
+                    </li>
+                    <li>
+                        <a href="#">회원끼리 캠페인</a>
+                    </li>
+                    <li>
+                        <Link to="/store">중고거래</Link>
+                    </li>
+                    <li>
+                        <Link to="/mission">미션(출석체크)</Link>
+                    </li>
+                    <li>
+                        <Link to="/tree-grow" className={styles.treeGrow}>나무 키우기</Link>
+                    </li>
+                    <li>
+                        <span>
+                            <hr />
+                        </span>
+                    </li>
+                    <li>
+                        <Link to="/support/notice">공지사항</Link>
+                    </li>
+                </ul>
 
-          <li>
-            <Link to="/point-give">포인트 나눔</Link>
-          </li>
-
-          <li>
-            <span>
-              <hr />
-            </span>
-          </li>
-          <li>
-            <Link to="/support/notice">공지사항</Link>
-          </li>
-        </ul>
-
-        <div className={styles.customer_box}>
-          <span className={styles.customer_head}>
-            <h3>고객센터</h3>
-            <HelpIcon sx={{ fontSize: 26, color: "#fff" }} />
-          </span>
-          <p>고객센터 운영시간</p>
-          <p>10:00 ~ 18:00</p>
-          <a href="#" className={styles.customer_link}>
-            문의하기 ▶
-          </a>
-        </div>
-      </aside>
-
-      {/* 메인 상점 컨텐츠 섹션 */}
-      <section className={styles.store_wrap}>
-        {/* 상단: 제목 + 검색 바 + 등록 버튼 */}
-        <div className={styles.header_box}>
-          <h1>중고장터</h1>
-
-          <div className={styles.search_box}>
-            <select
-              value={searchType}
-              onChange={(e) => setSearchType(e.target.value)}
-            >
-              <option value="author">작성자</option>
-              <option value="title">물품명</option>
-            </select>
-
-            <input
-              type="text"
-              placeholder="검색어를 입력하세요"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  updateSearch();
-                }
-              }}
-            />
-
-            <button type="button" onClick={updateSearch}>
-              검색
-            </button>
-          </div>
-
-          <Link to="/store/register" className={styles.sell_button}>
-            판매글 등록
-          </Link>
-        </div>
-
-        {/* 상품 카드 목록 섹션 */}
-        <div className={styles.grid_box}>
-          {isLoading && <p>목록을 불러오는 중입니다.</p>}
-          {!isLoading && loadError && <p>{loadError}</p>}
-          {visibleGoods.map((item, index) => {
-            const tradeMethodLabel = getTradeTypeLabel(item.tradeType);
-            const imageUrl = getImageUrl(item.productThumb);
-
-            return (
-              <Link
-                key={item.marketNo ?? item.boardNo ?? index}
-                to={`/store/${item.marketNo}`}
-                className={styles.cardLink}
-              >
-                <article className={styles.card}>
-                  <div className={styles.image}>
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt={item.marketTitle || "상품 이미지"}
-                      />
-                    ) : (
-                      "이미지"
-                    )}
-                  </div>
-                  <h3>{item.displayTitle}</h3>
-                  <p className={styles.price}>
-                    {formatPrice(item.productPrice)}
-                  </p>
-                  <div className={styles.region_badge}>
-                    {item.regionName || item.ctpvsggId || "지역 미등록"}
-                  </div>
-                  <p className={styles.tradeType}>
-                    거래방법 : {tradeMethodLabel}
-                  </p>
-
-                  <div className={styles.metaRow}>
-                    <span className={styles.authorAvatarWrapper}>
-                      <img
-                        className={styles.authorAvatar}
-                        src={getMemberImageUrl(
-                          item.memberThumb ||
-                            (item.memberId === memberId ? memberThumb : null),
-                        )}
-                        alt={`${item.memberId} 프로필`}
-                        onError={(e) => {
-                          e.currentTarget.src = userImg;
-                        }}
-                      />
-                      <span className={styles.author}>
-                        {item.memberNickname || item.memberId}
-                      </span>
+                <div className={styles.customer_box}>
+                    <span className={styles.customer_head}>
+                        <h3>고객센터</h3>
+                        <HelpIcon sx={{ fontSize: 26, color: "#fff" }} />
                     </span>
-                    <span className={styles.metaDivider}>|</span>
-                    <span className={styles.commentCount}>
-                      💬 {item.commentCount ?? 0}
-                    </span>
-                    <span className={styles.metaDivider}>|</span>
-                    <span className={styles.dateLine}>
-                      {formatDate(item.createdAt)}
-                    </span>
-                  </div>
-                  <p className={styles.viewCount}>
-                    👀 조회수{" "}
-                    {Number(item.readCount ?? 0).toLocaleString("ko-KR")}
-                  </p>
-                </article>
-              </Link>
-            );
-          })}
-        </div>
+                    <p>고객센터 운영시간</p>
+                    <p>10:00 ~ 18:00</p>
+                    <a href="#" className={styles.customer_link}>
+                        문의하기 ▶
+                    </a>
+                </div>
+            </aside>
 
-        <div className={styles.pagination}>
-          <button
-            type="button"
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            &lt;
-          </button>
+            {/* 메인 상점 컨텐츠 섹션 */}
+            <section className={styles.store_wrap}>
+                {/* 상단: 제목 + 검색 바 + 등록 버튼 */}
+                <div className={styles.header_box}>
+                    <h1>중고장터</h1>
 
-          {Array.from({ length: pageCount }, (_, i) => i + 1).map((page) => (
-            <button
-              type="button"
-              key={page}
-              className={currentPage === page ? styles.activePage : ""}
-              onClick={() => goToPage(page)}
-            >
-              {page}
-            </button>
-          ))}
+                    <div className={styles.search_box}>
+                        <select value={searchType} onChange={(e) => setSearchType(e.target.value)}>
+                            <option value="author">작성자</option>
+                            <option value="title">물품명</option>
+                        </select>
 
-          <button
-            type="button"
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === pageCount}
-          >
-            &gt;
-          </button>
-        </div>
-      </section>
+                        <input
+                            type="text"
+                            placeholder="검색어를 입력하세요"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    updateSearch();
+                                }
+                            }}
+                        />
+
+                        <button type="button" onClick={updateSearch}>
+                            검색
+                        </button>
+                    </div>
+
+                    <Link to="/store/register" className={styles.sell_button}>
+                        판매글 등록
+                    </Link>
+                </div>
+
+                {/* 상품 카드 목록 섹션 */}
+                <div className={styles.grid_box}>
+                    {isLoading && <p>목록을 불러오는 중입니다.</p>}
+                    {!isLoading && loadError && <p>{loadError}</p>}
+                    {visibleGoods.map((item, index) => {
+                        const tradeMethodLabel = getTradeTypeLabel(item.tradeType);
+                        const imageUrl = getImageUrl(item.productThumb);
+
+                        return (
+                            <Link key={item.marketNo ?? item.boardNo ?? index} to={`/store/${item.marketNo}`} className={styles.cardLink}>
+                                <article className={styles.card}>
+                                    <div className={styles.image}>
+                                        {imageUrl ? (
+                                            <img src={imageUrl} alt={item.marketTitle || "상품 이미지"} />
+                                        ) : (
+                                            "이미지"
+                                        )}
+                                    </div>
+                                    <h3>{item.displayTitle}</h3>
+                                    <p className={styles.price}>{formatPrice(item.productPrice)}</p>
+                                    <div className={styles.region_badge}>{item.regionName || item.ctpvsggId || "지역 미등록"}</div>
+                                    <p className={styles.tradeType}>거래방법 : {tradeMethodLabel}</p>
+
+                                    <div className={styles.metaRow}>
+                                        <span className={styles.authorAvatarWrapper}>
+                                            <img
+                                                className={styles.authorAvatar}
+                                                src={getMemberImageUrl(item.memberThumb || (item.memberId === memberId ? memberThumb : null)) || userImg}
+                                                alt={`${item.memberId} 프로필`}
+                                                onError={(e) => {
+                                                    e.currentTarget.src = userImg;
+                                                }}
+                                            />
+                                            <span className={styles.author}>{item.memberNickname || item.memberId}</span>
+                                        </span>
+                                        <span className={styles.metaDivider}>|</span>
+                                        <span className={styles.commentCount}>💬 {item.commentCount ?? 0}</span>
+                                        <span className={styles.metaDivider}>|</span>
+                                        <span className={styles.dateLine}>{formatDate(item.createdAt)}</span>
+                                    </div>
+                                    <p className={styles.viewCount}>👀 조회수 {Number(item.readCount ?? 0).toLocaleString("ko-KR")}</p>
+                                </article>
+                            </Link>
+                        );
+                    })}
+                </div>
+
+                <div className={styles.pagination}>
+                    <button type="button" onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
+                        &lt;
+                    </button>
+
+                    {Array.from({ length: pageCount }, (_, i) => i + 1).map((page) => (
+                        <button
+                            type="button"
+                            key={page}
+                            className={currentPage === page ? styles.activePage : ""}
+                            onClick={() => goToPage(page)}
+                        >
+                            {page}
+                        </button>
+                    ))}
+
+                    <button type="button" onClick={() => goToPage(currentPage + 1)} disabled={currentPage === pageCount}>
+                        &gt;
+                    </button>
+                </div>
+            </section>
     </div>
   );
 };

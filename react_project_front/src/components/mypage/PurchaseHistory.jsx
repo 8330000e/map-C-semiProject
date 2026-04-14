@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
 import styles from "./PurchaseHistory.module.css";
 import { getCompletedPurchases } from "./orderHistoryStorage";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 const PAGE_SIZE = 6;
@@ -13,35 +14,7 @@ const getStatusPrefix = (status) => (status ? `[${status}] ` : "");
 //  - 로그인한 사용자의 구매한 상품 기록을 보여줌.
 //  - 서버에서 거래 정보와 연관 상품 정보를 함께 가져와서 렌더링함.
 
-const getImageUrl = (thumb) => {
-  // thumb가 서버에서 여러 형태로 들어오기 때문에,
-  // 여기서 브라우저가 바로 쓸 수 있는 주소로 바꿔줘요.
-  if (!thumb) return null;
-  if (typeof thumb !== "string") return null;
-  let trimmed = thumb.trim();
-  if (!trimmed) return null;
-
-  trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
-
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
-  if (driveMatch) {
-    const boardIndex = trimmed.indexOf("/board/editor/");
-    if (boardIndex !== -1) {
-      const suffix = trimmed.substring(boardIndex);
-      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
-    }
-    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
-  }
-
-  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
-  return `${BACKSERVER}/board/editor/${trimmed}`;
-};
+const getImageUrl = normalizeImageUrl;
 
 const getShippingStatusLabel = (status) => {
   if (status === 1 || status === "1") return "배송완료";

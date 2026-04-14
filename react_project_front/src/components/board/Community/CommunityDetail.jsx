@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../../store/useAuthStore";
+import { normalizeImageUrl } from "../../../utils/getImageUrl";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
@@ -43,62 +44,9 @@ const formatDateTime = (rawDate) => {
   )}:${pad(date.getMinutes())}`;
 };
 
-const getImageUrl = (thumb) => {
-  if (!thumb) return null;
-  if (typeof thumb !== "string") return null;
-  let trimmed = thumb.trim();
-  if (!trimmed) return null;
+const getImageUrl = normalizeImageUrl;
 
-  trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
-
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
-    return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
-  if (driveMatch) {
-    const boardIndex = trimmed.indexOf("/board/editor/");
-    if (boardIndex !== -1) {
-      const suffix = trimmed.substring(boardIndex);
-      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
-    }
-    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
-  }
-
-  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.includes("/board/editor/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
-    return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
-  return `${BACKSERVER}/board/editor/${trimmed}`;
-};
-
-const getMemberImageUrl = (thumb) => {
-  if (!thumb) return null;
-  if (typeof thumb !== "string") return null;
-  let trimmed = thumb.trim();
-  if (!trimmed) return null;
-
-  trimmed = trimmed.replace(/\\/g, "/").replace(/\\/g, "/");
-
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
-    return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-  if (trimmed.startsWith("/member/thumb/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/member/thumb/"))
-    return `${BACKSERVER}/${trimmed.replace(/^\/+/, "")}`;
-  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.includes("/board/editor/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
-    return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
-  return `${BACKSERVER}/member/thumb/${trimmed}`;
-};
+const getMemberImageUrl = (thumb) => normalizeImageUrl(thumb, "member/thumb");
 
 const hasImageInContent = (html) => {
   if (!html) return false;
@@ -191,6 +139,7 @@ const CommunityDetail = ({
       .get(`${BACKSERVER}/boards/${board.boardNo}/comments`)
       .then((res) => {
         const loaded = Array.isArray(res.data) ? res.data : [];
+        console.log("[댓글 목록] boardNo=", board.boardNo, loaded.map((item) => ({ memberId: item.memberId, memberThumb: item.memberThumb })));
         setComments(
           loaded.map((item) => ({
             ...item,
@@ -619,6 +568,8 @@ const CommunityDetail = ({
             <div className={styles.commentMetaLeft}>
               <img
                 src={commentAvatarUrl}
+                loading="lazy"
+                decoding="async"
                 onError={(e) => {
                   const target = e.currentTarget;
                   target.onerror = null;
