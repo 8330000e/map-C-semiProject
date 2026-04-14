@@ -243,7 +243,6 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                 <div>
                   <img
                     src=${borderPin}
-                    alt=""
                     style="
                       position: absolute;
                       width: 32px;
