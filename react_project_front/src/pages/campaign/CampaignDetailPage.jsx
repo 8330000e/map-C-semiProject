@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Button from "../../components/ui/Button";
 import Swal from "sweetalert2";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 import { Doughnut } from "react-chartjs-2";
 import {
   Chart,
@@ -270,8 +271,15 @@ const PostBoard = ({
                 }}
               >
                 <div className={styles.camp_board_img}>
+                  {/*
+                    캠페인 리스트 이미지도 lazy loading을 적용함.
+                    보이지 않는 이미지는 로딩을 늦춰서 데이터 사용을 줄임.
+                  */}
                   <img
-                    src={`${import.meta.env.VITE_BACKSERVER}/campaign/memo/${list.campaignThumb}`}
+                    src={normalizeImageUrl(list.campaignThumb)}
+                    loading="lazy"
+                    decoding="async"
+                    alt="캠페인 이미지"
                   />
                 </div>
                 <div className={styles.camp_board_content_wrap}>

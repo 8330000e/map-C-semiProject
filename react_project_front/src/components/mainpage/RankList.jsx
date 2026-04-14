@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./RankList.module.css";
 import axios from "axios";
 import defaultImg from "../../assets/img/defaultImg.png";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 
 const RankList = () => {
   const [rankList, setRankList] = useState([]);
@@ -31,8 +32,10 @@ const RankList = () => {
                   <p>{i + 1}</p>
                   <p>
                     <img
-                      src={rank.memberThumb ? rank.memberThumb : defaultImg}
+                      src={rank.memberThumb ? normalizeImageUrl(rank.memberThumb, "member/thumb") : defaultImg}
                       className={styles.list_thumb}
+                      loading="lazy"
+                      decoding="async"
                     />
                   </p>
                   <p>{rank.memberNickname}</p>

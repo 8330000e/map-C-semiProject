@@ -546,6 +546,8 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
                   style={{ "--tree-scale": currentTreeScale }}
                 >
                   <img
+                    loading="lazy"
+                    decoding="async"
                     key={currentStage}
                     src={currentTreeImage}
                     alt={currentStageLabel}
@@ -555,6 +557,8 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
                   {showAbsorbEffect && (
                     <div className={styles.absorbEffect}>
                       <img
+                        loading="lazy"
+                        decoding="async"
                         src={waterDropImg}
                         alt="흡수 물방울"
                         className={styles.absorbDrop}
@@ -578,6 +582,8 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
                 </div>
 
                 <img
+                  loading="lazy"
+                  decoding="async"
                   src={waterDropImg}
                   alt="물방울 게이지"
                   className={styles.waterDropImage}
@@ -684,6 +690,8 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
                   </div>
 
                   <img
+                    loading="lazy"
+                    decoding="async"
                     src={waterDropImg}
                     alt="물방울"
                     className={styles.modalWaterDrop}
@@ -788,6 +796,8 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
                   </div>
 
                   <img
+                    loading="lazy"
+                    decoding="async"
                     src={waterDropImg}
                     alt="물방울"
                     className={styles.completeWaterDrop}

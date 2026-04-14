@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.iei.donation.model.dao.DonationDao">
+
+	<!-- 사용자의 기부 포인트 사용에 따른 포인트 변화 -->
+	<update id="updateMemberPoint">
+		update member_point_tbl
+		set total_point = total_point -
+		#{donationPoint}
+		where member_id = #{memberId}
+		<!-- 잔액이 기부액보다 많을 떄만 실행되게 하라 -->
+		and total_point >= #{donationPoint}
+	</update>
+
+	<!-- 사용자가 기부한 포인트가 환경단체로 넘어가 포인트 변화량을 설정 -->
+	<update id="updateGroupTotalPoint">
+		update donation_group
+		<!-- 전체 포인트에다가 기부한 포인트를 더한 값 -->
+		set total_points = total_points + #{donationPoint}
+		where group_id =
+		#{groupId}
+	</update>
+
+	<insert id="insertPointRecordResult">
+		insert into point_donation
+		(
+
+		donation_no,
+		member_id,
+		group_id,
+		donation_point,
+		donation_cash,
+		donation_date
+
+		)
+		values(
+		point_donation_seq.nextval, #{memberId}, #{groupId},
+		#{donationPoint},
+		#{donationCash},
+		SYSDATE
+
+		)
+	</insert>
+</mapper>
+
+	

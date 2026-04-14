@@ -164,9 +164,52 @@ const PointForGoodPage = () => {
       period: "2026-04-02 ~ 2026-06-30",
       image: "/images/relief.jpg",
     },
+    {
+      group_id: "global_6k",
+      title: "글로벌 6K 마라톤에 참여하고 깨끗한 물을 선물해요!",
+      category: "해외사업후원",
+      period: "2026-04-10 ~ 2026-04-30",
+      image: "/images/marathon.jpg", // 실제 이미지 경로
+    },
+    {
+      group_id: "emergency_relief",
+      title: "최수영과 함께 전쟁 속 아이의 하루를 지켜주세요!",
+      category: "긴급구호사업후원",
+      period: "2026-04-02 ~ 2026-06-30",
+      image: "/images/relief.jpg",
+    },
+    {
+      group_id: "emergency_relief",
+      title: "최수영과 함께 전쟁 속 아이의 하루를 지켜주세요!",
+      category: "긴급구호사업후원",
+      period: "2026-04-02 ~ 2026-06-30",
+      image: "/images/relief.jpg",
+    },
+    {
+      group_id: "global_6k",
+      title: "글로벌 6K 마라톤에 참여하고 깨끗한 물을 선물해요!",
+      category: "해외사업후원",
+      period: "2026-04-10 ~ 2026-04-30",
+      image: "/images/marathon.jpg", // 실제 이미지 경로
+    },
+    {
+      group_id: "emergency_relief",
+      title: "최수영과 함께 전쟁 속 아이의 하루를 지켜주세요!",
+      category: "긴급구호사업후원",
+      period: "2026-04-02 ~ 2026-06-30",
+      image: "/images/relief.jpg",
+    },
+    {
+      group_id: "emergency_relief",
+      title: "최수영과 함께 전쟁 속 아이의 하루를 지켜주세요!",
+      category: "긴급구호사업후원",
+      period: "2026-04-02 ~ 2026-06-30",
+      image: "/images/relief.jpg",
+    },
     // ... 이런 식으로 총 9개를 채웁니다.
   ];
 
+  // 로그인 했을 떄 포인트 데이터를 불러오는 함수
   const loadDataMemberPoint = useCallback(() => {
     // memberId가 비어있을 때는 호출하지 않도록 하는 방어로직
     if (!loginId) return;
@@ -201,10 +244,10 @@ const PointForGoodPage = () => {
   const handleDonateSubmit = async (amount, groupId) => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKSERVER}/point-give/donate`,
+        `${import.meta.env.VITE_BACKSERVER}/donations/donate`,
         {
           memberId: loginId,
-          donateAmount: amount,
+          donationPoint: amount,
 
           groupId: groupId, //서버로 단체 아이디 보냄
         },
@@ -218,7 +261,7 @@ const PointForGoodPage = () => {
         });
 
         setIsOpen(false); // 팝업 닫기
-        loadDataMemberPoint(); // ★중요: 포인트 다시 불러와서 화면 갱신!
+        loadDataMemberPoint(); // ★중요: 기부를 한후 사용자의 수정된 포인트 데이터를 불러오기, 화면 갱신!
       }
     } catch (err) {
       console.error("기부 실패:", err);
@@ -245,7 +288,12 @@ const PointForGoodPage = () => {
             >
               {/* 이미지 영역 */}
               <div className={styles.card_image_wrap}>
-                <img src={item.image} alt={item.title} />
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
 
               {/* 정보 영역 */}

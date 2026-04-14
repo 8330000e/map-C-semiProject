@@ -241,6 +241,8 @@ const MissionList = () => {
 
         <div className={styles.imageBox}>
           <img
+            loading="lazy"
+            decoding="async"
             src={
               mission.missionType === "RANDOM"
                 ? completed && randomMissionCertImage

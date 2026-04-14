@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./SupportNoticeDetail.module.css";
 import NoticeCardList from "./NoticeCardList";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 
 const categoryColors = {
   이벤트: "#f59e0b",
@@ -32,9 +33,15 @@ const SupportNoticeDetail = ({ notice, noticeList }) => {
 
         {notice.noticeImagePath && (
           <div className={styles.image_box}>
+            {/*
+              공지 상세 이미지도 lazy loading을 적용함.
+              초기 페이지 렌더링 성능을 높이고 트래픽을 줄임.
+            */}
             <img
-              src={`${import.meta.env.VITE_BACKSERVER}${notice.noticeImagePath}`}
+              src={normalizeImageUrl(notice.noticeImagePath)}
               alt="공지 이미지"
+              loading="lazy"
+              decoding="async"
             />
           </div>
         )}

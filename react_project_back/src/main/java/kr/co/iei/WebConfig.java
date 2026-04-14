@@ -1,21 +1,14 @@
 package kr.co.iei;
 
-import java.io.File;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-
+// WebConfig는 CORS 정책만 처리함.
+// 로컬 정적 이미지 경로(/board/editor, /member/thumb)는 더 이상 백엔드에서 서빙하지 않음.
+// 지금은 Firebase 업로드된 이미지 URL만 사용하도록 처리했음.
 @Configuration
 public class WebConfig implements WebMvcConfigurer {//MVC 관련 설정
-	// application.properties에 설정된 file.root 값을 사용하여 정적 리소스의 실제 파일 시스템 위치를 결정합니다.
-	// Windows와 macOS 모두에서 동작하도록 File.toURI()를 사용합니다.
-	@Value("${file.root}")
-	private String root;
-
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		// allowCredentials(true)를 사용할 때는 allowedOrigins("*")를 사용할 수 없습니다.
@@ -27,49 +20,4 @@ public class WebConfig implements WebMvcConfigurer {//MVC 관련 설정
 			.allowedHeaders("*")
 			.allowCredentials(true);
 	}
-
-	@Override
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		// 파일 시스템 경로를 URL로 매핑합니다.
-		// file.root에 설정된 루트 폴더 아래의 실제 파일을 /member/thumb/**, /board/editor/** 경로로 제공.
-		registry
-			.addResourceHandler("/member/thumb/**")
-			.addResourceLocations(getFileUri(new File(root, "member/thumb/")));
-		registry
-			.addResourceHandler("/campaign/memo/**")
-			.addResourceLocations(getFileUri(new File(root,"campaign/memo/")));
-
-		// 게시글 에디터에서 업로드한 이미지도 같은 루트 아래 board/editor 폴더에서 제공합니다.
-		// 프론트에서는 /board/editor/{fileName} 형태의 URL로 접근합니다.
-		registry.addResourceHandler("/board/editor/**")
-			.addResourceLocations(getFileUri(new File(root, "board/editor")));
-		
-		// /notice/... .jpg로 요청하면 upload/semiproject/notice/... .jpg 파일을 찾아줌 
-		registry.addResourceHandler("/notice/**")
-	    .addResourceLocations(getFileUri(new File(root, "notice")));
-		
-		// qna도 추가 
-		registry.addResourceHandler("/qna/**")
-		.addResourceLocations(getFileUri(new File(root, "qna")));
-
-		// 추가로 사용자 홈 디렉터리의 upload 폴더를 /upload/**로 제공하도록 설정합니다.
-		// 이 매핑은 file.root와는 별개로, 사용자 홈에 있는 legacy upload 파일을 서빙할 때 사용됩니다.
-		String uploadPath = System.getProperty("user.home") + File.separator + "upload" + File.separator;
-		registry.addResourceHandler("/upload/**")
-			.addResourceLocations(new File(uploadPath).toURI().toString());
-		
-		 //사용자가 업로드한 인증 이미지를 브라우저에서 접근할 수 있도록 /uploads/** 경로를 실제 파일 저장 경로와 매핑
-	    registry
-	        .addResourceHandler("/uploads/**")
-	        .addResourceLocations(getFileUri(new File(root)));
-	}
-	
-
-	/**
-	 * 윈도우와 맥(macOS) 모두에서 정상 동작하도록 파일 시스템 경로를 URI로 변환합니다.
-	 */
-	private String getFileUri(File file) {
-		return file.toURI().toString();
-	}
-
 }

@@ -3,155 +3,137 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
 import useAuthStore from "../../../store/useAuthStore";
+import { normalizeImageUrl } from "../../../utils/getImageUrl";
 import userImg from "../../../assets/user.png";
 import styles from "./store.module.css";
+
+// 스토어 상품 이미지 변환은 normalizeImageUrl에서 처리함.
+// 로컬 /board/editor 경로 대신 Firebase URL 변환을 우선함.
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
 // 중고거래 목록 페이지임.
 //  - 서버에서 판매중인 상품 목록을 받아와서 화면에 보여줌.
 //  - 검색어를 입력하면 제목 또는 작성자 기준으로 상품을 필터링함.
-const formatPrice = (value) => `${Number(value || 0).toLocaleString("ko-KR")}원`;
+const formatPrice = (value) =>
+  `${Number(value || 0).toLocaleString("ko-KR")}원`;
 const formatDate = (value) => {
-    if (!value) return "";
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return "";
-    return date.toLocaleDateString("ko-KR");
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("ko-KR");
 };
 const getTradeTypeLabel = (tradeType) => {
-    if (tradeType === 0 || tradeType === "0" || tradeType === "직거래/택배") return "직거래/택배";
-    if (tradeType === 1 || tradeType === "1" || tradeType === "직거래") return "직거래";
-    if (tradeType === 2 || tradeType === "2" || tradeType === "택배") return "택배";
-    return "미정";
+  if (tradeType === 0 || tradeType === "0" || tradeType === "직거래/택배")
+    return "직거래/택배";
+  if (tradeType === 1 || tradeType === "1" || tradeType === "직거래")
+    return "직거래";
+  if (tradeType === 2 || tradeType === "2" || tradeType === "택배")
+    return "택배";
+  return "미정";
 };
 const getSaleStatusLabel = (productStatus) => {
-    if (productStatus === "예약중" || productStatus === 1 || productStatus === "1") return "예약중";
-    if (productStatus === "판매완료" || productStatus === 2 || productStatus === "2") return "판매완료";
-    return "판매중";
+  if (
+    productStatus === "예약중" ||
+    productStatus === 1 ||
+    productStatus === "1"
+  )
+    return "예약중";
+  if (
+    productStatus === "판매완료" ||
+    productStatus === 2 ||
+    productStatus === "2"
+  )
+    return "판매완료";
+  return "판매중";
 };
 
-const getImageUrl = (thumb) => {
-    // 상품 이미지가 여러 형태로 들어올 수 있어서,
-    // 여기서 브라우저가 바로 쓸 수 있는 URL로 바꿔줘요.
-    // 파일명만 들어오면 /upload/ 경로로 연결합니다.
-    if (!thumb) return null;
-    if (typeof thumb !== "string") return null;
-    let trimmed = thumb.trim();
-    if (!trimmed) return null;
+// getImageUrl은 thumb 문자열을 normalizeImageUrl에 위임함.
+// 로컬 경로는 더 이상 백엔드로 직접 요청하지 않고,
+// 가능한 경우 Firebase URL로 바꿔서 이미지 로딩함.
+const getImageUrl = (thumb) => normalizeImageUrl(thumb);
 
-    trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
-
-    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-    if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-    const driveMatch = trimmed.match(/^[A-Za-z]:\//);
-    if (driveMatch) {
-      const boardIndex = trimmed.indexOf("/board/editor/");
-      if (boardIndex !== -1) {
-        const suffix = trimmed.substring(boardIndex);
-        return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
-      }
-      trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
-    }
-
-    if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-    if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-    if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-    if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
-    return `${BACKSERVER}/board/editor/${trimmed}`;
-};
-
+// getMemberImageUrl은 member/thumb 기본 경로를 사용함.
+// 프로필 이미지가 없으면 기본 userImg로 대체함.
 const getMemberImageUrl = (thumb) => {
-    if (!thumb) return userImg;
-    if (typeof thumb !== "string") return userImg;
-    let trimmed = thumb.trim();
-    if (!trimmed) return userImg;
-
-    trimmed = trimmed.replace(/\\/g, "/");
-
-    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-    if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-    if (trimmed.startsWith("/member/thumb/")) return `${BACKSERVER}${trimmed}`;
-    if (trimmed.includes("/member/thumb/")) return `${BACKSERVER}/${trimmed.replace(/^\/+/, "")}`;
-    if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-    if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-    if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-    if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
-    return `${BACKSERVER}/member/thumb/${trimmed}`;
+  const url = normalizeImageUrl(thumb, "member/thumb");
+  return url || userImg;
 };
 
 const Store = () => {
-    const { memberId, memberThumb } = useAuthStore();
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 16;
-    const [searchType, setSearchType] = useState("title");
-    const [searchQuery, setSearchQuery] = useState("");
-    const [activeSearch, setActiveSearch] = useState("");
-    const [goods, setGoods] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [loadError, setLoadError] = useState("");
+  const { memberId, memberThumb } = useAuthStore();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 16;
+  const [searchType, setSearchType] = useState("title");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeSearch, setActiveSearch] = useState("");
+  const [goods, setGoods] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
-    useEffect(() => {
-        const fetchStoreBoards = async () => {
-            try {
-                setIsLoading(true);
-                const response = await axios.get(`${BACKSERVER}/api/store/boards`);
-                const items = Array.isArray(response.data)
-                    ? response.data
-                    : Array.isArray(response.data?.items)
-                    ? response.data.items
-                    : [];
-                setGoods(items);
-                setLoadError("");
-            } catch (error) {
-                console.error("중고장터 목록 조회 실패", error);
-                setLoadError("중고장터 목록을 불러오지 못했습니다.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
+  useEffect(() => {
+    const fetchStoreBoards = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get(`${BACKSERVER}/api/store/boards`);
+        const items = Array.isArray(response.data)
+          ? response.data
+          : Array.isArray(response.data?.items)
+            ? response.data.items
+            : [];
+        setGoods(items);
+        setLoadError("");
+      } catch (error) {
+        console.error("중고장터 목록 조회 실패", error);
+        setLoadError("중고장터 목록을 불러오지 못했습니다.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-        fetchStoreBoards();
-    }, []);
+    fetchStoreBoards();
+  }, []);
 
-    const searchedGoods = useMemo(() => {
-        const q = activeSearch.trim().toLowerCase();
-        if (!q) return goods;
+  const searchedGoods = useMemo(() => {
+    const q = activeSearch.trim().toLowerCase();
+    if (!q) return goods;
 
-        return goods.filter((item) =>
-            String(searchType === "author" ? item.memberId : item.marketTitle)
-                .toLowerCase()
-                .includes(q),
-        );
-    }, [goods, searchType, activeSearch]);
-
-    const displayGoods = useMemo(
-        () =>
-            searchedGoods.map((item) => {
-                return {
-                    ...item,
-                    displayTitle: `[${getSaleStatusLabel(item.productStatus)}] ${item.marketTitle}`,
-                };
-            }),
-        [searchedGoods],
+    return goods.filter((item) =>
+      String(searchType === "author" ? item.memberId : item.marketTitle)
+        .toLowerCase()
+        .includes(q),
     );
+  }, [goods, searchType, activeSearch]);
 
-    const pageCount = Math.max(1, Math.ceil(displayGoods.length / itemsPerPage));
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const visibleGoods = displayGoods.slice(startIndex, startIndex + itemsPerPage);
+  const displayGoods = useMemo(
+    () =>
+      searchedGoods.map((item) => {
+        return {
+          ...item,
+          displayTitle: `[${getSaleStatusLabel(item.productStatus)}] ${item.marketTitle}`,
+        };
+      }),
+    [searchedGoods],
+  );
 
-    const goToPage = (page) => {
-        if (page < 1 || page > pageCount) return;
-        setCurrentPage(page);
-    };
+  const pageCount = Math.max(1, Math.ceil(displayGoods.length / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const visibleGoods = displayGoods.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
-    const updateSearch = () => {
-        setActiveSearch(searchQuery);
-        setCurrentPage(1);
-    };
+  const goToPage = (page) => {
+    if (page < 1 || page > pageCount) return;
+    setCurrentPage(page);
+  };
 
-    return (
+  const updateSearch = () => {
+    setActiveSearch(searchQuery);
+    setCurrentPage(1);
+  };
+
+  return (
         <div className={`${styles.store_layout} common_wrap`}>
             {/* 레이아웃: 왼쪽 메뉴 + 오른쪽 중고장터 컨텐츠 */}
             <aside className={styles.menu_panel}>
@@ -243,8 +225,18 @@ const Store = () => {
                             <Link key={item.marketNo ?? item.boardNo ?? index} to={`/store/${item.marketNo}`} className={styles.cardLink}>
                                 <article className={styles.card}>
                                     <div className={styles.image}>
+                                        {/*
+                                            목록 이미지에는 지연 로딩을 적용함.
+                                            화면에 보여질 때만 다운로드해서
+                                            초기 렌더링 속도를 빠르게 함.
+                                        */}
                                         {imageUrl ? (
-                                            <img src={imageUrl} alt={item.marketTitle || "상품 이미지"} />
+                                            <img
+                                                src={imageUrl}
+                                                alt={item.marketTitle || "상품 이미지"}
+                                                loading="lazy"
+                                                decoding="async"
+                                            />
                                         ) : (
                                             "이미지"
                                         )}
@@ -258,7 +250,7 @@ const Store = () => {
                                         <span className={styles.authorAvatarWrapper}>
                                             <img
                                                 className={styles.authorAvatar}
-                                                src={getMemberImageUrl(item.memberThumb || (item.memberId === memberId ? memberThumb : null))}
+                                                src={getMemberImageUrl(item.memberThumb || (item.memberId === memberId ? memberThumb : null)) || userImg}
                                                 alt={`${item.memberId} 프로필`}
                                                 onError={(e) => {
                                                     e.currentTarget.src = userImg;
@@ -299,8 +291,8 @@ const Store = () => {
                     </button>
                 </div>
             </section>
-        </div>
-    );
+    </div>
+  );
 };
 
 export default Store;

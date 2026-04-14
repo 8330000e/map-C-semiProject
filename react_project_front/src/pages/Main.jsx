@@ -13,6 +13,7 @@ import HorizontalScrollList from "../components/commons/HorizontalScrollList";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import Swal from "sweetalert2";
 import RankList from "../components/mainpage/RankList";
+import { normalizeImageUrl } from "../utils/getImageUrl";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -32,41 +33,7 @@ const getSaleStatusLabel = (productStatus) => {
   return "판매중";
 };
 
-const getImageUrl = (thumb) => {
-  // thumb가 서버에서 여러 모양으로 들어올 수 있어요.
-  // 그래서 여기서 브라우저가 바로 쓸 수 있는 주소로 정리해줍니다.
-  if (!thumb) return null;
-  if (typeof thumb !== "string") return null;
-  let trimmed = thumb.trim();
-  if (!trimmed) return null;
-
-  trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
-
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
-    return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
-  if (driveMatch) {
-    const boardIndex = trimmed.indexOf("/board/editor/");
-    if (boardIndex !== -1) {
-      const suffix = trimmed.substring(boardIndex);
-      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
-    }
-    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
-  }
-
-  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.includes("/board/editor/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
-    return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
-  if (trimmed.includes("/board/editor/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  return `${BACKSERVER}/board/editor/${trimmed}`;
-};
+const getImageUrl = normalizeImageUrl;
 
 const Main = () => {
   // 실시간 댓글 "보여지는 영역" DOM
@@ -520,6 +487,8 @@ const Main = () => {
                       <div className="used_item_image" aria-hidden="true">
                         {imageUrl ? (
                           <img
+                            loading="lazy"
+                            decoding="async"
                             src={imageUrl}
                             alt={item.marketTitle || "상품 이미지"}
                           />

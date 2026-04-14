@@ -15,6 +15,8 @@ import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import LinkIcon from "@mui/icons-material/Link";
 import axios from "axios";
+import { normalizeImageUrl } from "../../../utils/getImageUrl";
+import { compressImageFile } from "../../../utils/compressImage";
 
 const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
   const editorRef = useRef(null);
@@ -169,14 +171,25 @@ const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
   };
 
   const handleImageChange = async (e) => {
-    const file = e.target.files?.[0];
-    setAttachedFiles((prev) => [...prev, file]);
+    // 에디터에 이미지를 넣기 위해 파일을 선택하면 동작함.
+    let file = e.target.files?.[0];
     if (!file) return;
+    setAttachedFiles((prev) => [...prev, file]);
+
+    // 에디터 이미지도 업로드 전에 압축해서 전송함
+    if (file.type.startsWith("image/")) {
+      file = await compressImageFile(file, {
+        maxWidth: 1200,
+        maxHeight: 1200,
+        quality: 0.75,
+      });
+    }
 
     try {
       const formData = new FormData();
-      formData.append("upfile", file);
+      formData.append("upfile", file, file.name);
 
+      // 백엔드 업로드 API로 이미지 파일을 전송함.
       const res = await axios.post(
         `${import.meta.env.VITE_BACKSERVER}/boards/editor/upload`,
         formData,
@@ -187,10 +200,21 @@ const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
         },
       );
 
-      const imageUrl = `${import.meta.env.VITE_BACKSERVER}${res.data}`;
+      const returned = res.data;
+      const imageUrl =
+        typeof returned === "string"
+          ? normalizeImageUrl(returned, "board/editor")
+          : normalizeImageUrl(
+              returned?.url || returned?.fileUrl || returned?.path || "",
+              "board/editor",
+            );
 
+      // 업로드된 이미지 경로를 모든 클라이언트에서 정상 접근 가능한 URL로 보정함.
+      // 서버가 문자열 또는 객체 형태로 응답해도 Firebase URL 변환이 적용되도록 함.
       focusEditor();
-      document.execCommand("insertImage", false, imageUrl);
+      if (imageUrl) {
+        document.execCommand("insertImage", false, imageUrl);
+      }
 
       setTimeout(() => {
         if (!editorRef.current) return;
