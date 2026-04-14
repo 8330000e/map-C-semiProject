@@ -139,6 +139,7 @@ const CommunityDetail = ({
       .get(`${BACKSERVER}/boards/${board.boardNo}/comments`)
       .then((res) => {
         const loaded = Array.isArray(res.data) ? res.data : [];
+        console.log("[댓글 목록] boardNo=", board.boardNo, loaded.map((item) => ({ memberId: item.memberId, memberThumb: item.memberThumb })));
         setComments(
           loaded.map((item) => ({
             ...item,

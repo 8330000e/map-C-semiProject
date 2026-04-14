@@ -171,9 +171,9 @@ const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
 
   const handleImageChange = async (e) => {
     // 에디터에 이미지를 넣기 위해 파일을 선택하면 동작함.
-    const file = e.target.files?.[0];
-    setAttachedFiles((prev) => [...prev, file]);
+    let file = e.target.files?.[0];
     if (!file) return;
+    setAttachedFiles((prev) => [...prev, file]);
 
     // 에디터 이미지도 업로드 전에 압축해서 전송함
     if (file.type.startsWith("image/")) {

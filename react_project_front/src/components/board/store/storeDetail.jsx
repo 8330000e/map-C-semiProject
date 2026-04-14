@@ -157,6 +157,22 @@ const StoreDetail = () => {
   }, [item]);
 
   useEffect(() => {
+    if (!item || item.memberThumb) return;
+    if (!item.memberId) return;
+
+    axios
+      .get(`${BACKSERVER}/api/members/${item.memberId}`)
+      .then((res) => {
+        if (res.data?.memberThumb) {
+          setItem((prev) => (prev ? { ...prev, memberThumb: res.data.memberThumb } : prev));
+        }
+      })
+      .catch((error) => {
+        console.debug("판매자 썸네일 조회 실패", item.memberId, error);
+      });
+  }, [item]);
+
+  useEffect(() => {
     const sellerId = item?.memberId || item?.sellerId;
     if (!sellerId) return;
 
