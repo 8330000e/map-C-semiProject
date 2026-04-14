@@ -185,6 +185,22 @@ public class CampaignService {
 		}
 		return result;
 	}
+
+	public Campaign selectCampForUpdate(Integer campaignNo) {
+		Campaign camp = campaignDao.selectCampForUpdate(campaignNo);
+		return camp;
+	}
+
+	public int updateCamp(Campaign camp) {
+		int result=0;
+		result = campaignDao.insertIntoUpdateTbl(camp);
+		if(result==1) {
+			int campaignStatus=1;
+			camp.setCampaignStatus(campaignStatus);
+			result=campaignDao.changeStatus(camp);
+		}
+		return result;
+	}
 	
 
 }

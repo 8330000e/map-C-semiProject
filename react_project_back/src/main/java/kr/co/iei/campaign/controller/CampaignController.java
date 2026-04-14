@@ -49,7 +49,7 @@ public class CampaignController {
 	@GetMapping(value="/{campaignNo}")
 	public ResponseEntity<?> selectOneCampaign(@PathVariable Integer campaignNo){
 		Campaign result = campaignService.selectOneCampaign(campaignNo);
-//		System.out.println(result);
+		System.out.println(result);
 		return ResponseEntity.ok(result);
 	}
 	@PostMapping(value="/{memberId}")
@@ -169,6 +169,17 @@ public class CampaignController {
 		camp.setMemberId(memberId);
 		camp.setCampaignNo(campaignNo);
 		int result = campaignService.checkBannedMember(camp);
+		return ResponseEntity.ok(result);
+	}
+	@GetMapping(value="/{campaignNo}/forUpdate")
+	public ResponseEntity<?> selectCampForUpdate(@PathVariable Integer campaignNo){
+		Campaign camp = campaignService.selectCampForUpdate(campaignNo);
+		return ResponseEntity.ok(camp);
+	}
+	@PatchMapping(value="/{campaignNo}/updateCamp")
+	public ResponseEntity<?> updateCamp(@PathVariable Integer campaignNo,@RequestBody Campaign camp){
+		camp.setCampaignNo(campaignNo);
+		int result = campaignService.updateCamp(camp);
 		return ResponseEntity.ok(result);
 	}
 	

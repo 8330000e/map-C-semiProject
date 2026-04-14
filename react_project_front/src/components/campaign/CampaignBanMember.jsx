@@ -23,51 +23,53 @@ const CampaignBanMember = () => {
       <div className={styles.camp_settings_content_main_wrap}>
         <div className={styles.camp_settings_content_ban_memberId}>
           <label htmlFor="banMemberId">추방시킬 멤버</label>
-          <Input
-            id="banMemberId"
-            name="memberId"
-            disabled={checkMember}
-            value={banMember.memberId}
-            onChange={(e) => {
-              setBanMember({
-                ...banMember,
-                [e.target.name]: e.target.value,
-              });
-            }}
-          ></Input>
-          <Button
-            className="btn primary sm"
-            style={!checkMember ? { display: "block" } : { display: "none" }}
-            onClick={() => {
-              const memberId = banMember.memberId;
-              const campaignNo = banMember.campaignNo;
-              axios
-                .get(
-                  `${import.meta.env.VITE_BACKSERVER}/campaigns/${memberId}/part?campaignNo=${campaignNo}`,
-                )
-                .then((res) => {
-                  console.log(res.data);
-                  if (res.data === 1) {
-                    setCheckMember(true);
-                  }
-                })
-                .catch((err) => {
-                  console.log(err);
+          <div>
+            <Input
+              id="banMemberId"
+              name="memberId"
+              disabled={checkMember}
+              value={banMember.memberId}
+              onChange={(e) => {
+                setBanMember({
+                  ...banMember,
+                  [e.target.name]: e.target.value,
                 });
-            }}
-          >
-            회원 조회
-          </Button>
-          <Button
-            className="btn primary sm"
-            style={checkMember ? { display: "block" } : { display: "none" }}
-            onClick={() => {
-              setCheckMember(false);
-              setBanMember({ ...banMember, memberId: "" });
-            }}
-          >
-            취소
-          </Button>
+              }}
+            ></Input>
+            <Button
+              className="btn primary sm"
+              style={!checkMember ? { display: "block" } : { display: "none" }}
+              onClick={() => {
+                const memberId = banMember.memberId;
+                const campaignNo = banMember.campaignNo;
+                axios
+                  .get(
+                    `${import.meta.env.VITE_BACKSERVER}/campaigns/${memberId}/part?campaignNo=${campaignNo}`,
+                  )
+                  .then((res) => {
+                    console.log(res.data);
+                    if (res.data === 1) {
+                      setCheckMember(true);
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              }}
+            >
+              회원 조회
+            </Button>
+            <Button
+              className="btn primary sm"
+              style={checkMember ? { display: "block" } : { display: "none" }}
+              onClick={() => {
+                setCheckMember(false);
+                setBanMember({ ...banMember, memberId: "" });
+              }}
+            >
+              취소
+            </Button>
+          </div>
           <p>{checkMember ? "회원 존재" : "회원이 존재하지 않습니다."}</p>
         </div>
         {checkMember && (

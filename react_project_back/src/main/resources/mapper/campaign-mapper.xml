@@ -101,4 +101,10 @@
 	<select id="selectBannedMember" resultType="String">
 		select member_id from campaign_exile_tbl where campaign_no = #{campaignNo} 
 	</select>
+	<select id="selectCampForUpdate" resultType="camp">
+		select campaign_title,campaign_explanation,campaign_goal_member from create_campaign_tbl where campaign_no=#{campaignNo}
+	</select>
+	<insert id="insertIntoUpdateTbl">
+		insert into campaign_update_tbl values(campaign_update_seq.nextval,#{campaignTitle},#{campaignExplanation},#{campaignGoalMember},#{campaignNo})
+	</insert>
 </mapper>

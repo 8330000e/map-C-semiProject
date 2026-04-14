@@ -32,6 +32,34 @@
   margin-bottom: 200px;
   text-align: center;
 }
+/* 멤버 추방 */
+.camp_settings_content_ban_memberId > p {
+  padding-left: 50px;
+}
+.camp_settings_content_ban_memberId > label {
+  padding-left: 33px;
+}
+.camp_settings_content_ban_memberId > div {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.camp_settings_content_ban_memberId > div > input {
+  width: 80%;
+}
+.camp_settings_content_ban_reason {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.camp_settings_content_ban_reason > label {
+  padding-left: 33px;
+}
+.camp_settings_content_ban_reason > textarea {
+  width: 88%;
+  margin: 10px auto;
+}
+/* 캠페인 수정 */
 
 .camp_settings_content_btn_wrap {
   align-self: center;

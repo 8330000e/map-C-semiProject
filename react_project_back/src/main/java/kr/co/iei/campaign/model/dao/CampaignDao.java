@@ -58,6 +58,12 @@ public interface CampaignDao {
 
 	List<String> selectBannedMember(int campaignNo);
 
+	Campaign selectCampForUpdate(Integer campaignNo);
+
+	int InsertIntoUpdateTbl(Campaign camp);
+
+	int insertIntoUpdateTbl(Campaign camp);
+
 	
 
 }
