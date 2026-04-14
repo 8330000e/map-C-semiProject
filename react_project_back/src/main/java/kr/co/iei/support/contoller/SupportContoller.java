@@ -69,7 +69,7 @@ public class SupportContoller {
 				saveDir.mkdir();
 			}
 			String fileName = fileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
-			qna.setQnaQuestionImage("/qna/" + fileName);
+			qna.setQnaQuestionImage(fileName);
 		}
 		int result = supportService.insertQna(qna);
 		return ResponseEntity.ok(result);

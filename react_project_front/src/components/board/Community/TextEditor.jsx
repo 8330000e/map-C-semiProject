@@ -169,6 +169,7 @@ const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
   };
 
   const handleImageChange = async (e) => {
+    // 에디터에 이미지를 넣기 위해 파일을 선택하면 동작함.
     const file = e.target.files?.[0];
     setAttachedFiles((prev) => [...prev, file]);
     if (!file) return;
@@ -177,6 +178,7 @@ const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
       const formData = new FormData();
       formData.append("upfile", file);
 
+      // 백엔드 업로드 API로 이미지 파일을 전송함.
       const res = await axios.post(
         `${import.meta.env.VITE_BACKSERVER}/boards/editor/upload`,
         formData,
@@ -187,10 +189,19 @@ const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
         },
       );
 
-      const imageUrl = `${import.meta.env.VITE_BACKSERVER}${res.data}`;
+      const returned = res.data;
+      const imageUrl =
+        typeof returned === "string"
+          ? returned.startsWith("http://") || returned.startsWith("https://")
+            ? returned
+            : `${import.meta.env.VITE_BACKSERVER}${returned}`
+          : "";
 
+      // 업로드 결과가 절대 URL이면 그대로 쓰고, 그렇지 않으면 백엔드 앞부분을 붙여서 처리함.
       focusEditor();
-      document.execCommand("insertImage", false, imageUrl);
+      if (imageUrl) {
+        document.execCommand("insertImage", false, imageUrl);
+      }
 
       setTimeout(() => {
         if (!editorRef.current) return;

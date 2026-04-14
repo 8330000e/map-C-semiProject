@@ -63,7 +63,7 @@ public class AdminController {
 			}
 			String fileName = fileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
 			System.out.println("경로: " + saveDir.getAbsolutePath());
-			notice.setNoticeImagePath("/notice/" + fileName);
+			notice.setNoticeImagePath(fileName);
 		}
 		int result = adminService.insertNotice(notice);
 		return ResponseEntity.ok(result);
@@ -86,7 +86,7 @@ public class AdminController {
 				saveDir.mkdir();
 			}
 			String fileName = fileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
-			notice.setNoticeImagePath("/notice/" + fileName);
+			notice.setNoticeImagePath(fileName);
 		}
 
 		int result = adminService.editNotice(notice);
@@ -146,7 +146,7 @@ public class AdminController {
 				saveDir.mkdir();
 			}
 			String fileName = fileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
-			qna.setQnaAnswerImage("/qna/" + fileName);
+			qna.setQnaAnswerImage(fileName);
 		}
 		int result = adminService.qnaAnswer(qna);
 		return ResponseEntity.ok(result);

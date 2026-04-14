@@ -52,12 +52,15 @@ const ProductRegistration = () => {
                 },
             });
             const uploadResult = response.data;
-            // 업로드 API가 파일명만 반환할 수 있어, /board/editor/ 경로로 보정합니다.
-            // 이렇게 하면 프리뷰가 깨지는 경우를 방지할 수 있습니다.
+            const fileUrl = typeof uploadResult === "string"
+                ? uploadResult
+                : uploadResult?.url || uploadResult?.fileUrl || uploadResult?.path || "";
+            // 업로드 API가 파일명만 반환할 수도 있고, Firebase URL을 반환할 수도 있으므로,
+            // 브라우저가 바로 사용할 수 있는 형태로 변환합니다.
             setProductThumb(
-                typeof uploadResult === "string" && !uploadResult.startsWith("/") && !uploadResult.startsWith("http")
-                    ? `/board/editor/${uploadResult}`
-                    : uploadResult,
+                fileUrl && !fileUrl.startsWith("/") && !fileUrl.startsWith("http")
+                    ? `/board/editor/${fileUrl}`
+                    : fileUrl,
             );
         } catch (error) {
             console.error("상품 이미지 업로드 실패", error);
