@@ -139,3 +139,10 @@ Thumbs.db
 coverage/
 *.exec
 
+# Firebase 서비스 계정 키 파일
+# 백엔드 프로젝트 로컬에서만 사용되는 JSON 파일은 커밋에서 제외합니다
+serviceAccountKey.json
+firebase-service-account.json
+*firebase-adminsdk*.json
+*.firebase-adminsdk*.json
+
