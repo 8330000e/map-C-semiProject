@@ -166,7 +166,7 @@ const Map = ({
         <img
         loading="lazy"
         decoding="async"
-        src='${writerAvatar}'
+        src='${markerSrc}'
         style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
         />
         <img
@@ -286,6 +286,8 @@ const Map = ({
                       style=" display: flex; gap: 8px; align-items: center; "
                     >
                       <img
+                        loading="lazy"
+                        decoding="async"
                         src=${defaultImg}
                         alt=""
                         style="
@@ -340,6 +342,8 @@ const Map = ({
             </div>
           <div style="position: relative;">
             <img
+              loading="lazy"
+              decoding="async"
               src=${marker.memberThumb || defaultImg}
               style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
             />
@@ -362,6 +366,8 @@ const Map = ({
             content: `
           <div>
             <img
+              loading="lazy"
+              decoding="async"
               src=${marker.memberThumb || defaultImg}
               style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
             />
