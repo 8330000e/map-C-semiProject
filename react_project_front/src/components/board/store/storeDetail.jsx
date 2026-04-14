@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import useAuthStore from "../../../store/useAuthStore";
+import { normalizeImageUrl } from "../../../utils/getImageUrl";
 import userImg from "../../../assets/user.png";
 import styles from "./storeDetail.module.css";
 import storeStyles from "./store.module.css";
@@ -155,6 +156,23 @@ const StoreDetail = () => {
     setSaleStatus(getSaleStatusLabel(item.productStatus));
   }, [item]);
 
+  // 상세페이지 로딩 시 작성자 썸네일이 비어 있으면 회원 API에서 추가로 가져와서 채워줌.
+  useEffect(() => {
+    if (!item || item.memberThumb) return;
+    if (!item.memberId) return;
+
+    axios
+      .get(`${BACKSERVER}/api/members/${item.memberId}`)
+      .then((res) => {
+        if (res.data?.memberThumb) {
+          setItem((prev) => (prev ? { ...prev, memberThumb: res.data.memberThumb } : prev));
+        }
+      })
+      .catch((error) => {
+        console.debug("판매자 썸네일 조회 실패", item.memberId, error);
+      });
+  }, [item]);
+
   useEffect(() => {
     const sellerId = item?.memberId || item?.sellerId;
     if (!sellerId) return;
@@ -181,55 +199,9 @@ const StoreDetail = () => {
     return { direct: true, delivery: true };
   }, [item]);
 
-  const getImageUrl = (thumb) => {
-    // 여기서도 thumb가 여러 모양으로 들어와요.
-    // 파일명만 들어오면 /upload/ 경로로 바꿔서 보여줍니다.
-    if (!thumb) return null;
-    if (typeof thumb !== "string") return null;
-    let trimmed = thumb.trim();
-    if (!trimmed) return null;
+  const getImageUrl = normalizeImageUrl;
 
-    trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
-
-    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-    if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-    const driveMatch = trimmed.match(/^[A-Za-z]:\//);
-    if (driveMatch) {
-      const boardIndex = trimmed.indexOf("/board/editor/");
-      if (boardIndex !== -1) {
-        const suffix = trimmed.substring(boardIndex);
-        return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
-      }
-      trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
-    }
-
-    if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-    if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-    if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-    if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
-    return `${BACKSERVER}/board/editor/${trimmed}`;
-  };
-
-  const getMemberImageUrl = (thumb) => {
-    if (!thumb) return userImg;
-    if (typeof thumb !== "string") return userImg;
-    let trimmed = thumb.trim();
-    if (!trimmed) return userImg;
-
-    trimmed = trimmed.replace(/\\/g, "/");
-
-    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-    if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-    if (trimmed.startsWith("/member/thumb/")) return `${BACKSERVER}${trimmed}`;
-    if (trimmed.includes("/member/thumb/")) return `${BACKSERVER}/${trimmed.replace(/^\/+/, "")}`;
-    if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-    if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-    if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-    if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
-    return `${BACKSERVER}/member/thumb/${trimmed}`;
-  };
+  const getMemberImageUrl = (thumb) => normalizeImageUrl(thumb, "member/thumb");
 
   const [supportDirect, setSupportDirect] = useState(true);
   const [supportDelivery, setSupportDelivery] = useState(true);
@@ -681,7 +653,7 @@ const StoreDetail = () => {
           <div className={styles.authorRow}>
             <img
               className={styles.authorAvatar}
-              src={getMemberImageUrl(item.memberThumb || (item.memberId === memberId ? memberThumb : null))}
+              src={getMemberImageUrl(item.memberThumb || (item.memberId === memberId ? memberThumb : null)) || userImg}
               alt="작성자 프로필"
               onError={(e) => {
                 e.currentTarget.src = userImg;
@@ -899,7 +871,7 @@ const StoreDetail = () => {
               isBoardAuthor ||
               parentAuthorId === memberId;
             const displayContent = isSecret && !canViewSecret ? "비공개 댓글입니다." : comment.reviewContent;
-            const commentAvatarUrl = getMemberImageUrl(comment.memberThumb || (comment.memberId === memberId ? memberThumb : null));
+            const commentAvatarUrl = getMemberImageUrl(comment.memberThumb || (comment.memberId === memberId ? memberThumb : null)) || userImg;
             return (
               <div
                 key={comment.reviewNo}
@@ -911,6 +883,8 @@ const StoreDetail = () => {
                     <img
                       className={styles.commentAvatar}
                       src={commentAvatarUrl}
+                      loading="lazy"
+                      decoding="async"
                       alt={`${comment.memberNickname || comment.memberId} 프로필`}
                       onError={(e) => {
                         e.currentTarget.src = userImg;
@@ -987,17 +961,17 @@ const StoreDetail = () => {
         </div>
 
         <div className={styles.comment_form}>
-          <p className={styles.comment_meta}>
+          <div className={styles.comment_form_meta}>
             <img
               className={styles.commentFormAvatar}
-              src={getMemberImageUrl(memberThumb)}
+              src={getMemberImageUrl(memberThumb) || userImg}
               alt="내 프로필"
               onError={(e) => {
                 e.currentTarget.src = userImg;
               }}
             />
-            {memberNickname || memberId || "비회원"} | 절약점수 : 00
-          </p>
+            <span>{memberNickname || memberId || "비회원"} | 절약점수 : 00</span>
+          </div>
           {replyTarget && (
             <div className={styles.reply_form}>
               답글 대상: {replyTarget.memberNickname || replyTarget.memberId}

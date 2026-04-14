@@ -4,6 +4,7 @@ import useAuthStore from "../../store/useAuthStore";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useLocation } from "react-router-dom";
+import { compressImageFile } from "../../utils/compressImage";
 
 const SupportQnaPage = () => {
   const location = useLocation();
@@ -35,7 +36,7 @@ const SupportQnaPage = () => {
       });
   };
 
-  const insertQna = (e) => {
+  const insertQna = async (e) => {
     e.preventDefault();
     Swal.fire({
       title: "문의등록",
@@ -44,7 +45,7 @@ const SupportQnaPage = () => {
       showCancelButton: true,
       cancelButtonText: "취소",
       confirmButtonText: "등록",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
         const formData = new FormData();
         formData.append("memberId", memberId);
@@ -52,7 +53,13 @@ const SupportQnaPage = () => {
         formData.append("qnaContent", qna.qnaContent);
         formData.append("qnaCategory", qna.qnaCategory);
         if (imageFile) {
-          formData.append("upfile", imageFile);
+          // 문의 이미지도 업로드 전에 압축해서 전송함
+          const compressedImage = await compressImageFile(imageFile, {
+            maxWidth: 1200,
+            maxHeight: 1200,
+            quality: 0.75,
+          });
+          formData.append("upfile", compressedImage, compressedImage.name);
         }
         axios
           .post(`${import.meta.env.VITE_BACKSERVER}/supports/qna`, formData, {

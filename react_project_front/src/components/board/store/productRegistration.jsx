@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import useAuthStore from "../../../store/useAuthStore";
 import styles from "./productRegistration.module.css";
+import { normalizeImageUrl } from "../../../utils/getImageUrl";
+import { compressImageFile } from "../../../utils/compressImage";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -42,8 +44,14 @@ const ProductRegistration = () => {
         if (!file) return;
         setImageName(file.name);
 
+        // 상품 이미지도 업로드 전에 크기를 줄여서 서버 전송량을 줄임
+        const compressedFile = await compressImageFile(file, {
+          maxWidth: 1200,
+          maxHeight: 1200,
+          quality: 0.75,
+        });
         const formData = new FormData();
-        formData.append("upfile", file);
+        formData.append("upfile", compressedFile, compressedFile.name);
 
         try {
             const response = await axios.post(`${BACKSERVER}/boards/editor/upload`, formData, {
@@ -52,12 +60,17 @@ const ProductRegistration = () => {
                 },
             });
             const uploadResult = response.data;
-            // 업로드 API가 파일명만 반환할 수 있어, /board/editor/ 경로로 보정합니다.
-            // 이렇게 하면 프리뷰가 깨지는 경우를 방지할 수 있습니다.
+            const fileUrl = typeof uploadResult === "string"
+                ? uploadResult
+                : uploadResult?.url || uploadResult?.fileUrl || uploadResult?.path || "";
+            // 업로드 API가 파일명만 반환할 수도 있고, Firebase URL을 반환할 수도 있으므로,
+            // 브라우저가 바로 사용할 수 있는 형태로 변환합니다.
+            // 여기선 파일명만 내려오면 임시로 /board/editor/ 경로를 붙여두지만,
+            // 실제 렌더링 시 normalizeImageUrl에서 Firebase URL로 바꿔서 사용합니다.
             setProductThumb(
-                typeof uploadResult === "string" && !uploadResult.startsWith("/") && !uploadResult.startsWith("http")
-                    ? `/board/editor/${uploadResult}`
-                    : uploadResult,
+                fileUrl && !fileUrl.startsWith("/") && !fileUrl.startsWith("http")
+                    ? `/board/editor/${fileUrl}`
+                    : fileUrl,
             );
         } catch (error) {
             console.error("상품 이미지 업로드 실패", error);
@@ -74,35 +87,7 @@ const ProductRegistration = () => {
         return "";
     };
 
-    const getImageUrl = (thumb) => {
-        // 상품 등록에서도 thumb가 여러 형태로 들어올 수 있어요.
-        // 여기서 브라우저가 바로 쓸 수 있는 URL로 바꿔줍니다.
-        if (!thumb) return null;
-        if (typeof thumb !== "string") return null;
-        let trimmed = thumb.trim();
-        if (!trimmed) return null;
-
-        trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
-
-        if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-        if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-        const driveMatch = trimmed.match(/^[A-Za-z]:\//);
-        if (driveMatch) {
-          const boardIndex = trimmed.indexOf("/board/editor/");
-          if (boardIndex !== -1) {
-            const suffix = trimmed.substring(boardIndex);
-            return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
-          }
-          trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
-        }
-
-        if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-        if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-        if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-        if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
-        return `${BACKSERVER}/board/editor/${trimmed}`;
-    };
+    const getImageUrl = normalizeImageUrl;
 
     useEffect(() => {
         const fetchRegions = async () => {
@@ -119,6 +104,9 @@ const ProductRegistration = () => {
     }, []);
 
     const normalizeStoredProductThumb = (thumb) => {
+        // 편집 화면에서 editItem.productThumb를 화면에 표시하기 위한 전처리 함수.
+        // 서버에 저장된 값이 다양한 형태로 올 수 있기 때문에,
+        // 가능한 경우 브라우저가 곧바로 쓸 수 있는 경로로 변환함.
         if (!thumb || typeof thumb !== "string") return "";
         let normalized = thumb.replace(/\\\\/g, "/").replace(/\\/g, "/").trim();
         if (!normalized) return "";

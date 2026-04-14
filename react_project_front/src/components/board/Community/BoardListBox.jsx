@@ -30,7 +30,8 @@ const BoardListBox = ({
   const getBoardNo = (board) =>
     board?.boardNo ?? board?.boardId ?? board?.id ?? null;
 
-  const normalizeId = (id) => (id !== null && id !== undefined ? String(id) : "");
+  const normalizeId = (id) =>
+    id !== null && id !== undefined ? String(id) : "";
 
   useEffect(() => {
     if (!expandedBoardNo) return;
@@ -79,7 +80,8 @@ const BoardListBox = ({
             .filter((board) => getBoardNo(board) !== null)
             .map((board, index) => {
               const boardNo = getBoardNo(board);
-              const isExpanded = normalizeId(expandedBoardNo) === normalizeId(boardNo);
+              const isExpanded =
+                normalizeId(expandedBoardNo) === normalizeId(boardNo);
               return (
                 <li
                   ref={(el) => {
@@ -90,111 +92,133 @@ const BoardListBox = ({
                   className={styles.boardListItem}
                   key={boardNo}
                 >
-                <div
-                  className={styles.boardItem}
-                  onClick={() => handleBoardClick(board)}
-                >
-                  <div className={styles.boardItemTop}>
-                    <div className={styles.boardWriter}>
-                      {/* 작성자 프로필 이미지 렌더링임.
+                  <div
+                    className={styles.boardItem}
+                    onClick={() => handleBoardClick(board)}
+                  >
+                    <div className={styles.boardItemTop}>
+                      <div className={styles.boardWriter}>
+                        {/* 작성자 프로필 이미지 렌더링임.
                           memberThumb 우선, 없으면 로그아웃된 본인일 경우 스토어의 memberThumb 사용,
                           그도 없으면 기본 user.png로 대체함. */}
-                      <img
-                        src={
-                          getAvatarUrl(
-                            board.memberThumb ||
-                            board.writerThumb ||
-                            board.profileThumb ||
-                            (board.writerId === memberId ? memberThumb : null),
-                          ) || userImg
-                        }
-                        onError={(e) => {
-                          const target = e.currentTarget;
-                          target.onerror = null;
-                          target.src = userImg;
-                        }}
-                        alt="작성자"
-                        className={styles.writerAvatar}
-                      />
-                      <span>{board.writerNickname || board.memberNickname || board.writerId || board.memberId}</span>
+                        <img
+                          src={
+                            getAvatarUrl(
+                              board.memberThumb ||
+                                board.writerThumb ||
+                                board.profileThumb ||
+                                (board.writerId === memberId
+                                  ? memberThumb
+                                  : null),
+                            ) || userImg
+                          }
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            target.onerror = null;
+                            target.src = userImg;
+                          }}
+                          alt="작성자"
+                          className={styles.writerAvatar}
+                        />
+                        <span>
+                          {board.writerNickname ||
+                            board.memberNickname ||
+                            board.writerId ||
+                            board.memberId}
+                        </span>
+                      </div>
+                      <div className={styles.boardDate}>
+                        {board.createDate || board.boardDate}
+                      </div>
                     </div>
-                    <div className={styles.boardDate}>{board.createDate || board.boardDate}</div>
-                  </div>
-                  <div className={styles.boardTitleWrap}>
-                    <div className={styles.boardTitle}>{board.boardTitle || board.BOARD_TITLE || board.title || "제목 없음"}</div>
-                    {(board.updatedAt || board.updateAt) &&
-                      (board.updatedAt !== board.createDate) && (
-                        // 게시글 생성일과 수정일이 다르면 수정된 글로 판단해서 배지를 보여줌.
-                        <span className={styles.boardUpdatedBadge}>수정됨</span>
-                      )}
-                  </div>
-                  {board.thumbnailUrl && (
-                    <div className={styles.boardThumbnailBox}>
-                      <img
-                        src={getImageUrl(board.thumbnailUrl || board.boardThumb)}
-                        alt="썸네일"
-                        className={styles.boardThumbnail}
-                      />
+                    <div className={styles.boardTitleWrap}>
+                      <div className={styles.boardTitle}>
+                        {board.boardTitle ||
+                          board.BOARD_TITLE ||
+                          board.title ||
+                          "제목 없음"}
+                      </div>
+                      {(board.updatedAt || board.updateAt) &&
+                        board.updatedAt !== board.createDate && (
+                          // 게시글 생성일과 수정일이 다르면 수정된 글로 판단해서 배지를 보여줌.
+                          <span className={styles.boardUpdatedBadge}>
+                            수정됨
+                          </span>
+                        )}
                     </div>
-                  )}
-                  <div className={styles.boardItemBottom}>
-                    <span className={styles.iconItem}>
-                      <VisibilityIcon fontSize="small" />
-                      <span>{board.readCount ?? 0}</span>
-                    </span>
-                    <span className={styles.iconItem}>
-                      {board.liked ? (
-                        <FavoriteIcon fontSize="small" />
-                      ) : (
-                        <FavoriteBorderIcon fontSize="small" />
-                      )}
-                      <span>{board.likeCount ?? 0}</span>
-                    </span>
-                    <span className={styles.iconItem}>
-                      <ChatIcon fontSize="small" />
-                      <span>{board.commentCount ?? 0}</span>
-                    </span>
-                  </div>
-                  {isExpanded && detailLoading ? (
-                    <div className={styles.boardDetailLoading}>
-                      상세 정보를 불러오는 중입니다...
+
+                    {(board.thumbnailUrl || board.boardThumb) && (
+                      <div className={styles.boardThumbnailBox}>
+                        <img
+                          src={getImageUrl(
+                            board.thumbnailUrl || board.boardThumb,
+                          )}
+                          alt="썸네일"
+                          className={styles.boardThumbnail}
+                        />
+                      </div>
+                    )}
+                    <div className={styles.boardItemBottom}>
+                      <span className={styles.iconItem}>
+                        <VisibilityIcon fontSize="small" />
+                        <span>{board.readCount ?? 0}</span>
+                      </span>
+                      <span className={styles.iconItem}>
+                        {board.liked ? (
+                          <FavoriteIcon fontSize="small" />
+                        ) : (
+                          <FavoriteBorderIcon fontSize="small" />
+                        )}
+                        <span>{board.likeCount ?? 0}</span>
+                      </span>
+                      <span className={styles.iconItem}>
+                        <ChatIcon fontSize="small" />
+                        <span>{board.commentCount ?? 0}</span>
+                      </span>
                     </div>
-                  ) : isExpanded && (
-                    <CommunityDetail
-                      board={
-                        normalizeId(getBoardNo(selectedBoard)) === normalizeId(boardNo)
-                          ? selectedBoard
-                          : board
-                      }
-                      onEdit={(boardItem) => {
-                        setSelectedBoard(boardItem);
-                        startEdit(boardItem);
-                      }}
-                      onDelete={(boardNo) => deleteBoard(boardNo)}
-                      onLikeChange={(boardNo, newLikeCount, liked) => {
-                        setBoardList((prev) =>
-                          prev.map((item) =>
-                            item.boardNo === boardNo
-                              ? { ...item, likeCount: newLikeCount, liked }
-                              : item,
-                          ),
-                        );
-                      }}
-                      onCommentCountChange={(boardNo, newCommentCount) => {
-                        setBoardList((prev) =>
-                          prev.map((item) =>
-                            item.boardNo === boardNo
-                              ? { ...item, commentCount: newCommentCount }
-                              : item,
-                          ),
-                        );
-                      }}
-                    />
-                  )}
-                </div>
-              </li>
-            );
-          })}
+                    {isExpanded && detailLoading ? (
+                      <div className={styles.boardDetailLoading}>
+                        상세 정보를 불러오는 중입니다...
+                      </div>
+                    ) : (
+                      isExpanded && (
+                        <CommunityDetail
+                          board={
+                            normalizeId(getBoardNo(selectedBoard)) ===
+                            normalizeId(boardNo)
+                              ? selectedBoard
+                              : board
+                          }
+                          onEdit={(boardItem) => {
+                            setSelectedBoard(boardItem);
+                            startEdit(boardItem);
+                          }}
+                          onDelete={(boardNo) => deleteBoard(boardNo)}
+                          onLikeChange={(boardNo, newLikeCount, liked) => {
+                            setBoardList((prev) =>
+                              prev.map((item) =>
+                                item.boardNo === boardNo
+                                  ? { ...item, likeCount: newLikeCount, liked }
+                                  : item,
+                              ),
+                            );
+                          }}
+                          onCommentCountChange={(boardNo, newCommentCount) => {
+                            setBoardList((prev) =>
+                              prev.map((item) =>
+                                item.boardNo === boardNo
+                                  ? { ...item, commentCount: newCommentCount }
+                                  : item,
+                              ),
+                            );
+                          }}
+                        />
+                      )
+                    )}
+                  </div>
+                </li>
+              );
+            })}
         </ul>
       ) : (
         <div className={styles.emptyBoard}>등록된 게시글이 없습니다.</div>

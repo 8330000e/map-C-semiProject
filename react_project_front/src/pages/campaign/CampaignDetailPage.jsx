@@ -6,6 +6,17 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Button from "../../components/ui/Button";
 import Swal from "sweetalert2";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
+import { Doughnut } from "react-chartjs-2";
+import {
+  Chart,
+  DoughnutController,
+  ArcElement,
+  Title,
+  Tooltip,
+} from "chart.js";
+
+Chart.register(DoughnutController, ArcElement, Title, Tooltip);
 
 const CampaignDetailPage = () => {
   const navigate = useNavigate();
@@ -19,6 +30,24 @@ const CampaignDetailPage = () => {
   const [dateOut, setDateout] = useState(true);
   // const realtime = Date.now(); 로직이 back으로 감
   const [boardList, setBoardList] = useState([]);
+  const [deleteBoard, setDeleteBoard] = useState(false);
+  const data = readComplete && {
+    labels: ["남은기간", "지난기간"],
+    datasets: [
+      {
+        data: [
+          new Date(campaignDetail.campaignExpireDate).getTime() - Date.now(),
+          new Date(campaignDetail.campaignExpireDate).getTime() -
+            new Date(campaignDetail.campaignStartDate).getTime() -
+            (new Date(campaignDetail.campaignExpireDate) - Date.now()),
+        ],
+        backgroundColor: ["#FA9B3B", "#fefefe"],
+      },
+    ],
+  };
+  const option = {
+    cutout: "83%",
+  };
 
   useEffect(() => {
     axios
@@ -63,12 +92,12 @@ const CampaignDetailPage = () => {
       .then((res) => {
         // console.log(res.data);
         setBoardList([...res.data]);
-        // console.log(boardList);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [deleteBoard]);
+
   return (
     memberId &&
     readComplete && (
@@ -78,18 +107,44 @@ const CampaignDetailPage = () => {
         </div>
         <div className={styles.campdetailpage_content_wrap}>
           <div className={styles.campdetailpage_details_wrap}>
-            <div>{campaignNo}</div>
-            <div>{campaignDetail.campaignTitle}</div>
-            <div>{campaignDetail.campaignStatus}</div>
-            <div>{campaignDetail.campaignGoalMember}</div>
-            <div>{campaignDetail.campaignStartDate}</div>
-            <div>{campaignDetail.memberCount}</div>
-            <div>{campaignDetail.memberId}</div>
-            <div>{campaignDetail.campaignExpireDate}</div>
+            <div className={styles.campdetailpage_chart}>
+              <Doughnut data={data} options={option} />
+            </div>
+            <div className={styles.camp_polygon_wrap}>
+              <div
+                className={`${styles.camp_polygon1} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.1 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon2} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.2 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon3} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.3 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon4} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.4 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon5} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.5 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon6} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.6 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon7} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.7 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon8} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.8 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon9} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.9 ? styles.camp_success : ""}`}
+              ></div>
+              <div
+                className={`${styles.camp_polygon0} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.04 ? styles.camp_success : ""}`}
+              ></div>
+            </div>
           </div>
           <div className={styles.campdetailpage_sidebar}>
             <div>{campaignDetail.campaignExplanation}</div>
-            <p>히히</p>
             <CampaignDetailSideBar
               campaignDetail={campaignDetail}
               isCreator={isCreator}
@@ -110,6 +165,8 @@ const CampaignDetailPage = () => {
           memberId={memberId}
           isCreator={isCreator}
           boardList={boardList}
+          deleteBoard={deleteBoard}
+          setDeleteBoard={setDeleteBoard}
         />
       </div>
     )
@@ -141,7 +198,9 @@ const CampaignDetailSideBar = ({
             ? inCampaign
               ? (e.target.disabled = true)
               : isCreator
-                ? navigate("/campaign/settings/updateCampaign")
+                ? navigate(
+                    `/campaign/settings/${campaignNo}/${memberId}/updateCamp`,
+                  )
                 : Swal.fire({
                     title: "캠페인을 참여하시겠습니까?",
                     icon: "question",
@@ -186,6 +245,8 @@ const PostBoard = ({
   dateOut,
   isCreator,
   boardList,
+  deleteBoard,
+  setDeleteBoard,
 }) => {
   return (
     boardList && (
@@ -210,20 +271,72 @@ const PostBoard = ({
                 }}
               >
                 <div className={styles.camp_board_img}>
-                  <img
-                    src={`${import.meta.env.VITE_BACKSERVER}/campaign/memo/${list.campaignThumb}`}
-                  />
+                  <img src={normalizeImageUrl(list.campaignThumb)} />
                 </div>
-                <p>{list.campaignMemo}</p>
+                <div className={styles.camp_board_content_wrap}>
+                  <p>{list.campaignMemo}</p>
+                  {list.memberId === memberId && (
+                    <div className={styles.board_btn_wrap}>
+                      <button
+                        onClick={() => {
+                          navigate(
+                            `/campaign/update/${list.campaignParticipanceNo}`,
+                          );
+                        }}
+                      >
+                        수정
+                      </button>
+                      <button
+                        onClick={() => {
+                          const campaignParticipanceNo =
+                            list.campaignParticipanceNo;
+                          console.log(campaignParticipanceNo);
+                          Swal.fire({
+                            title: "정말로 삭제하시겠습니까?",
+                            text: "삭제시 복구 불가",
+                            icon: "warning",
+                            showCancelButton: true,
+                            cancelButtonText: "취소",
+                            confirmButtonText: "강행",
+                          }).then((res) => {
+                            if (res.isConfirmed) {
+                              axios
+                                .delete(
+                                  `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignParticipanceNo}/board`,
+                                )
+                                .then((res) => {
+                                  console.log(res.data);
+                                  if (res.data === 1) {
+                                    Swal.fire({
+                                      text: "삭제되었습니다",
+                                      title: "삭제완료",
+                                      icon: "info",
+                                    }).then((result) => {
+                                      if (result.isConfirmed) {
+                                        setDeleteBoard(!deleteBoard);
+                                        navigate(
+                                          `/campaign/detail/${list.campaignNo}`,
+                                        );
+                                      }
+                                    });
+                                  }
+                                })
+                                .catch((err) => {
+                                  console.log(err);
+                                });
+                            }
+                          });
+                        }}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           );
         })}
-        {/* <div className={styles.board_max_wrap}></div>
-        <div className={styles.board_max_wrap}></div>
-        <div className={styles.board_max_wrap}></div>
-        <div className={styles.board_max_wrap}></div>
-        <div className={styles.board_max_wrap}></div> */}
         <button
           className={styles.board_btn}
           disabled={isCreator ? !dateOut : !inCampaign || !dateOut} //현재 캠페인 생성자가 못건드림(생성자를 campaign_member_tbl에 추가시켜야 할 것 같음)

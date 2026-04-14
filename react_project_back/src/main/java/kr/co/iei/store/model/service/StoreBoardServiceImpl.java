@@ -1,5 +1,7 @@
 package kr.co.iei.store.model.service;
 
+import kr.co.iei.member.model.service.MemberService;
+import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.store.model.dao.StoreBoardDAO;
 import kr.co.iei.store.model.vo.StoreBoard;
 import kr.co.iei.store.model.vo.StoreCart;
@@ -8,15 +10,24 @@ import kr.co.iei.store.model.vo.StoreReview;
 import kr.co.iei.store.model.vo.StoreTradeInfo;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class StoreBoardServiceImpl implements StoreBoardService {
 
     private final StoreBoardDAO storeBoardDAO;
+    private final MemberService memberService;
 
-    public StoreBoardServiceImpl(StoreBoardDAO storeBoardDAO) {
+    public StoreBoardServiceImpl(StoreBoardDAO storeBoardDAO, MemberService memberService) {
         this.storeBoardDAO = storeBoardDAO;
+        this.memberService = memberService;
+    }
+
+    // 문자열이 null, 빈 문자열, "null", "undefined"로 들어올 때 모두 비어있다고 판정함.
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty() || value.trim().equalsIgnoreCase("null") || value.trim().equalsIgnoreCase("undefined");
     }
 
     @Override
@@ -51,6 +62,13 @@ public class StoreBoardServiceImpl implements StoreBoardService {
         StoreBoard sb = storeBoardDAO.selectStoreBoard(marketNo);
         if (sb != null) {
             sb.setProductStatus(convertStatus(sb.getProductStatus()));
+            // 상세 페이지 불러오기 시 작성자 썸네일이 없으면 회원 정보에서 추가로 채워줌.
+            if (isBlank(sb.getMemberThumb()) && sb.getMemberId() != null) {
+                Member member = memberService.selectOneMember(sb.getMemberId());
+                if (member != null && !isBlank(member.getMemberThumb())) {
+                    sb.setMemberThumb(member.getMemberThumb());
+                }
+            }
         }
         return sb;
     }
@@ -89,12 +107,35 @@ public class StoreBoardServiceImpl implements StoreBoardService {
 
     @Override
     public List<StoreReview> getReviewList(Long marketNo) {
-        return storeBoardDAO.selectReviewList(marketNo);
+        List<StoreReview> reviews = storeBoardDAO.selectReviewList(marketNo);
+        if (reviews == null || reviews.isEmpty()) {
+            return reviews;
+        }
+
+        // 리뷰 목록에서 작성자 썸네일이 누락된 경우, 회원 정보로 보강함.
+        Map<String, Member> memberCache = new HashMap<>();
+        for (StoreReview review : reviews) {
+            if (isBlank(review.getMemberThumb()) && review.getMemberId() != null) {
+                Member member = memberCache.computeIfAbsent(review.getMemberId(), memberService::selectOneMember);
+                if (member != null && !isBlank(member.getMemberThumb())) {
+                    review.setMemberThumb(member.getMemberThumb());
+                }
+            }
+        }
+
+        return reviews;
     }
 
     @Override
     public StoreReview addReview(StoreReview review) {
         storeBoardDAO.insertReview(review);
+        // 댓글 등록 후에도 작성자 썸네일이 빈 경우, 회원 정보로 채워서 반환함.
+        if (isBlank(review.getMemberThumb()) && review.getMemberId() != null) {
+            Member member = memberService.selectOneMember(review.getMemberId());
+            if (member != null && !isBlank(member.getMemberThumb())) {
+                review.setMemberThumb(member.getMemberThumb());
+            }
+        }
         return review;
     }
 

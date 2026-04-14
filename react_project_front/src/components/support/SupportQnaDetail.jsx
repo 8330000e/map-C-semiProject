@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./SupportQnaDetail.module.css";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 
 const categoryColors = {
   "회원·계정": "#4a9fd5",
@@ -50,14 +51,10 @@ const SupportQnaDetail = ({ qna }) => {
             <div className={styles.image_box}>
               <p className={styles.image_label}>첨부 이미지</p>
               <img
-                src={`${import.meta.env.VITE_BACKSERVER}${qna.qnaQuestionImage}`}
+                src={normalizeImageUrl(qna.qnaQuestionImage)}
                 alt="문의 첨부 이미지"
                 className={styles.preview_img}
-                onClick={() =>
-                  setPreviewImage(
-                    `${import.meta.env.VITE_BACKSERVER}${qna.qnaQuestionImage}`,
-                  )
-                }
+                onClick={() => setPreviewImage(normalizeImageUrl(qna.qnaQuestionImage))}
               />
             </div>
           )}
@@ -71,14 +68,10 @@ const SupportQnaDetail = ({ qna }) => {
             {qna.qnaAnswerImage && (
               <div className={styles.answer_image}>
                 <img
-                  src={`${import.meta.env.VITE_BACKSERVER}${qna.qnaAnswerImage}`}
+                  src={normalizeImageUrl(qna.qnaAnswerImage)}
                   alt="답변 첨부 이미지"
                   className={styles.preview_img}
-                  onClick={() =>
-                    setPreviewImage(
-                      `${import.meta.env.VITE_BACKSERVER}${qna.qnaAnswerImage}`,
-                    )
-                  }
+                  onClick={() => setPreviewImage(normalizeImageUrl(qna.qnaAnswerImage))}
                 />
               </div>
             )}

@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 import styles from "./NoticeCardList.module.css";
 
 const categoryColors = {
@@ -28,7 +29,7 @@ const NoticeCardList = ({ noticeList }) => {
           <div className={styles.image_box}>
             {notice.noticeImagePath ? (
               <img
-                src={`${import.meta.env.VITE_BACKSERVER}${notice.noticeImagePath}`}
+                src={normalizeImageUrl(notice.noticeImagePath, "notice")}
                 alt="공지 이미지"
               />
             ) : (

@@ -15,6 +15,7 @@ import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import LinkIcon from "@mui/icons-material/Link";
 import axios from "axios";
+import { compressImageFile } from "../../../utils/compressImage";
 
 const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
   const editorRef = useRef(null);
@@ -169,14 +170,25 @@ const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
   };
 
   const handleImageChange = async (e) => {
-    const file = e.target.files?.[0];
-    setAttachedFiles((prev) => [...prev, file]);
+    // 에디터에 이미지를 넣기 위해 파일을 선택하면 동작함.
+    let file = e.target.files?.[0];
     if (!file) return;
+    setAttachedFiles((prev) => [...prev, file]);
+
+    // 에디터 이미지도 업로드 전에 압축해서 전송함
+    if (file.type.startsWith("image/")) {
+      file = await compressImageFile(file, {
+        maxWidth: 1200,
+        maxHeight: 1200,
+        quality: 0.75,
+      });
+    }
 
     try {
       const formData = new FormData();
-      formData.append("upfile", file);
+      formData.append("upfile", file, file.name);
 
+      // 백엔드 업로드 API로 이미지 파일을 전송함.
       const res = await axios.post(
         `${import.meta.env.VITE_BACKSERVER}/boards/editor/upload`,
         formData,
@@ -187,10 +199,19 @@ const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
         },
       );
 
-      const imageUrl = `${import.meta.env.VITE_BACKSERVER}${res.data}`;
+      const returned = res.data;
+      const imageUrl =
+        typeof returned === "string"
+          ? returned.startsWith("http://") || returned.startsWith("https://")
+            ? returned
+            : `${import.meta.env.VITE_BACKSERVER}${returned}`
+          : "";
 
+      // 업로드 결과가 절대 URL이면 그대로 쓰고, 그렇지 않으면 백엔드 앞부분을 붙여서 처리함.
       focusEditor();
-      document.execCommand("insertImage", false, imageUrl);
+      if (imageUrl) {
+        document.execCommand("insertImage", false, imageUrl);
+      }
 
       setTimeout(() => {
         if (!editorRef.current) return;
