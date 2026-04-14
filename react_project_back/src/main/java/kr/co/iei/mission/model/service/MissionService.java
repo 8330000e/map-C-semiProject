@@ -184,8 +184,7 @@ public class MissionService {
 	    }
 
 	    String savedFileName = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, certImage);
-	    String certImageUrl = "/uploads/mission/random/" + savedFileName;
-
+        String certImageUrl = savedFileName;
 	    int result1 = missionDao.updateRandomMissionCertification(memberId, missionNo, certImageUrl);
 
 	    if (result1 == 0) {

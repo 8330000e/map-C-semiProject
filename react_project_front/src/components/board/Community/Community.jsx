@@ -5,6 +5,8 @@ import axios from "axios";
 import TextEditor from "./TextEditor";
 import BoardListBox from "./BoardListBox";
 import useAuthStore from "../../../store/useAuthStore";
+import { normalizeImageUrl } from "../../../utils/getImageUrl";
+import { compressImageFile } from "../../../utils/compressImage";
 import Swal from "sweetalert2";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { REGION_DATA } from "./regionData";
@@ -17,62 +19,10 @@ const getBoardNo = (board) =>
 // 이미지 src는 서버에서 여러 형태로 내려올 수 있습니다.
 // 예: 이미지 전체 URL, /upload/ 경로, /board/editor/ 경로, 파일명만 전달되는 경우.
 // 여기서 브라우저가 바로 요청 가능한 URL로 변환해 줍니다.
-const getBoardImageUrl = (thumb) => {
-  if (!thumb) return null;
-  if (typeof thumb !== "string") return null;
-  let trimmed = thumb.trim();
-  if (!trimmed) return null;
+// 로컬 경로는 이제 백엔드 정적 서빙 대신 Firebase URL로 바꾸는 것을 우선함.
+const getBoardImageUrl = normalizeImageUrl;
 
-  trimmed = trimmed.replace(/\\/g, "/");
-
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
-    return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
-  if (driveMatch) {
-    const boardIndex = trimmed.indexOf("/board/editor/");
-    if (boardIndex !== -1) {
-      const suffix = trimmed.substring(boardIndex);
-      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
-    }
-    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
-  }
-
-  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.includes("/board/editor/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
-    return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
-  return `${BACKSERVER}/board/editor/${trimmed}`;
-};
-
-const getMemberImageUrl = (thumb) => {
-  if (!thumb) return null;
-  if (typeof thumb !== "string") return null;
-  let trimmed = thumb.trim();
-  if (!trimmed) return null;
-
-  trimmed = trimmed.replace(/\\/g, "/");
-
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
-    return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-  if (trimmed.startsWith("/member/thumb/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/member/thumb/"))
-    return `${BACKSERVER}/${trimmed.replace(/^\/+/, "")}`;
-  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.includes("/board/editor/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
-    return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
-  return `${BACKSERVER}/member/thumb/${trimmed}`;
-};
+const getMemberImageUrl = (thumb) => normalizeImageUrl(thumb, "member/thumb");
 
 const Community = ({
   addr,
@@ -379,9 +329,17 @@ const Community = ({
         if (attachedFiles.length > 0) {
           const formData = new FormData();
 
-          attachedFiles.forEach((file) => {
-            formData.append("files", file);
-          });
+          // 첨부 파일 중 이미지인 경우 업로드 전에 압축함
+          for (const file of attachedFiles) {
+            const fileToUpload = file.type.startsWith("image/")
+              ? await compressImageFile(file, {
+                  maxWidth: 1200,
+                  maxHeight: 1200,
+                  quality: 0.75,
+                })
+              : file;
+            formData.append("files", fileToUpload, fileToUpload.name);
+          }
 
           formData.append("memberId", memberId);
 

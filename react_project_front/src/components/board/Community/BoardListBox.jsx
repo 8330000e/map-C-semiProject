@@ -147,7 +147,7 @@ const BoardListBox = ({
                         )}
                     </div>
 
-                    {board.thumbnailUrl && (
+                    {(board.thumbnailUrl || board.boardThumb) && (
                       <div className={styles.boardThumbnailBox}>
                         <img
                           src={getImageUrl(

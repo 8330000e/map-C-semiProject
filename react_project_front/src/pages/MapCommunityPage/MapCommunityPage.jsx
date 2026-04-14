@@ -10,38 +10,11 @@ import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import heart from "../../assets/img/heart.svg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-const getImageUrl = (thumb) => {
-  if (!thumb || typeof thumb !== "string") return null;
-  let trimmed = thumb.trim();
-  if (!trimmed) return null;
-
-  trimmed = trimmed.replace(/\\/g, "/").replace(/\\/g, "/");
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
-    return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
-  if (driveMatch) {
-    const boardIndex = trimmed.indexOf("/board/editor/");
-    if (boardIndex !== -1) {
-      const suffix = trimmed.substring(boardIndex);
-      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
-    }
-    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
-  }
-
-  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.includes("/board/editor/"))
-    return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i))
-    return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
-  return `${BACKSERVER}/member/thumb/${trimmed}`;
-};
+const getImageUrl = normalizeImageUrl;
 
 const MapCommunityPage = () => {
   const [addr, setAddr] = useState("서울특별시 중구");
@@ -162,6 +135,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
     markerList.map((marker, i) => {
       mapaddr = "선택된 위치 없음";
       const writerAvatar = getImageUrl(marker.memberThumb) || defaultImg;
+      const markerSrc = getImageUrl(marker.boardThumb) || defaultImg;
       const markerName = new naver.maps.Marker({
         key: `marker-${i}`,
         position: new window.naver.maps.LatLng(
@@ -173,7 +147,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
           content: `
           <div>
         <img
-        src=${marker.boardThumb || defaultImg}
+        src='${markerSrc}'
         style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
         />
         <img

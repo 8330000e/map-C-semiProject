@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
+import { compressImageFile } from "../../utils/compressImage";
 import styles from "./PurchaseHistory.module.css";
 import { removeCompletedPurchase, getCompletedPurchaseById } from "./orderHistoryStorage";
 
@@ -37,35 +39,7 @@ const getCourierLabel = (code) => {
   return "미지정";
 };
 
-const getImageUrl = (thumb) => {
-  // 구매 상세에서도 thumb가 여러 모양으로 들어올 수 있어요.
-  // 그래서 여기서 이미지 URL로 깔끔하게 바꿔줍니다.
-  if (!thumb) return null;
-  if (typeof thumb !== "string") return null;
-  let trimmed = thumb.trim();
-  if (!trimmed) return null;
-
-  trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
-
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
-  if (driveMatch) {
-    const boardIndex = trimmed.indexOf("/board/editor/");
-    if (boardIndex !== -1) {
-      const suffix = trimmed.substring(boardIndex);
-      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
-    }
-    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
-  }
-
-  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-    if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
-  return `${BACKSERVER}/board/editor/${trimmed}`;
-};
+const getImageUrl = normalizeImageUrl;
 
 const isDeliveryTrade = (tradeType, tradeTypeText, deliveryMethod, address) => {
   const normalized = String(tradeType ?? tradeTypeText ?? deliveryMethod ?? "").trim();
@@ -220,12 +194,21 @@ const PurchaseDetail = () => {
   }, [item?.marketNo]);
 
   const onFileChange = async (e) => {
-    const file = e.target.files[0];
+    let file = e.target.files[0];
     if (!file) return;
     setReviewImage(file);
 
+    // 후기 이미지도 업로드 전에 압축해서 용량을 줄임
+    if (file.type.startsWith("image/")) {
+      file = await compressImageFile(file, {
+        maxWidth: 1200,
+        maxHeight: 1200,
+        quality: 0.75,
+      });
+    }
+
     const formData = new FormData();
-    formData.append("upfile", file);
+    formData.append("upfile", file, file.name);
 
     try {
       const res = await axios.post(`${BACKSERVER}/boards/editor/upload`, formData, {

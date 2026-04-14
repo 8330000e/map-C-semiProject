@@ -45,8 +45,6 @@ public class AdminController {
 	@Value("${file.root}")
 	private String root;
 
-	@Autowired
-	private FileUtils fileUtils;
 
 
 	// 공지사항 등록 - 이미지 있으면 /notice 폴더에 저장 후 경로 set
@@ -61,9 +59,9 @@ public class AdminController {
 			if (!saveDir.exists()) {
 				saveDir.mkdir();
 			}
-			String fileName = fileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
+			String fileName = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
 			System.out.println("경로: " + saveDir.getAbsolutePath());
-			notice.setNoticeImagePath("/notice/" + fileName);
+			notice.setNoticeImagePath(fileName);
 		}
 		int result = adminService.insertNotice(notice);
 		return ResponseEntity.ok(result);
@@ -85,8 +83,8 @@ public class AdminController {
 			if (!saveDir.exists()) {
 				saveDir.mkdir();
 			}
-			String fileName = fileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
-			notice.setNoticeImagePath("/notice/" + fileName);
+			String fileName = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
+			notice.setNoticeImagePath(fileName);
 		}
 
 		int result = adminService.editNotice(notice);
@@ -145,8 +143,8 @@ public class AdminController {
 			if (!saveDir.exists()) {
 				saveDir.mkdir();
 			}
-			String fileName = fileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
-			qna.setQnaAnswerImage("/qna/" + fileName);
+			String fileName = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
+			qna.setQnaAnswerImage(fileName);
 		}
 		int result = adminService.qnaAnswer(qna);
 		return ResponseEntity.ok(result);

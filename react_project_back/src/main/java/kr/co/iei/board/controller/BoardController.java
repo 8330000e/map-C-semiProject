@@ -115,12 +115,10 @@ public class BoardController {
 			saveDir.mkdirs();
 		}
 
-		// 업로드 파일을 실제 디스크에 저장하고, 저장된 파일명만 반환받음.
+		// Firebase Storage에 업로드하고, 저장된 스토리지 경로를 반환받음.
 		String fileName = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
 
-		// 프론트는 이 리턴 값을 기반으로 이미지 URL을 구성함.
-		// 예: http://localhost:9999/board/editor/{fileName}
-		return "/board/editor/" + fileName;
+		return fileName;
 	}
 	 
 	// 수정

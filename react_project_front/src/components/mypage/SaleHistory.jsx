@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
 import { getCompletedSales } from "./orderHistoryStorage";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 import styles from "./SaleHistory.module.css";
 
 const PAGE_SIZE = 3;
@@ -98,18 +99,7 @@ const getTradeInfoForItem = (item, tradeInfoMap) => {
   return marketNo ? tradeInfoMap[marketNo] : null;
 };
 
-const getImageUrl = (thumb) => {
-  if (!thumb || typeof thumb !== "string") return null;
-  let trimmed = thumb.trim().replace(/\\\\/g, "/").replace(/\\/g, "/");
-  if (!trimmed) return null;
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-  if (trimmed.startsWith("/")) return `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}${trimmed}`;
-  if (trimmed.includes("/upload/")) return `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}/${trimmed.replace(/^\//, "")}`;
-  if (trimmed.includes("/board/editor/")) return `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}/${trimmed.replace(/^\//, "")}`;
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}/board/editor/${trimmed.replace(/^\//, "")}`;
-  return `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}/board/editor/${trimmed}`;
-};
+const getImageUrl = normalizeImageUrl;
 
 const getBoardForMarketNo = (marketNo, boards) => {
   if (!marketNo) return null;
@@ -335,26 +325,32 @@ const SaleHistory = () => {
     if (completedPage > completedPageCount) setCompletedPage(completedPageCount);
   }, [completedPage, completedPageCount]);
 
-  const renderPagination = (page, pageCount, onChange) => (
-    <div className={styles.pagination}>
-      <button type="button" disabled={page === 1} onClick={() => onChange(page - 1)}>
-        &lt;
-      </button>
-      {Array.from({ length: pageCount }, (_, index) => index + 1).map((pageNumber) => (
-        <button
-          key={pageNumber}
-          type="button"
-          className={pageNumber === page ? styles.activePage : ""}
-          onClick={() => onChange(pageNumber)}
-        >
-          {pageNumber}
+  const renderPagination = (page, pageCount, onChange) => {
+    const PAGE_BUTTONS = 5;
+    const groupStart = Math.floor((page - 1) / PAGE_BUTTONS) * PAGE_BUTTONS + 1;
+    const groupEnd = Math.min(pageCount, groupStart + PAGE_BUTTONS - 1);
+
+    return (
+      <div className={styles.pagination}>
+        <button type="button" disabled={page === 1} onClick={() => onChange(page - 1)}>
+          &lt;
         </button>
-      ))}
-      <button type="button" disabled={page === pageCount} onClick={() => onChange(page + 1)}>
-        &gt;
-      </button>
-    </div>
-  );
+        {Array.from({ length: groupEnd - groupStart + 1 }, (_, index) => groupStart + index).map((pageNumber) => (
+          <button
+            key={pageNumber}
+            type="button"
+            className={pageNumber === page ? styles.activePage : ""}
+            onClick={() => onChange(pageNumber)}
+          >
+            {pageNumber}
+          </button>
+        ))}
+        <button type="button" disabled={page === pageCount} onClick={() => onChange(page + 1)}>
+          &gt;
+        </button>
+      </div>
+    );
+  };
 
   const renderSaleCard = (item) => {
     const marketNo = item.marketNo ?? item.id;

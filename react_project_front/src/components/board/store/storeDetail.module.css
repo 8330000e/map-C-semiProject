@@ -606,6 +606,15 @@
 	padding: 10px;
 }
 
+.comment_form_meta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 12px;
+	color: #6d7768;
+	margin-bottom: 8px;
+}
+
 .reply_form {
 	margin-top: 10px;
 	padding: 10px;
