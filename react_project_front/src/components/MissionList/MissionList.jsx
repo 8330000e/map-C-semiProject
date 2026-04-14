@@ -107,20 +107,28 @@ const MissionList = () => {
 
       setAttendanceChecked(true);
 
+      const { streak, bonusPoint, totalPoint } = res.data;
+
       await Swal.fire({
         icon: "success",
         title: "출석 완료!",
         html: `
-          <div style="line-height:1.7;">
-            오늘도 탄소 실천에 참여해주셨네요.<br/>
-            <strong style="font-size:18px; color:#89a93f;">+1 포인트 지급</strong>
-          </div>
-        `,
+    <div style="line-height:1.7;">
+      오늘도 탄소 실천에 참여해주셨네요.<br/>
+      ${
+        bonusPoint > 0
+          ? `<strong style="font-size:18px; color:#89a93f;">${streak}일 연속 출석! 총 +${totalPoint} 포인트 지급</strong>`
+          : `<strong style="font-size:18px; color:#89a93f;">+${totalPoint} 포인트 지급</strong>`
+      }
+    </div>
+  `,
         confirmButtonText: "확인",
         confirmButtonColor: "#89a93f",
       });
     } catch (err) {
       console.error("출석체크 실패", err);
+    } finally {
+      setAttendanceLoading(false);
     }
   };
   const loadAttendanceStatus = async () => {
@@ -326,7 +334,7 @@ const MissionList = () => {
       await Swal.fire({
         icon: "success",
         title: "인증 완료!",
-        text: "랜덤 미션 완료! 10포인트 지급 🎉",
+        text: "랜덤 미션 완료! 20포인트 지급 🎉",
         confirmButtonColor: "#89a93f",
       });
 
@@ -440,7 +448,7 @@ const MissionList = () => {
           onClick={handleAttendanceCheck}
           disabled={attendanceLoading || attendanceChecked}
         >
-          {attendanceChecked ? "출석완료" : "출석체크(1포인트)"}
+          {attendanceChecked ? "출석완료" : "출석체크(5포인트)"}
         </button>
       </div>
 

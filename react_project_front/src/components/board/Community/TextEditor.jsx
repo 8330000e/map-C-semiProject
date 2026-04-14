@@ -204,10 +204,13 @@ const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
       const imageUrl =
         typeof returned === "string"
           ? normalizeImageUrl(returned, "board/editor")
-          : "";
+          : normalizeImageUrl(
+              returned?.url || returned?.fileUrl || returned?.path || "",
+              "board/editor",
+            );
 
-      // 업로드된 이미지 경로가 Firebase URL로 바뀌도록 보정함.
-      // 상대 경로로 내려오는 경우에도 각 클라이언트에서 404가 나는 것을 방지함.
+      // 업로드된 이미지 경로를 모든 클라이언트에서 정상 접근 가능한 URL로 보정함.
+      // 서버가 문자열 또는 객체 형태로 응답해도 Firebase URL 변환이 적용되도록 함.
       focusEditor();
       if (imageUrl) {
         document.execCommand("insertImage", false, imageUrl);
