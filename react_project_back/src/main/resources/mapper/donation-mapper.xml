@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.iei.donation.model.dao.DonationDao">
+	
+	<update id="updateMemberPoint">
+		 update member_point_tbl
+		 set total_point = total_point - #{donationPoint}
+		 where member_id = #{memberId}
+		 <!-- 잔액이 기부액보다 많을 떄만 실행되게 하라 -->
+		 and total_point >= #{donationPoint}
+	</update>
+</mapper>
+
+	
