@@ -11,60 +11,82 @@ const getFirebaseUrl = (objectPath) => {
 };
 
 const getDefaultUrl = (trimmed, defaultPrefix) => {
-  if (trimmed.startsWith("/upload/")) {
-    const objectPath = trimmed.substring(trimmed.indexOf("/upload/") + "/upload/".length);
-    return getFirebaseUrl(objectPath);
+  const normalized = trimmed.replace(/^\//, "");
+
+  if (normalized.startsWith("upload/semiproject/")) {
+    return getFirebaseUrl(normalized.substring("upload/".length));
   }
 
-  if (trimmed.startsWith("/board/editor/")) {
-    return getFirebaseUrl(trimmed.replace(/^\//, ""));
+  if (normalized.startsWith("upload/")) {
+    return getFirebaseUrl(normalized.substring("upload/".length));
   }
 
-  if (trimmed.startsWith("/campaign/memo/")) {
-    return getFirebaseUrl(trimmed.replace(/^\//, ""));
+  if (normalized.startsWith("board/editor/")) {
+    return getFirebaseUrl(normalized);
   }
 
-  if (trimmed.startsWith("/member/thumb/")) {
-    return getFirebaseUrl(trimmed.replace(/^\//, ""));
+  if (normalized.startsWith("campaign/memo/")) {
+    return getFirebaseUrl(normalized);
   }
 
-  if (trimmed.startsWith("/notice/")) {
-    return getFirebaseUrl(trimmed.replace(/^\//, ""));
+  if (normalized.startsWith("member/thumb/")) {
+    return getFirebaseUrl(normalized);
   }
 
-  if (trimmed.startsWith("/qna/")) {
-    return getFirebaseUrl(trimmed.replace(/^\//, ""));
+  if (normalized.startsWith("notice/")) {
+    return getFirebaseUrl(normalized);
+  }
+
+  if (normalized.startsWith("qna/")) {
+    return getFirebaseUrl(normalized);
   }
 
   if (trimmed.startsWith("/")) {
     return `${BACKSERVER}${trimmed}`;
   }
 
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) {
-    return getFirebaseUrl(`${defaultPrefix}/${trimmed.replace(/^\//, "")}`);
+  if (normalized.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) {
+    return getFirebaseUrl(`${defaultPrefix}/${normalized}`);
   }
 
-  return `${BACKSERVER}/${defaultPrefix}/${trimmed}`;
+  return `${BACKSERVER}/${defaultPrefix}/${normalized}`;
 };
 
 export const normalizeImageUrl = (thumb, defaultPrefix = "board/editor") => {
   if (!thumb || typeof thumb !== "string") return null;
   let trimmed = thumb.trim();
   if (!trimmed) return null;
+  if (["null", "undefined", "none", "NONE", "NULL"].includes(trimmed)) return null;
 
   trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
 
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
   if (trimmed.startsWith("//")) return `https:${trimmed}`;
 
-  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
+  const driveMatch = trimmed.match(/^[A-Za-z]:/);
   if (driveMatch) {
-    const boardIndex = trimmed.indexOf("/board/editor/");
-    if (boardIndex !== -1) {
-      const suffix = trimmed.substring(boardIndex);
-      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
+    trimmed = trimmed.substring(driveMatch[0].length);
+  }
+  if (trimmed.startsWith("/")) {
+    trimmed = trimmed.substring(1);
+  }
+
+  const pathMarkers = [
+    "upload/semiproject/",
+    "upload/",
+    "board/editor/",
+    "campaign/memo/",
+    "member/thumb/",
+    "notice/",
+    "qna/",
+  ];
+
+  for (const marker of pathMarkers) {
+    const idx = trimmed.indexOf(marker);
+    if (idx !== -1) {
+      trimmed = trimmed.substring(idx);
+      break;
     }
-    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
   }
 
   return getDefaultUrl(trimmed, defaultPrefix);

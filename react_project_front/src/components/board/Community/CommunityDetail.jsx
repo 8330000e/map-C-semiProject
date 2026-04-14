@@ -567,6 +567,8 @@ const CommunityDetail = ({
             <div className={styles.commentMetaLeft}>
               <img
                 src={commentAvatarUrl}
+                loading="lazy"
+                decoding="async"
                 onError={(e) => {
                   const target = e.currentTarget;
                   target.onerror = null;

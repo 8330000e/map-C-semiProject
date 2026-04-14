@@ -212,7 +212,7 @@ const Store = () => {
                                         <span className={styles.authorAvatarWrapper}>
                                             <img
                                                 className={styles.authorAvatar}
-                                                src={getMemberImageUrl(item.memberThumb || (item.memberId === memberId ? memberThumb : null))}
+                                                src={getMemberImageUrl(item.memberThumb || (item.memberId === memberId ? memberThumb : null)) || userImg}
                                                 alt={`${item.memberId} 프로필`}
                                                 onError={(e) => {
                                                     e.currentTarget.src = userImg;

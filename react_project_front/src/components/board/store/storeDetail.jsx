@@ -636,7 +636,7 @@ const StoreDetail = () => {
           <div className={styles.authorRow}>
             <img
               className={styles.authorAvatar}
-              src={getMemberImageUrl(item.memberThumb || (item.memberId === memberId ? memberThumb : null))}
+              src={getMemberImageUrl(item.memberThumb || (item.memberId === memberId ? memberThumb : null)) || userImg}
               alt="작성자 프로필"
               onError={(e) => {
                 e.currentTarget.src = userImg;
@@ -854,7 +854,7 @@ const StoreDetail = () => {
               isBoardAuthor ||
               parentAuthorId === memberId;
             const displayContent = isSecret && !canViewSecret ? "비공개 댓글입니다." : comment.reviewContent;
-            const commentAvatarUrl = getMemberImageUrl(comment.memberThumb || (comment.memberId === memberId ? memberThumb : null));
+            const commentAvatarUrl = getMemberImageUrl(comment.memberThumb || (comment.memberId === memberId ? memberThumb : null)) || userImg;
             return (
               <div
                 key={comment.reviewNo}
@@ -866,6 +866,8 @@ const StoreDetail = () => {
                     <img
                       className={styles.commentAvatar}
                       src={commentAvatarUrl}
+                      loading="lazy"
+                      decoding="async"
                       alt={`${comment.memberNickname || comment.memberId} 프로필`}
                       onError={(e) => {
                         e.currentTarget.src = userImg;
@@ -942,17 +944,17 @@ const StoreDetail = () => {
         </div>
 
         <div className={styles.comment_form}>
-          <p className={styles.comment_meta}>
+          <div className={styles.comment_form_meta}>
             <img
               className={styles.commentFormAvatar}
-              src={getMemberImageUrl(memberThumb)}
+              src={getMemberImageUrl(memberThumb) || userImg}
               alt="내 프로필"
               onError={(e) => {
                 e.currentTarget.src = userImg;
               }}
             />
-            {memberNickname || memberId || "비회원"} | 절약점수 : 00
-          </p>
+            <span>{memberNickname || memberId || "비회원"} | 절약점수 : 00</span>
+          </div>
           {replyTarget && (
             <div className={styles.reply_form}>
               답글 대상: {replyTarget.memberNickname || replyTarget.memberId}
