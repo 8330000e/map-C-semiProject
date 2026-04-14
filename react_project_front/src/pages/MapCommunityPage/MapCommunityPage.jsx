@@ -399,6 +399,7 @@ const Map = ({
             return;
           }
           console.log(response);
+
           setAddr(response.result.items[0].address);
           setLnglat({
             lat: e.coord.lat(),
@@ -412,6 +413,16 @@ const Map = ({
       );
     });
   }, [markerList]);
+  useEffect(() => {
+    axios
+      .get(`${BACKSERVER}/boards/markers&sgg=${ctpvsgg.sgg}`)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <div className={styles.map_div}>

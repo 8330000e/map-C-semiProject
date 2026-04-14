@@ -28,6 +28,7 @@ import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
+import kr.co.iei.board.model.vo.Marker;
 import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.utils.DeviceParser;
 import kr.co.iei.utils.FileUtils;
@@ -323,8 +324,8 @@ public class BoardController {
 	 }
 	 
 	@GetMapping(value="/markers")
-	public ResponseEntity<?> selectMarkers() {
-		List<Board> list = boardService.selectMarkers();
+	public ResponseEntity<?> selectMarkers(@RequestParam String sgg) {
+		List<Marker> list = boardService.selectMarkers(sgg);
 		return ResponseEntity.ok(list);
 	}
 	
