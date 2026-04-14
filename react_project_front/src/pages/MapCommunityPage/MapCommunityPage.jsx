@@ -34,6 +34,7 @@ const MapCommunityPage = () => {
           <ArrowBackIosOutlinedIcon />
           <span>메인으로 돌아가기</span>
         </div>
+        ㅣ
       </div>
       <div className={styles.container}>
         <div className={styles.left}>
