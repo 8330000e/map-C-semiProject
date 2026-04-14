@@ -123,7 +123,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
       map: map,
       icon: {
         content:
-          '<img src="src/assets/img/marker.png" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=99999; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">',
+          '<img loading="lazy" decoding="async" src="src/assets/img/marker.png" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=99999; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">',
         size: new naver.maps.Size(22, 35),
         anchor: new naver.maps.Point(11, 35),
       },
@@ -147,10 +147,14 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
           content: `
           <div>
         <img
+        loading="lazy"
+        decoding="async"
         src='${markerSrc}'
         style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
         />
         <img
+        loading="lazy"
+        decoding="async"
         src='src/assets/img/defaultthumbmarker.png'
         style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
         />
@@ -216,6 +220,8 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                 >
                 <div>
                   <img
+                    loading="lazy"
+                    decoding="async"
                     src=${borderPin}
                     style="
                       position: absolute;
@@ -263,6 +269,8 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                       style=" display: flex; gap: 8px; align-items: center; "
                     >
                       <img
+                        loading="lazy"
+                        decoding="async"
                         src=${defaultImg}
                         alt=""
                         style="
@@ -278,6 +286,8 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                   style=" display: flex; gap: 1px; align-items: center; "
                 >
                   <img
+                    loading="lazy"
+                    decoding="async"
                     src=${heart}
                     alt=""
                     style="
@@ -311,10 +321,14 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
             </div>
           <div>
             <img
+              loading="lazy"
+              decoding="async"
               src=${marker.memberThumb || defaultImg}
               style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
             />
             <img
+              loading="lazy"
+              decoding="async"
               src='src/assets/img/defaultthumbmarker.png'
               style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
             />
@@ -331,10 +345,14 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
             content: `
           <div>
             <img
+              loading="lazy"
+              decoding="async"
               src=${marker.memberThumb || defaultImg}
               style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
             />
             <img
+              loading="lazy"
+              decoding="async"
               src='src/assets/img/defaultthumbmarker.png'
               style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
             />

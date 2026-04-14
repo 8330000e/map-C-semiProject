@@ -148,6 +148,8 @@ const AdminQna = ({
                   <img
                     src={normalizeImageUrl(selectedQna.qnaQuestionImage)}
                     alt="질문 이미지"
+                    loading="lazy"
+                    decoding="async"
                     onClick={() =>
                       setPreviewImage(normalizeImageUrl(selectedQna.qnaQuestionImage))
                     }
@@ -220,7 +222,12 @@ const AdminQna = ({
           className={styles.image_modal}
           onClick={() => setPreviewImage(null)}
         >
-          <img src={previewImage} alt="이미지 크게보기" />
+          <img
+            src={previewImage}
+            alt="이미지 크게보기"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       )}
     </>

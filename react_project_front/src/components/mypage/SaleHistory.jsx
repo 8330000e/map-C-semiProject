@@ -378,8 +378,8 @@ const SaleHistory = () => {
         <div className={styles.sale_card_inner}>
           <div className={styles.sale_card_image_wrap}>
             {imageUrl ? (
-              <img
-                src={imageUrl}
+              <img                loading="lazy"
+                decoding="async"                src={imageUrl}
                 alt={displayTitle}
                 className={styles.sale_card_image}
                 onError={(e) => {

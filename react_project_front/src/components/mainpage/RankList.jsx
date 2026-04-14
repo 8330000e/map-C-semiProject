@@ -34,6 +34,8 @@ const RankList = () => {
                     <img
                       src={rank.memberThumb ? normalizeImageUrl(rank.memberThumb, "member/thumb") : defaultImg}
                       className={styles.list_thumb}
+                      loading="lazy"
+                      decoding="async"
                     />
                   </p>
                   <p>{rank.memberNickname}</p>

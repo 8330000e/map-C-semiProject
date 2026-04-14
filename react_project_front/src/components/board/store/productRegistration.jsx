@@ -249,7 +249,15 @@ const ProductRegistration = () => {
                             {(() => {
                                 const url = getImageUrl(productThumb);
                                 if (url) {
-                                    return <img src={url} alt={imageName || "상품 이미지"} className={styles.uploaded_image} />;
+                                    return (
+                                        <img
+                                            src={url}
+                                            alt={imageName || "상품 이미지"}
+                                            className={styles.uploaded_image}
+                                            loading="lazy"
+                                            decoding="async"
+                                        />
+                                    );
                                 }
                                 return imageName || "이미지";
                             })()}
