@@ -17,6 +17,8 @@ const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 const getImageUrl = normalizeImageUrl;
 
 const MapCommunityPage = () => {
+  const [sido, setSido] = useState("");
+  const [sigungu, setSigungu] = useState("");
   const [addr, setAddr] = useState("서울특별시 중구");
   const [lnglat, setLnglat] = useState({
     lat: 37.5665 - 0.001,
@@ -39,6 +41,10 @@ const MapCommunityPage = () => {
         <div className={styles.left}>
           <div className={styles.mapBox}>
             <Map
+              sido={sido}
+              setSido={setSido}
+              sigungu={sigungu}
+              setSigungu={setSigungu}
               addr={addr}
               lnglat={lnglat}
               ctpvsgg={ctpvsgg}
@@ -64,7 +70,18 @@ const MapCommunityPage = () => {
   );
 };
 
-const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
+const Map = ({
+  addr,
+  lnglat,
+  ctpvsgg,
+  setAddr,
+  setLnglat,
+  setCtpvsgg,
+  sido,
+  setSido,
+  sigungu,
+  setSigungu,
+}) => {
   // const [detailMode, setDetailMode] = useState(false);
   const navigate = useNavigate();
   const mapDivRef = useRef(null);
@@ -80,7 +97,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
     sgg: "중구",
   };
   let detailMode = false;
-  let openMarker = true;
+  let ctpvsgglength = 0;
 
   const boardView = (boardNo) => {
     if (boardNo) {
@@ -147,7 +164,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
           content: `
           <div>
         <img
-        src='${markerSrc}'
+        src='${writerAvatar}'
         style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
         />
         <img
@@ -395,14 +412,7 @@ const Map = ({ addr, lnglat, ctpvsgg, setAddr, setLnglat, setCtpvsgg }) => {
                 <div>
                   <div className={styles.spot_box_top_posts}>
                     <DescriptionOutlinedIcon sx={{ fontSize: "24px" }} />
-                    <p>
-                      {ctpvsgg.ctpv + " " + ctpvsgg.sgg ==
-                      markerList.ctpv + " " + markerList.sgg
-                        ? ctpvsgg.length == 0
-                          ? 0
-                          : ctpvsgg.length
-                        : -1}
-                    </p>
+                    <p>{}</p>
                   </div>
                 </div>
               </div>
