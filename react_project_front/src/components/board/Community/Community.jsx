@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // URL 쿼리값으로 mode(write/list)를 판단하므로 꼭 import 필요
+import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Community.module.css";
 import axios from "axios";
 import TextEditor from "./TextEditor";
