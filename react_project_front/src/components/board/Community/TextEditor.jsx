@@ -15,6 +15,7 @@ import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import LinkIcon from "@mui/icons-material/Link";
 import axios from "axios";
+import { normalizeImageUrl } from "../../../utils/getImageUrl";
 import { compressImageFile } from "../../../utils/compressImage";
 
 const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
@@ -202,12 +203,11 @@ const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
       const returned = res.data;
       const imageUrl =
         typeof returned === "string"
-          ? returned.startsWith("http://") || returned.startsWith("https://")
-            ? returned
-            : `${import.meta.env.VITE_BACKSERVER}${returned}`
+          ? normalizeImageUrl(returned, "board/editor")
           : "";
 
-      // 업로드 결과가 절대 URL이면 그대로 쓰고, 그렇지 않으면 백엔드 앞부분을 붙여서 처리함.
+      // 업로드된 이미지 경로가 Firebase URL로 바뀌도록 보정함.
+      // 상대 경로로 내려오는 경우에도 각 클라이언트에서 404가 나는 것을 방지함.
       focusEditor();
       if (imageUrl) {
         document.execCommand("insertImage", false, imageUrl);
