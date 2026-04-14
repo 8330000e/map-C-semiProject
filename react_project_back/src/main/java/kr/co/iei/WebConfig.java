@@ -1,19 +1,12 @@
 package kr.co.iei;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {//MVC 관련 설정
-	// application.properties에 설정된 file.root 값을 사용하여 정적 리소스의 실제 파일 시스템 위치를 결정합니다.
-	// Windows와 macOS 모두에서 동작하도록 File.toURI()를 사용합니다.
-	@Value("${file.root}")
-	private String root;
-
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		// allowCredentials(true)를 사용할 때는 allowedOrigins("*")를 사용할 수 없습니다.
@@ -25,11 +18,4 @@ public class WebConfig implements WebMvcConfigurer {//MVC 관련 설정
 			.allowedHeaders("*")
 			.allowCredentials(true);
 	}
-
-	@Override
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		// 로컬 업로드 경로를 정적 리소스로 제공하지 않습니다.
-		// 모든 업로드 이미지와 파일은 Firebase Storage에서 직접 제공되어야 합니다.
-	}
-
 }
