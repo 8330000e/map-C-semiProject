@@ -771,6 +771,8 @@ const CommunityDetail = ({
               src={getImageUrl(board.boardThumb)}
               alt="게시글 이미지"
               className={styles.detailImage}
+              loading="lazy"
+              decoding="async"
             />
           </div>
         )}
