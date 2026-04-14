@@ -2,10 +2,14 @@
 
 .banner_container {
   position: relative;
-  width: 100%;
-  height: 300px; /* 배너의 높이. 이미지_0.png 비율에 맞춰 조정하세요 */
-  overflow: hidden; /* 슬라이드가 영역 밖으로 나가지 않게 */
-  border-bottom: 2px solid #5d4037; /* 상단 갈색 선 (image_0.png 참고) */
+  width: 110vw; /* 화면의 전체 가로 폭 (Viewport Width) */
+  height: 450px; /* 배너의 높이. 이미지_0.png 비율에 맞춰 조정하세요 */
+  margin-left: calc(
+    -50vw + 50%
+  ); /* 부모가 중앙에 있더라도 강제로 꽉 채우는 기술 */
+  overflow: hidden;
+  background-color: #f8f9fa;
+  margin-top: 60px;
 }
 
 .banner_slide {
@@ -50,7 +54,7 @@
 }
 
 .banner_text h3 {
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: bold;
   margin-bottom: 10px;
 }

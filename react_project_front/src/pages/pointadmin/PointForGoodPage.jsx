@@ -246,7 +246,7 @@ const PointForGoodPage = () => {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKSERVER}/donations/donate`,
         {
-          memberId: loginId,
+          memberId: loginId, //즉 사용자 아이디, 로그인한 아이디는 loginId에 저장 되어있음
           donationPoint: amount,
 
           groupId: groupId, //서버로 단체 아이디 보냄
@@ -274,12 +274,7 @@ const PointForGoodPage = () => {
       <HomeBanner />
 
       <div className={styles.campaign_container}>
-        {/* 1. 상단 타이틀 섹션 */}
-        <div className={styles.header_section}>
-          <h2 className={styles.main_title}>더 늦기 전에 지켜주세요</h2>
-        </div>
-
-        {/* 2. 캠페인 카드 그리드 */}
+        {/* 1. 캠페인 카드 그리드 */}
         <div className={styles.campaign_grid}>
           {donationCardList.map((item, index) => (
             <div
