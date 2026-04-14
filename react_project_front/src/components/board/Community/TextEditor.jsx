@@ -15,6 +15,7 @@ import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import LinkIcon from "@mui/icons-material/Link";
 import axios from "axios";
+import { compressImageFile } from "../../../utils/compressImage";
 
 const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
   const editorRef = useRef(null);
@@ -174,9 +175,18 @@ const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
     setAttachedFiles((prev) => [...prev, file]);
     if (!file) return;
 
+    // 에디터 이미지도 업로드 전에 압축해서 전송함
+    if (file.type.startsWith("image/")) {
+      file = await compressImageFile(file, {
+        maxWidth: 1200,
+        maxHeight: 1200,
+        quality: 0.75,
+      });
+    }
+
     try {
       const formData = new FormData();
-      formData.append("upfile", file);
+      formData.append("upfile", file, file.name);
 
       // 백엔드 업로드 API로 이미지 파일을 전송함.
       const res = await axios.post(

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,8 +33,6 @@ public class SupportContoller {
 	@Value("${file.root}")
 	private String root;
 	
-	@Autowired
-	private FileUtils fileUtils;
 	
 	@GetMapping(value="faq")
 	public ResponseEntity<?> selectFaqList(@RequestParam (required = false) String category) {
@@ -68,7 +65,7 @@ public class SupportContoller {
 			if (!saveDir.exists()) {
 				saveDir.mkdir();
 			}
-			String fileName = fileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
+			String fileName = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
 			qna.setQnaQuestionImage(fileName);
 		}
 		int result = supportService.insertQna(qna);

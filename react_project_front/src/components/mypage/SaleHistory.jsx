@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
 import { getCompletedSales } from "./orderHistoryStorage";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 import styles from "./SaleHistory.module.css";
 
 const PAGE_SIZE = 3;
@@ -98,18 +99,7 @@ const getTradeInfoForItem = (item, tradeInfoMap) => {
   return marketNo ? tradeInfoMap[marketNo] : null;
 };
 
-const getImageUrl = (thumb) => {
-  if (!thumb || typeof thumb !== "string") return null;
-  let trimmed = thumb.trim().replace(/\\\\/g, "/").replace(/\\/g, "/");
-  if (!trimmed) return null;
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-  if (trimmed.startsWith("/")) return `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}${trimmed}`;
-  if (trimmed.includes("/upload/")) return `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}/${trimmed.replace(/^\//, "")}`;
-  if (trimmed.includes("/board/editor/")) return `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}/${trimmed.replace(/^\//, "")}`;
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}/board/editor/${trimmed.replace(/^\//, "")}`;
-  return `${import.meta.env.VITE_BACKSERVER || "http://localhost:9999"}/board/editor/${trimmed}`;
-};
+const getImageUrl = normalizeImageUrl;
 
 const getBoardForMarketNo = (marketNo, boards) => {
   if (!marketNo) return null;

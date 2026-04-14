@@ -7,6 +7,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import Swal from "sweetalert2";
 
 import useAuthStore from "../../store/useAuthStore";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 import { useState, useEffect, useRef } from "react";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
@@ -15,32 +16,7 @@ const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 // - 백엔드에서 내려오는 값이 절대 URL일 수도 있고,
 // - /upload/, /board/editor/ 같은 상대 경로 형태일 수도 있으며,
 // - 드라이브 경로로 저장된 경우에도 정상적으로 백엔드 호출 URL로 변환함.
-const getImageUrl = (thumb) => {
-  if (!thumb || typeof thumb !== "string") return null;
-  let trimmed = thumb.trim();
-  if (!trimmed) return null;
-
-  trimmed = trimmed.replace(/\\/g, "/").replace(/\\/g, "/");
-
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-  const driveMatch = trimmed.match(/^[A-Za-z]:\//);
-  if (driveMatch) {
-    const boardIndex = trimmed.indexOf("/board/editor/");
-    if (boardIndex !== -1) {
-      const suffix = trimmed.substring(boardIndex);
-      return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
-    }
-    trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
-  }
-
-  if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-  if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-  if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
-  return `${BACKSERVER}/member/thumb/${trimmed}`;
-};
+const getImageUrl = (thumb) => normalizeImageUrl(thumb, "member/thumb");
 // 로고 이미지는 Vite 정상 로딩을 위해 import 방식으로 참조함.
 import logo from "../../assets/logo/logo.svg";
 import axios from "axios";

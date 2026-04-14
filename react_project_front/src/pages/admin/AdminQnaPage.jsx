@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import AdminQna from "../../components/admin/AdminQna";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { compressImageFile } from "../../utils/compressImage";
 
 const AdminQnaPage = () => {
   const [qnaList, setQnaList] = useState([]);
@@ -28,14 +29,19 @@ const AdminQnaPage = () => {
       showCancelButton: true,
       cancelButtonText: "취소",
       confirmButtonText: "등록",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
         const formData = new FormData();
         formData.append("qnaNo", selectedQna.qnaNo);
         formData.append("qnaAnswer", answer);
-        // 이미지 첨부했을 때만 파일 추가
+        // 답변 이미지도 서버 전송 전에 용량을 줄여서 올림
         if (imageFile) {
-          formData.append("upfile", imageFile);
+          const compressedImage = await compressImageFile(imageFile, {
+            maxWidth: 1200,
+            maxHeight: 1200,
+            quality: 0.75,
+          });
+          formData.append("upfile", compressedImage, compressedImage.name);
         }
         axios
           .patch(`${import.meta.env.VITE_BACKSERVER}/admins/qna`, formData, {

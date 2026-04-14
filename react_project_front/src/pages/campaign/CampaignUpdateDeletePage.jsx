@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./CampaignUpdateDelete.module.css";
 import useAuthStore from "../../store/useAuthStore";
+import { normalizeImageUrl } from "../../utils/getImageUrl";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Input } from "../../components/ui/Form";
@@ -81,9 +82,7 @@ const CampaignUpdateDeletePage = () => {
         <div className={styles.camp_update_img_wrap}>
           <img
             src={
-              imgChange
-                ? imgUrl
-                : `${import.meta.env.VITE_BACKSERVER}/campaign/memo/${campBoardList.campaignThumb}`
+              imgChange ? imgUrl : normalizeImageUrl(campBoardList.campaignThumb)
             }
           />
           <Button

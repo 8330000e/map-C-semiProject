@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
 import useAuthStore from "../../../store/useAuthStore";
+import { normalizeImageUrl } from "../../../utils/getImageUrl";
 import userImg from "../../../assets/user.png";
 import styles from "./store.module.css";
 
@@ -30,56 +31,9 @@ const getSaleStatusLabel = (productStatus) => {
     return "판매중";
 };
 
-const getImageUrl = (thumb) => {
-    // 상품 이미지가 여러 형태로 들어올 수 있어서,
-    // 여기서 브라우저가 바로 쓸 수 있는 URL로 바꿔줘요.
-    // 파일명만 들어오면 /upload/ 경로로 연결합니다.
-    if (!thumb) return null;
-    if (typeof thumb !== "string") return null;
-    let trimmed = thumb.trim();
-    if (!trimmed) return null;
+const getImageUrl = normalizeImageUrl;
 
-    trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
-
-    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-    if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-    const driveMatch = trimmed.match(/^[A-Za-z]:\//);
-    if (driveMatch) {
-      const boardIndex = trimmed.indexOf("/board/editor/");
-      if (boardIndex !== -1) {
-        const suffix = trimmed.substring(boardIndex);
-        return `${BACKSERVER}${suffix.startsWith("/") ? "" : "/"}${suffix}`;
-      }
-      trimmed = trimmed.substring(trimmed.indexOf("/") + 1);
-    }
-
-    if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-    if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-    if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-    if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/board/editor/${trimmed.replace(/^\//, "")}`;
-    return `${BACKSERVER}/board/editor/${trimmed}`;
-};
-
-const getMemberImageUrl = (thumb) => {
-    if (!thumb) return userImg;
-    if (typeof thumb !== "string") return userImg;
-    let trimmed = thumb.trim();
-    if (!trimmed) return userImg;
-
-    trimmed = trimmed.replace(/\\/g, "/");
-
-    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-    if (trimmed.startsWith("//")) return `https:${trimmed}`;
-
-    if (trimmed.startsWith("/member/thumb/")) return `${BACKSERVER}${trimmed}`;
-    if (trimmed.includes("/member/thumb/")) return `${BACKSERVER}/${trimmed.replace(/^\/+/, "")}`;
-    if (trimmed.startsWith("/")) return `${BACKSERVER}${trimmed}`;
-    if (trimmed.includes("/upload/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-    if (trimmed.includes("/board/editor/")) return `${BACKSERVER}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-    if (trimmed.match(/^.+\.(jpg|jpeg|png|gif|bmp)$/i)) return `${BACKSERVER}/member/thumb/${trimmed.replace(/^\//, "")}`;
-    return `${BACKSERVER}/member/thumb/${trimmed}`;
-};
+const getMemberImageUrl = (thumb) => normalizeImageUrl(thumb, "member/thumb");
 
 const Store = () => {
     const { memberId, memberThumb } = useAuthStore();
