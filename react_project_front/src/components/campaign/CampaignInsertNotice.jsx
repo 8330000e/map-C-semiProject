@@ -33,6 +33,14 @@ const CampaignInsertNotice = () => {
               title: "공지글이 등록되었습니다.",
               text: "공지사항에 게시글이 등록되었습니다.",
               icon: "success",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                setWriteNotice({
+                  ...writeNotice,
+                  campaignNoticeTitle: "",
+                  campaignNoticeContent: "",
+                });
+              }
             });
           }
         })

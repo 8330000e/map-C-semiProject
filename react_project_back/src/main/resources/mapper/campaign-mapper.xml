@@ -107,4 +107,9 @@
 	<insert id="insertIntoUpdateTbl">
 		insert into campaign_update_tbl values(campaign_update_seq.nextval,#{campaignTitle},#{campaignExplanation},#{campaignGoalMember},#{campaignNo})
 	</insert>
+	<select id="getNoticeList" resultType="campNo">
+		select 
+		campaign_notice_no,campaign_notice_title,campaign_notice_writer,campaign_notice_date,campaign_no
+		 from campaign_notice_tbl 
+	</select>
 </mapper>

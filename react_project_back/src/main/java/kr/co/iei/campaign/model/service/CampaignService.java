@@ -201,6 +201,11 @@ public class CampaignService {
 		}
 		return result;
 	}
+
+	public List<CampaignNotice> getNoticeList() {
+		List<CampaignNotice> campNo = campaignDao.getNoticeList();
+		return campNo;
+	}
 	
 
 }
