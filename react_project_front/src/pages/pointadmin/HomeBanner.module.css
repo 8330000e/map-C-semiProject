@@ -1,15 +1,16 @@
 /* HomeBanner.module.css */
 
 .banner_container {
-  position: relative;
-  width: 110vw; /* 화면의 전체 가로 폭 (Viewport Width) */
-  height: 450px; /* 배너의 높이. 이미지_0.png 비율에 맞춰 조정하세요 */
-  margin-left: calc(
-    -50vw + 50%
-  ); /* 부모가 중앙에 있더라도 강제로 꽉 채우는 기술 */
+  /* 부모를 기준으로 삼지 않고, 브라우저 화면(Viewport)을 기준으로 위치를 잡습니다. */
+  position: absolute;
+  left: 0;
+  width: 100vw; /* 화면 너비 100% */
+  height: 450px;
+
   overflow: hidden;
   background-color: #f8f9fa;
-  margin-top: 60px;
+  margin-top: 20px;
+  z-index: 10; /* 다른 요소보다 위로 올림 */
 }
 
 .banner_slide {

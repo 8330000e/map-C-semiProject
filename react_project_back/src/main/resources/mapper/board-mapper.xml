@@ -355,6 +355,7 @@
             b.board_no AS boardNo,
             b.writer_id AS writerId,
             b.member_nickname AS memberNickname,
+            b.member_nickname AS writerNickname,
             b.board_title AS boardTitle,
             b.board_thumb AS boardThumb,
             b.board_date AS boardDate,
