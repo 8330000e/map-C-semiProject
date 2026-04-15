@@ -2,6 +2,8 @@
   padding: 15px 24px;
   height: 280px;
   overflow: scroll;
+  background-color: #eef3e8;
+  border-radius: 18px;
 }
 .ranklist_wrap > div:first-child {
   font-weight: 600;
@@ -15,24 +17,33 @@
 }
 .list_item {
   display: flex;
-  font-size: 15px;
+  width: 100%;
+  padding: 8px 14px;
   justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  background-color: var(--gray8);
+  color: var(--color1);
+  font-size: 13px;
+  font-weight: 600;
   cursor: default;
 }
 .list_item > div {
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  align-items: center;
 }
 .list_item > div > p:first-child {
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
   width: 18px;
   display: flex;
   justify-content: center;
 }
 .list_item > p:last-child {
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
 }
 .list_item > p:first-child {
   width: 20px;
