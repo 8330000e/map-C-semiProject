@@ -290,10 +290,8 @@ public class BoardService {
 		return boardDao.selectTipBoardList();
 	}
 
-	public List<Marker> selectMarkers(String sgg) {
-		List<Marker> list = boardDao.selectMarkers();
-		Marker boardCount = boardDao.selectBoardCount(sgg);
-		list.setBoardCount(boardCount);
+	public List<Marker> selectMarkers() {
+		List<Marker> list = boardDao.selectMarkers();		
 		return list;
 	}
 	
@@ -314,6 +312,10 @@ public class BoardService {
 	public List<Report> getReportList() {
 		List<Report> reportList = boardDao.getReportList();
 		return reportList;
+	}
+	public List<Board> selectBoardCount() {
+		List<Board> list = boardDao.selectBoardCount();
+		return list;
 	}
 
 }

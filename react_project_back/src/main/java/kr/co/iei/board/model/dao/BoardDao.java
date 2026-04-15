@@ -73,8 +73,6 @@ public interface BoardDao {
 
 	List<Marker> selectMarkers();
 
-	Marker selectBoardCount(String sgg);
-
 	int insertBoardReport(Report report);
 
 	int checkReport(Report report);
@@ -84,6 +82,8 @@ public interface BoardDao {
 	List<Board> selectCtpvsgg();
 
 	List<Report> getReportList();
+
+	List<Board> selectBoardCount();
 
     
 

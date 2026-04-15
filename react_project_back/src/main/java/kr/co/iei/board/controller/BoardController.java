@@ -329,8 +329,14 @@ public class BoardController {
 	 }
 	 
 	@GetMapping(value="/markers")
-	public ResponseEntity<?> selectMarkers(@RequestParam String sgg) {
-		List<Marker> list = boardService.selectMarkers(sgg);
+	public ResponseEntity<?> selectMarkers() {
+		List<Marker> list = boardService.selectMarkers();
+		return ResponseEntity.ok(list);
+	}
+
+	@GetMapping(value="/boardCount")
+	public ResponseEntity<?> selectBoardCount() {
+		List<Board> list = boardService.selectBoardCount();
 		return ResponseEntity.ok(list);
 	}
 	
