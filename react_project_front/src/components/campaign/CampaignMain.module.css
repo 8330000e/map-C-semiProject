@@ -36,6 +36,7 @@
 .campaignmain_list {
   cursor: pointer;
 }
+
 .campaignmain_list > ul {
   display: flex;
   position: relative;
@@ -44,6 +45,12 @@
   margin: 10px auto;
   background-color: var(--gray8);
   border-radius: 5px;
+  transition-duration: 0.2s;
+}
+.campaignmain_list > ul:hover {
+  transform: translateY(-3px);
+  /* 양옆 위아래 퍼지는정도 색깔 */
+  box-shadow: 0px 0.2px 8px var(--gray2);
 }
 .campaignmain_list li {
   list-style-type: none;

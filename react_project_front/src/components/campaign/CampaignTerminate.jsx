@@ -20,7 +20,7 @@ const CampaignTerminate = () => {
       </div>
       <div className={styles.camp_settings_content_main_wrap}>
         <div className={styles.camp_settings_content_terminate}>
-          <h3>이 버튼은 캠페인을 강제로 종료 시키는 버튼입니다.</h3>
+          <h3>이 페이지는 캠페인을 강제로 종료 시키는 버튼입니다.</h3>
           <Input
             id="inputId"
             value={input}
@@ -42,7 +42,7 @@ const CampaignTerminate = () => {
           </p>
         </div>
         <Button
-          className="btn primary sm"
+          className="btn primary lg"
           onClick={() => {
             if (inputCheck) {
               Swal.fire({

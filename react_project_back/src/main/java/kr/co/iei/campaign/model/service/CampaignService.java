@@ -242,6 +242,11 @@ public class CampaignService {
 		}
 		return result;
 	}
+
+	public int leaveMember(Campaign camp) {
+		int result = campaignDao.deletePartMember(camp);
+		return result;
+	}
 	
 
 }

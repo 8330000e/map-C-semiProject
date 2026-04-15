@@ -64,3 +64,15 @@
 .camp_settings_content_btn_wrap {
   align-self: center;
 }
+/* 캠페인 강제종료 */
+.camp_settings_content_terminate {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 600px;
+  margin: 0px auto;
+}
+.camp_settings_content_terminate + button {
+  width: 200px;
+  margin: 120px auto;
+}

@@ -44,6 +44,11 @@ const CampaignNotice = () => {
                 <ul
                   className={styles.camp_notice_list_wrap}
                   key={notice.campaignNoticeTitle + index}
+                  onClick={() => {
+                    navigate(
+                      `/campaign/noticeDetail/${notice.campaignNoticeNo}`,
+                    );
+                  }}
                 >
                   <li className={styles.camp_notice_list1}>
                     {notice.campaignNoticeNo}
