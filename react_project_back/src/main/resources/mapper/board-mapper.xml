@@ -201,6 +201,21 @@
         ORDER BY C.COMMENT_GROUP ASC, C.COMMENT_DEPTH ASC, C.BOARD_COMMENT_NO ASC
     </select>
 
+    <select id="selectBoardCommentByNo" resultType="kr.co.iei.board.model.vo.BoardComment" parameterType="long">
+        SELECT
+            BOARD_COMMENT_NO AS commentNo,
+            BOARD_NO AS boardNo,
+            BOARD_COMMENT_WRITER AS memberId,
+            MEMBER_NICKNAME AS memberNickname,
+            BOARD_COMMENT_CONTENT AS content,
+            PARENT_COMMENT_NO AS parentCommentNo,
+            COMMENT_GROUP AS commentGroup,
+            COMMENT_DEPTH AS commentDepth,
+            CASE WHEN IS_SECRET = 'Y' THEN 1 ELSE 0 END AS isSecret
+        FROM BOARD_COMMENT_TBL
+        WHERE BOARD_COMMENT_NO = #{commentNo}
+    </select>
+
     <insert id="insertBoardComment" parameterType="boardComment">
         <!--
           댓글 PK는 LONG 타입으로 처리합니다.

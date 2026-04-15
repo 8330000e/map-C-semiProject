@@ -54,6 +54,8 @@ public interface BoardDao {
 
 	List<BoardComment> selectBoardComments(@Param("boardNo") int boardNo);
 
+	BoardComment selectBoardCommentByNo(@Param("commentNo") Long commentNo);
+
 	int insertBoardComment(BoardComment comment);
 
 	int updateBoardComment(BoardComment comment);
