@@ -175,21 +175,25 @@ header {
 .realtime_comment {
   width: 320px;
   height: 40px;
-  background-color: #464d3e;
-  color: #fff;
   display: flex;
   align-items: center;
+  background-color: #eef3e8;
+  color: #333;
   padding: 0 10px;
+  border-radius: 18px;
+  border: 1px solid #000;
 }
 .realtime_comment_viewport {
   width: 100%;
   overflow: hidden;
 }
 .realtime_comment_line {
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 1.6;
   display: inline-block;
   white-space: nowrap;
   will-change: transform;
+  color: inherit;
 }
 .rank_list {
   width: 320px;
