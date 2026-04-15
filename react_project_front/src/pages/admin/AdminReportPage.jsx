@@ -34,6 +34,7 @@ const AdminReportPage = () => {
     boardAction: "미처리",
     memberAction: "미처리",
     reason: "",
+    lockReason: "",
   });
 
   const changeReportAction = (e) => {
@@ -44,7 +45,12 @@ const AdminReportPage = () => {
   const resetModal = () => {
     setIsModalOpen(false);
     setShowDetail(false);
-    setReportAction({ boardAction: "미처리", memberAction: "미처리", reason: "" });
+    setReportAction({
+      boardAction: "미처리",
+      memberAction: "미처리",
+      reason: "",
+      lockReason: "",
+    });
   };
 
   const handleSubmit = (e) => {
@@ -58,7 +64,12 @@ const AdminReportPage = () => {
         memberId: memberId,
       })
       .then(() => {
-        Swal.fire({ icon: "success", title: "처리 완료", timer: 1500, showConfirmButton: false });
+        Swal.fire({
+          icon: "success",
+          title: "처리 완료",
+          timer: 1500,
+          showConfirmButton: false,
+        });
         resetModal();
         selectReportList();
       })

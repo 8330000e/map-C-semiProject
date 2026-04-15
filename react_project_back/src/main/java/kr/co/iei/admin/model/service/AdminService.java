@@ -156,6 +156,8 @@ public class AdminService {
 				throw new RuntimeException("신고 처리 실패");
 		}
 		
+		
+		
 		int logResult = adminDao.insertAdminLog(pr);
 			if (logResult == 0) {
 				throw new RuntimeException("로그 저장 실패");

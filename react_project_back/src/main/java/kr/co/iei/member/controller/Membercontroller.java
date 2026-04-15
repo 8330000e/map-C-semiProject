@@ -108,9 +108,11 @@ public class Membercontroller {
 	@PostMapping(value = "/login")
 	public ResponseEntity<?> loginMember(@RequestBody Member member, HttpServletRequest request) {
 		
-		Date lockUntil = memberService.getLockUntil(member.getMemberId());
-		if (lockUntil != null && lockUntil.after(new Date())) { // null 아니고 lockUntil이 지금 시간보다 미래면 
-			return ResponseEntity.status(403).body("로그인이 일시적으로 차단되었습니다. 잠시 후 다시 시도해주세요."); // 403 + 메시지 반환 
+		Map<String, Object> map = memberService.getLockInfo(member.getMemberId());
+		Date lockUntil = (Date) map.get("lockUntil");                                                                       
+		String lockReason = (String) map.get("lockReason");    
+		if (lockUntil != null && lockUntil.after(new Date())) { // null 아니고 lockUntil이 지금 시간보다 나중이면 
+			return ResponseEntity.status(403).body(lockReason); // 403 + 메시지 반환 
 		}
 		
 	    LoginMember loginUser = memberService.login(member);

@@ -15,4 +15,5 @@ public class ProcessReport {
 	private Integer targetNo;
 	private String targetId;
 	private String memberId;
+	private String lockReason;
 }

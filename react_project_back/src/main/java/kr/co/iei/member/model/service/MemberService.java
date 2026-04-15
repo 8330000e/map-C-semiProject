@@ -214,9 +214,9 @@ public class MemberService {
 	}
 
 
-	public Date getLockUntil(String memberId) {
-		Date lockUntil = memberDao.getLockUntil(memberId);
-		return lockUntil;
+	
+	public Map<String, Object> getLockInfo(String memberId) {
+		return memberDao.getLockInfo(memberId);
 	}
 
 	public void checkFailCount(String memberId) {

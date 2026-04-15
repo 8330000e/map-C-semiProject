@@ -73,6 +73,8 @@ public interface AdminDao {
 	int updateReportStatus(ProcessReport pr);
 
 	int insertAdminLog(ProcessReport pr);
+
+	
 	
 	
 

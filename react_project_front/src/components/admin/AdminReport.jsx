@@ -208,7 +208,18 @@ const AdminReport = ({
 
               {/* 처리 사유 입력 */}
               <div className={styles.reason_section}>
-                <h4>처리 사유</h4>
+                {(reportAction.memberAction === "1" ||
+                  reportAction.memberAction === "3" ||
+                  reportAction.memberAction === "7" ||
+                  reportAction.memberAction === "영구정지") && (
+                  <textarea
+                    placeholder="회원에게 보여줄 메세지"
+                    name="lockReason"
+                    value={reportAction.lockReason}
+                    onChange={changeReportAction}
+                  />
+                )}
+
                 <textarea
                   placeholder="처리 사유를 입력하세요"
                   name="reason"
