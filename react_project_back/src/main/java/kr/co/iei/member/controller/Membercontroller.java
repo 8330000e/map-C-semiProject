@@ -1,6 +1,7 @@
 package kr.co.iei.member.controller;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -108,10 +109,28 @@ public class Membercontroller {
 	@PostMapping(value = "/login")
 	public ResponseEntity<?> loginMember(@RequestBody Member member, HttpServletRequest request) {
 		
-		Date lockUntil = memberService.getLockUntil(member.getMemberId());
-		if (lockUntil != null && lockUntil.after(new Date())) { // null 아니고 lockUntil이 지금 시간보다 미래면 
-			return ResponseEntity.status(403).body("로그인이 일시적으로 차단되었습니다. 잠시 후 다시 시도해주세요."); // 403 + 메시지 반환 
+		// 로그인 시 정지 여부 체크를 하기위한 로직 status는 영구정지 여부만 판단하고 기간 정지는 lock_until로 판단함
+		Map<String, Object> map = memberService.getLockInfo(member.getMemberId());
+		if (map != null) {
+		    Integer memberStatus = ((Number) map.get("memberStatus")).intValue();
+		    String lockReason = (String) map.get("lockReason");
+			// 1. 영구정지 체크
+		    if (memberStatus == 1) {
+		    	// react에서 Swal text가 아닌 html로 받게함 <br>로 줄바꿈 처리 
+		        return ResponseEntity.status(403).body(lockReason +  "<br>" + "자세한 내용은 이메일을 확인해주세요.");
+		    }
+		    
+
+		    Date lockUntil = (Date) map.get("lockUntil");
+		    // 2. 일시정지 체크 (lock_until)
+		    if (lockUntil != null && lockUntil.after(new Date())) {
+		        SimpleDateFormat sdf = new SimpleDateFormat("MM월 dd일 HH시 mm분");
+		        String lockTime = sdf.format(lockUntil);
+		        return ResponseEntity.status(403).body(lockReason + "<br>" + lockTime + " 이후 정지가 해제됩니다.");
+		    }
 		}
+		    
+		
 		
 	    LoginMember loginUser = memberService.login(member);
 	    

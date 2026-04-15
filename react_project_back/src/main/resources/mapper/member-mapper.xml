@@ -166,8 +166,10 @@ fetch first 1 row only
 ]]>
 </select>
 
-<select id="getLockUntil" resultType="java.util.Date">
-	select lock_until from member_tbl1 where member_id = #{memberId}
+<select id="getLockInfo" resultType="map">
+	select lock_until as "lockUntil", lock_reason as "lockReason", member_status as "memberStatus"
+	from member_tbl1 
+	where member_id = #{memberId}
 </select>
 
 <select id="getFailCount">
@@ -178,8 +180,9 @@ fetch first 1 row only
 </select>
 
 <update id="updateLockUntil">
-	update member_tbl1 
-	set lock_until = sysdate + (5/1440) <!-- 현재시간 5분후 -->
+	update member_tbl1 set 
+	lock_until = sysdate + (5/1440), <!-- 현재시간 5분후 -->
+	lock_reason = '로그인 3회 실패로 일시정지 되었습니다. 잠시 후 다시 시도해주세요'
 	where member_id = #{memberId}	
 </update>
 
@@ -220,4 +223,13 @@ fetch first 1 row only
 		    )
 		</insert>
 
+	<update id="unlockExpiredMembers">
+	<![CDATA[
+		update member_tbl1 set
+			member_status = 0
+		where member_status = 3
+		and lock_until <= sysdate
+		]]>
+	</update>
+	
 </mapper>

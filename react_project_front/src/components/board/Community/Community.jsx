@@ -31,6 +31,12 @@ const Community = ({
   setAddr,
   setLnglat,
   setCtpvsgg,
+  sido,
+  setSido,
+  sigungu,
+  setSigungu,
+  boxaddr,
+  setBoxaddr,
 }) => {
   const { memberId, memberNickname } = useAuthStore();
   const isLogin = !!memberId;
@@ -448,6 +454,7 @@ const Community = ({
         boardTitle: title,
         boardContent: content,
         boardThumb: thumbnailUrl,
+        addr: selectAddr,
       };
 
       const res = await axios.patch(
@@ -650,7 +657,11 @@ const Community = ({
                       className={`${styles.mapCommunityBtn} ${styles.writeBtn}`}
                       onClick={() => {
                         setMode("write");
-                        setAddr("선택된 위치 없음");
+                        {
+                          addr == "" || addr == "선택된 위치 없음"
+                            ? setAddr("선택된 위치 없음")
+                            : setAddr(addr);
+                        }
                         setSelectLnglat({
                           lat: 0,
                           lng: 0,
