@@ -253,7 +253,7 @@ header {
   white-space: nowrap;
   will-change: transform;
   color: #464d3e;
-  font-weight: 600;
+  font-weight: 500;
 }
 .rank_list {
   width: 320px;
@@ -496,9 +496,9 @@ header {
 }
 .tip_title {
   font-size: 13px;
-  line-height: 1.2;
-  font-weight: 700;
-  color: #2f3a2b;
+  line-height: 1.4;
+  font-weight: 600;
+  color: #464d3e;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -511,17 +511,17 @@ header {
   display: block;
   width: 100%;
   color: #6b7280;
-  font-size: 11px;
-  line-height: 1.2;
-  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 500;
 }
 .tip_date {
   display: block;
   width: 100%;
-  color: #464d3e;
-  font-size: 10px;
-  line-height: 1.2;
-  font-weight: 600;
+  color: #6b7280;
+  font-size: 11px;
+  line-height: 1.4;
+  font-weight: 500;
 }
 .tip_empty {
   font-size: 12px;

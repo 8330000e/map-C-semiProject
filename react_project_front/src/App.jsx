@@ -88,6 +88,9 @@ function App() {
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       console.log("새로고침 후 Axios 헤더 세팅 완료", token);
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
+      console.log("Axios Authorization 헤더 제거 완료");
     }
   }, [token]);
 
