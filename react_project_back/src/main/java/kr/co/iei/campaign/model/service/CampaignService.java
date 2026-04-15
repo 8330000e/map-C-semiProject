@@ -194,10 +194,16 @@ public class CampaignService {
 	public int updateCamp(Campaign camp) {
 		int result=0;
 		result = campaignDao.insertIntoUpdateTbl(camp);
+		
 		if(result==1) {
-			int campaignStatus=1;
-			camp.setCampaignStatus(campaignStatus);
-			result=campaignDao.changeStatus(camp);
+			int campaignStatus = campaignDao.getOnlyCampaignStatus(camp);
+			if(campaignStatus == 1) {
+				return 1;
+			}else {
+				camp.setCampaignStatus(campaignStatus);
+				result=campaignDao.changeStatus(camp);
+				System.out.println(result);
+			}
 		}
 		return result;
 	}

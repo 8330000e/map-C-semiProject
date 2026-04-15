@@ -66,6 +66,8 @@ public interface CampaignDao {
 
 	List<CampaignNotice> getNoticeList();
 
+	int getOnlyCampaignStatus(Campaign camp);
+
 	
 
 }
