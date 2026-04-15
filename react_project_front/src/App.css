@@ -72,11 +72,10 @@ header {
 }
 .main_nav > ul {
   list-style-type: none;
-  margin-top: 20px;
+  margin-top: 8px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
 }
 .main_nav > ul > li > a {
   font-weight: 600;
@@ -88,13 +87,15 @@ header {
   align-items: center;
   padding: 4px 10px;
   border-radius: 10px;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 .main_nav > ul > li > a:hover {
   background-color: rgba(70, 77, 62, 0.12);
   color: #464d3e;
 }
-.main_nav > ul > li:nth-child(6) {
+.main_nav > ul > li:nth-child(7) {
   width: 120px;
   margin: 8px 0;
 }
@@ -236,7 +237,9 @@ header {
   border-radius: 18px;
   border: 1px solid rgba(70, 77, 62, 0.12);
   box-shadow: 0 12px 24px rgba(70, 77, 62, 0.06);
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 .realtime_comment:hover {
   background-color: #edf2e7;
@@ -383,7 +386,10 @@ header {
   border-radius: 16px;
   border: 1.5px solid #c8d0bf;
   box-shadow: 0 1px 3px rgba(70, 77, 62, 0.12);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 .used_list_scroll > ul > li:hover {
   transform: translateY(-2px);
@@ -487,7 +493,10 @@ header {
   border-radius: 14px;
   border: 1px solid rgba(70, 77, 62, 0.08);
   background: #ffffff;
-  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 .tip_item:hover {
   background-color: #f7f9f0;
