@@ -142,11 +142,20 @@ header > .profile_bar_wrap {
     color 0.2s ease;
 }
 
-.drawer_link:hover,
+.drawer_link:hover {
+  background-color: #f1f4ed;
+  color: #2f3529;
+}
+
 .drawer_link_active {
   background-color: #f1f4ed;
   color: #2f3529;
-  font-weight: 600;
+  font-weight: 700;
+}
+
+.drawer_link_active:hover {
+  background-color: #f1f4ed;
+  color: #2f3529;
 }
 
 .footer {

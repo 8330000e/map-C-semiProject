@@ -50,7 +50,8 @@ header {
   border-radius: 10px;
 }
 .campaign_zone.roundBorder,
-.rank_list.roundBorder {
+.rank_list.roundBorder,
+.used_list.roundBorder {
   border: 1px solid rgba(70, 77, 62, 0.12);
   border-radius: 10px;
   overflow: hidden;
@@ -230,11 +231,16 @@ header {
   display: flex;
   align-items: center;
   background-color: #eef3e8;
-  color: #333;
+  color: #464d3e;
   padding: 0 14px;
   border-radius: 18px;
   border: 1px solid rgba(70, 77, 62, 0.12);
   box-shadow: 0 12px 24px rgba(70, 77, 62, 0.06);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.realtime_comment:hover {
+  background-color: #edf2e7;
+  border-color: rgba(70, 77, 62, 0.18);
 }
 .realtime_comment_viewport {
   width: 100%;
@@ -242,11 +248,12 @@ header {
 }
 .realtime_comment_line {
   font-size: 13px;
-  line-height: 1.6;
+  line-height: 1.4;
   display: inline-block;
   white-space: nowrap;
   will-change: transform;
-  color: inherit;
+  color: #464d3e;
+  font-weight: 600;
 }
 .rank_list {
   width: 320px;
@@ -265,6 +272,7 @@ header {
   padding: 6px 10px 4px;
   gap: 4px;
   position: relative;
+  background-color: #eef3e8;
 }
 .used_scroll_btn {
   position: absolute;
@@ -339,7 +347,7 @@ header {
   overflow-x: scroll;
   overflow-y: hidden;
   scrollbar-width: thin;
-  scrollbar-color: rgba(70, 77, 62, 0.8) rgba(255, 255, 255, 0.2);
+  scrollbar-color: rgba(70, 77, 62, 0.28) transparent;
   scroll-behavior: smooth;
   padding-bottom: 4px;
   -webkit-overflow-scrolling: touch;
@@ -349,18 +357,15 @@ header {
 .used_list_scroll::-webkit-scrollbar {
   height: 12px;
 }
-/* 스크롤바 트랙을 투명하게 처리함. */
 .used_list_scroll::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.2);
+  background: transparent;
 }
-/* 스크롤바 썸 색상과 모서리 둥글게 처리함. */
 .used_list_scroll::-webkit-scrollbar-thumb {
-  background: rgba(70, 77, 62, 0.8);
+  background: rgba(70, 77, 62, 0.28);
   border-radius: 10px;
 }
-/* hover 시 스크롤바를 더 짙게 보여줌. */
 .used_list_scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(70, 77, 62, 0.95);
+  background: rgba(70, 77, 62, 0.4);
 }
 .used_list_scroll > ul {
   display: flex;
