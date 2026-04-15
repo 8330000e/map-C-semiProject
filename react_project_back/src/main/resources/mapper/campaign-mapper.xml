@@ -127,4 +127,25 @@
 	<insert id="alarmTerminateCamp">
 		insert into alarm_tbl values (alarm_seq.nextval,#{memberId},5,#{alarmContent},#{alarmData},0,sysdate,1,null)
 	</insert>
+	<select id="selectFrontCamp" resultType="camp">
+		select 
+				campaign_no,
+				campaign_title,
+				campaign_explanation,
+				campaign_expire_date,
+				campaign_start_date,
+				member_id,
+				(select count(*) from campaign_member_tbl cmt where cmt.campaign_no = cct.campaign_no) as member_count
+		from create_campaign_tbl cct
+		where campaign_status in(1,2)
+		order by member_count desc
+		offset 0 rows fetch next 10 rows only
+	</select>
+	<select id="selectOnlyFiveNotice" resultType="campNo">
+		select campaign_notice_title,campaign_notice_writer
+		from campaign_notice_tbl
+		where campaign_notice_date > sysdate - interval '2' day
+		offset 0 rows fetch next 5 rows only
+			   
+	</select>
 </mapper>

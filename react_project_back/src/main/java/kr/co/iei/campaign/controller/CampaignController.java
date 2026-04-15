@@ -238,6 +238,16 @@ public class CampaignController {
 		int result  = campaignService.leaveMember(camp);
 		return ResponseEntity.ok(result);
 	}
+	@GetMapping(value="/selectFrontCamp")
+	public ResponseEntity<?> selectFrontCamp(){
+		List<Campaign> campList = campaignService.selectFrontCamp();
+		return ResponseEntity.ok(campList);
+	}
+	@GetMapping(value="/onlyFiveNotice")
+	public ResponseEntity<?> selectOnlyFiveNotice(){
+		List<CampaignNotice> campNo = campaignService.selectOnlyFiveNotice();
+		return ResponseEntity.ok(campNo);
+	}
 	
 }
 

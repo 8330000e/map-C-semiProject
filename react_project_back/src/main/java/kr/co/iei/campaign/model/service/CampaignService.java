@@ -247,6 +247,25 @@ public class CampaignService {
 		int result = campaignDao.deletePartMember(camp);
 		return result;
 	}
+
+	public List<Campaign> selectFrontCamp() {
+		List<Campaign> campList = campaignDao.selectFrontCamp();
+		//자바에서 직접 짜르는 로직(비효율)
+//		if(campList.size()>10) {
+//			List<Campaign> list=campList.stream()
+//					.skip(0)//생략가능!?(건너뛸지)
+//					.limit(10)
+//					.toList();
+//			return list;
+//		}
+		return campList;
+	}
+
+	public List<CampaignNotice> selectOnlyFiveNotice() {
+		List<CampaignNotice> campNo = campaignDao.selectOnlyFiveNotice();
+		
+		return campNo;
+	}
 	
 
 }

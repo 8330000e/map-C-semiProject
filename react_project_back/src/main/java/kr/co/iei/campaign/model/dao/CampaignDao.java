@@ -76,6 +76,10 @@ public interface CampaignDao {
 
 	int alarmTerminateCamp(Map<String, String> map);
 
+	List<Campaign> selectFrontCamp();
+
+	List<CampaignNotice> selectOnlyFiveNotice();
+
 	
 
 }
