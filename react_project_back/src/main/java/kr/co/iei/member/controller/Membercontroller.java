@@ -131,10 +131,10 @@ public class Membercontroller {
 	    if (loginUser != null) {
 	        if (loginUser.getMemberStatus() != null && loginUser.getMemberStatus() == 1) {
 	            return ResponseEntity.status(403).body("정지된 계정입니다. 고객센터로 문의해주세요.");
-	        }   
-	        
-	        
-	        params.put("logResult", 0);
+	        }
+	        if (loginUser.getMemberStatus() != null && loginUser.getMemberStatus() == 2) {
+	            return ResponseEntity.status(403).body("탈퇴된 계정입니다. 다시 로그인할 수 없습니다.");
+	        }
 	        memberService.insertLog(params);
 	        return ResponseEntity.ok(loginUser);
 	    } else {
