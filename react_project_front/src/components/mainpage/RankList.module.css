@@ -1,9 +1,9 @@
 .ranklist_wrap {
-  padding: 15px 24px;
+  padding: 16px 20px;
   height: 280px;
-  overflow: scroll;
+  overflow: auto;
   background-color: #eef3e8;
-  border-radius: 18px;
+  border-radius: 10px;
   scrollbar-width: thin;
   scrollbar-color: rgba(70, 77, 62, 0.28) transparent;
 }
