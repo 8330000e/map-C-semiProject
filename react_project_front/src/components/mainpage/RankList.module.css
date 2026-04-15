@@ -80,8 +80,15 @@
   object-fit: contain;
 }
 .ranklist_wrap > p {
-  font-size: 14px;
-  font-weight: 300;
-  color: var(--gray1);
+  font-size: 13px;
+  font-weight: 600;
+  color: #2f3529;
   text-align: center;
+  margin: 14px auto 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  display: block;
+  width: max-content;
+  white-space: nowrap;
 }
