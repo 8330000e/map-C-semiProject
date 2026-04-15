@@ -50,9 +50,20 @@
 	margin: 8px 0;
 }
 
-.menu_list li:nth-child(6) hr {
+.menu_list li:nth-child(7) {
+	width: 100%;
+}
+
+.menu_list li span {
+	display: block;
+	width: 100%;
+}
+
+.menu_list li span hr {
+	margin: 0;
 	border: 0;
 	border-top: 1px solid #9ea39a;
+	width: 100%;
 }
 
 .menu_list a {

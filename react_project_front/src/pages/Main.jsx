@@ -328,7 +328,7 @@ const Main = () => {
               <Link to="map-community">맵 커뮤니티</Link>
             </li>
             <li>
-              <a href="#">회원끼리 캠페인</a>
+              <Link to="/campaign/main">회원끼리 캠페인</Link>
             </li>
             <li>
               <Link to="/store">중고거래</Link>
