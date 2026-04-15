@@ -168,6 +168,28 @@ header {
   background-color: #eef3e8;
   overflow-y: overlay;
 }
+.best_list,
+.rank_list {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(70, 77, 62, 0.28) transparent;
+}
+.best_list::-webkit-scrollbar,
+.rank_list::-webkit-scrollbar {
+  width: 8px;
+}
+.best_list::-webkit-scrollbar-track,
+.rank_list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.best_list::-webkit-scrollbar-thumb,
+.rank_list::-webkit-scrollbar-thumb {
+  background-color: rgba(70, 77, 62, 0.28);
+  border-radius: 10px;
+}
+.best_list::-webkit-scrollbar-thumb:hover,
+.rank_list::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(70, 77, 62, 0.4);
+}
 .tip_list {
   width: 320px;
   min-height: 84px;

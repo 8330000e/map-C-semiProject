@@ -4,16 +4,33 @@
   overflow: scroll;
   background-color: #eef3e8;
   border-radius: 18px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(70, 77, 62, 0.28) transparent;
+}
+.ranklist_wrap::-webkit-scrollbar {
+  width: 8px;
+}
+.ranklist_wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+.ranklist_wrap::-webkit-scrollbar-thumb {
+  background-color: rgba(70, 77, 62, 0.28);
+  border-radius: 10px;
+}
+.ranklist_wrap::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(70, 77, 62, 0.4);
 }
 .ranklist_wrap > div:first-child {
   font-weight: 600;
   margin-bottom: 18px;
 }
 .list_wrap {
-  padding: 4px 0;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  overflow: scroll;
+  gap: 6px;
+  overflow: auto;
 }
 .list_item {
   display: flex;
@@ -21,13 +38,14 @@
   padding: 8px 14px;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   border-radius: 10px;
   background-color: var(--gray8);
   color: var(--color1);
   font-size: 13px;
   font-weight: 600;
   cursor: default;
+  list-style: none;
 }
 .list_item > div {
   display: flex;
