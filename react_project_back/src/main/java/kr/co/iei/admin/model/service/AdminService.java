@@ -1,10 +1,8 @@
 package kr.co.iei.admin.model.service;
 
-import java.lang.reflect.Member;
+import kr.co.iei.member.model.vo.Member;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,7 +18,6 @@ import kr.co.iei.admin.model.vo.Notice;
 import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.board.model.vo.Board;
-import kr.co.iei.board.model.vo.Keyword;
 import kr.co.iei.utils.FileUtils;
 
 @Service
@@ -147,7 +144,7 @@ public class AdminService {
 			}
 		}
 		
-		if (!pr.getBoardAction().equals("미처리")) {
+		if (!pr.getMemberAction().equals("미처리") && !pr.getMemberAction().equals("경고 처리")) {
 			int memberResult = adminDao.updateMemberStatus(pr);
 				if (memberResult == 0) {
 					throw new RuntimeException("회원 조치 실패");
@@ -165,7 +162,7 @@ public class AdminService {
 			}
 		
 
-		return 0;
+		return 1;
 	}
 
 }

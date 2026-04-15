@@ -477,7 +477,7 @@
 		from report_tbl r
 		left join board_tbl b on r.target_no = b.board_no and r.target_type = 'board'
 		left join board_comment_tbl c on r.target_no = c.board_comment_no and r.target_type = 'comment'
-		order by r.report_date desc
+		order by r.report_status asc, r.report_date desc
 	</select>
 	
 	

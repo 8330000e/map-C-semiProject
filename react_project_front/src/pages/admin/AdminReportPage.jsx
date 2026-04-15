@@ -3,13 +3,16 @@
 // AdminReport 컴포넌트에 props로 내려줌
 
 import axios from "axios";
+import Swal from "sweetalert2";
 import AdminReport from "../../components/admin/AdminReport";
-import { useEffect, useState } from "react";
-import { useRef } from "react"; // DOM 요소를 직접 참조할 때 쓰는 훅
+import { useEffect, useRef, useState } from "react";
+import useAuthStore from "../../store/useAuthStore";
 
 const AdminReportPage = () => {
   // 신고 목록 전체 (게시글/댓글 신고 모두 포함)
   const [reportList, setReportList] = useState([]);
+
+  const { memberId } = useAuthStore();
 
   // 상세보기 모달에서 CommunityDetail 컴포넌트에 넘길 게시글/댓글 데이터
   const [boardDetail, setBoardDetail] = useState({});
@@ -38,6 +41,12 @@ const AdminReportPage = () => {
     setReportAction((prev) => ({ ...prev, [name]: value }));
   };
 
+  const resetModal = () => {
+    setIsModalOpen(false);
+    setShowDetail(false);
+    setReportAction({ boardAction: "미처리", memberAction: "미처리", reason: "" });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
@@ -46,12 +55,15 @@ const AdminReportPage = () => {
         reportNo: selectedReport.reportNo,
         targetNo: selectedReport.targetNo,
         targetId: selectedReport.targetId,
+        memberId: memberId,
       })
-      .then((res) => {
-        console.log(res);
+      .then(() => {
+        Swal.fire({ icon: "success", title: "처리 완료", timer: 1500, showConfirmButton: false });
+        resetModal();
+        selectReportList();
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        Swal.fire({ icon: "error", title: "처리 실패" });
       });
   };
 
@@ -111,13 +123,13 @@ const AdminReportPage = () => {
         reportList={reportList}
         selectDetail={selectDetail}
         boardDetail={boardDetail}
-        setIsModalOpen={setIsModalOpen}
+        resetModal={resetModal}
         isModalOpen={isModalOpen}
         selectedReport={selectedReport}
         setSelectedReport={setSelectedReport}
         showDetail={showDetail}
         setShowDetail={setShowDetail}
-        detailRef={detailRef} // ref도 props로 내려줌 (컴포넌트에서 직접 DOM에 붙일 수 있게)
+        detailRef={detailRef}
         reportAction={reportAction}
         changeReportAction={changeReportAction}
         handleSubmit={handleSubmit}

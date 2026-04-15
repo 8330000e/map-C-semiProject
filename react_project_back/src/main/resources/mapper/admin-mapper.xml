@@ -239,7 +239,7 @@
 			from keyword_tbl k
 			where b.board_title like '%' || k.keyword || '%'
 			or b.board_content like '%' || k.keyword || '%') as detectedKeyword,
-			(select count(*) from report_tbl r where r.report_no = b.board_no) as reportCount
+			(select count(*) from report_tbl r where r.target_no = b.board_no and r.target_type = 'board') as reportCount
 		from board_tbl b) v
 		<where>
 			<if test="keyword == 'Y'.toString()">
@@ -280,28 +280,26 @@
 	</select>
 	
 	<update id="updateBoardStatus">
-		<if test="boardAction != '미처리'">
-			update board_tbl set board_status = 
-				<choose>
-					<when test="boardAction == '비공개 처리'">1</when>
-					<when test="boardAction == '삭제 처리'">2</when>
-				</choose>
-			where board_no = #{targetNo}
-		</if>
+		update board_tbl set board_status =
+			<choose>
+				<when test="boardAction == '비공개 처리'">1</when>
+				<when test="boardAction == '삭제 처리'">2</when>
+			</choose>
+		where board_no = #{targetNo}
 	</update>
 	
+	                                                                                                                        
 	<update id="updateMemberStatus">
-		<if test="memberAction != '미처리'">
-			update member_tbl1 set 
-				<choose>
-					<when test="memberAction == '1일 정지'">lock_until = sysdate + 1</when>
-					<when test="memberAction == '3일 정지'">lock_until = sysdate + 3</when>
-					<when test="memberAction == '7일 정지'">lock_until = sysdate + 7</when>
-					<when test="memberAction == '영구정지'">member_status = 1</when>
-				</choose>
-			where member_id = #{targetId}
-		</if>
+		update member_tbl1 set
+			<choose>
+				<when test="memberAction == '1'.toString()">lock_until = sysdate + 1</when>
+				<when test="memberAction == '3'.toString()">lock_until = sysdate + 3</when>
+				<when test="memberAction == '7'.toString()">lock_until = sysdate + 7</when>
+				<when test="memberAction == '영구정지'">member_status = 1</when>
+			</choose>
+		where member_id = #{targetId}
 	</update>
+
 	
 	<update id="updateReportStatus">
 		update report_tbl set
@@ -311,8 +309,19 @@
 	
 	<insert id="insertAdminLog">
 		insert into admin_log_tbl values(
-			admin_log_seq.nextval,
-			
+	    admin_log_seq.nextval,
+	    #{memberId},
+	    #{targetId},
+	    '게시글: ' || #{boardAction} || ' / 회원: ' || #{memberAction},
+	    sysdate,
+	    <choose>
+	        <when test="memberAction == '1'.toString()">1</when>
+	        <when test="memberAction == '3'.toString()">3</when>
+	        <when test="memberAction == '7'.toString()">7</when>
+	        <otherwise>0</otherwise>
+	    </choose>,
+	    #{reason},
+	    #{reportNo}
 		)
 	</insert>
 	
