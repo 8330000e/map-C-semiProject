@@ -146,8 +146,7 @@ header > .profile_bar_wrap {
 .drawer_link_active {
   background-color: #f1f4ed;
   color: #2f3529;
-  font-weight: 500;
-  margin-bottom: 8px;
+  font-weight: 600;
 }
 
 .footer {

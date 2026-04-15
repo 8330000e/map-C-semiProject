@@ -9,7 +9,7 @@
 			   to_char(campaign_start_date,'yyyy-mm-dd') as campaign_start_date,
 			   to_char(campaign_expire_date,'yyyy-mm-dd') as campaign_expire_date
 			   from create_campaign_tbl
-			   where campaign_status in (2,3,4)
+			   where campaign_status in (1,2,3,4)
 			   <if test="campaignTitle != null and campaignTitle != ''">
 			   		and campaign_title like '%' || #{campaignTitle} || '%'
 			   </if>
@@ -107,4 +107,12 @@
 	<insert id="insertIntoUpdateTbl">
 		insert into campaign_update_tbl values(campaign_update_seq.nextval,#{campaignTitle},#{campaignExplanation},#{campaignGoalMember},#{campaignNo})
 	</insert>
+	<select id="getNoticeList" resultType="campNo">
+		select 
+		campaign_notice_no,campaign_notice_title,campaign_notice_writer,campaign_notice_date,campaign_no
+		 from campaign_notice_tbl 
+	</select>
+	<select id="getOnlyCampaignStatus" resultType="String">
+		select campaign_status from create_campaign_tbl where campaign_no = #{campaignNo}
+	</select>
 </mapper>

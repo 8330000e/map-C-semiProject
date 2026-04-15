@@ -56,6 +56,18 @@ const getCourierLabel = (code) => {
   return "미지정";
 };
 
+const getDisplayName = (item) => {
+  const name =
+    item?.buyerNickname?.trim() ||
+    item?.sellerNickname?.trim() ||
+    item?.buyerName?.trim() ||
+    item?.sellerName?.trim();
+  if (!name || ["null", "undefined"].includes(name.toLowerCase())) {
+    return item?.buyerId || item?.sellerId || "";
+  }
+  return name;
+};
+
 const resolveTradeType = (type, typeText, deliveryMethod, address) => {
   const normalized = String(type ?? typeText ?? deliveryMethod ?? "").trim();
   const addressExists = Boolean((address ?? "").toString().trim());
@@ -373,6 +385,7 @@ const SaleHistory = () => {
     const saleStatus = getSaleStatusLabel(item.status ?? item.productStatus ?? item.tradeStatus);
     const imageUrl = getImageUrl(item.productThumb || item.boardThumb || item.thumb || item.marketThumb || item.thumbnail);
 
+    const displayTraderName = getDisplayName(item) || getDisplayName(tradeInfo);
     return (
       <Link key={`${marketNo}-${displayTitle}`} to={`/mypage/history/sale/${linkMarketNo}`} className={styles.sale_card}>
         <div className={styles.sale_card_inner}>
@@ -395,8 +408,8 @@ const SaleHistory = () => {
             <div className={styles.sale_card_meta}>{displayDate} · {saleStatus}</div>
             <div className={styles.sale_card_detail}>{displayAmount}원</div>
             <div className={styles.sale_card_detail}>거래방법: {displayTradeType}</div>
-            {item.buyerId || item.buyerNickname ? (
-              <div className={styles.sale_card_buyer}>구매자: {item.buyerNickname || item.buyerId}</div>
+            {item.buyerId || item.buyerNickname || tradeInfo?.buyerId || tradeInfo?.buyerNickname ? (
+              <div className={styles.sale_card_buyer}>구매자: {displayTraderName}</div>
             ) : null}
             {hasShippingInfo && (
               <div className={styles.sale_card_shipping_info}>

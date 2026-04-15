@@ -70,10 +70,11 @@ const MemberTip = () => {
         {tipBoardList && (
           <div className={styles.board_list_wrap}>
             {tipBoardList.map((tip, index) => {
+              const authorName = tip.writerNickname || tip.memberNickname || tip.writerId || "알 수 없음";
               return (
                 <ul key={tip.boardTitle} className={styles.one_board}>
                   <li>{"글번호:" + tip.boardNo}</li>
-                  <li>{"게시자:" + tip.writerId}</li>
+                  <li>{"게시자:" + authorName}</li>
                   <li>{"등록일:" + tip.boardDate}</li>
                   <li>{"제목:" + tip.boardTitle}</li>
                   <li>{"조회수:" + tip.readCount}</li>

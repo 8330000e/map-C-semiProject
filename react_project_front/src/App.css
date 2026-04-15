@@ -77,10 +77,29 @@ header {
 .main_nav > ul > li > a {
   width: max-content;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 10px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.main_nav > ul > li > a:hover {
+  background-color: rgba(70, 77, 62, 0.12);
+  color: #464d3e;
 }
 .main_nav > ul > li:nth-child(6) {
   width: 120px;
   margin: 8px 0;
+}
+.main_nav > ul > li span {
+  display: block;
+  width: 100%;
+}
+.main_nav > ul > li span hr {
+  margin: 0;
+  border: 0;
+  border-top: 1px solid #9ea39a;
+  width: 100%;
 }
 .menu_bar {
   background-color: #464d3e;
@@ -149,6 +168,28 @@ header {
   background-color: #eef3e8;
   overflow-y: overlay;
 }
+.best_list,
+.rank_list {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(70, 77, 62, 0.28) transparent;
+}
+.best_list::-webkit-scrollbar,
+.rank_list::-webkit-scrollbar {
+  width: 8px;
+}
+.best_list::-webkit-scrollbar-track,
+.rank_list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.best_list::-webkit-scrollbar-thumb,
+.rank_list::-webkit-scrollbar-thumb {
+  background-color: rgba(70, 77, 62, 0.28);
+  border-radius: 10px;
+}
+.best_list::-webkit-scrollbar-thumb:hover,
+.rank_list::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(70, 77, 62, 0.4);
+}
 .tip_list {
   width: 320px;
   min-height: 84px;
@@ -175,21 +216,25 @@ header {
 .realtime_comment {
   width: 320px;
   height: 40px;
-  background-color: #464d3e;
-  color: #fff;
   display: flex;
   align-items: center;
+  background-color: #eef3e8;
+  color: #333;
   padding: 0 10px;
+  border-radius: 18px;
+  border: 1px solid #000;
 }
 .realtime_comment_viewport {
   width: 100%;
   overflow: hidden;
 }
 .realtime_comment_line {
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 1.6;
   display: inline-block;
   white-space: nowrap;
   will-change: transform;
+  color: inherit;
 }
 .rank_list {
   width: 320px;

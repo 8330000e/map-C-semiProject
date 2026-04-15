@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
 import useAuthStore from "../../../store/useAuthStore";
 import { normalizeImageUrl } from "../../../utils/getImageUrl";
@@ -58,6 +58,20 @@ const getImageUrl = (thumb) => normalizeImageUrl(thumb);
 const getMemberImageUrl = (thumb) => {
   const url = normalizeImageUrl(thumb, "member/thumb");
   return url || userImg;
+};
+
+const getDisplayName = (user) => {
+  const name =
+    user?.writerNickname?.trim() ||
+    user?.memberNickname?.trim() ||
+    user?.buyerNickname?.trim() ||
+    user?.sellerNickname?.trim() ||
+    user?.memberName?.trim() ||
+    user?.writerName?.trim();
+  if (!name || ["null", "undefined"].includes(name.toLowerCase())) {
+    return user?.memberId || user?.writerId || user?.buyerId || user?.sellerId || "";
+  }
+  return name;
 };
 
 const Store = () => {
@@ -133,6 +147,8 @@ const Store = () => {
     setCurrentPage(1);
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className={`${styles.store_layout} common_wrap`}>
       {/* 레이아웃: 왼쪽 메뉴 + 오른쪽 중고장터 컨텐츠 */}
@@ -145,7 +161,7 @@ const Store = () => {
             <Link to="/map-community">맵 커뮤니티</Link>
           </li>
           <li>
-            <a href="#">회원끼리 캠페인</a>
+            <Link to="/campaign/main">회원끼리 캠페인</Link>
           </li>
           <li>
             <Link to="/store">중고거래</Link>
@@ -174,14 +190,20 @@ const Store = () => {
 
         <div className={styles.customer_box}>
           <span className={styles.customer_head}>
-            <h3>고객센터</h3>
-            <HelpIcon sx={{ fontSize: 26, color: "#fff" }} />
+            <p>고객센터</p>
+            <p>
+              <HelpIcon sx={{ fontSize: 24, color: "#fff" }} />
+            </p>
           </span>
           <p>고객센터 운영시간</p>
           <p>10:00 ~ 18:00</p>
-          <a href="#" className={styles.customer_link}>
+          <button
+            type="button"
+            className={styles.customer_link}
+            onClick={() => navigate("/support")}
+          >
             문의하기 ▶
-          </a>
+          </button>
         </div>
       </aside>
 
@@ -275,13 +297,13 @@ const Store = () => {
                               (item.memberId === memberId ? memberThumb : null),
                           ) || userImg
                         }
-                        alt={`${item.memberId} 프로필`}
+                        alt={`${getDisplayName(item)} 프로필`}
                         onError={(e) => {
                           e.currentTarget.src = userImg;
                         }}
                       />
                       <span className={styles.author}>
-                        {item.memberNickname || item.memberId}
+                        {getDisplayName(item)}
                       </span>
                     </span>
                     <span className={styles.metaDivider}>|</span>
