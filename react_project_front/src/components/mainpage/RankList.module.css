@@ -1,9 +1,9 @@
 .ranklist_wrap {
-  padding: 15px 24px;
+  padding: 16px 20px;
   height: 280px;
-  overflow: scroll;
+  overflow: auto;
   background-color: #eef3e8;
-  border-radius: 18px;
+  border-radius: 10px;
   scrollbar-width: thin;
   scrollbar-color: rgba(70, 77, 62, 0.28) transparent;
 }
@@ -80,8 +80,15 @@
   object-fit: contain;
 }
 .ranklist_wrap > p {
-  font-size: 14px;
-  font-weight: 300;
-  color: var(--gray1);
+  font-size: 13px;
+  font-weight: 600;
+  color: #2f3529;
   text-align: center;
+  margin: 14px auto 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  display: block;
+  width: max-content;
+  white-space: nowrap;
 }

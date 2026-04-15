@@ -236,6 +236,10 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
     setWaterAmount((prev) => Math.max(0, Math.min(prev + amount, MAX_WATER)));
   };
   const handleConfirmWater = async () => {
+    if (waterAmount <= 0) {
+      Swal.fire("포인트를 선택해주세요");
+      return;
+    }
     if (waterAmount > ownedPoint) {
       Swal.fire("포인트 부족");
       return;

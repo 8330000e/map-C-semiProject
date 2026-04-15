@@ -63,6 +63,19 @@ const Main = () => {
     return board?.boardNo ?? board?.boardId ?? board?.id ?? null;
   };
 
+  const getRealtimeCommentLink = (comment) => {
+    if (!comment) return null;
+    if (comment.marketNo) return `/store/${comment.marketNo}`;
+    return null;
+  };
+
+  const handleRealtimeCommentClick = () => {
+    const targetLink = getRealtimeCommentLink(visibleRealtimeComment);
+    if (targetLink) {
+      navigate(targetLink);
+    }
+  };
+
   //랜덤 미션 패널
   const [todayRandomMission, setTodayRandomMission] = useState(null);
   const [showMissionBubble, setShowMissionBubble] = useState(false);
@@ -448,7 +461,11 @@ const Main = () => {
             {/*캠페인 컴포넌트 호출 */}
           </div>
 
-          <div className="realtime_comment roundBorder">
+          <div
+            className="realtime_comment roundBorder"
+            onClick={handleRealtimeCommentClick}
+            style={{ cursor: visibleRealtimeComment && visibleRealtimeComment.marketNo ? "pointer" : "default" }}
+          >
             <div
               className="realtime_comment_viewport"
               ref={realtimeViewportRef}

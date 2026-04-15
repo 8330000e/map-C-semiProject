@@ -1,28 +1,30 @@
 .mypage_wrap {
-  width: 1200px;
-  margin: 30px auto;
+  width: min(1200px, calc(100% - 40px));
+  margin: 30px auto 50px;
 }
 .mypage_wrap > h1 {
   text-align: center;
   padding: 20px 0;
   margin: 20px 0;
+  color: #2c3a24;
 }
 .mypage_content_wrap {
-  display: flex;
-  min-height: 550px;
-  gap: 150px;
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 32px;
   align-items: flex-start;
 }
 .history_pane {
-  flex: 1;
-  background: #f8faf2;
-  border: 1px solid #c8d0bf;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 1px 8px rgba(70, 77, 62, 0.16);
+  background: linear-gradient(180deg, #f7faf3 0%, #eef3e9 100%);
+  border: 1px solid #d9e2cf;
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 16px 36px rgba(69, 86, 55, 0.12);
+  min-height: 620px;
 }
 .emptyText {
-  padding: 40px;
+  padding: 60px 26px;
   text-align: center;
   color: #6f7965;
+  font-size: 1rem;
 }
