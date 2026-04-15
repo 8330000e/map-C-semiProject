@@ -19,6 +19,7 @@ import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
+import kr.co.iei.board.model.vo.Marker;
 import kr.co.iei.board.model.vo.Report;
 import kr.co.iei.member.model.service.MemberService;
 import kr.co.iei.member.model.vo.Member;
@@ -289,8 +290,8 @@ public class BoardService {
 		return boardDao.selectTipBoardList();
 	}
 
-	public List<Board> selectMarkers() {
-		List<Board> list = boardDao.selectMarkers();
+	public List<Marker> selectMarkers() {
+		List<Marker> list = boardDao.selectMarkers();		
 		return list;
 	}
 	
@@ -311,6 +312,10 @@ public class BoardService {
 	public List<Report> getReportList() {
 		List<Report> reportList = boardDao.getReportList();
 		return reportList;
+	}
+	public List<Board> selectBoardCount() {
+		List<Board> list = boardDao.selectBoardCount();
+		return list;
 	}
 
 }

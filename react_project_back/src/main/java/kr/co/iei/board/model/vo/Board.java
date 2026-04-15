@@ -42,6 +42,7 @@ public class Board {
 	    private Integer sggCd;
 	    private String ctpvNm;
 	    private String sggNm;
+	    private String boardCount;
 	 
 	    
 	    
