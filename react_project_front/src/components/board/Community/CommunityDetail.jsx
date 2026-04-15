@@ -74,6 +74,13 @@ const CommunityDetail = ({
   const [editTarget, setEditTarget] = useState(null);
   const [editText, setEditText] = useState("");
   const [editPrivate, setEditPrivate] = useState(false);
+
+  const getDisplayName = (user) => {
+    const name = user?.memberNickname?.trim();
+    return name && name.toLowerCase() !== "null" && name.toLowerCase() !== "undefined"
+      ? name
+      : user?.memberId;
+  };
   const [reportedCommentIds, setReportedCommentIds] = useState([]);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(safeBoard.likeCount ?? 0);
@@ -433,7 +440,7 @@ const CommunityDetail = ({
 
   const handleStartReply = (comment) => {
     setReplyTarget(comment);
-    setNewComment(`@${comment.memberNickname || comment.memberId} `);
+    setNewComment(`@${getDisplayName(comment)} `);
     setNewPrivate(false);
   };
 
@@ -622,7 +629,7 @@ const CommunityDetail = ({
                 alt="댓글 작성자"
                 className={styles.commentAvatar}
               />
-              <span>{comment.memberNickname || comment.memberId}</span>
+              <span>{getDisplayName(comment)}</span>
               <span>{formatTime(comment.createdAt)}</span>
               {(comment.updatedAt || comment.updateAt) &&
                 (comment.updatedAt || comment.updateAt) !==
@@ -855,7 +862,7 @@ const CommunityDetail = ({
         <div className={styles.commentForm}>
           {replyTarget && (
             <div className={styles.replyNote}>
-              답글 대상: {replyTarget.memberNickname || replyTarget.memberId}
+              답글 대상: {getDisplayName(replyTarget)}
               <button type="button" onClick={handleCancelReply}>
                 취소
               </button>

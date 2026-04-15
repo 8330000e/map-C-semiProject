@@ -30,6 +30,28 @@ public class StoreBoardServiceImpl implements StoreBoardService {
         return value == null || value.trim().isEmpty() || value.trim().equalsIgnoreCase("null") || value.trim().equalsIgnoreCase("undefined");
     }
 
+    private void fillMissingMemberInfo(StoreBoard storeBoard) {
+        if (storeBoard == null || isBlank(storeBoard.getMemberId())) {
+            return;
+        }
+        if (!isBlank(storeBoard.getMemberNickname()) && !isBlank(storeBoard.getWriterNickname()) && !isBlank(storeBoard.getMemberThumb())) {
+            return;
+        }
+        Member member = memberService.selectOneMember(storeBoard.getMemberId());
+        if (member == null) {
+            return;
+        }
+        if (isBlank(storeBoard.getMemberNickname()) && !isBlank(member.getMemberNickname())) {
+            storeBoard.setMemberNickname(member.getMemberNickname());
+        }
+        if (isBlank(storeBoard.getWriterNickname()) && !isBlank(member.getMemberNickname())) {
+            storeBoard.setWriterNickname(member.getMemberNickname());
+        }
+        if (isBlank(storeBoard.getMemberThumb()) && !isBlank(member.getMemberThumb())) {
+            storeBoard.setMemberThumb(member.getMemberThumb());
+        }
+    }
+
     @Override
     public Long createStoreBoard(StoreBoard storeBoard) {
         if (storeBoard == null) {
@@ -53,6 +75,7 @@ public class StoreBoardServiceImpl implements StoreBoardService {
         List<StoreBoard> list = storeBoardDAO.selectStoreBoardList();
         for (StoreBoard sb : list) {
             sb.setProductStatus(convertStatus(sb.getProductStatus()));
+            fillMissingMemberInfo(sb);
         }
         return list;
     }
@@ -62,6 +85,7 @@ public class StoreBoardServiceImpl implements StoreBoardService {
         StoreBoard sb = storeBoardDAO.selectStoreBoard(marketNo);
         if (sb != null) {
             sb.setProductStatus(convertStatus(sb.getProductStatus()));
+            fillMissingMemberInfo(sb);
             // 상세 페이지 불러오기 시 작성자 썸네일이 없으면 회원 정보에서 추가로 채워줌.
             if (isBlank(sb.getMemberThumb()) && sb.getMemberId() != null) {
                 Member member = memberService.selectOneMember(sb.getMemberId());
