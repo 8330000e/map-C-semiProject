@@ -42,19 +42,18 @@
 
 .menu_list li {
 	cursor: pointer;
-	width: fit-content;
 }
 
 .menu_list li span {
 	display: block;
-	width: fit-content;
+	width: 100%;
 }
 
 .menu_list li span hr {
 	margin: 8px 0;
 	border: 0;
 	border-top: 1px solid #9ea39a;
-	width: 100%;
+	width: 120px;
 }
 
 .menu_list a {
