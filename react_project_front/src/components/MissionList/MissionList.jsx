@@ -31,6 +31,25 @@ const MissionList = () => {
   const [randomMissionCertImage, setRandomMissionCertImage] = useState("");
 
   useEffect(() => {
+    if (!memberId) {
+      Swal.fire({
+        icon: "warning",
+        title: "로그인이 필요합니다",
+        text: "미션 페이지는 로그인 후 이용할 수 있습니다.",
+        showCancelButton: true,
+        confirmButtonText: "로그인",
+        cancelButtonText: "취소",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/members/login", { state: { from: "/mission" } });
+        } else {
+          navigate("/");
+        }
+      });
+    }
+  }, [memberId, navigate]);
+
+  useEffect(() => {
     if (!memberId) return;
 
     loadMissions();

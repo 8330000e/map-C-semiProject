@@ -62,9 +62,13 @@ public class MemberService {
 		// 따라서 그냥 아이디 하나로 조회하여 해당 비밀번호를 호출
 		Member loginMember = memberDao.selectOneMember(member.getMemberId());
 		if (loginMember != null) {
-			if (bcrypt.matches(member.getMemberPw(), loginMember.getMemberPw())) {
-
-				LoginMember login = jwtUtils.createToken(loginMember.getMemberId(), loginMember.getMemberGrade(),
+            if (bcrypt.matches(member.getMemberPw(), loginMember.getMemberPw())) {
+                if (loginMember.getMemberStatus() != null && loginMember.getMemberStatus() == 2) {
+                    LoginMember login = new LoginMember();
+                    login.setMemberStatus(loginMember.getMemberStatus());
+                    return login;
+                }
+					LoginMember login = jwtUtils.createToken(loginMember.getMemberId(), loginMember.getMemberGrade(),
 						loginMember.getMemberNickname());
 
 				// 암호화된 비밀번호가 프론트로 가는 것을 방지 하기 위한 로직.
@@ -78,10 +82,8 @@ public class MemberService {
 
 				return login;
 			}
-
 		}
 		return null;
-
 	}
 	/*
 	 * //이메일 인증을 통한 아이디 찾기 if (loginUser != null &&

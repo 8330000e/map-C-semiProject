@@ -1,0 +1,62 @@
+.leaveMember_wrap {
+  width: 100%;
+  max-width: 760px;
+  background: #ffffff;
+  border: 1px solid #d7dfcd;
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 14px 30px rgba(63, 80, 48, 0.08);
+}
+.leaveMember_title_wrap {
+  margin-bottom: 22px;
+  text-align: center;
+}
+.leaveMember_title_wrap h3 {
+  margin: 0;
+  font-size: 1.65rem;
+  color: #2b3a28;
+}
+.leaveMember_content_wrap {
+  display: flex;
+  justify-content: center;
+}
+.leaveMember_input_wrap {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.leaveMember_input_wrap label {
+  font-weight: 700;
+  color: #4c634f;
+}
+.leaveMember_input_wrap input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid #d6ddcd;
+  background: #f7faf2;
+  color: #3b4d34;
+}
+.leaveMember_input_wrap button {
+  margin-top: 8px;
+  border: none;
+  border-radius: 16px;
+  color: #fff;
+  font-weight: 700;
+  padding: 14px 22px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  width: fit-content;
+  align-self: center;
+}
+.leaveMember_input_wrap button:hover {
+  transform: translateY(-1px);
+}
+.dangerButton {
+  background: #dc2626;
+}
+.dangerButton:hover {
+  background: #b91c1c;
+}
