@@ -143,22 +143,24 @@
 /* EmailAuth 특화 CSS - JoinPage 공통 스타일 기반 */
 .input_item {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 8px; /* input과 버튼 사이 간격 */
   margin-top: 4px;
 }
 
 .input_item input {
   flex: 1; /* 버튼과 함께 배치될 때 input이 넓게 차지 */
-  height: 40px;
-  padding: 10px;
-  border-radius: 6px;
+  min-height: 42px;
+  padding: 12px 14px;
+  border-radius: 16px;
   border: 1px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box;
 }
 
 .join_btn {
-  height: 40px;
-  padding: 0 12px;
+  min-height: 42px;
+  padding: 0 18px;
   font-size: 1rem;
 }
 
