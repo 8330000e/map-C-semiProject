@@ -68,6 +68,14 @@ public interface CampaignDao {
 
 	int getOnlyCampaignStatus(Campaign camp);
 
+	int selectCampaignNoSeq();
+
+	int campaignUpdateTblUpdate(Campaign camp);
+
+	int terminateCamp(Integer campaignNo);
+
+	int alarmTerminateCamp(Map<String, String> map);
+
 	
 
 }

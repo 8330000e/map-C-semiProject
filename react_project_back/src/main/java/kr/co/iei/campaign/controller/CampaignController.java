@@ -225,6 +225,11 @@ public class CampaignController {
 		List<CampaignNotice> campNo = campaignService.getNoticeList();
 		return ResponseEntity.ok(campNo);
 	}
+	@PatchMapping(value="/{campaignNo}/terminate")
+	public ResponseEntity<?> terminateCamp(@PathVariable Integer campaignNo){
+		int result = campaignService.terminateCamp(campaignNo);
+		return ResponseEntity.ok(result);
+	}
 	
 }
 
