@@ -306,6 +306,7 @@ const PostBoard = ({
                   transform: `rotate(${Math.ceil(Math.random() * 2) / 2 === 1 ? 1 * (Math.random() * 15) : -1 * (Math.random() * 15)}deg)`,
                 }}
               >
+                <p>{list.memberId}</p>
                 <div className={styles.camp_board_img}>
                   {/*
                     캠페인 리스트 이미지도 lazy loading을 적용함.
@@ -364,6 +365,8 @@ const PostBoard = ({
                                         );
                                       }
                                     });
+                                  } else {
+                                    console.log("오류발생");
                                   }
                                 })
                                 .catch((err) => {

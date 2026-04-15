@@ -31,10 +31,6 @@ const Community = ({
   setAddr,
   setLnglat,
   setCtpvsgg,
-  sido,
-  setSido,
-  sigungu,
-  setSigungu,
   boxaddr,
   setBoxaddr,
 }) => {
@@ -53,6 +49,9 @@ const Community = ({
 
   const [searchType, setSearchType] = useState(1);
   const [searchKeyword, setSearchKeyword] = useState("");
+
+  const [sido, setSido] = useState("");
+  const [sigungu, setSigungu] = useState("");
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");

@@ -77,6 +77,7 @@ const CampaignBanMember = () => {
             <label htmlFor="exileReason">추방 이유</label>
             <TextArea
               id="exileReason"
+              placeholder="예시:'캠페인이름 및 번호'에서 불건전한 행위로 인해 추방되셨습니다."
               name="campaignExileReason"
               value={banMember.campaignExileReason}
               onChange={(e) => {

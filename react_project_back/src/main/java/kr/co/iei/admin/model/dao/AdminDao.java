@@ -3,7 +3,7 @@ package kr.co.iei.admin.model.dao;
 // MyBatis Mapper 인터페이스 - 실제 SQL은 admin-mapper.xml에서 처리
 // 메서드명이 mapper의 id와 매핑됨
 
-import java.lang.reflect.Member;
+import kr.co.iei.member.model.vo.Member;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +17,6 @@ import kr.co.iei.admin.model.vo.Notice;
 import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.board.model.vo.Board;
-import kr.co.iei.board.model.vo.Keyword;
-
 @Mapper
 public interface AdminDao {
 
@@ -75,6 +73,8 @@ public interface AdminDao {
 	int updateReportStatus(ProcessReport pr);
 
 	int insertAdminLog(ProcessReport pr);
+
+	
 	
 	
 

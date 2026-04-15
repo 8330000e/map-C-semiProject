@@ -20,7 +20,8 @@
 		where group_id =
 		#{groupId}
 	</update>
-
+	
+	<!-- 기부 포인트에 대한 기록을 남기게 하는 설정 -->
 	<insert id="insertPointRecordResult">
 		insert into point_donation
 		(

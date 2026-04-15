@@ -44,21 +44,46 @@ const HomeBanner = () => {
   }, [slides.length]);
 
   return (
-    <div className={styles.banner_container}>
-      {slides.map((slide, index) => (
-        <div
-          key={index}
-          className={`${styles.banner_slide} ${
-            index === currentSlide ? styles.active : ""
-          }`}
-          style={{ backgroundImage: `url(${slide.image})` }}
-        >
-          <div className={styles.banner_text}>
-            <h3>{slide.title}</h3>
-            <p>{slide.subtitle}</p>
+    <div
+      style={{
+        width: "100%",
+        height: "450px",
+        marginTop: "60px",
+        /* position: "relative" 대신 배경 이미지 설정을 활용합니다 */
+        backgroundImage: "url('배경이미지경로')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        paddingLeft: "50px", // 텍스트 위치 조절용
+      }}
+    >
+      <div className={styles.banner_container}>
+        {slides.map((slide, index) => (
+          //기존 방식에서 내부 이미지가 position: absolute 등으로 붕 떠 있었다면, 후속 요소(게시글)들이 배너의 높이를 인식하지 못하고 위로 올라오게 된다.
+          // 배너의 위와 같이 div 자체에 배경을 넣으면 450px만큼의 물리적 공간이 확실히 확보
+          <div
+            key={index}
+            className={`${styles.banner_slide} ${index === currentSlide ? styles.active : ""}`}
+            style={{
+              backgroundImage: `url(${slide.image})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              width: "100%",
+              height: "100%",
+              position: "absolute",
+              top: 0,
+              left: 0,
+            }}
+          >
+            <div className={styles.banner_text}>
+              <h3>{slide.title}</h3>
+              <p>{slide.subtitle}</p>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };

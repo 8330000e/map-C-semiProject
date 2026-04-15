@@ -1,3 +1,4 @@
+import axios from "axios";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -34,7 +35,7 @@ const useAuthStore = create(
       },
 
       logout: () => {
-        //다시 초기값 상태로 되돌림
+        // 다시 초기값 상태로 되돌림
         set({
           memberId: null,
           memberGrade: null,
@@ -43,6 +44,10 @@ const useAuthStore = create(
           endTime: null,
           memberNickname: null,
         });
+        // axios 기본 인증 헤더도 제거함.
+        delete axios.defaults.headers.common["Authorization"];
+        // 로컬 저장소에 남아 있는 auth-key도 삭제함.
+        localStorage.removeItem("auth-key");
       },
 
       //isReady는 로그인 상태가 초기화되는 것을 방지하기 위한 설정.
@@ -57,6 +62,9 @@ const useAuthStore = create(
       },
       setThumb: (thumb) => {
         set({ memberThumb: thumb });
+      },
+      setNickname: (memberNickname) => {
+        set({ memberNickname });
       },
     }),
 

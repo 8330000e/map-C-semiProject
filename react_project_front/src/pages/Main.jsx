@@ -35,6 +35,18 @@ const getSaleStatusLabel = (productStatus) => {
 
 const getImageUrl = normalizeImageUrl;
 
+const getDisplayName = (item) => {
+  const name =
+    item?.writerNickname?.trim() ||
+    item?.memberNickname?.trim() ||
+    item?.writerName?.trim() ||
+    item?.memberName?.trim();
+  if (!name || ["null", "undefined"].includes(name.toLowerCase())) {
+    return item?.writerId || item?.memberId || item?.buyerId || item?.sellerId || "";
+  }
+  return name;
+};
+
 const Main = () => {
   // 실시간 댓글 "보여지는 영역" DOM
   const realtimeViewportRef = useRef(null);
@@ -49,6 +61,19 @@ const Main = () => {
 
   const getBoardNo = (board) => {
     return board?.boardNo ?? board?.boardId ?? board?.id ?? null;
+  };
+
+  const getRealtimeCommentLink = (comment) => {
+    if (!comment) return null;
+    if (comment.marketNo) return `/store/${comment.marketNo}`;
+    return null;
+  };
+
+  const handleRealtimeCommentClick = () => {
+    const targetLink = getRealtimeCommentLink(visibleRealtimeComment);
+    if (targetLink) {
+      navigate(targetLink);
+    }
   };
 
   //랜덤 미션 패널
@@ -316,7 +341,7 @@ const Main = () => {
               <Link to="map-community">맵 커뮤니티</Link>
             </li>
             <li>
-              <a href="#">회원끼리 캠페인</a>
+              <Link to="/campaign/main">회원끼리 캠페인</Link>
             </li>
             <li>
               <Link to="/store">중고거래</Link>
@@ -408,7 +433,7 @@ const Main = () => {
                   {tipBoards[tipIndex]?.boardTitle || "제목 정보 없음"}
                 </div>
                 <div className="tip_author">
-                  {tipBoards[tipIndex]?.writerId || "작성자 정보 없음"}
+                  {getDisplayName(tipBoards[tipIndex]) || "작성자 정보 없음"}
                 </div>
                 <div className="tip_date">
                   {tipBoards[tipIndex]?.boardDate
@@ -436,7 +461,11 @@ const Main = () => {
             {/*캠페인 컴포넌트 호출 */}
           </div>
 
-          <div className="realtime_comment roundBorder">
+          <div
+            className="realtime_comment roundBorder"
+            onClick={handleRealtimeCommentClick}
+            style={{ cursor: visibleRealtimeComment && visibleRealtimeComment.marketNo ? "pointer" : "default" }}
+          >
             <div
               className="realtime_comment_viewport"
               ref={realtimeViewportRef}
@@ -450,7 +479,7 @@ const Main = () => {
                 }}
               >
                 {visibleRealtimeComment
-                  ? `${visibleRealtimeComment.memberNickname || visibleRealtimeComment.memberId} : ${visibleRealtimeComment.reviewContent}`
+                  ? `${getDisplayName(visibleRealtimeComment)} : ${visibleRealtimeComment.reviewContent}`
                   : "실시간 댓글이 없습니다."}
               </p>
             </div>
@@ -505,7 +534,7 @@ const Main = () => {
                             : ""}
                         </p>
                         <div className="used_item_meta">
-                          <span>{item.memberNickname || item.memberId}</span>
+                          <span>{getDisplayName(item)}</span>
                           <span>|</span>
                           <span>💬 {item.commentCount ?? 0}</span>
                           <span>|</span>

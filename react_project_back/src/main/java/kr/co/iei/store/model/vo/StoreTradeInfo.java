@@ -10,7 +10,9 @@ public class StoreTradeInfo {
     private Long tradeNo;
     private Long marketNo;
     private String sellerId;
+    private String sellerNickname;
     private String buyerId;
+    private String buyerNickname;
     private String ctpvsggId;
     private Long tradePrice;
     private Integer tradeStatus;
