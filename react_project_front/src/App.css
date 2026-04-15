@@ -235,6 +235,11 @@ header {
   border-radius: 18px;
   border: 1px solid rgba(70, 77, 62, 0.12);
   box-shadow: 0 12px 24px rgba(70, 77, 62, 0.06);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.realtime_comment:hover {
+  background-color: #edf2e7;
+  border-color: rgba(70, 77, 62, 0.18);
 }
 .realtime_comment_viewport {
   width: 100%;
