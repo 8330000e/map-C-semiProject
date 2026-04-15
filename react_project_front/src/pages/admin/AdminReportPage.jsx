@@ -55,27 +55,42 @@ const AdminReportPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/admins/processReport`, {
-        ...reportAction,
-        reportNo: selectedReport.reportNo,
-        targetNo: selectedReport.targetNo,
-        targetId: selectedReport.targetId,
-        memberId: memberId,
-      })
-      .then(() => {
-        Swal.fire({
-          icon: "success",
-          title: "처리 완료",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-        resetModal();
-        selectReportList();
-      })
-      .catch(() => {
-        Swal.fire({ icon: "error", title: "처리 실패" });
-      });
+
+    Swal.fire({
+      icon: "question",
+      title: "게시글 및 회원 조치를 진행하시겠습니까?",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: "확인",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .post(`${import.meta.env.VITE_BACKSERVER}/admins/processReport`, {
+            ...reportAction,
+            reportNo: selectedReport.reportNo,
+            targetNo: selectedReport.targetNo,
+            targetId: selectedReport.targetId,
+            targetType: selectedReport.targetType,
+            memberId: memberId,
+          })
+          .then((res) => {
+            Swal.fire({
+              icon: "success",
+              title: "처리가 완료되었습니다.",
+              timer: 1500,
+            });
+            resetModal();
+            selectReportList();
+          })
+          .catch((err) => {
+            Swal.fire({
+              icon: "error",
+              title: "처리에 실패했습니다.",
+            });
+          });
+      }
+    });
   };
 
   // 상세보기 아이콘 클릭 시 호출

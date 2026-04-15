@@ -157,7 +157,7 @@ fetch first 1 row only
 </select>
 
 <select id="getLockInfo" resultType="map">
-	select lock_until as "lockUntil", lock_reason as "lockReason"
+	select lock_until as "lockUntil", lock_reason as "lockReason", member_status as "memberStatus"
 	from member_tbl1 
 	where member_id = #{memberId}
 </select>
@@ -213,4 +213,13 @@ fetch first 1 row only
 		    )
 		</insert>
 
+	<update id="unlockExpiredMembers">
+	<![CDATA[
+		update member_tbl1 set
+			member_status = 0
+		where member_status = 3
+		and lock_until <= sysdate
+		]]>
+	</update>
+	
 </mapper>

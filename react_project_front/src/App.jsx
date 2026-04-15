@@ -91,6 +91,27 @@ function App() {
     }
   }, [token]);
 
+  useEffect(() => {
+    // 모든 axios 응답이 여기 거치고 감 / 정상응답은 그냥 보내고 에러 응답이면 검증해야함
+    const interceptor = axios.interceptors.response.use(
+      // 정상 응답이면 그냥 통과
+      (response) => response,
+      // 에러 응답이면 아래로 들어감
+      (error) => {
+        // 에러 응답 코드가 403이고 응답 데이터에 locked: true가 있는 경우에만 ?.은 옵셔널 체이닝 null이여도 안터지고 undefined로 빠짐
+        // 옵셔널 체이닝 없으면 data가 null인 상태에서 .으로 추가접근 > null에 접근 터짐
+        if (error.response.status === 403 && error.response.data?.locked) {
+          useAuthStore.getState().logout();
+          window.location.href = "/login";
+        }
+        return Promise.reject(error); // locked를 제외한 다른 오류는 각자 axios catch에 돌려줌
+      },
+    );
+
+    // 컴포넌트 언마운트 시 인터셉터 제거 (중복 방지)
+    return () => axios.interceptors.response.eject(interceptor);
+  }, []);
+
   return (
     <div className="carbonconnect wrap">
       {!isAdmin && <Header />}{" "}

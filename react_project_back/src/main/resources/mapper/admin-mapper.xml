@@ -305,7 +305,7 @@
 	<update id="updateReportStatus">
 		update report_tbl set
 			report_status = 1
-		where report_no = #{reportNo}
+		where target_no = #{targetNo} and target_type = #{targetType}
 	</update>
 	
 	<insert id="insertAdminLog">

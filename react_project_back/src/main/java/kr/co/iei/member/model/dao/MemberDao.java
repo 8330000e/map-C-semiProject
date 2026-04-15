@@ -74,5 +74,7 @@ public interface MemberDao {
 	
 	Map<String, Object> getLockInfo(String memberId);
 	
+	void unlockExpiredMembers();
+	
 	
 }

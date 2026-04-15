@@ -94,7 +94,7 @@ const Login = () => {
           setIsLoading(false); //로딩 끝내기
           Swal.fire({
             title: "로그인 불가",
-            text: err.response.data,
+            html: err.response.data,
             icon: "error",
           });
           return;

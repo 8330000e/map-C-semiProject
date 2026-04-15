@@ -221,7 +221,7 @@ const AdminReport = ({
                 )}
 
                 <textarea
-                  placeholder="처리 사유를 입력하세요"
+                  placeholder="게시글 및 회원에 대한 조치 사유를 자세히 작성하세요."
                   name="reason"
                   value={reportAction.reason}
                   onChange={changeReportAction}
