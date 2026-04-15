@@ -6,6 +6,7 @@ import useAuthStore from "../../../store/useAuthStore";
 import { normalizeImageUrl } from "../../../utils/getImageUrl";
 import userImg from "../../../assets/user.png";
 import styles from "./store.module.css";
+import Swal from "sweetalert2";
 
 // 스토어 상품 이미지 변환은 normalizeImageUrl에서 처리함.
 // 로컬 /board/editor 경로 대신 Firebase URL 변환을 우선함.
@@ -69,7 +70,9 @@ const getDisplayName = (user) => {
     user?.memberName?.trim() ||
     user?.writerName?.trim();
   if (!name || ["null", "undefined"].includes(name.toLowerCase())) {
-    return user?.memberId || user?.writerId || user?.buyerId || user?.sellerId || "";
+    return (
+      user?.memberId || user?.writerId || user?.buyerId || user?.sellerId || ""
+    );
   }
   return name;
 };
@@ -149,6 +152,31 @@ const Store = () => {
 
   const navigate = useNavigate();
 
+  const isLogin = !!memberId;
+
+  //미션버튼 클릭-> 로그인으로 이동
+  const handleMissionClick = async () => {
+    if (!isLogin) {
+      const result = await Swal.fire({
+        icon: "warning",
+        title: "로그인이 필요합니다",
+        text: "미션(출석체크)은 로그인 후 이용할 수 있습니다. 로그인 페이지로 이동하시겠습니까?",
+        showCancelButton: true,
+        confirmButtonText: "로그인",
+        cancelButtonText: "취소",
+        confirmButtonColor: "#464d3e",
+        cancelButtonColor: "#b0b0b0",
+      });
+
+      if (result.isConfirmed) {
+        navigate("/members/login", { state: { from: "/mission" } });
+      }
+      return;
+    }
+
+    navigate("/mission");
+  };
+
   return (
     <div className={`${styles.store_layout} common_wrap`}>
       {/* 레이아웃: 왼쪽 메뉴 + 오른쪽 중고장터 컨텐츠 */}
@@ -167,7 +195,17 @@ const Store = () => {
             <Link to="/store">중고거래</Link>
           </li>
           <li>
-            <Link to="/mission">미션(출석체크)</Link>
+            <Link
+              to="/mission"
+              onClick={(e) => {
+                if (!isLogin) {
+                  e.preventDefault(); // 이동 막기
+                  handleMissionClick();
+                }
+              }}
+            >
+              미션(출석체크)
+            </Link>
           </li>
           <li>
             <Link to="/tree-grow" className={styles.treeGrow}>
