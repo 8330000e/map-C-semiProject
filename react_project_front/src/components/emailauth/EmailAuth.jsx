@@ -23,7 +23,7 @@ import { useEffect, useState } from "react";
   */
 
 // 이메일 인증 관련 상태 관리 (인증코드 발송, 입력값 검증, 타이머 처리) -> 자식컴포넌트 -> 부모컴포넌트인 JoinPage로 인증완료 여부 전달(onVerified)
-const EmailAuth = ({ memberEmail, setMemberEmail, onVerified }) => {
+const EmailAuth = ({ memberEmail, setMemberEmail, onVerified, readOnlyEmail = false }) => {
   // mailAuth : 이메일 인증 진행 상태
   // 0 = 인증 전 (초기 상태)
   // 1 = 인증번호 발송 완료 (타이머 시작)
@@ -181,8 +181,7 @@ const EmailAuth = ({ memberEmail, setMemberEmail, onVerified }) => {
             onChange={handleEmailChange}
             //mailAuth가 1 또는 3일 때 input을 수정 못하게 하는 로직
             //readOnly -> true: 입력 불가능, false:입력 가능
-
-            readOnly={mailAuth === 1 || mailAuth === 3}
+            readOnly={readOnlyEmail || mailAuth === 1 || mailAuth === 3}
           />
 
           <button
