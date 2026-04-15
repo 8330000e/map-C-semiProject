@@ -4,6 +4,7 @@ import axios from "axios";
 import TreeGrowMain from "../../components/TreeGrowMain/TreeGrowMain";
 import styles from "./TreeGrowMainPage.module.css";
 import RegionMap from "../../components/mainpage/RegionMap";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -98,7 +99,8 @@ const TreeGrowMainPage = () => {
     <div className={styles.treeGrowMainPage}>
       <div className={styles.topSection}>
         <button className={styles.backButton} onClick={() => navigate(-1)}>
-          ← 홈으로
+          <ArrowBackIcon fontSize="small" />
+          홈으로
         </button>
 
         <div className={styles.noticeBox}>
