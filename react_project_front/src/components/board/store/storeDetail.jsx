@@ -69,6 +69,20 @@ const StoreDetail = () => {
   const [editingTarget, setEditingTarget] = useState(null);
   const [editingText, setEditingText] = useState("");
   const [editingPrivate, setEditingPrivate] = useState(false);
+
+  const getDisplayName = (user) => {
+    const name =
+      user?.writerNickname?.trim() ||
+      user?.memberNickname?.trim() ||
+      user?.buyerNickname?.trim() ||
+      user?.sellerNickname?.trim() ||
+      user?.memberName?.trim() ||
+      user?.writerName?.trim();
+    if (!name || ["null", "undefined"].includes(name.toLowerCase())) {
+      return user?.memberId || user?.writerId || user?.buyerId || user?.sellerId || "";
+    }
+    return name;
+  };
   const [saleStatus, setSaleStatus] = useState("판매중");
   const [deliveryMethod, setDeliveryMethod] = useState("");
   const [isCartLoading, setIsCartLoading] = useState(false);
@@ -347,7 +361,7 @@ const StoreDetail = () => {
       return;
     }
     setReplyTarget(comment);
-    setNewComment(`@${comment.memberNickname || comment.memberId} `);
+    setNewComment(`@${getDisplayName(comment)} `);
     setNewCommentPrivate(false);
   };
 
@@ -661,7 +675,7 @@ const StoreDetail = () => {
                 e.currentTarget.src = userImg;
               }}
             />
-            <span>{item.memberNickname || item.memberId}</span>
+            <span>{getDisplayName(item)}</span>
           </div>
           <p>조회수 : {item.readCount || 0}</p>
           <p>댓글 : {comments.length}</p>
@@ -767,7 +781,7 @@ const StoreDetail = () => {
 
       <div className={styles.section_box}>
         <h3>가게 정보</h3>
-        <p>상점명 : {item.memberNickname || item.memberId} 상점</p>
+        <p>상점명 : {getDisplayName(item)} 상점</p>
         <p>신뢰지수 : {totalSellerRatingScore}점</p>
         <p>거래후기 : {sellerRatings.length}</p>
       </div>
@@ -786,7 +800,7 @@ const StoreDetail = () => {
                   style={{ marginLeft: `${(comment.commentDepth || 0) * 20}px` }}
                 >
                   <div className={styles.review_header}>
-                    <span className={styles.review_author}>{comment.buyerNickname || comment.memberNickname || comment.buyerId || comment.memberId}</span>
+                    <span className={styles.review_author}>{getDisplayName(comment)}</span>
                     <span className={styles.review_score}>★ {comment.rating ?? 0}점</span>
                   </div>
                   <p className={styles.comment_meta}>{formatCommentDate(comment.createdAt)}</p>
@@ -842,7 +856,7 @@ const StoreDetail = () => {
                   <div className={storeStyles.region_badge}>{same.regionName || same.ctpvsggId || "지역 미등록"}</div>
                   <p className={storeStyles.tradeType}>거래방법 : {getTradeTypeLabel(same.tradeType)}</p>
                   <div className={storeStyles.metaRow}>
-                    <span className={storeStyles.author}>{same.memberId}</span>
+                    <span className={storeStyles.author}>{getDisplayName(same)}</span>
                     <span className={storeStyles.metaDivider}>|</span>
                     <span className={storeStyles.commentCount}>💬 {same.commentCount ?? 0}</span>
                     <span className={storeStyles.metaDivider}>|</span>
@@ -889,13 +903,13 @@ const StoreDetail = () => {
                       src={commentAvatarUrl}
                       loading="lazy"
                       decoding="async"
-                      alt={`${comment.memberNickname || comment.memberId} 프로필`}
+                      alt={`${getDisplayName(comment)} 프로필`}
                       onError={(e) => {
                         e.currentTarget.src = userImg;
                       }}
                     />
                     <span>
-                      {comment.memberNickname || comment.memberId} · {formatCommentDate(comment.createdAt)}
+                      {getDisplayName(comment)} · {formatCommentDate(comment.createdAt)}
                       {isSecret && <span className={styles.reply_badge}>비공개</span>}
                       {isCommentEdited(comment) && (
                         <span className={styles.comment_update_info}>
@@ -978,7 +992,7 @@ const StoreDetail = () => {
           </div>
           {replyTarget && (
             <div className={styles.reply_form}>
-              답글 대상: {replyTarget.memberNickname || replyTarget.memberId}
+              답글 대상: {getDisplayName(replyTarget)}
               <button type="button" onClick={cancelReply}>
                 취소
               </button>
