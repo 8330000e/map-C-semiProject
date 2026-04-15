@@ -31,10 +31,6 @@ const Community = ({
   setAddr,
   setLnglat,
   setCtpvsgg,
-  sido,
-  setSido,
-  sigungu,
-  setSigungu,
   boxaddr,
   setBoxaddr,
 }) => {
