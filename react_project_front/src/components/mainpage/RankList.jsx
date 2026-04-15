@@ -22,29 +22,25 @@ const RankList = () => {
     <>
       <div className={styles.ranklist_wrap}>
         <div>총 절감 탄소배출량 랭킹</div>
-        {rankList.map((rank, i) => {
-          const rankNo =
-            rank?.rankNo ?? rank?.memberNickname ?? rank?.memberThumb ?? null;
-          return (
-            <ul key={`${rank}+${i}`} className={styles.list_wrap}>
-              <li className={styles.list_item}>
-                <div>
-                  <p>{i + 1}</p>
-                  <p>
-                    <img
-                      src={rank.memberThumb ? normalizeImageUrl(rank.memberThumb, "member/thumb") : defaultImg}
-                      className={styles.list_thumb}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </p>
-                  <p>{rank.memberNickname}</p>
-                </div>
-                <p>{rank.memberCo2} Kg</p>
-              </li>
-            </ul>
-          );
-        })}
+        <ul className={styles.list_wrap}>
+          {rankList.map((rank, i) => (
+            <li key={`${rank}+${i}`} className={styles.list_item}>
+              <div>
+                <p>{i + 1}</p>
+                <p>
+                  <img
+                    src={rank.memberThumb ? normalizeImageUrl(rank.memberThumb, "member/thumb") : defaultImg}
+                    className={styles.list_thumb}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </p>
+                <p>{rank.memberNickname}</p>
+              </div>
+              <p>{rank.memberCo2} Kg</p>
+            </li>
+          ))}
+        </ul>
         <p>여러분도 탄소줄이기 랭킹에 도전해보세요!</p>
       </div>
     </>

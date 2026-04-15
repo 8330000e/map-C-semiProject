@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
 import useAuthStore from "../../../store/useAuthStore";
 import { normalizeImageUrl } from "../../../utils/getImageUrl";
 import userImg from "../../../assets/user.png";
 import styles from "./store.module.css";
+import Swal from "sweetalert2";
 
 // 스토어 상품 이미지 변환은 normalizeImageUrl에서 처리함.
 // 로컬 /board/editor 경로 대신 Firebase URL 변환을 우선함.
@@ -58,6 +59,22 @@ const getImageUrl = (thumb) => normalizeImageUrl(thumb);
 const getMemberImageUrl = (thumb) => {
   const url = normalizeImageUrl(thumb, "member/thumb");
   return url || userImg;
+};
+
+const getDisplayName = (user) => {
+  const name =
+    user?.writerNickname?.trim() ||
+    user?.memberNickname?.trim() ||
+    user?.buyerNickname?.trim() ||
+    user?.sellerNickname?.trim() ||
+    user?.memberName?.trim() ||
+    user?.writerName?.trim();
+  if (!name || ["null", "undefined"].includes(name.toLowerCase())) {
+    return (
+      user?.memberId || user?.writerId || user?.buyerId || user?.sellerId || ""
+    );
+  }
+  return name;
 };
 
 const Store = () => {
@@ -133,6 +150,33 @@ const Store = () => {
     setCurrentPage(1);
   };
 
+  const navigate = useNavigate();
+
+  const isLogin = !!memberId;
+
+  //미션버튼 클릭-> 로그인으로 이동
+  const handleMissionClick = async () => {
+    if (!isLogin) {
+      const result = await Swal.fire({
+        icon: "warning",
+        title: "로그인이 필요합니다",
+        text: "미션(출석체크)은 로그인 후 이용할 수 있습니다. 로그인 페이지로 이동하시겠습니까?",
+        showCancelButton: true,
+        confirmButtonText: "로그인",
+        cancelButtonText: "취소",
+        confirmButtonColor: "#464d3e",
+        cancelButtonColor: "#b0b0b0",
+      });
+
+      if (result.isConfirmed) {
+        navigate("/members/login", { state: { from: "/mission" } });
+      }
+      return;
+    }
+
+    navigate("/mission");
+  };
+
   return (
     <div className={`${styles.store_layout} common_wrap`}>
       {/* 레이아웃: 왼쪽 메뉴 + 오른쪽 중고장터 컨텐츠 */}
@@ -145,13 +189,23 @@ const Store = () => {
             <Link to="/map-community">맵 커뮤니티</Link>
           </li>
           <li>
-            <a href="#">회원끼리 캠페인</a>
+            <Link to="/campaign/main">회원끼리 캠페인</Link>
           </li>
           <li>
             <Link to="/store">중고거래</Link>
           </li>
           <li>
-            <Link to="/mission">미션(출석체크)</Link>
+            <Link
+              to="/mission"
+              onClick={(e) => {
+                if (!isLogin) {
+                  e.preventDefault(); // 이동 막기
+                  handleMissionClick();
+                }
+              }}
+            >
+              미션(출석체크)
+            </Link>
           </li>
           <li>
             <Link to="/tree-grow" className={styles.treeGrow}>
@@ -174,14 +228,20 @@ const Store = () => {
 
         <div className={styles.customer_box}>
           <span className={styles.customer_head}>
-            <h3>고객센터</h3>
-            <HelpIcon sx={{ fontSize: 26, color: "#fff" }} />
+            <p>고객센터</p>
+            <p>
+              <HelpIcon sx={{ fontSize: 24, color: "#fff" }} />
+            </p>
           </span>
           <p>고객센터 운영시간</p>
           <p>10:00 ~ 18:00</p>
-          <a href="#" className={styles.customer_link}>
+          <button
+            type="button"
+            className={styles.customer_link}
+            onClick={() => navigate("/support")}
+          >
             문의하기 ▶
-          </a>
+          </button>
         </div>
       </aside>
 
@@ -275,13 +335,13 @@ const Store = () => {
                               (item.memberId === memberId ? memberThumb : null),
                           ) || userImg
                         }
-                        alt={`${item.memberId} 프로필`}
+                        alt={`${getDisplayName(item)} 프로필`}
                         onError={(e) => {
                           e.currentTarget.src = userImg;
                         }}
                       />
                       <span className={styles.author}>
-                        {item.memberNickname || item.memberId}
+                        {getDisplayName(item)}
                       </span>
                     </span>
                     <span className={styles.metaDivider}>|</span>

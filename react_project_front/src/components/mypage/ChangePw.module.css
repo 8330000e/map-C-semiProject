@@ -1,7 +1,112 @@
 .changepw_wrap {
-  background-color: #dfdfdf;
-  width: 700px;
+  width: 100%;
+  max-width: 760px;
+  background: #ffffff;
+  border: 1px solid #dee6dc;
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 18px 40px rgba(66, 86, 56, 0.08);
 }
-.changepw_wrap > h3 {
+.changepw_header {
   text-align: center;
+  margin-bottom: 28px;
+}
+.changepw_header > h3 {
+  margin: 0 0 8px;
+  font-size: 1.9rem;
+  color: #2b3a26;
+  letter-spacing: -0.02em;
+}
+.changepw_header > p {
+  margin: 0;
+  color: #5b6c55;
+  font-size: 0.96rem;
+  line-height: 1.7;
+}
+.changepw_section {
+  border: 1px solid #edf2ea;
+  border-radius: 22px;
+  padding: 22px 24px;
+  margin-bottom: 20px;
+  background: #f8faf5;
+}
+.changepw_section_title {
+  margin-bottom: 16px;
+  font-weight: 700;
+  color: #4a5a44;
+  font-size: 1rem;
+}
+.changepw_row {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.changepw_row label {
+  font-weight: 700;
+  color: #4f614d;
+}
+.changepw_input_group {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+}
+.changepw_row input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid #d7e1d3;
+  background: #f7faf3;
+  color: #2f4031;
+  font-size: 1rem;
+}
+.changepw_row input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+.authButton,
+.changepw_button_wrap button {
+  min-width: 120px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 16px;
+  background: #5c7c56;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.authButton:disabled,
+.changepw_button_wrap button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.authButton:hover:not(:disabled),
+.changepw_button_wrap button:hover:not(:disabled) {
+  background: #4f6c48;
+  transform: translateY(-1px);
+}
+.statusText,
+.matchText,
+.passwordHint {
+  color: #5a6c57;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.successText {
+  color: #3f7d4e;
+  font-weight: 700;
+}
+.errorText {
+  color: #b23b3b;
+  font-weight: 700;
+}
+.infoText {
+  color: #6a7a66;
+}
+.passwordHint {
+  margin-top: 8px;
+}
+.changepw_button_wrap {
+  display: flex;
+  justify-content: flex-end;
 }

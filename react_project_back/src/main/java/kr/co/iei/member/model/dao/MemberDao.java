@@ -56,7 +56,7 @@ public interface MemberDao {
 	
 	String getLastLocation(String memberId);
 	
-	Date getLockUntil(String memberId);
+	
 	
 	int getFailCount(String memberId);
 	
@@ -67,6 +67,14 @@ public interface MemberDao {
 	List<PointHistory> selectPointHistory(String memberId);
 	
 	int insertPointHistory(Map<String, Object> param);
+	
+	int updateLockReason(String memberId);
+	
+	
+	
+	Map<String, Object> getLockInfo(String memberId);
+	
+	void unlockExpiredMembers();
 	
 	
 }

@@ -3,13 +3,16 @@
 // AdminReport 컴포넌트에 props로 내려줌
 
 import axios from "axios";
+import Swal from "sweetalert2";
 import AdminReport from "../../components/admin/AdminReport";
-import { useEffect, useState } from "react";
-import { useRef } from "react"; // DOM 요소를 직접 참조할 때 쓰는 훅
+import { useEffect, useRef, useState } from "react";
+import useAuthStore from "../../store/useAuthStore";
 
 const AdminReportPage = () => {
   // 신고 목록 전체 (게시글/댓글 신고 모두 포함)
   const [reportList, setReportList] = useState([]);
+
+  const { memberId } = useAuthStore();
 
   // 상세보기 모달에서 CommunityDetail 컴포넌트에 넘길 게시글/댓글 데이터
   const [boardDetail, setBoardDetail] = useState({});
@@ -31,6 +34,7 @@ const AdminReportPage = () => {
     boardAction: "미처리",
     memberAction: "미처리",
     reason: "",
+    lockReason: "",
   });
 
   const changeReportAction = (e) => {
@@ -38,21 +42,55 @@ const AdminReportPage = () => {
     setReportAction((prev) => ({ ...prev, [name]: value }));
   };
 
+  const resetModal = () => {
+    setIsModalOpen(false);
+    setShowDetail(false);
+    setReportAction({
+      boardAction: "미처리",
+      memberAction: "미처리",
+      reason: "",
+      lockReason: "",
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/admins/processReport`, {
-        ...reportAction,
-        reportNo: selectedReport.reportNo,
-        targetNo: selectedReport.targetNo,
-        targetId: selectedReport.targetId,
-      })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+
+    Swal.fire({
+      icon: "question",
+      title: "게시글 및 회원 조치를 진행하시겠습니까?",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: "확인",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .post(`${import.meta.env.VITE_BACKSERVER}/admins/processReport`, {
+            ...reportAction,
+            reportNo: selectedReport.reportNo,
+            targetNo: selectedReport.targetNo,
+            targetId: selectedReport.targetId,
+            targetType: selectedReport.targetType,
+            memberId: memberId,
+          })
+          .then((res) => {
+            Swal.fire({
+              icon: "success",
+              title: "처리가 완료되었습니다.",
+              timer: 1500,
+            });
+            resetModal();
+            selectReportList();
+          })
+          .catch((err) => {
+            Swal.fire({
+              icon: "error",
+              title: "처리에 실패했습니다.",
+            });
+          });
+      }
+    });
   };
 
   // 상세보기 아이콘 클릭 시 호출
@@ -111,13 +149,13 @@ const AdminReportPage = () => {
         reportList={reportList}
         selectDetail={selectDetail}
         boardDetail={boardDetail}
-        setIsModalOpen={setIsModalOpen}
+        resetModal={resetModal}
         isModalOpen={isModalOpen}
         selectedReport={selectedReport}
         setSelectedReport={setSelectedReport}
         showDetail={showDetail}
         setShowDetail={setShowDetail}
-        detailRef={detailRef} // ref도 props로 내려줌 (컴포넌트에서 직접 DOM에 붙일 수 있게)
+        detailRef={detailRef}
         reportAction={reportAction}
         changeReportAction={changeReportAction}
         handleSubmit={handleSubmit}
