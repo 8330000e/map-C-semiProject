@@ -61,6 +61,7 @@ import CampaignMemoWritePage from "./pages/campaign/CampaignMemoWritePage";
 import CampaignUpdateDeletePage from "./pages/campaign/CampaignUpdateDeletePage";
 import PointForGoodPage from "./pages/pointadmin/PointForGoodPage";
 import CampaignNotice from "./pages/campaign/CampaignNoticePage";
+import Swal from "sweetalert2";
 
 function App() {
   const location = useLocation();
@@ -105,7 +106,14 @@ function App() {
         // 옵셔널 체이닝 없으면 data가 null인 상태에서 .으로 추가접근 > null에 접근 터짐
         if (error.response.status === 403 && error.response.data?.locked) {
           useAuthStore.getState().logout();
-          window.location.href = "/login";
+          Swal.fire({
+            icon: "error",
+            title: "계정이 정지되었습니다.",
+            text: "로그인페이지로 이동합니다.",
+            timer: 5000,
+          }).then(() => {
+            window.location.href = "/login";
+          });
         }
         return Promise.reject(error); // locked를 제외한 다른 오류는 각자 axios catch에 돌려줌
       },
