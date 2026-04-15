@@ -60,7 +60,7 @@ const Bestpostlist = () => {
             >
               <p>{i + 1}</p>
               <p>{bestPost.boardTitle}</p>
-              <p>{bestPost.sgg}</p>
+              <p>{bestPost.sgg || "지역 미등록"}</p>
             </li>
           </ul>
         );
