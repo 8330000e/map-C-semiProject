@@ -82,6 +82,16 @@ header {
   width: 120px;
   margin: 8px 0;
 }
+.main_nav > ul > li span {
+  display: block;
+  width: 100%;
+}
+.main_nav > ul > li span hr {
+  margin: 0;
+  border: 0;
+  border-top: 1px solid #9ea39a;
+  width: 100%;
+}
 .menu_bar {
   background-color: #464d3e;
   border-top-right-radius: 30px;
