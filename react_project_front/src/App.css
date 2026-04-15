@@ -378,6 +378,12 @@ header {
   border-radius: 16px;
   border: 1.5px solid #c8d0bf;
   box-shadow: 0 1px 3px rgba(70, 77, 62, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.used_list_scroll > ul > li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(70, 77, 62, 0.12);
+  border-color: rgba(70, 77, 62, 0.18);
 }
 .used_list_scroll > ul > li a {
   color: #464d3e;
@@ -476,6 +482,12 @@ header {
   border-radius: 14px;
   border: 1px solid rgba(70, 77, 62, 0.08);
   background: #ffffff;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.tip_item:hover {
+  background-color: #f7f9f0;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(70, 77, 62, 0.08);
 }
 .tip_title {
   font-size: 13px;

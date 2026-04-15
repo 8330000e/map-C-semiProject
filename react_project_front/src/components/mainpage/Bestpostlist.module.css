@@ -48,6 +48,12 @@ li {
   font-size: 15px;
   font-weight: 600;
   margin: 10px 10px;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.list_item:hover {
+  background-color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(70, 77, 62, 0.08);
 }
 .list_item > p:first-child {
   font-weight: 700;
