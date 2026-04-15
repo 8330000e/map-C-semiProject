@@ -231,7 +231,7 @@ header {
   display: flex;
   align-items: center;
   background-color: #eef3e8;
-  color: #333;
+  color: #464d3e;
   padding: 0 14px;
   border-radius: 18px;
   border: 1px solid rgba(70, 77, 62, 0.12);
@@ -248,11 +248,12 @@ header {
 }
 .realtime_comment_line {
   font-size: 13px;
-  line-height: 1.6;
+  line-height: 1.4;
   display: inline-block;
   white-space: nowrap;
   will-change: transform;
-  color: inherit;
+  color: #464d3e;
+  font-weight: 600;
 }
 .rank_list {
   width: 320px;
