@@ -3,3 +3,7 @@
   min-height: 900px;
   margin-top: 50px;
 }
+.campaign_content_wrap > button {
+  margin-left: 150px;
+  margin-bottom: 30px;
+}

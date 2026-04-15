@@ -43,7 +43,7 @@ const CreateCampaignPage = () => {
               text: "관리자가 승인할시에 챌린지가 시작됩니다.",
             }).then((result) => {
               if (result.isConfirmed) {
-                navigate("/");
+                navigate("/campaign/main");
               }
             });
           }
@@ -70,7 +70,6 @@ const CreateCampaignPage = () => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-
               createChallenge();
             }}
           >
@@ -139,6 +138,15 @@ const CreateCampaignPage = () => {
                 }}
               >
                 승인요청
+              </Button>
+              <Button
+                className="btn primary lg"
+                type="button"
+                onClick={() => {
+                  navigate(`/campaign/main`);
+                }}
+              >
+                돌아가기
               </Button>
             </div>
           </form>

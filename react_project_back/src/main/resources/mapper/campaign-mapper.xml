@@ -29,7 +29,7 @@
 	</select>
 	<insert id="createCampaign">
 		insert into create_campaign_tbl values (
-			campaign_no_seq.nextval,
+			#{campaignNo},
 			#{campaignTitle},
 			#{campaignExplanation},
 			0,
@@ -105,14 +105,26 @@
 		select campaign_title,campaign_explanation,campaign_goal_member from create_campaign_tbl where campaign_no=#{campaignNo}
 	</select>
 	<insert id="insertIntoUpdateTbl">
-		insert into campaign_update_tbl values(campaign_update_seq.nextval,#{campaignTitle},#{campaignExplanation},#{campaignGoalMember},#{campaignNo})
+		insert into campaign_update_tbl values(campaign_update_seq.nextval,null,null,null,#{campaignNo})
 	</insert>
 	<select id="getNoticeList" resultType="campNo">
 		select 
 		campaign_notice_no,campaign_notice_title,campaign_notice_writer,campaign_notice_date,campaign_no
 		 from campaign_notice_tbl 
 	</select>
-	<select id="getOnlyCampaignStatus" resultType="String">
+	<select id="getOnlyCampaignStatus" resultType="int">
 		select campaign_status from create_campaign_tbl where campaign_no = #{campaignNo}
 	</select>
+	<update id="campaignUpdateTblUpdate">
+		update campaign_update_tbl set campaign_title=#{campaignTitle},campaign_explanation=#{campaignExplanation},campaign_goal_member=#{campaignGoalMember} where campaign_no=#{campaignNo}
+	</update>
+	<select id="selectCampaignNoSeq" resultType="int">
+		select campaign_no_seq.nextval from dual
+	</select>
+	<update id="terminateCamp">
+		update create_campaign_tbl set campaign_status = 5 where campaign_no = #{campaignNo}
+	</update>
+	<insert id="alarmTerminateCamp">
+		insert into alarm_tbl values (alarm_seq.nextval,#{memberId},5,#{alarmContent},#{alarmData},0,sysdate,1,null)
+	</insert>
 </mapper>

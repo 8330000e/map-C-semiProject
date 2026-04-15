@@ -77,7 +77,9 @@ const CampaignMain = () => {
                 </li>
                 <li className={styles.campaignmain_campaign_status}>
                   <div>
-                    {camp.campaignStatus === 2 ? "진행중" : "챌린지 종료"}
+                    {camp.campaignStatus === 2 || camp.campaignStatus === 1
+                      ? "진행중"
+                      : "챌린지 종료"}
                   </div>
                 </li>
                 <li className={styles.campaignmain_date}>

@@ -37,7 +37,13 @@ public class CampaignService {
 
 	@Transactional
 	public int createCampaign(Campaign camp) {
-		int result = campaignDao.createCampaign(camp);
+		int campaignNo = campaignDao.selectCampaignNoSeq();
+		camp.setCampaignNo(campaignNo);
+		int result=0;
+		result = campaignDao.createCampaign(camp);
+		if(result==1) {
+			result=campaignDao.insertIntoUpdateTbl(camp);
+		}
 		return result;
 	}
 
@@ -190,16 +196,19 @@ public class CampaignService {
 		Campaign camp = campaignDao.selectCampForUpdate(campaignNo);
 		return camp;
 	}
-
+	@Transactional
 	public int updateCamp(Campaign camp) {
 		int result=0;
-		result = campaignDao.insertIntoUpdateTbl(camp);
-		
+		result = campaignDao.campaignUpdateTblUpdate(camp);
+		System.out.println(camp.getCampaignTitle());
+		System.out.println(result);
 		if(result==1) {
 			int campaignStatus = campaignDao.getOnlyCampaignStatus(camp);
+			System.out.println(campaignStatus);
 			if(campaignStatus == 1) {
 				return 1;
 			}else {
+				campaignStatus=1;
 				camp.setCampaignStatus(campaignStatus);
 				result=campaignDao.changeStatus(camp);
 				System.out.println(result);
@@ -211,6 +220,32 @@ public class CampaignService {
 	public List<CampaignNotice> getNoticeList() {
 		List<CampaignNotice> campNo = campaignDao.getNoticeList();
 		return campNo;
+	}
+	@Transactional
+	public int terminateCamp(Integer campaignNo) {
+		int result=0;
+		result = campaignDao.terminateCamp(campaignNo);
+		if(result==1) {
+			Campaign camp = campaignDao.selectOneCampaign(campaignNo);
+			camp.setCampaignNo(campaignNo);
+			String campTitle=camp.getCampaignTitle();
+			String alarmContent = campTitle + "캠페인 조기종료";
+			String alarmData = camp.getMemberId() + "가 부득이한 사정으로 "+campTitle +"을 종료했습니다.자세한 내용은 캠페인 내부 공지사항을 확인해주세요";
+			List <String> partMembers = campaignDao.checkParticipanceMember(camp);
+			for(String memberId : partMembers) {
+				Map <String,String> map = new HashMap<String,String>();
+				map.put("alarmContent", alarmContent);
+				map.put("alarmData", alarmData);
+				map.put("memberId", memberId);
+				result = campaignDao.alarmTerminateCamp(map);	
+			}
+		}
+		return result;
+	}
+
+	public int leaveMember(Campaign camp) {
+		int result = campaignDao.deletePartMember(camp);
+		return result;
 	}
 	
 

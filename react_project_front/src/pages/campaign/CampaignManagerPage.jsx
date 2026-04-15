@@ -1,4 +1,10 @@
-import { NavLink, Route, Routes, useParams } from "react-router-dom";
+import {
+  NavLink,
+  Route,
+  Routes,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import styles from "./CampaignManagerPage.module.css";
 import CampaignSuccession from "../../components/campaign/CampaignSuccession";
 import CampaignUpdateCamp from "../../components/campaign/CampaignUpdateCamp";
@@ -12,6 +18,7 @@ import CampaignTerminate from "../../components/campaign/CampaignTerminate";
 const CampaignManagerPage = () => {
   const { campaignNo, createId } = useParams();
   const { memberId } = useAuthStore();
+  const navigate = useNavigate();
 
   return (
     createId === memberId && (
@@ -49,6 +56,14 @@ const CampaignManagerPage = () => {
             >
               조기종료
             </NavLink>
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                navigate(`/campaign/detail/${campaignNo}`);
+              }}
+            >
+              돌아가기
+            </div>
           </div>
           <div className={styles.camp_settings_content_wrap}>
             <Routes>

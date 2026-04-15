@@ -145,21 +145,22 @@ const PointForGoodPage = () => {
   const donationCardList = [
     {
       group_id: "global_6k",
-      title: "글로벌 6K 마라톤에 참여하고 깨끗한 물을 선물해요!",
+      title:
+        "마라톤에 참여하고 깨끗한 물을 선물해요! 점점 심해지는 지구의 오염으로 인해 꺠끗한 물을 얻기가 어려워지고 있습니다. 그 중심에는 탄소를 뺴놓을 수 없습니다. 우리 모두 걷기와 자동차를 줄이는 것을 목표로 합시다!",
       category: "해외사업후원",
       period: "2026-04-10 ~ 2026-04-30",
       image: "/pointimages/point1.jpg", // 실제 이미지 경로
     },
     {
       group_id: "forest",
-      title: "forest: 우리 나무들을 지켜줘요!",
+      title: "우리 나무들을 지켜줘요!",
       category: "긴급구호사업후원",
       period: "2026-04-02 ~ 2026-06-30",
       image: "/pointimages/point2.jpg",
     },
     {
       group_id: "forest",
-      title: "forest: 자연의 훼손은 나를 죽이는 일입니다.",
+      title: "자연의 훼손은 나를 죽이는 일입니다.",
       category: "긴급구호사업후원",
       period: "2026-04-02 ~ 2026-06-30",
       image: "/pointimages/point3.jpg",
@@ -194,8 +195,7 @@ const PointForGoodPage = () => {
     },
     {
       group_id: "emergency_relief",
-      title:
-        "해수면 상승으로 인해 한국가가 사라질 위기!! 여러분의 도움이 절실합니다.",
+      title: "해수면 상승으로 인한 위기!!\n여러분의 도움이 절실합니다.",
       category: "긴급구호사업후원",
       period: "2026-04-02 ~ 2026-06-30",
       image: "/pointimages/point8.jpg",
@@ -307,6 +307,14 @@ const PointForGoodPage = () => {
               <button
                 className={styles.donate_open_btn}
                 onClick={() => {
+                  if (!loginId) {
+                    Swal.fire({
+                      title: "로그인 필요",
+                      text: "로그인 회원만 기부할 수 있습니다.",
+                      icon: "warning",
+                    });
+                    return; //리턴을 꼭 해줘야 함. 그렇지 않으면 다음 로직이 수행됨
+                  }
                   setSelectedGroup(item);
                   setIsOpen(true);
                 }}
