@@ -1,5 +1,5 @@
 .pointCard {
-  width: 640px;
+  width: 750px;
   height: 560px;
   background: linear-gradient(180deg, #fffefb 0%, #f8f7f1 100%);
   border: 1px solid #e7e2d8;
@@ -15,7 +15,6 @@
 .pointHeader {
   flex-shrink: 0;
 }
-
 
 .pointTitle {
   margin: 0;
