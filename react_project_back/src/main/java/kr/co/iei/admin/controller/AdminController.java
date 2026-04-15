@@ -1,7 +1,7 @@
 package kr.co.iei.admin.controller;
 
 import java.io.File;
-import java.lang.reflect.Member;
+import kr.co.iei.member.model.vo.Member;
 import java.util.List;
 import java.util.Map;
 

@@ -1,37 +1,183 @@
 .board_main_wrap {
-  width: 700px;
-  background-color: var(--gray6);
-  min-height: 700px;
+  width: 100%;
+  max-width: 760px;
+  background: #ffffff;
+  border: 1px solid #d7dfcd;
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 14px 30px rgba(63, 80, 48, 0.08);
 }
 .board_title_wrap {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+.board_title_wrap h3 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #2b3a28;
 }
 .board_content_wrap {
-  margin-top: 30px;
-}
-.board_search_wrap {
-  width: 500px;
-  margin: 0px auto;
-  display: flex;
-  gap: 5px;
-}
-.board_search_wrap > label {
-  cursor: pointer;
-  align-self: center;
-}
-.board_search_wrap > select {
-  border-radius: 5px;
-}
-.board_list_wrap {
-  width: 600px;
-  margin: 20px auto;
   display: flex;
   flex-direction: column;
+  gap: 22px;
+}
+/* 검색 영역 전체를 수평 정렬하여 입력창과 필터가 한 줄에 정렬됩니다. */
+.board_search_wrap {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid #dde5d6;
+  border-radius: 16px;
+  background: #f7faf2;
+  align-items: center;
+  justify-content: space-between;
+}
+/* 검색 입력과 버튼을 한 줄로 묶어 자연스러운 검색 흐름을 만듭니다. */
+.search_form {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 220px;
+}
+/* 검색 입력창 높이를 버튼과 동일하게 맞춰서 세 컴포넌트에서 UI가 일관되게 보이도록 함. */
+.search_form input {
+  height: 44px;
+  box-sizing: border-box;
+}
+/* 검색 버튼 스타일: 입력창과 높이를 맞추고 텍스트 버튼으로 바꾸어 직관적인 검색 인터페이스를 만듦. */
+.search_button {
+  min-width: 84px;
+  height: 44px;
+  border-radius: 14px;
+  border: none;
+  background: #464d3e;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0 18px;
+  font-weight: 700;
+}
+.search_button:hover {
+  background: #3f4638;
+}
+.search_button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.board_search_wrap > select {
+  border-radius: 16px;
+  border: 1px solid #d6ddcd;
+  padding: 12px 14px;
+  background: #fff;
+  color: #394b35;
+  min-width: 140px;
+  width: fit-content;
+  margin-left: auto;
+}
+.board_list_wrap {
+  display: grid;
+  gap: 8px;
 }
 .one_board {
-  width: fit-content;
-  height: 70px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 84px 130px 118px minmax(180px, 1fr) 90px;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: #f4f8ee;
+  border: 1px solid #e2e9da;
+  color: #3b4d34;
+  font-size: 0.95rem;
+  align-items: center;
+}
+.header_row {
+  background: #e9f2e4;
+  border-color: #d7e2d0;
+}
+.header_row li {
+  font-weight: 700;
+  color: #4c634f;
+  text-align: center;
+}
+.one_board li {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+.one_board li:nth-child(4) {
+  text-align: left;
+}
+.one_board li:first-child {
+  color: #5d6e52;
+}
+
+.clickable_row {
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.clickable_row:hover {
+  background: #e8f2de;
+  transform: translateY(-1px);
+}
+
+.board_count {
+  font-size: 0.95rem;
+  color: #5d6e52;
+}
+
+.pagination {
   display: flex;
-  background-color: var(--gray8);
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.pagination button {
+  min-width: 42px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid #d5dfcf;
+  background: #f8faf4;
+  color: #3d4f3a;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: #e8f0e3;
+  transform: translateY(-1px);
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.activePage {
+  background: #5c7d54;
+  border-color: #4c6b44;
+  color: #ffffff;
+}
+
+.empty_state {
+  padding: 28px;
+  text-align: center;
+  color: #6f7f68;
+  background: #f7faf2;
+  border-radius: 18px;
+  border: 1px dashed #d4dccb;
 }

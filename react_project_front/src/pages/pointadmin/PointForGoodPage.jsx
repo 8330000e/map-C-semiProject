@@ -145,66 +145,67 @@ const PointForGoodPage = () => {
   const donationCardList = [
     {
       group_id: "global_6k",
-      title: "글로벌 6K 마라톤에 참여하고 깨끗한 물을 선물해요!",
+      title:
+        "마라톤에 참여하고 깨끗한 물을 선물해요! 점점 심해지는 지구의 오염으로 인해 꺠끗한 물을 얻기가 어려워지고 있습니다. 그 중심에는 탄소를 뺴놓을 수 없습니다. 우리 모두 걷기와 자동차를 줄이는 것을 목표로 합시다!",
       category: "해외사업후원",
       period: "2026-04-10 ~ 2026-04-30",
-      image: "/images/marathon.jpg", // 실제 이미지 경로
+      image: "/pointimages/point1.jpg", // 실제 이미지 경로
     },
     {
-      group_id: "emergency_relief",
-      title: "최수영과 함께 전쟁 속 아이의 하루를 지켜주세요!",
+      group_id: "forest",
+      title: "우리 나무들을 지켜줘요!",
       category: "긴급구호사업후원",
       period: "2026-04-02 ~ 2026-06-30",
-      image: "/images/relief.jpg",
+      image: "/pointimages/point2.jpg",
     },
     {
-      group_id: "emergency_relief",
-      title: "최수영과 함께 전쟁 속 아이의 하루를 지켜주세요!",
+      group_id: "forest",
+      title: "자연의 훼손은 나를 죽이는 일입니다.",
       category: "긴급구호사업후원",
       period: "2026-04-02 ~ 2026-06-30",
-      image: "/images/relief.jpg",
+      image: "/pointimages/point3.jpg",
     },
     {
       group_id: "global_6k",
-      title: "글로벌 6K 마라톤에 참여하고 깨끗한 물을 선물해요!",
+      title: "우리 북극곰들을 지켜주세요!!",
       category: "해외사업후원",
       period: "2026-04-10 ~ 2026-04-30",
-      image: "/images/marathon.jpg", // 실제 이미지 경로
+      image: "/pointimages/point4.jpg", // 실제 이미지 경로
     },
     {
-      group_id: "emergency_relief",
-      title: "최수영과 함께 전쟁 속 아이의 하루를 지켜주세요!",
-      category: "긴급구호사업후원",
+      group_id: "korea_clean",
+      title: "쓰레기를 줄입시다. 탄소배출의 원인!!!",
+      category: "국내환경단체후원",
       period: "2026-04-02 ~ 2026-06-30",
-      image: "/images/relief.jpg",
+      image: "/pointimages/point5.jpg",
     },
     {
-      group_id: "emergency_relief",
-      title: "최수영과 함께 전쟁 속 아이의 하루를 지켜주세요!",
-      category: "긴급구호사업후원",
+      group_id: "korea_clean",
+      title: "친환경에너지 사업을 위한 여러분의 작은 성원이 필요합니다!",
+      category: "국내환경단체후원",
       period: "2026-04-02 ~ 2026-06-30",
-      image: "/images/relief.jpg",
+      image: "/pointimages/point6.jpg",
     },
     {
       group_id: "global_6k",
-      title: "글로벌 6K 마라톤에 참여하고 깨끗한 물을 선물해요!",
+      title: "전세계적인 자동차 매연 줄이기 운동!!",
       category: "해외사업후원",
       period: "2026-04-10 ~ 2026-04-30",
-      image: "/images/marathon.jpg", // 실제 이미지 경로
+      image: " /pointimages/point7.jpg", // 실제 이미지 경로
     },
     {
       group_id: "emergency_relief",
-      title: "최수영과 함께 전쟁 속 아이의 하루를 지켜주세요!",
+      title: "해수면 상승으로 인한 위기!!\n여러분의 도움이 절실합니다.",
       category: "긴급구호사업후원",
       period: "2026-04-02 ~ 2026-06-30",
-      image: "/images/relief.jpg",
+      image: "/pointimages/point8.jpg",
     },
     {
-      group_id: "emergency_relief",
-      title: "최수영과 함께 전쟁 속 아이의 하루를 지켜주세요!",
-      category: "긴급구호사업후원",
+      group_id: "korea_clean",
+      title: "본격적인 금강산 나무심기 운동! 함께해주세요!!",
+      category: "국내환경단체후원",
       period: "2026-04-02 ~ 2026-06-30",
-      image: "/images/relief.jpg",
+      image: "/pointimages/point9.jpg",
     },
     // ... 이런 식으로 총 9개를 채웁니다.
   ];
@@ -246,7 +247,7 @@ const PointForGoodPage = () => {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKSERVER}/donations/donate`,
         {
-          memberId: loginId,
+          memberId: loginId, //즉 사용자 아이디, 로그인한 아이디는 loginId에 저장 되어있음
           donationPoint: amount,
 
           groupId: groupId, //서버로 단체 아이디 보냄
@@ -274,12 +275,7 @@ const PointForGoodPage = () => {
       <HomeBanner />
 
       <div className={styles.campaign_container}>
-        {/* 1. 상단 타이틀 섹션 */}
-        <div className={styles.header_section}>
-          <h2 className={styles.main_title}>더 늦기 전에 지켜주세요</h2>
-        </div>
-
-        {/* 2. 캠페인 카드 그리드 */}
+        {/* 1. 캠페인 카드 그리드 */}
         <div className={styles.campaign_grid}>
           {donationCardList.map((item, index) => (
             <div
@@ -289,6 +285,7 @@ const PointForGoodPage = () => {
               {/* 이미지 영역 */}
               <div className={styles.card_image_wrap}>
                 <img
+                  //위에서 카드 영역에서 들어간 이미지를 여기서 꺼내어 보여주는 것
                   src={item.image}
                   alt={item.title}
                   loading="lazy"
@@ -310,6 +307,14 @@ const PointForGoodPage = () => {
               <button
                 className={styles.donate_open_btn}
                 onClick={() => {
+                  if (!loginId) {
+                    Swal.fire({
+                      title: "로그인 필요",
+                      text: "로그인 회원만 기부할 수 있습니다.",
+                      icon: "warning",
+                    });
+                    return; //리턴을 꼭 해줘야 함. 그렇지 않으면 다음 로직이 수행됨
+                  }
                   setSelectedGroup(item);
                   setIsOpen(true);
                 }}

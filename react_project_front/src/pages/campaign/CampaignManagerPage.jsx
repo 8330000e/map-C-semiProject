@@ -5,6 +5,9 @@ import CampaignUpdateCamp from "../../components/campaign/CampaignUpdateCamp";
 import CampaignInsertNotice from "../../components/campaign/CampaignInsertNotice";
 import CampaignBanMember from "../../components/campaign/CampaignBanMember";
 import useAuthStore from "../../store/useAuthStore";
+import Button from "../../components/ui/Button";
+import Swal from "sweetalert2";
+import CampaignTerminate from "../../components/campaign/CampaignTerminate";
 
 const CampaignManagerPage = () => {
   const { campaignNo, createId } = useParams();
@@ -41,6 +44,11 @@ const CampaignManagerPage = () => {
             >
               권한승계
             </NavLink>
+            <NavLink
+              to={`/campaign/settings/${campaignNo}/${memberId}/terminate`}
+            >
+              조기종료
+            </NavLink>
           </div>
           <div className={styles.camp_settings_content_wrap}>
             <Routes>
@@ -51,6 +59,7 @@ const CampaignManagerPage = () => {
                 element={<CampaignInsertNotice />}
               ></Route>
               <Route path="banMember" element={<CampaignBanMember />}></Route>
+              <Route path="terminate" element={<CampaignTerminate />}></Route>
             </Routes>
           </div>
         </div>
