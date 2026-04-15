@@ -64,6 +64,10 @@ public interface CampaignDao {
 
 	int insertIntoUpdateTbl(Campaign camp);
 
+	List<CampaignNotice> getNoticeList();
+
+	int getOnlyCampaignStatus(Campaign camp);
+
 	
 
 }

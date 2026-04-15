@@ -50,7 +50,13 @@ const CampaignMain = () => {
       </div>
       <div className={styles.campaignmain_content_wrap}>
         <div className={styles.campaignmain_notice}>
-          <p>공지사항 들어가는 곳</p>
+          <p
+            onClick={() => {
+              navigate("/campaign/notice");
+            }}
+          >
+            공지사항 들어가는 곳
+          </p>
         </div>
         {campaignList.map((camp, index) => {
           return (

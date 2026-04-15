@@ -1,6 +1,8 @@
 package kr.co.iei.campaign.controller;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.google.api.services.storage.Storage;
+import com.google.api.services.storage.model.Bucket;
+import com.google.cloud.firestore.Blob;
+import com.google.firebase.cloud.StorageClient;
 
 import kr.co.iei.campaign.model.service.CampaignService;
 import kr.co.iei.campaign.model.vo.Campaign;
@@ -81,14 +88,14 @@ public class CampaignController {
 		if(memoThumb == null|| memoThumb.isEmpty()) {
 			throw new RuntimeException("썸네일이 없음");
 		}
-		File saveFolder = new File(new File(root),"campaign/memo");
-		if(!saveFolder.exists()) {
-			saveFolder.mkdirs();
-		}
+//		File saveFolder = new File(new File(root),"campaign/memo");
+//		if(!saveFolder.exists()) {
+//			saveFolder.mkdirs();
+//		}
 		CampaignParticipance campPart = new CampaignParticipance();
-		String filename = FileUtils.upload(saveFolder.getAbsolutePath() + File.separator,memoThumb);
-		campPart.setCampaignThumb(filename);
-		System.out.println(filename);
+		String fileUrl = FileUtils.upload("/campaign/memo/",memoThumb);
+		campPart.setCampaignThumb(fileUrl);
+		System.out.println(fileUrl);
 		campPart.setMemberId(memberId);
 		campPart.setCampaignNo(campaignNo);
 		campPart.setCampaignMemo(campaignMemo);
@@ -111,19 +118,43 @@ public class CampaignController {
 //		if(file == null || file.isEmpty()) {
 //			throw new RuntimeException("보내진 파일 X");
 //		}
-		if(file != null) {
-			File saveFolder = new File(new File(root),"campaign/memo");
+		if(file != null || !file.isEmpty()) {
+//			File saveFolder = new File(new File(root),"campaign/memo");
 			CampaignParticipance campPart = new CampaignParticipance();
-			String filename = FileUtils.upload(saveFolder.getAbsolutePath()+ File.separator,file);
-			campPart.setCampaignThumb(filename);
+			String fileUrl = FileUtils.upload("/campaign/memo/",file);
+			campPart.setCampaignThumb(fileUrl);
 			campPart.setCampaignMemo(campaignMemo);
 			campPart.setCampaignParticipanceNo(campaignParticipanceNo);
 			int result = campaignService.updateParticipanceBoard(campPart);
 			if(result>0) {
-				File terminatePath = new File(new File(root),"campaign/memo/"+deletePath);
-				if(terminatePath.exists()) {
-					terminatePath.delete();
+//				File terminatePath = new File(new File(root),"campaign/memo/"+deletePath);
+//				if(terminatePath.exists()) {
+//					terminatePath.delete();
+//				}
+				//사실 시간이 없어서 gpt 의 힘을 빌렸으나, 최대한 fireStorage에 대해 공부 해서 bucket/blob/storageclient 구조에 대해 알아볼것임
+				// 1. URL decode ( %2F → / )
+				String decoded;
+				try {
+					decoded = URLDecoder.decode(deletePath, "UTF-8");
+					
+					// 2. "/o/" 뒤 부분 가져오기
+					String path = decoded.split("/o/")[1];
+					
+					// 3. 쿼리스트링 제거 (?alt=media 제거)
+					path = path.split("\\?")[0];
+					com.google.cloud.storage.Bucket bucket = StorageClient.getInstance().bucket();
+					com.google.cloud.storage.Blob blob = bucket.get(path);
+					if(blob!= null) {
+						blob.delete();
+					}
+					
+					
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
+
+				
 				
 			}
 			return ResponseEntity.ok(result);
@@ -133,17 +164,24 @@ public class CampaignController {
 	@DeleteMapping(value="/{campaignParticipanceNo}/board")
 	public ResponseEntity<?> deleteBoardMemo(@PathVariable int campaignParticipanceNo){
 		String deletePath = campaignService.deleteBoardMemo(campaignParticipanceNo);
-		if(deletePath == "f") {
-			return ResponseEntity.ok(0);
+		int result=0;
+		if(deletePath.equals("f") || deletePath == null || deletePath.isEmpty()) {
+			return ResponseEntity.ok(result);
 		}else {
-			System.out.println(deletePath);
-			int result=0;
-			File terminatePath = new File(new File(root),"campaign/memo/"+deletePath);
-			if(terminatePath.exists()) {
-				boolean bool=terminatePath.delete();
-				if(bool) {
-					result=1;
+			String decode;
+			try {
+				decode = URLDecoder.decode(deletePath,"UTF-8");
+				String decoding = decode.split("/o/")[1];
+				decoding = decoding.split("\\?")[0];
+				com.google.cloud.storage.Bucket bucket = StorageClient.getInstance().bucket();
+				com.google.cloud.storage.Blob blob = bucket.get(decoding);
+				if(blob != null) {
+					blob.delete();
+					result =1;
 				}
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			return ResponseEntity.ok(result);
 		}
@@ -181,6 +219,11 @@ public class CampaignController {
 		camp.setCampaignNo(campaignNo);
 		int result = campaignService.updateCamp(camp);
 		return ResponseEntity.ok(result);
+	}
+	@GetMapping(value="/notice")
+	public ResponseEntity<?> getNoticeList(){
+		List<CampaignNotice> campNo = campaignService.getNoticeList();
+		return ResponseEntity.ok(campNo);
 	}
 	
 }
