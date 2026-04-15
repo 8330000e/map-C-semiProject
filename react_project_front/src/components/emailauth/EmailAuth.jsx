@@ -44,6 +44,13 @@ const EmailAuth = ({ memberEmail, setMemberEmail, onVerified, readOnlyEmail = fa
   // true가 되면 인증 실패 상태로 간주하고 재요청 필요
   const [timeExpired, setTimeExpired] = useState(false);
   const sendMail = () => {
+    if (mailAuth !== 1)
+      ({
+        title: "이미 인증메일을 보냈습니다.",
+        text: "3분 이내에 인증번호를 확인해주세요.",
+        icon: "info",
+      });
+
     if (!memberEmail) {
       Swal.fire({
         title: "이메일을 입력하세요",
@@ -188,8 +195,13 @@ const EmailAuth = ({ memberEmail, setMemberEmail, onVerified, readOnlyEmail = fa
             type="button"
             className={styles.join_btn} //joinpage 버튼 재사용
             onClick={sendMail}
+            disabled={mailAuth === 1 || mailAuth === 3}
           >
-            인증메일 전송
+            {mailAuth === 1
+              ? "전송됨"
+              : mailAuth === 3
+                ? "인증완료"
+                : "인증메일 전송"}
           </button>
         </div>
       </div>

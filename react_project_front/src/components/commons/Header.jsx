@@ -22,13 +22,16 @@ const getImageUrl = (thumb) => normalizeImageUrl(thumb, "member/thumb");
 // 로고 이미지는 Vite 정상 로딩을 위해 import 방식으로 참조함.
 import logo from "../../assets/logo/logo.svg";
 import axios from "axios";
+import Alarm from "../alarm/Alarm";
 
 const Header = () => {
   const navigate = useNavigate();
   const [drawer, setDrawer] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
   const drawerRef = useRef(null);
-  const { memberId, memberNickname, memberThumb, logout, memberGrade } = useAuthStore();
+  const { memberId, memberNickname, memberThumb, logout, memberGrade } =
+    useAuthStore();
+  const [alarmMode, setAlarmMode] = useState(false);
 
   // avatarError는 Header 이미지 로딩 실패 시 기본 아이콘으로 폴백하기 위한 상태임.
   // memberThumb가 있어도 이미지가 깨지면 아이콘으로 바꿔줌.
@@ -133,7 +136,9 @@ const Header = () => {
                       onLoad={() => setAvatarError(false)}
                     />
                   ) : (
-                    <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
+                    <AccountCircleIcon
+                      sx={{ fontSize: 30, color: "#464d3e" }}
+                    />
                   )}
                   <span>{memberNickname}</span>
                 </div>
@@ -155,7 +160,9 @@ const Header = () => {
                       onLoad={() => setAvatarError(false)}
                     />
                   ) : (
-                    <AccountCircleIcon sx={{ fontSize: 30, color: "#464d3e" }} />
+                    <AccountCircleIcon
+                      sx={{ fontSize: 30, color: "#464d3e" }}
+                    />
                   )}
                   <span>{memberNickname}</span>
                 </div>
@@ -163,9 +170,18 @@ const Header = () => {
 
               {/*로그인만 됐을 떄에만 아이콘이 뜨도록 설정 */}
               {memberId && (
-                <NotificationsIcon
-                  sx={{ fontSize: 30, color: "#464d3e", marginTop: 0.5 }}
-                />
+                <div style={{ position: "relative" }}>
+                  <NotificationsIcon
+                    sx={{
+                      fontSize: 30,
+                      color: "#464d3e",
+                      marginTop: 0.5,
+                      cursor: "pointer",
+                    }}
+                    onClick={() => setAlarmMode(!alarmMode)}
+                  />
+                  {alarmMode ? <Alarm /> : null}
+                </div>
               )}
 
               {/*memberId가 있을 경우에는 즉 로그인이 되어 있을 경우에는 로그아웃 버튼 활성화x */}

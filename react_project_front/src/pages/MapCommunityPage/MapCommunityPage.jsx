@@ -86,6 +86,7 @@ const Map = ({
   // const [detailMode, setDetailMode] = useState(false);
   const navigate = useNavigate();
   const mapDivRef = useRef(null);
+  const [ctpvsggList, setCtpvsggList] = useState([]);
   const [markerList, setMarkerList] = useState([]);
   let mapMarkerList = [];
   let mapaddr = "서울특별시 중구";
@@ -117,6 +118,15 @@ const Map = ({
       .catch((err) => {
         console.error("마커 데이터 로드 실패:", err);
       });
+    axios
+      .get(`${BACKSERVER}/boards/boardCount`)
+      .then((res) => {
+        console.log(res.data);
+        setCtpvsggList(res.data);
+      })
+      .catch((err) => {
+        console.error("boardCount 데이터 로드 실패:", err);
+      });
   }, []);
   console.log("마커 리스트:", markerList);
   mapMarkerList = { ...markerList };
@@ -141,7 +151,7 @@ const Map = ({
       map: map,
       icon: {
         content:
-          '<img loading="lazy" decoding="async" src="src/assets/img/marker.png" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=99999; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">',
+          '<div style="position: relative; width: 100%; z-index:99999;"><img loading="lazy" decoding="async" src="src/assets/img/marker.png" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=99999; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;"></div>',
         size: new naver.maps.Size(22, 35),
         anchor: new naver.maps.Point(11, 35),
       },
@@ -400,6 +410,7 @@ const Map = ({
             return;
           }
           console.log(response);
+
           setAddr(response.result.items[0].address);
           setLnglat({
             lat: e.coord.lat(),
@@ -431,7 +442,15 @@ const Map = ({
                 <div>
                   <div className={styles.spot_box_top_posts}>
                     <DescriptionOutlinedIcon sx={{ fontSize: "24px" }} />
-                    <p>{}</p>
+                    <div>
+                      {(() => {
+                        const target = ctpvsggList.find(
+                          (item) =>
+                            item.ctpv + item.sgg === ctpvsgg.ctpv + ctpvsgg.sgg,
+                        );
+                        return <div>{target ? target.boardCount : 0}</div>;
+                      })()}
+                    </div>
                   </div>
                 </div>
               </div>

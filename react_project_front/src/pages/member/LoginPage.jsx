@@ -1,7 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import loginBg from "/images/login-background.png";
+//import loginBg from "/images/login-background.png";
+
 //import joinbg1 from "/images/join2jpg.jpg";
 import useAuthStore from "../../store/useAuthStore";
 import Swal from "sweetalert2";
@@ -114,68 +115,75 @@ const Login = () => {
   if (!isReady) return null;
 
   return (
-    //<div className={styles.login_total_page}></dev>
-    <div className={styles.login_wrap}>
-      <h3 className={styles.page_title}>로그인</h3>
+    <div className={styles.login_total_container}>
+      {/* 전체 배경 컨테이너 추가 */}
+      <div className={styles.login_wrap}>
+        <h3 className={styles.page_title}>로그인</h3>
 
-      {isLoading && <p className={styles.loading_text}>로그인 중...</p>}
+        {isLoading && <p className={styles.loading_text}>로그인 중...</p>}
 
-      <div className={styles.input_group}>
-        {" "}
-        {/*입력영역 그룹화 */}
-        <input
-          type="text"
-          name="memberId"
-          id="memberId"
-          value={member.memberId}
-          onChange={handleChange}
-          className={styles.input_field}
-          /*placeholder: 칸에 글씨를 보여주게 하는 역할, 입력하면 사라짐 */
-          placeholder="아이디"
-        ></input>
-        <input
-          //text를 써도 되지만 글씨가 다 보이게됨. 보안을 위해 password를 사용
-          type="password"
-          name="memberPw"
-          id="memberPw"
-          value={member.memberPw}
-          onChange={handleChange}
-          className={styles.input_field}
-          /*placeholder: 칸에 글씨를 보여주게 하는 역할, 입력하면 사라짐 */
-          placeholder="비밀번호"
-          //onKeyDown=> 엔터를 치면 그걸 키값으로 받아들여 handleLogin() 함수 실행
-          //즉 로그인이 되게 하는 기능.
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleLogin();
-          }}
-        ></input>
-        <button
-          onClick={handleLogin}
-          disabled={isLoading}
-          className={styles.login_btn}
-        >
-          로그인
-        </button>
+        <div className={styles.input_group}>
+          {" "}
+          {/*입력영역 그룹화 */}
+          <input
+            type="text"
+            name="memberId"
+            id="memberId"
+            value={member.memberId}
+            onChange={handleChange}
+            className={styles.input_field}
+            /*placeholder: 칸에 글씨를 보여주게 하는 역할, 입력하면 사라짐 */
+            placeholder="아이디"
+          ></input>
+          <input
+            //text를 써도 되지만 글씨가 다 보이게됨. 보안을 위해 password를 사용
+            type="password"
+            name="memberPw"
+            id="memberPw"
+            value={member.memberPw}
+            onChange={handleChange}
+            className={styles.input_field}
+            /*placeholder: 칸에 글씨를 보여주게 하는 역할, 입력하면 사라짐 */
+            placeholder="비밀번호"
+            //onKeyDown=> 엔터를 치면 그걸 키값으로 받아들여 handleLogin() 함수 실행
+            //즉 로그인이 되게 하는 기능.
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleLogin();
+            }}
+          ></input>
+          <button
+            onClick={handleLogin}
+            disabled={isLoading}
+            className={styles.login_btn}
+          >
+            로그인
+          </button>
+        </div>
+
+        {/* 여기에 아이디/비밀번호 찾기 링크 추가 */}
+        <div className={styles.search_wrap}>
+          <Link to="/members/find-id">아이디 찾기</Link>
+          {" || "}
+          <Link to="/members/find-pw">비밀번호 찾기</Link>
+          {" || "}
+
+          <Link to="/join">회원가입</Link>
+        </div>
+
+        {/* 이미지는 맨 아래에 배치 (CSS에서 absolute로 띄움) */}
+        {/*
+        
+        <img
+          src={loginBg}
+          className={styles.login_img}
+          alt="배경 이미지"
+          loading="lazy"
+          decoding="async"
+        />
+        
+        
+        */}
       </div>
-
-      {/* 여기에 아이디/비밀번호 찾기 링크 추가 */}
-      <div className={styles.search_wrap}>
-        <Link to="/members/find-id">아이디 찾기</Link>
-        {" || "}
-        <Link to="/members/find-pw">비밀번호 찾기</Link>
-        {" || "}
-
-        <Link to="/join">회원가입</Link>
-      </div>
-
-      {/* 이미지는 맨 아래에 배치 (CSS에서 absolute로 띄움) */}
-      <img
-        src={loginBg}
-        className={styles.login_img}
-        alt="배경 이미지"
-        loading="lazy"
-        decoding="async"
-      />
     </div>
   );
 };

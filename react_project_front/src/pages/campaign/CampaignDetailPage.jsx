@@ -50,6 +50,7 @@ const CampaignDetailPage = () => {
   const option = {
     cutout: "83%",
   };
+
   useEffect(() => {
     axios
       .get(
@@ -87,6 +88,7 @@ const CampaignDetailPage = () => {
         console.log(err);
       });
   }, []);
+
   useEffect(() => {
     axios
       .get(
@@ -102,6 +104,7 @@ const CampaignDetailPage = () => {
         console.log(err);
       });
   }, [inCampaign]);
+
   useEffect(() => {
     axios
       .get(
@@ -125,44 +128,62 @@ const CampaignDetailPage = () => {
           </div>
           <div className={styles.campdetailpage_content_wrap}>
             <div className={styles.campdetailpage_details_wrap}>
-              <div className={styles.campdetailpage_chart}>
-                <Doughnut data={data} options={option} />
+              <div className={styles.campdetailpage_visible_wrap}>
+                <div className={styles.campdetailpage_chart}>
+                  <div className={styles.campdetailpage_chart_title}>
+                    <h4>시간 경과</h4>
+                    {/* toLocaleDateString -> Date 타입에 한하여 날짜를 원하는 나라별표기 형식으로 바꾸는 것(자동으로도 되긴 함) */}
+                    <p>
+                      {`${new Date(campaignDetail.campaignStartDate).toLocaleDateString("kr-KR")}` +
+                        ` ~ ` +
+                        `${new Date(campaignDetail.campaignExpireDate).toLocaleDateString("kr-KR")}`}
+                    </p>
+                  </div>
+                  <Doughnut data={data} options={option} />
+                </div>
+                <div className={styles.camp_polygon_wrap}>
+                  <h4>참여 회원 현황</h4>
+                  <div
+                    className={`${styles.camp_polygon1} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.1 ? styles.camp_success : ""}`}
+                  ></div>
+                  <div
+                    className={`${styles.camp_polygon2} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.2 ? styles.camp_success : ""}`}
+                  ></div>
+                  <div
+                    className={`${styles.camp_polygon3} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.3 ? styles.camp_success : ""}`}
+                  ></div>
+                  <div
+                    className={`${styles.camp_polygon4} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.4 ? styles.camp_success : ""}`}
+                  ></div>
+                  <div
+                    className={`${styles.camp_polygon5} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.5 ? styles.camp_success : ""}`}
+                  ></div>
+                  <div
+                    className={`${styles.camp_polygon6} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.6 ? styles.camp_success : ""}`}
+                  ></div>
+                  <div
+                    className={`${styles.camp_polygon7} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.7 ? styles.camp_success : ""}`}
+                  ></div>
+                  <div
+                    className={`${styles.camp_polygon8} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.8 ? styles.camp_success : ""}`}
+                  ></div>
+                  <div
+                    className={`${styles.camp_polygon9} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.9 ? styles.camp_success : ""}`}
+                  ></div>
+                  <div
+                    className={`${styles.camp_polygon0} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 1 ? styles.camp_success : ""}`}
+                  ></div>
+                </div>
               </div>
-              <div className={styles.camp_polygon_wrap}>
-                <div
-                  className={`${styles.camp_polygon1} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.1 ? styles.camp_success : ""}`}
-                ></div>
-                <div
-                  className={`${styles.camp_polygon2} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.2 ? styles.camp_success : ""}`}
-                ></div>
-                <div
-                  className={`${styles.camp_polygon3} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.3 ? styles.camp_success : ""}`}
-                ></div>
-                <div
-                  className={`${styles.camp_polygon4} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.4 ? styles.camp_success : ""}`}
-                ></div>
-                <div
-                  className={`${styles.camp_polygon5} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.5 ? styles.camp_success : ""}`}
-                ></div>
-                <div
-                  className={`${styles.camp_polygon6} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.6 ? styles.camp_success : ""}`}
-                ></div>
-                <div
-                  className={`${styles.camp_polygon7} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.7 ? styles.camp_success : ""}`}
-                ></div>
-                <div
-                  className={`${styles.camp_polygon8} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.8 ? styles.camp_success : ""}`}
-                ></div>
-                <div
-                  className={`${styles.camp_polygon9} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.9 ? styles.camp_success : ""}`}
-                ></div>
-                <div
-                  className={`${styles.camp_polygon0} ${campaignDetail.memberCount >= campaignDetail.campaignGoalMember * 0.04 ? styles.camp_success : ""}`}
-                ></div>
+              <div className={styles.campdetailpage_info_wrap}>
+                <p>{"캠페인 주최자 : " + campaignDetail.memberId}</p>
+                <p>{"캠페인 참여인원 : " + campaignDetail.memberCount}</p>
+                <p>
+                  {"캠페인 목표 인원 : " + campaignDetail.campaignGoalMember}
+                </p>
               </div>
             </div>
             <div className={styles.campdetailpage_sidebar}>
-              <div>{campaignDetail.campaignExplanation}</div>
               <CampaignDetailSideBar
                 campaignDetail={campaignDetail}
                 isCreator={isCreator}
@@ -199,7 +220,7 @@ const CampaignDetailPage = () => {
         <Button
           className="btn primary sm"
           onClick={() => {
-            navigate(`/`);
+            navigate(`/campaign/main`);
           }}
         >
           돌아가기
@@ -227,49 +248,99 @@ const CampaignDetailSideBar = ({
         <h3>캠페인 상세내용</h3>
       </div>
       <div>{campaignDetail.campaignExplanation}</div>
-      <Button
-        className="btn primary lg"
-        onClick={(e) => {
-          dateOut
+      <div className={styles.campdetailpage_sidebar_btn_wrap}>
+        <Button
+          className="btn primary lg"
+          onClick={() => {
+            navigate("/campaign/main");
+          }}
+        >
+          돌아가기
+        </Button>
+        <Button
+          className="btn primary lg"
+          onClick={(e) => {
+            dateOut
+              ? inCampaign
+                ? (e.target.disabled = true)
+                : isCreator
+                  ? navigate(
+                      `/campaign/settings/${campaignNo}/${memberId}/updateCamp`,
+                    )
+                  : Swal.fire({
+                      title: "캠페인을 참여하시겠습니까?",
+                      icon: "question",
+                      showCancelButton: "아니요",
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        axios
+                          .post(
+                            `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNo}/join`,
+                            { memberId: memberId },
+                          )
+                          .then((res) => {
+                            console.log(res);
+                            if (res.data === 1) {
+                              setInCampaign(true);
+                            }
+                          })
+                          .catch((err) => {
+                            console.log(err);
+                          });
+                      }
+                    })
+              : (e.target.disabled = true);
+          }}
+        >
+          {dateOut
             ? inCampaign
-              ? (e.target.disabled = true)
+              ? "참여중"
               : isCreator
-                ? navigate(
-                    `/campaign/settings/${campaignNo}/${memberId}/updateCamp`,
-                  )
-                : Swal.fire({
-                    title: "캠페인을 참여하시겠습니까?",
-                    icon: "question",
-                    showCancelButton: "아니요",
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      axios
-                        .post(
-                          `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNo}/join`,
-                          { memberId: memberId },
-                        )
-                        .then((res) => {
-                          console.log(res);
-                          if (res.data === 1) {
-                            setInCampaign(true);
-                          }
-                        })
-                        .catch((err) => {
-                          console.log(err);
+                ? "설정"
+                : "참여하기"
+            : "캠페인 종료"}
+        </Button>
+        {inCampaign && (
+          <Button
+            className="btn primary lg"
+            onClick={() => {
+              Swal.fire({
+                title: "정말로 캠페인에서 탈퇴하시겠습니까?",
+                icon: "warning",
+                text: "탈퇴시에는 캠페인이 성공해도 포인트를 지급받지 못합니다.",
+                confirmButtonText: "탈퇴",
+                showCancelButton: true,
+                cancelButtonText: "취소",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  axios
+                    .patch(
+                      `${import.meta.env.VITE_BACKSERVER}/campaigns/${memberId}/leaveMember?campaignNo=${campaignNo}`,
+                    )
+                    .then((res) => {
+                      console.log(res);
+                      if (res.data == 1) {
+                        Swal.fire({
+                          title: "멤버를 탈퇴하셨습니다.",
+                          icon: "success",
+                        }).then((result) => {
+                          // if (result.isConfirmed) {
+                          navigate("/campaign/main");
+                          // }
                         });
-                    }
-                  })
-            : (e.target.disabled = true);
-        }}
-      >
-        {dateOut
-          ? inCampaign
-            ? "참여중"
-            : isCreator
-              ? "설정"
-              : "참여하기"
-          : "캠페인 종료"}
-      </Button>
+                      }
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                }
+              });
+            }}
+          >
+            캠페인탈퇴
+          </Button>
+        )}
+      </div>
     </div>
   );
 };

@@ -58,7 +58,7 @@ public class CampaignSchedule {
 			    .atZone(ZoneId.systemDefault())//시스템 시간대
 			    .toInstant()//utc기준 절대시간
 			    .toEpochMilli();//밀리초(1970)
-			if(expire-now<0 && campStatus ==2) {
+			if(expire-now<0 && campStatus ==2 ) {
 				if(memberCount >= campGoalMember) {
 					changeStatus = 3;
 					//멤버들에게 포인트 주는 로직

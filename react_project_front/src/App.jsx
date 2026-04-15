@@ -62,6 +62,7 @@ import CampaignUpdateDeletePage from "./pages/campaign/CampaignUpdateDeletePage"
 import PointForGoodPage from "./pages/pointadmin/PointForGoodPage";
 import CampaignNotice from "./pages/campaign/CampaignNoticePage";
 import Swal from "sweetalert2";
+import CampaignNoticeDetailPage from "./pages/campaign/CampaignNoticeDetailPage";
 
 function App() {
   const location = useLocation();
@@ -177,6 +178,10 @@ function App() {
             element={<CampaignUpdateDeletePage />}
           ></Route>
           <Route path="/campaign/notice" element={<CampaignNotice />}></Route>
+          <Route
+            path="/campaign/noticeDetail/:campaignNoticeNo"
+            element={<CampaignNoticeDetailPage />}
+          ></Route>
           <Route path="/admin/*" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/support/*" element={<SupportPage />} />

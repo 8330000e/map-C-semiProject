@@ -61,7 +61,7 @@
   display: flex;
   flex-direction: column;
   width: 400px;
-  min-height: 400px;
+  min-height: auto;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -69,9 +69,44 @@
   transform: translate(-50%, -50%); /*중앙 정렬 기준*/
   background-color: aliceblue;
   padding: 30px;
-  border-radius: 10px;
+  border-radius: 15px;
   z-index: 1000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* 그림자 추가로 입체감 */
 }
+
+.content_body {
+  flex: 1; /*남은 공간을 모두 차지하게 하여 버튼을 아래로 내리기*/
+}
+
+.donation_page_btn {
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+  margin-top: 15px;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  color: #666;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.submit_btn {
+  background-color: #2ecc71; /* 싱그러운 초록색 */
+  color: white;
+  border: none;
+  padding: 15px;
+  width: 100%;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.submit_btn:hover {
+  background-color: #27ae60;
+}
+
 /*   ----------------------------------  */
 /* 전체 컨테이너 */
 .campaign_container {
@@ -89,6 +124,13 @@
   grid-template-columns: repeat(3, 1fr); /* 3열 구조 */
   column-gap: 140px; /* 옆 카드와의 간격 */
   row-gap: 50px; /* 아래 카드와의 간격 */
+  /* grid-template-columns: repeat(3, 1fr);
+  --> 자식 요소들(카드들)의 세로 정렬이 기본값인 **stretch**로 작동
+  -->따라서 이를 방지하기 위해서는 텍스트의 기본 시작을 start로 정렬
+  --> 그러면 옆의 카드들은 영향을 안받음ㄴ
+  
+  */
+  align-items: start;
 }
 
 /* 카드 개별 스타일 */
@@ -102,6 +144,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   transition: transform 0.3s ease;
 }
 
@@ -128,6 +171,8 @@
 .card_content {
   padding: 0; /* 이미지와 수직선을 맞추기 위해 패딩 제거 */
   text-align: center;
+  margin-top: 10px;
+  flex-grow: 1;
 }
 
 .card_subject {
@@ -138,11 +183,32 @@
 }
 
 .card_description {
+  position: relative;
   font-size: 0.95rem;
   font-weight: 500;
   color: #555;
+  margin: 5px 0;
+  padding: 5px;
   margin-bottom: 12px;
   height: 2.8em; /* 높이 고정으로 카드 열 맞춤 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* 2줄까지만 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  white-space: pre-line; /* 줄바꿈 적용 */
+  word-break: keep-all; /* 한글 자연스럽게 줄바꿈 */
+}
+
+.campaign_card:hover .card_description {
+  /* height: auto;-> 텍스트 늘어나면 같이*/
+  height: auto;
+  -webkit-line-clamp: unset; /*커서가 오면 문장 제한 해제*/
+  overflow: visible;
+  background-color: white;
+  z-index: 10;
+  transform: translateY(-5px); /*살짝 떠오르는 효과*/
 }
 
 .card_footer {
@@ -175,30 +241,4 @@
   border-radius: 8px;
   margin: 15px 0;
   text-align: right;
-}
-
-.content_body {
-  flex: 1; /*남은 공간을 모두 차지하게 하여 버튼을 아래로 내리기*/
-}
-
-.donation_page_btn {
-  padding: 10px;
-  cursor: pointer;
-  margin-top: 250px;
-}
-
-.submit_btn {
-  background-color: #2ecc71; /* 싱그러운 초록색 */
-  color: white;
-  border: none;
-  padding: 15px;
-  width: 100%;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.submit_btn:hover {
-  background-color: #27ae60;
 }
