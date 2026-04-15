@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HelpIcon from "@mui/icons-material/Help";
 import useAuthStore from "../../../store/useAuthStore";
 import { normalizeImageUrl } from "../../../utils/getImageUrl";
@@ -147,6 +147,8 @@ const Store = () => {
     setCurrentPage(1);
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className={`${styles.store_layout} common_wrap`}>
       {/* 레이아웃: 왼쪽 메뉴 + 오른쪽 중고장터 컨텐츠 */}
@@ -188,14 +190,20 @@ const Store = () => {
 
         <div className={styles.customer_box}>
           <span className={styles.customer_head}>
-            <h3>고객센터</h3>
-            <HelpIcon sx={{ fontSize: 26, color: "#fff" }} />
+            <p>고객센터</p>
+            <p>
+              <HelpIcon sx={{ fontSize: 24, color: "#fff" }} />
+            </p>
           </span>
           <p>고객센터 운영시간</p>
           <p>10:00 ~ 18:00</p>
-          <a href="#" className={styles.customer_link}>
+          <button
+            type="button"
+            className={styles.customer_link}
+            onClick={() => navigate("/support")}
+          >
             문의하기 ▶
-          </a>
+          </button>
         </div>
       </aside>
 

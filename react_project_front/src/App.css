@@ -77,6 +77,15 @@ header {
 .main_nav > ul > li > a {
   width: max-content;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 10px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.main_nav > ul > li > a:hover {
+  background-color: rgba(70, 77, 62, 0.12);
+  color: #464d3e;
 }
 .main_nav > ul > li:nth-child(6) {
   width: 120px;
