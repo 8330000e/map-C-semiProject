@@ -60,6 +60,20 @@ const getMemberImageUrl = (thumb) => {
   return url || userImg;
 };
 
+const getDisplayName = (user) => {
+  const name =
+    user?.writerNickname?.trim() ||
+    user?.memberNickname?.trim() ||
+    user?.buyerNickname?.trim() ||
+    user?.sellerNickname?.trim() ||
+    user?.memberName?.trim() ||
+    user?.writerName?.trim();
+  if (!name || ["null", "undefined"].includes(name.toLowerCase())) {
+    return user?.memberId || user?.writerId || user?.buyerId || user?.sellerId || "";
+  }
+  return name;
+};
+
 const Store = () => {
   const { memberId, memberThumb } = useAuthStore();
   const [currentPage, setCurrentPage] = useState(1);
@@ -275,13 +289,13 @@ const Store = () => {
                               (item.memberId === memberId ? memberThumb : null),
                           ) || userImg
                         }
-                        alt={`${item.memberId} 프로필`}
+                        alt={`${getDisplayName(item)} 프로필`}
                         onError={(e) => {
                           e.currentTarget.src = userImg;
                         }}
                       />
                       <span className={styles.author}>
-                        {item.memberNickname || item.memberId}
+                        {getDisplayName(item)}
                       </span>
                     </span>
                     <span className={styles.metaDivider}>|</span>

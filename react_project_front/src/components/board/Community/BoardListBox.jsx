@@ -11,6 +11,14 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
+const getDisplayName = (user) => {
+  const name = user?.writerNickname || user?.memberNickname;
+  if (!name || ["null", "undefined"].includes(String(name).trim().toLowerCase())) {
+    return user?.writerId || user?.memberId || "";
+  }
+  return name;
+};
+
 const BoardListBox = ({
   boardList,
   expandedBoardNo,
@@ -121,10 +129,7 @@ const BoardListBox = ({
                           className={styles.writerAvatar}
                         />
                         <span>
-                          {board.writerNickname ||
-                            board.memberNickname ||
-                            board.writerId ||
-                            board.memberId}
+                          {getDisplayName(board)}
                         </span>
                       </div>
                       <div className={styles.boardDate}>
