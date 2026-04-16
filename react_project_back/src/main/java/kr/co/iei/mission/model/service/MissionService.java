@@ -205,11 +205,11 @@ public class MissionService {
 	    if (result2 == 0) {
 	        throw new RuntimeException("랜덤 미션 포인트 지급 실패");
 	    }
-	    memberService.insertPointHistory(memberId, 10, "EARN", "랜덤 미션 완료");
+	    memberService.insertPointHistory(memberId, 20, "EARN", "랜덤 미션 완료");
 
 	    return Map.of(
 	        "result", 1,
-	        "message", "랜덤 미션 인증 완료! 10포인트 지급",
+	        "message", "랜덤 미션 인증 완료! 20포인트 지급",
 	        "certImageUrl", certImageUrl
 	    );
 	}
