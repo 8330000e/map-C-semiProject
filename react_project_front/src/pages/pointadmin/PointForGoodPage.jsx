@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import useAuthStore from "../../store/useAuthStore";
 import HomeBanner from "./HomeBanner";
+import { errorAlert, successAlert } from "../../utils/alert";
 
 //부모 컴포넌트 , props로 isOpen, onClose를 설정.
 //->여기서 알아야 할 아주 중요한 점 한가지. 컴포넌트로 분할 할 떄
@@ -21,10 +22,32 @@ const DonationPage = ({
 }) => {
   const [donatePoint, setDonatePoint] = useState("");
 
+  // 1. ESC 키 이벤트 설정
+  useEffect(() => {
+    // 팝업이 닫혀있으면 리스너를 등록하지 않음
+    if (!isOpen) return;
+
+    const handleEsc = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    console.log("ESC 감시 시작");
+    window.addEventListener("keydown", handleEsc);
+
+    // 클린업 함수: 팝업이 닫히거나 컴포넌트가 사라질 때 리스너 제거
+    return () => {
+      console.log("ESC 감시 종료");
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, [isOpen, onClose]); // isOpen이나 onClose가 바뀔 때마다 실행
+
+  // 팝업이 닫혀있으면 리스너를 등록하지 않음
   if (!isOpen) return null;
 
   //체크박스에서 전체 기부포인트를 누르면 기부하게 하는 함수
-  const handleAllGivePoint = (e) => {
+  const handleAllGivePoint = async (e) => {
     if (e.target.checked) {
       setDonatePoint(totalPoint);
     } else {
@@ -34,7 +57,7 @@ const DonationPage = ({
 
   //기부 포인트란에 포인트를 입력하면 이벤트가 발동하여
   //등록하게 하는 로직
-  const handlePointChange = (e) => {
+  const handlePointChange = async (e) => {
     const value = e.target.value;
 
     // 숫자가 아니면 입력되지 않도록 막는 로직 (정규표현식 활용)
@@ -77,23 +100,21 @@ const DonationPage = ({
         <p className={styles.point_sub_text}>10포인트는 1000원에 해당됩니다.</p>
         <button
           className={styles.submit_btn}
-          onClick={() => {
+          //함수가 아닐 경우에는 onclick에 다음과 같은 방식으로 삽입가능
+          onClick={async () => {
             // 1. 유효성 검사: 입력값이 비었거나 보유 포인트보다 많은지 체크
             const amount = parseInt(donatePoint);
             //통장 잔고가 없거나 혹은 입력이 되지 않았을 경우에는 경고 알림창이 뜨게 하기
             if (!amount || amount <= 0) {
-              return Swal.fire(
-                "오류",
-                "기부할 포인트를 입력해 주세요",
-                "error",
-              );
+              await errorAlert("오류", "기부할 포인트를 입력해 주세요");
+              return;
             }
             if (amount > totalPoint) {
-              return Swal.fire(
+              await errorAlert(
                 "잔액 부족",
                 "보유하신 포인트보다 많이 기부할 수 없습니다.",
-                "warning",
               );
+              return;
             }
 
             // 2. 부모에게 기부 요청 함수 실행 (아래 2단계에서 만들 함수)
