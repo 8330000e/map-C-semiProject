@@ -7,12 +7,13 @@
 			   campaign_status,
 			   campaign_goal_member,
 			   to_char(campaign_start_date,'yyyy-mm-dd') as campaign_start_date,
-			   to_char(campaign_expire_date,'yyyy-mm-dd') as campaign_expire_date
+			   to_char(campaign_expire_date - interval '1' day,'yyyy-mm-dd') as campaign_expire_date
 			   from create_campaign_tbl
 			   where campaign_status in (1,2,3,4)
 			   <if test="campaignTitle != null and campaignTitle != ''">
 			   		and campaign_title like '%' || #{campaignTitle} || '%'
 			   </if>
+			   offset #{page} * #{size} rows fetch next #{size} rows only
 	</select>
 	<select id="selectOneCampaign" resultType="camp">
 		select 
@@ -21,7 +22,7 @@
 			   campaign_explanation,
 			   campaign_goal_member,
 			   campaign_start_date,
-			   campaign_expire_date - interval '1' day as campaign_expire_date,
+			   campaign_expire_date,
 			   member_id,
                (select count(*) from campaign_member_tbl where campaign_no=#{campaignNo})as member_count
                from create_campaign_tbl ct
@@ -157,5 +158,8 @@
 			campaign_notice_date,
 			(select campaign_title from create_campaign_tbl cct where cct.campaign_no = cnt.campaign_no) as campaign_title
 		 from campaign_notice_tbl cnt where campaign_notice_no = #{campaignNoticeNo}
+	</select>
+	<select id="selectAllCampaignCount" resultType="int">
+		select count(*) from create_campaign_tbl where campaign_status in (1,2,3,4)
 	</select>
 </mapper>

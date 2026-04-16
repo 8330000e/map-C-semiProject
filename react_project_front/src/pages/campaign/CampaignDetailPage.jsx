@@ -14,6 +14,7 @@ import {
   ArcElement,
   Title,
   Tooltip,
+  plugins,
 } from "chart.js";
 
 Chart.register(DoughnutController, ArcElement, Title, Tooltip);
@@ -38,6 +39,7 @@ const CampaignDetailPage = () => {
     new Date(campaignDetail.campaignExpireDate).getTime() - Date.now() > 0
       ? {
           labels: ["남은기간", "지난기간"],
+
           datasets: [
             {
               data: [
@@ -47,7 +49,7 @@ const CampaignDetailPage = () => {
                   new Date(campaignDetail.campaignStartDate).getTime() -
                   (new Date(campaignDetail.campaignExpireDate) - Date.now()),
               ],
-              backgroundColor: ["#FA9B3B", "#fefefe"],
+              backgroundColor: ["#FA9B3B", "#afafaf"],
             },
           ],
         }
@@ -55,19 +57,69 @@ const CampaignDetailPage = () => {
           labels: ["남은기간", "지난기간"],
           datasets: [
             {
-              data: [
-                0, 100,
-                // new Date(campaignDetail.campaignExpireDate).getTime() -
-                //   new Date(campaignDetail.campaignStartDate).getTime() -
-                //   (new Date(campaignDetail.campaignExpireDate) - Date.now()),
-              ],
-              backgroundColor: ["#FA9B3B", "#fefefe"],
+              data: [0, 100],
+              backgroundColor: ["#FA9B3B", "#afafaf"],
             },
           ],
         };
-  const option = {
-    cutout: "83%",
-  };
+  const option =
+    readComplete &&
+    new Date(campaignDetail.campaignExpireDate).getTime() - Date.now() > 0
+      ? {
+          cutout: "83%",
+          plugins: {
+            tooltip: {
+              backgroundColor: "rgba(0, 0, 0, 0.8)",
+              padding: 12,
+              titleFont: {
+                size: 14,
+              },
+              bodyFont: {
+                size: 13,
+              },
+              callbacks: {
+                title: (tooltipItems) => {
+                  // 타이틀 커스터마이징(한번만 가능)
+                  // return "";
+                },
+                label: (context) => {
+                  //이게 출력되는 안쪽의 내용을 바꾸는 설정(내용 커스터마이징))option/plugins/tooltip/callbacks/label/:content
+                  const day =
+                    Math.floor(context.raw / 86400000) > 0
+                      ? Math.floor(context.raw / 86400000) + "일"
+                      : Math.floor(context.raw / 3600000) + "시간";
+                  //context.raw는 데이터셋 안의 각 데이터를 리턴
+                  return `${day}`;
+                },
+              },
+            },
+          },
+        }
+      : {
+          cutout: "83%",
+          plugins: {
+            tooltip: {
+              backgroundColor: "rgba(0, 0, 0, 0.8)",
+              padding: 12,
+              titleFont: {
+                size: 14,
+              },
+              bodyFont: {
+                size: 13,
+              },
+              callbacks: {
+                title: (tooltipItems) => {
+                  // 타이틀 커스터마이징
+                  return "시간 소진";
+                },
+                label: (context) => {
+                  //이게 출력되는 안쪽의 내용을 바꾸는 설정(내용 커스터마이징))option/plugins/tooltip/callbacks/label/:content
+                  return "0일";
+                },
+              },
+            },
+          },
+        };
 
   useEffect(() => {
     axios
@@ -196,7 +248,15 @@ const CampaignDetailPage = () => {
                     {"캠페인 진행 날짜 : " +
                       `${new Date(campaignDetail.campaignStartDate).toLocaleDateString("kr-KR")}` +
                       ` ~ ` +
-                      `${new Date(campaignDetail.campaignExpireDate).toLocaleDateString("kr-KR")}`}
+                      `
+                    ${new Date(
+                      new Date(campaignDetail.campaignExpireDate).setDate(
+                        new Date(campaignDetail.campaignExpireDate).getDate() -
+                          1,
+                      ),
+                    ).toLocaleDateString("kr-KR")}
+                    `}
+                    {/* 캠페인 진행 날짜의 campaignExpireDate부분은 실제 등록된 날짜는 다음날 00:00이기 때문에 하루를 뺀 로직임(여기서 시간계산이 차트에 존재해 sql에서 다듬지 않음) */}
                   </p>
                 </div>
                 <div className={styles.campdetailpage_info2}>

@@ -23,9 +23,16 @@ public class CampaignService {
 	@Autowired
 	private CampaignDao campaignDao;
 
-	public List<Campaign> selectAllCampaign(String campaignTitle) {
-		List<Campaign> list = campaignDao.selectAllCampaign(campaignTitle);
-		return list;
+	public Map<String, Object> selectAllCampaign(Map<String, Object> map) {
+		Integer totalCount = campaignDao.selectAllCampaignCount();
+		int size = (Integer)(map.get("size"));
+		System.out.println(totalCount);
+		int totalPage = (int)(Math.ceil((totalCount / (double)size)));
+		System.out.println(totalPage);
+		List<Campaign> list = campaignDao.selectAllCampaign(map);
+		map.put("campList", list);
+		map.put("totalPage", totalPage);
+		return map;
 	}
 
 	public Campaign selectOneCampaign(Integer campaignNo) {

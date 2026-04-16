@@ -9,6 +9,7 @@ import { Swiper, SwiperSlide, useSwiper } from "Swiper/react";
 import "swiper/css/autoplay";
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
+import Pagination from "../ui/Pagination";
 
 const CampaignMain = () => {
   const [campaignList, setCampaignList] = useState([]);
@@ -16,21 +17,24 @@ const CampaignMain = () => {
   const [campaignSendSearch, setCampaignSendSearch] = useState("");
   const [noticeList, setNoticeList] = useState([]);
   const [readComplete, setReadComplete] = useState(false);
+  const [page, setPage] = useState(0);
+  const [totalPage, setTotalPage] = useState();
   const navigate = useNavigate();
   const swiper = useSwiper();
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/campaigns?campaignTitle=${campaignSendSearch}`,
+        `${import.meta.env.VITE_BACKSERVER}/campaigns?campaignTitle=${campaignSendSearch}&size=6&page=${page}`,
       )
       .then((res) => {
         console.log(res.data);
-        setCampaignList(res.data);
+        setCampaignList(res.data.campList);
+        setTotalPage(res.data.totalPage);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [campaignSendSearch]);
+  }, [campaignSendSearch, page]);
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/campaigns/onlyFiveNotice`)
@@ -157,6 +161,12 @@ const CampaignMain = () => {
               </div>
             );
           })}
+          <Pagination
+            page={page}
+            setPage={setPage}
+            totalPage={totalPage}
+            naviSize={6}
+          />
           <div className={styles.campaignmain_btn_wrap}>
             <Button
               onClick={() => {

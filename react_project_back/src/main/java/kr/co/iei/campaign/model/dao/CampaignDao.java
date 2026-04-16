@@ -12,7 +12,7 @@ import kr.co.iei.campaign.model.vo.CampaignParticipance;
 @Mapper
 public interface CampaignDao {
 
-	List<Campaign> selectAllCampaign(String campaignTitle);
+	List<Campaign> selectAllCampaign(Map<String, Object> map);
 
 	Campaign selectOneCampaign(Integer campaignNo);
 
@@ -81,6 +81,8 @@ public interface CampaignDao {
 	List<CampaignNotice> selectOnlyFiveNotice();
 
 	CampaignNotice selectNoticeDetail(Integer campaignNoticeNo);
+
+	int selectAllCampaignCount();
 
 	
 
