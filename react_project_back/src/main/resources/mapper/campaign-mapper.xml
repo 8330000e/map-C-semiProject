@@ -148,4 +148,14 @@
 		offset 0 rows fetch next 5 rows only
 			   
 	</select>
+	<select id="selectNoticeDetail" resultType="campNo">
+		select
+			campaign_notice_no,
+			campaign_notice_title,
+			campaign_notice_content,
+			campaign_notice_writer,
+			campaign_notice_date,
+			(select campaign_title from create_campaign_tbl cct where cct.campaign_no = cnt.campaign_no) as campaign_title
+		 from campaign_notice_tbl cnt where campaign_notice_no = #{campaignNoticeNo}
+	</select>
 </mapper>

@@ -81,58 +81,48 @@ const CampaignMain = () => {
             ></Input>
           </div>
         </div>
+        <button
+          onClick={() => {
+            navigate(`/campaign/notice`);
+          }}
+        >
+          공지사항
+        </button>
         <div className={styles.campaignmain_content_wrap}>
           <div className={styles.campaignmain_notice}>
-            <div
-            // onClick={() => {
-            //   navigate("/campaign/notice");
-            // }}
-            >
-              {/* {console.log(integer())}
+            {/* {console.log(integer())}
               {noticeList.at(1).campaignNoticeWriter +
                 " - " +
                 noticeList.at(1).campaignNoticeTitle} */}
-              <Swiper
-                // spaceBetween={10}?
-                //Autoplay 가 핵심임(npm i swiper 해서 이런식으로 해야함....))
-                modules={[Autoplay]}
-                loop={true} //한번 순환후에 계속 돌건지 여부(false면 안돔)
-                autoplay={{
-                  delay: 4000, //몇밀리초마다
-                  disableOnInteraction: false, //사용자가 건드려도 계속 돌아감(true 면 멈춤)
-                }}
-                slidesPerView={1} //swiper하나당 몇개 보여줄지
-                //onSlideChange={() => console.log("slide change")} //slide 한번 할때마다 작동(그행위시마다)
-                speed={1500} //넘어가는 시간
-                // onSwiper={(swiper) => console.log(swiper)}?
-              >
-                <SwiperSlide>
-                  {noticeList.at(0).campaignNoticeWriter +
-                    " - " +
-                    noticeList.at(0).campaignNoticeTitle}
-                </SwiperSlide>
-                <SwiperSlide>
-                  {noticeList.at(1).campaignNoticeWriter +
-                    " - " +
-                    noticeList.at(1).campaignNoticeTitle}
-                </SwiperSlide>
-                <SwiperSlide>
-                  {noticeList.at(2).campaignNoticeWriter +
-                    " - " +
-                    noticeList.at(2).campaignNoticeTitle}
-                </SwiperSlide>
-                <SwiperSlide>
-                  {noticeList.at(3).campaignNoticeWriter +
-                    " - " +
-                    noticeList.at(3).campaignNoticeTitle}
-                </SwiperSlide>
-                <SwiperSlide>
-                  {noticeList.at(4).campaignNoticeWriter +
-                    " - " +
-                    noticeList.at(4).campaignNoticeTitle}
-                </SwiperSlide>
-              </Swiper>
-            </div>
+            <Swiper
+              // spaceBetween={10}?
+              //Autoplay 가 핵심임(npm i swiper 해서 이런식으로 해야함....))
+              direction="vertical"
+              modules={[Autoplay]}
+              loop={true} //한번 순환후에 계속 돌건지 여부(false면 안돔)
+              autoplay={{
+                delay: 4000, //몇밀리초마다
+                disableOnInteraction: false, //사용자가 건드려도 계속 돌아감(true 면 멈춤)
+                pauseOnMouseEnter: true, //마우스 들어가면 정지
+              }}
+              slidesPerView={1} //swiper하나당 몇개 보여줄지
+              style={{ height: "40px" }}
+              //onSlideChange={() => console.log("slide change")} //slide 한번 할때마다 작동(그행위시마다)
+              // speed={1500} //넘어가는 시간
+              // onSwiper={(swiper) => console.log(swiper)}?
+            >
+              {noticeList.map((notice, index) => {
+                return (
+                  <SwiperSlide key={notice.campaignNoticeTitle + index}>
+                    <div>
+                      {notice.campaignNoticeTitle +
+                        " - " +
+                        notice.campaignNoticeWriter}
+                    </div>
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
           </div>
           {campaignList.map((camp, index) => {
             return (

@@ -33,20 +33,38 @@ const CampaignDetailPage = () => {
   const [deleteBoard, setDeleteBoard] = useState(false);
   const [banMember, setBanMember] = useState(true);
   const [readBan, setReadBan] = useState(false);
-  const data = readComplete && {
-    labels: ["남은기간", "지난기간"],
-    datasets: [
-      {
-        data: [
-          new Date(campaignDetail.campaignExpireDate).getTime() - Date.now(),
-          new Date(campaignDetail.campaignExpireDate).getTime() -
-            new Date(campaignDetail.campaignStartDate).getTime() -
-            (new Date(campaignDetail.campaignExpireDate) - Date.now()),
-        ],
-        backgroundColor: ["#FA9B3B", "#fefefe"],
-      },
-    ],
-  };
+  const data =
+    readComplete &&
+    new Date(campaignDetail.campaignExpireDate).getTime() - Date.now() > 0
+      ? {
+          labels: ["남은기간", "지난기간"],
+          datasets: [
+            {
+              data: [
+                new Date(campaignDetail.campaignExpireDate).getTime() -
+                  Date.now(),
+                new Date(campaignDetail.campaignExpireDate).getTime() -
+                  new Date(campaignDetail.campaignStartDate).getTime() -
+                  (new Date(campaignDetail.campaignExpireDate) - Date.now()),
+              ],
+              backgroundColor: ["#FA9B3B", "#fefefe"],
+            },
+          ],
+        }
+      : {
+          labels: ["남은기간", "지난기간"],
+          datasets: [
+            {
+              data: [
+                0, 100,
+                // new Date(campaignDetail.campaignExpireDate).getTime() -
+                //   new Date(campaignDetail.campaignStartDate).getTime() -
+                //   (new Date(campaignDetail.campaignExpireDate) - Date.now()),
+              ],
+              backgroundColor: ["#FA9B3B", "#fefefe"],
+            },
+          ],
+        };
   const option = {
     cutout: "83%",
   };
@@ -133,11 +151,6 @@ const CampaignDetailPage = () => {
                   <div className={styles.campdetailpage_chart_title}>
                     <h4>시간 경과</h4>
                     {/* toLocaleDateString -> Date 타입에 한하여 날짜를 원하는 나라별표기 형식으로 바꾸는 것(자동으로도 되긴 함) */}
-                    <p>
-                      {`${new Date(campaignDetail.campaignStartDate).toLocaleDateString("kr-KR")}` +
-                        ` ~ ` +
-                        `${new Date(campaignDetail.campaignExpireDate).toLocaleDateString("kr-KR")}`}
-                    </p>
                   </div>
                   <Doughnut data={data} options={option} />
                 </div>
@@ -176,11 +189,32 @@ const CampaignDetailPage = () => {
                 </div>
               </div>
               <div className={styles.campdetailpage_info_wrap}>
-                <p>{"캠페인 주최자 : " + campaignDetail.memberId}</p>
-                <p>{"캠페인 참여인원 : " + campaignDetail.memberCount}</p>
-                <p>
-                  {"캠페인 목표 인원 : " + campaignDetail.campaignGoalMember}
-                </p>
+                <div className={styles.campdetailpage_info1}>
+                  <p>{"캠페인 주최자 : " + campaignDetail.memberId}</p>
+                  <p>{"캠페인 주제 : " + campaignDetail.campaignTitle}</p>
+                  <p>
+                    {"캠페인 진행 날짜 : " +
+                      `${new Date(campaignDetail.campaignStartDate).toLocaleDateString("kr-KR")}` +
+                      ` ~ ` +
+                      `${new Date(campaignDetail.campaignExpireDate).toLocaleDateString("kr-KR")}`}
+                  </p>
+                </div>
+                <div className={styles.campdetailpage_info2}>
+                  <p>{"캠페인 참여인원 : " + campaignDetail.memberCount}</p>
+                  <p>
+                    {"캠페인 목표 인원 : " + campaignDetail.campaignGoalMember}
+                  </p>
+                  <p>
+                    {"캠페인 달성 여부 : " +
+                      (campaignDetail.campaignStatus >= 3
+                        ? campaignDetail.campaignStatus === 3
+                          ? campaignDetail.campaignStatus === 4
+                            ? "목표달성 실패"
+                            : "조기종료"
+                          : "목표달성 성공"
+                        : "진행중")}
+                  </p>
+                </div>
               </div>
             </div>
             <div className={styles.campdetailpage_sidebar}>
@@ -247,7 +281,9 @@ const CampaignDetailSideBar = ({
       <div className={styles.campdetailpage_sidebar_title}>
         <h3>캠페인 상세내용</h3>
       </div>
-      <div>{campaignDetail.campaignExplanation}</div>
+      <div className={styles.campdetailpage_sidebar_content}>
+        <h4>{campaignDetail.campaignExplanation}</h4>
+      </div>
       <div className={styles.campdetailpage_sidebar_btn_wrap}>
         <Button
           className="btn primary lg"

@@ -80,6 +80,8 @@ public interface CampaignDao {
 
 	List<CampaignNotice> selectOnlyFiveNotice();
 
+	CampaignNotice selectNoticeDetail(Integer campaignNoticeNo);
+
 	
 
 }

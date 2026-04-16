@@ -266,6 +266,11 @@ public class CampaignService {
 		
 		return campNo;
 	}
+
+	public CampaignNotice selectNoticeDetail(Integer campaignNoticeNo) {
+		CampaignNotice campNo = campaignDao.selectNoticeDetail(campaignNoticeNo);
+		return campNo;
+	}
 	
 
 }

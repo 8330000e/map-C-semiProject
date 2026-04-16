@@ -248,6 +248,11 @@ public class CampaignController {
 		List<CampaignNotice> campNo = campaignService.selectOnlyFiveNotice();
 		return ResponseEntity.ok(campNo);
 	}
+	@GetMapping(value="/{campaignNoticeNo}/noticeDetail")
+	public ResponseEntity<?> selectNoticeDetail(@PathVariable Integer campaignNoticeNo){
+		CampaignNotice campNo = campaignService.selectNoticeDetail(campaignNoticeNo);
+		return ResponseEntity.ok(campNo);
+	}
 	
 }
 
