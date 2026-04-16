@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.iei.admin.model.service.AdminService;
+import kr.co.iei.admin.model.vo.AdminLog;
 import kr.co.iei.admin.model.vo.DashData;
 import kr.co.iei.admin.model.vo.Faq;
 import kr.co.iei.admin.model.vo.ListItem;
@@ -192,17 +193,27 @@ public class AdminController {
 	public ResponseEntity<?> selectBoardList(@RequestParam(required = false) String keyword,
 											 @RequestParam(required = false) String risk,
 											 @RequestParam(required = false) String reportSort,
-											 @RequestParam(required = false, defaultValue = "desc") String sort
+											 @RequestParam(required = false, defaultValue = "desc") String sort,
+											 @RequestParam(required = false) String memberId
 			) {
-		List<Board> boardList = adminService.getBoardList(keyword, risk, reportSort, sort);
+		System.out.println(memberId);
+		List<Board> boardList = adminService.getBoardList(keyword, risk, reportSort, sort, memberId);
 		return ResponseEntity.ok(boardList);
 	}
 	
 	@PostMapping(value="processReport")
 	public ResponseEntity<?> processReport(@RequestBody ProcessReport pr) {
+		  System.out.println("컨트롤러 processReport 진입");
 		int result = adminService.processReport(pr);
 		return ResponseEntity.ok(result);
 	}
+	
+	@GetMapping(value="adminLog/{reportNo}")
+	public ResponseEntity<?> selectAdmingLog(@PathVariable Integer reportNo) {
+		AdminLog adminLog = adminService.selectAdminLog(reportNo);
+		return ResponseEntity.ok(adminLog);
+	}
+	
 	
 	
 	

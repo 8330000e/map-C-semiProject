@@ -248,6 +248,9 @@
 			<if test="keyword == 'N'.toString()">
 				and detectedKeyword is null
 			</if>
+			<if test="memberId != null">
+				and writer_id = #{memberId}
+			</if>
 			<choose> <!-- 스위치, if else true 나오면 멈춤 -->
 				<when test="risk == 'high'">
 					and detectedKeyword is not null and reportCount > 0
@@ -292,9 +295,9 @@
 	<update id="updateMemberStatus">
 		update member_tbl1 set
 			<choose>
-				<when test="memberAction == '1'.toString()">lock_until = sysdate + 1,</when>
-				<when test="memberAction == '3'.toString()">lock_until = sysdate + 3,</when>
-				<when test="memberAction == '7'.toString()">lock_until = sysdate + 7,</when>
+				<when test="memberAction == '1'.toString()">lock_until = sysdate + 1, member_status = 3,</when>
+				<when test="memberAction == '3'.toString()">lock_until = sysdate + 3, member_status = 3,</when>
+				<when test="memberAction == '7'.toString()">lock_until = sysdate + 7, member_status = 3,</when>
 				<when test="memberAction == '영구정지'">member_status = 1,</when>
 			</choose>
 			lock_reason = #{lockReason}
@@ -326,7 +329,9 @@
 		)
 	</insert>
 	
-	
+	<select id="selectAdminLog" resultType="adminLog">
+		select * from admin_log_tbl where report_no = #{reportNo}
+	</select>
 	
 
 

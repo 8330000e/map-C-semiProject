@@ -109,7 +109,7 @@ public class Membercontroller {
 	@PostMapping(value = "/login")
 	public ResponseEntity<?> loginMember(@RequestBody Member member, HttpServletRequest request) {
 		
-		// 로그인 시 정지 여부 체크를 하기위한 로직 status는 영구정지 여부만 판단하고 기간 정지는 lock_until로 판단함
+		// 로그인 시 정지 여부 체크를 하기위한 로직 status는 영구정지 여부만 판단하고 기간 정지는 lock_until
 		Map<String, Object> map = memberService.getLockInfo(member.getMemberId());
 		if (map != null) {
 		    Integer memberStatus = ((Number) map.get("memberStatus")).intValue();

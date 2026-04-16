@@ -314,6 +314,36 @@
   cursor: pointer;
 }
 
+.btn_release {
+  padding: 8px 24px;
+  border-radius: 8px;
+  border: none;
+  background: #2e7d32;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn_detail {
+  padding: 8px 24px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(115, 103, 240, 0.5);
+  color: #ffffff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.empty_state {
+  text-align: center;
+  padding: 20px;
+  color: #aab4d4;
+  font-size: 13px;
+}
+
 .btn_cancel:hover { background: rgba(255, 255, 255, 0.18); }
 .btn_reject:hover { background: rgba(115, 103, 240, 0.7); }
 .btn_confirm:hover { background: #d32f2f; }
+.btn_release:hover { background: #1b5e20; }
+.btn_detail:hover { background: rgba(115, 103, 240, 0.7); }

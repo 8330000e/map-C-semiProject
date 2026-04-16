@@ -117,6 +117,7 @@
 
 .member_identity {
   min-width: 0;
+  flex: 1;
 }
 
 /* 텍스트 컨테이너 정렬 공통 */
@@ -178,23 +179,39 @@
 /* ---- 뱃지 ---- */
 .member_meta {
   display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+  min-width: 90px;
+}
+
+.meta_row {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 6px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+}
+
+.meta_label {
+  color: var(--admin-muted);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .badge {
   border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 12px;
+  padding: 3px 8px;
+  font-size: 11px;
   font-weight: 700;
   line-height: 1;
+  white-space: nowrap;
 }
 
 /* 상태 및 권한 뱃지 */
 .status_active { background-color: var(--admin-status-active); color: #0f2f0d; }
 .status_banned { background-color: var(--admin-status-banned); color: #450e0e; }
+.status_suspended { background-color: var(--admin-warning); color: #2a1f00; }
 .status_dormant { background-color: var(--admin-status-dormant); color: #1c2433; }
 .badge_role { background-color: var(--admin-badge-role); color: #1a2245; }
 
@@ -203,9 +220,13 @@
 .danger_mid { background-color: var(--admin-warning); color: #2a1f00; }
 .danger_safe { background-color: var(--admin-status-active); color: #0f2f0d; }
 
-.join_date {
-  color: var(--admin-muted);
-  font-size: 13px;
+/* member_item 내부 이름 넘침 방지 */
+.identity_text > strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+  display: block;
 }
 
 /* ---- 우측 카드 및 그리드 ---- */
@@ -232,6 +253,16 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
+}
+
+/* 이메일은 전체 너비 사용 */
+.info_grid > article:first-child {
+  grid-column: 1 / -1;
+}
+
+.info_item > strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .info_item {

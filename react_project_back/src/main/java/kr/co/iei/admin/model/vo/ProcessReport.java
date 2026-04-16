@@ -1,5 +1,7 @@
 package kr.co.iei.admin.model.vo;
 
+import org.apache.ibatis.type.Alias;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Alias(value="pr")
 public class ProcessReport {
 	private String boardAction;
 	private String memberAction;

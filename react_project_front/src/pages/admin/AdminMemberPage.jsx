@@ -3,11 +3,17 @@ import { useEffect, useState } from "react";
 import styles from "./AdminMemberPage.module.css";
 import axios from "axios";
 import AdminMember from "../../components/admin/AdminMember";
+import { useNavigate } from "react-router-dom";
 
 const AdminMemberPage = () => {
   const [memberList, setMemberList] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null); // 오른쪽 패널에 표시할 회원
   const [isModalOpen, setIsModalOpen] = useState(false); // 전체 로그 모달 상태값
+  const navigate = useNavigate();
+
+  const boardNav = (memberId) => {
+    navigate("/admin/boards", { state: { memberId: memberId } });
+  };
 
   // 회원 로그 필터 객체로 한번에 묶음
   const [logFilter, setLogFilter] = useState({
@@ -160,6 +166,7 @@ const AdminMemberPage = () => {
         logFilter={logFilter}
         changeLogFilter={changeLogFilter}
         toggleLogSort={toggleLogSort}
+        boardNav={boardNav}
       />
     </>
   );

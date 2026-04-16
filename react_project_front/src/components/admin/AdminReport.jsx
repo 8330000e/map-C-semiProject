@@ -20,6 +20,9 @@ const AdminReport = ({
   reportAction,
   changeReportAction,
   handleSubmit,
+  adminLog,
+  selectAdminLog,
+  handleRelease,
 }) => {
   return (
     <>
@@ -61,8 +64,10 @@ const AdminReport = ({
                   <td
                     onClick={() => {
                       selectDetail(report.targetType, report.targetNo);
-
                       setSelectedReport(report);
+                      if (report.reportStatus === 1) {
+                        selectAdminLog(report.reportNo);
+                      }
                     }}
                   >
                     <OpenInNewIcon />
@@ -102,153 +107,225 @@ const AdminReport = ({
                 </span>
               </div>
             </div>
+            {selectedReport.reportStatus === 0 ? (
+              <form onSubmit={handleSubmit}>
+                <div className={styles.action_wrap}>
+                  {/* 게시글 조치 라디오 - name="boardAction"으로 그룹화, 하나만 선택 가능 */}
+                  <div className={styles.action_section}>
+                    <h4>게시글 조치</h4>
+                    <div className={styles.action_row}>
+                      <span>미처리</span>
+                      <input
+                        type="radio"
+                        name="boardAction"
+                        value="미처리"
+                        checked={reportAction.boardAction === "미처리"}
+                        onChange={changeReportAction}
+                      />
+                    </div>
+                    <div className={styles.action_row}>
+                      <span>비공개 처리</span>
+                      <input
+                        type="radio"
+                        name="boardAction"
+                        value="비공개 처리"
+                        checked={reportAction.boardAction === "비공개 처리"}
+                        onChange={changeReportAction}
+                      />
+                    </div>
+                    <div className={styles.action_row}>
+                      <span>삭제 처리</span>
+                      <input
+                        type="radio"
+                        name="boardAction"
+                        value="삭제 처리"
+                        checked={reportAction.boardAction === "삭제 처리"}
+                        onChange={changeReportAction}
+                      />
+                    </div>
+                  </div>
 
-            <form onSubmit={handleSubmit}>
-              <div className={styles.action_wrap}>
-                {/* 게시글 조치 라디오 - name="boardAction"으로 그룹화, 하나만 선택 가능 */}
-                <div className={styles.action_section}>
-                  <h4>게시글 조치</h4>
-                  <div className={styles.action_row}>
-                    <span>미처리</span>
-                    <input
-                      type="radio"
-                      name="boardAction"
-                      value="미처리"
-                      checked={reportAction.boardAction === "미처리"}
-                      onChange={changeReportAction}
-                    />
-                  </div>
-                  <div className={styles.action_row}>
-                    <span>비공개 처리</span>
-                    <input
-                      type="radio"
-                      name="boardAction"
-                      value="비공개 처리"
-                      checked={reportAction.boardAction === "비공개 처리"}
-                      onChange={changeReportAction}
-                    />
-                  </div>
-                  <div className={styles.action_row}>
-                    <span>삭제 처리</span>
-                    <input
-                      type="radio"
-                      name="boardAction"
-                      value="삭제 처리"
-                      checked={reportAction.boardAction === "삭제 처리"}
-                      onChange={changeReportAction}
-                    />
+                  {/* 회원 조치 라디오 - name="memberAction"으로 그룹화, 하나만 선택 가능 */}
+                  <div className={styles.action_section}>
+                    <h4>회원 조치</h4>
+                    <div className={styles.action_row}>
+                      <span>미처리</span>
+                      <input
+                        type="radio"
+                        name="memberAction"
+                        value="미처리"
+                        checked={reportAction.memberAction === "미처리"}
+                        onChange={changeReportAction}
+                      />
+                    </div>
+                    <div className={styles.action_row}>
+                      <span>경고 처리</span>
+                      <input
+                        type="radio"
+                        name="memberAction"
+                        value="경고 처리"
+                        checked={reportAction.memberAction === "경고 처리"}
+                        onChange={changeReportAction}
+                      />
+                    </div>
+                    <div className={styles.action_row}>
+                      <span>이용 정지 (1일)</span>
+                      <input
+                        type="radio"
+                        name="memberAction"
+                        value="1"
+                        checked={reportAction.memberAction === "1"}
+                        onChange={changeReportAction}
+                      />
+                    </div>
+                    <div className={styles.action_row}>
+                      <span>이용 정지 (3일)</span>
+                      <input
+                        type="radio"
+                        name="memberAction"
+                        value="3"
+                        checked={reportAction.memberAction === "3"}
+                        onChange={changeReportAction}
+                      />
+                    </div>
+                    <div className={styles.action_row}>
+                      <span>이용 정지 (7일)</span>
+                      <input
+                        type="radio"
+                        name="memberAction"
+                        value="7"
+                        checked={reportAction.memberAction === "7"}
+                        onChange={changeReportAction}
+                      />
+                    </div>
+                    <div className={styles.action_row}>
+                      <span>영구정지</span>
+                      <input
+                        type="radio"
+                        name="memberAction"
+                        value="영구정지"
+                        checked={reportAction.memberAction === "영구정지"}
+                        onChange={changeReportAction}
+                      />
+                    </div>
                   </div>
                 </div>
 
-                {/* 회원 조치 라디오 - name="memberAction"으로 그룹화, 하나만 선택 가능 */}
-                <div className={styles.action_section}>
-                  <h4>회원 조치</h4>
-                  <div className={styles.action_row}>
-                    <span>미처리</span>
-                    <input
-                      type="radio"
-                      name="memberAction"
-                      value="미처리"
-                      checked={reportAction.memberAction === "미처리"}
+                {/* 처리 사유 입력 */}
+                <div className={styles.reason_section}>
+                  {(reportAction.memberAction === "1" ||
+                    reportAction.memberAction === "3" ||
+                    reportAction.memberAction === "7" ||
+                    reportAction.memberAction === "영구정지") && (
+                    <textarea
+                      placeholder="회원에게 보여줄 메세지"
+                      name="lockReason"
+                      value={reportAction.lockReason}
                       onChange={changeReportAction}
                     />
-                  </div>
-                  <div className={styles.action_row}>
-                    <span>경고 처리</span>
-                    <input
-                      type="radio"
-                      name="memberAction"
-                      value="경고 처리"
-                      checked={reportAction.memberAction === "경고 처리"}
-                      onChange={changeReportAction}
-                    />
-                  </div>
-                  <div className={styles.action_row}>
-                    <span>이용 정지 (1일)</span>
-                    <input
-                      type="radio"
-                      name="memberAction"
-                      value="1"
-                      checked={reportAction.memberAction === "1"}
-                      onChange={changeReportAction}
-                    />
-                  </div>
-                  <div className={styles.action_row}>
-                    <span>이용 정지 (3일)</span>
-                    <input
-                      type="radio"
-                      name="memberAction"
-                      value="3"
-                      checked={reportAction.memberAction === "3"}
-                      onChange={changeReportAction}
-                    />
-                  </div>
-                  <div className={styles.action_row}>
-                    <span>이용 정지 (7일)</span>
-                    <input
-                      type="radio"
-                      name="memberAction"
-                      value="7"
-                      checked={reportAction.memberAction === "7"}
-                      onChange={changeReportAction}
-                    />
-                  </div>
-                  <div className={styles.action_row}>
-                    <span>영구정지</span>
-                    <input
-                      type="radio"
-                      name="memberAction"
-                      value="영구정지"
-                      checked={reportAction.memberAction === "영구정지"}
-                      onChange={changeReportAction}
-                    />
-                  </div>
-                </div>
-              </div>
+                  )}
 
-              {/* 처리 사유 입력 */}
-              <div className={styles.reason_section}>
-                {(reportAction.memberAction === "1" ||
-                  reportAction.memberAction === "3" ||
-                  reportAction.memberAction === "7" ||
-                  reportAction.memberAction === "영구정지") && (
                   <textarea
-                    placeholder="회원에게 보여줄 메세지"
-                    name="lockReason"
-                    value={reportAction.lockReason}
+                    placeholder="게시글 및 회원에 대한 조치 사유를 자세히 작성하세요."
+                    name="reason"
+                    value={reportAction.reason}
                     onChange={changeReportAction}
                   />
+                </div>
+
+                {/* 버튼 영역 */}
+                <div className={styles.modal_btn_wrap}>
+                  <button
+                    type="button"
+                    className={styles.btn_cancel}
+                    onClick={() => resetModal()}
+                  >
+                    취소
+                  </button>
+                  <button className={styles.btn_confirm} type="submit">
+                    처리 확정
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.btn_detail}
+                    onClick={() => setShowDetail(true)}
+                  >
+                    원본
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div>
+                {adminLog ? (
+                  <>
+                    <div className={styles.action_section}>
+                      <h4>처리 내역</h4>
+                      <div className={styles.detail_row}>
+                        <span className={styles.detail_label}>처리 관리자</span>
+                        <span className={styles.detail_value}>
+                          {adminLog.adminId}
+                        </span>
+                      </div>
+                      <div className={styles.detail_row}>
+                        <span className={styles.detail_label}>
+                          대상 회원아이디
+                        </span>
+                        <span className={styles.detail_value}>
+                          {adminLog.logTargetId}
+                        </span>
+                      </div>
+                      <div className={styles.detail_row}>
+                        <span className={styles.detail_label}>조치 내용</span>
+                        <span className={styles.detail_value}>
+                          {adminLog.logResult}
+                        </span>
+                      </div>
+                      <div className={styles.detail_row}>
+                        <span className={styles.detail_label}>조치 사유</span>
+                        <span className={styles.detail_value}>
+                          {adminLog.logReason}
+                        </span>
+                      </div>
+
+                      <div className={styles.detail_row}>
+                        <span className={styles.detail_label}>처리 날짜</span>
+                        <span className={styles.detail_value}>
+                          {adminLog.logDate}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className={styles.modal_btn_wrap}>
+                      <button
+                        type="button"
+                        className={styles.btn_cancel}
+                        onClick={() => resetModal()}
+                      >
+                        닫기
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.btn_release}
+                        onClick={() => handleRelease(selectedReport.targetId)}
+                      >
+                        정지 해제
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.btn_detail}
+                        onClick={() => setShowDetail(true)}
+                      >
+                        원본
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className={styles.empty_state}>
+                    처리 내역을 불러오는 중...
+                  </div>
                 )}
-
-                <textarea
-                  placeholder="게시글 및 회원에 대한 조치 사유를 자세히 작성하세요."
-                  name="reason"
-                  value={reportAction.reason}
-                  onChange={changeReportAction}
-                />
               </div>
-
-              {/* 버튼 영역 */}
-              <div className={styles.modal_btn_wrap}>
-                <button
-                  type="button"
-                  className={styles.btn_cancel}
-                  onClick={() => resetModal()}
-                >
-                  취소
-                </button>
-                <button className={styles.btn_confirm} type="submit">
-                  처리 확정
-                </button>
-                <button
-                  type="button"
-                  className={styles.btn_detail}
-                  onClick={() => setShowDetail(true)}
-                >
-                  원본
-                </button>
-              </div>
-            </form>
+            )}
 
             {/* showDetail이 true일 때만 CommunityDetail 렌더링 */}
             {showDetail && (

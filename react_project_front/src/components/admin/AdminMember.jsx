@@ -5,8 +5,9 @@ import styles from "./AdminMember.module.css";
 
 const statusText = {
   0: "정상",
-  1: "정지",
+  1: "영구정지",
   2: "탈퇴",
+  3: "정지",
 };
 
 const AdminMember = ({
@@ -28,6 +29,7 @@ const AdminMember = ({
   logFilter,
   changeLogFilter,
   toggleLogSort,
+  boardNav,
 }) => {
   return (
     <>
@@ -39,7 +41,8 @@ const AdminMember = ({
             <select name="status" value={filter.status} onChange={changeFilter}>
               <option value="ALL">상태</option>
               <option value={0}>정상</option>
-              <option value={1}>정지</option>
+              <option value={1}>영구정지</option>
+              <option value={3}>정지</option>
               <option value={2}>탈퇴</option>
             </select>
             <select name="grade" value={filter.grade} onChange={changeFilter}>
@@ -88,45 +91,50 @@ const AdminMember = ({
                   </div>
 
                   <div className={styles.member_meta}>
-                    {/* 상태 뱃지 - 정상/정지/탈퇴에 따라 다른 색상 클래스 */}
-                    <span
-                      className={`${styles.badge} ${
-                        member.memberStatus === 0
-                          ? styles.status_active
-                          : member.memberStatus === 1
-                            ? styles.status_banned
-                            : styles.status_dormant
-                      }`}
-                    >
-                      {statusText[member.memberStatus]}
-                    </span>
-                    <span className={`${styles.badge} ${styles.badge_role}`}>
-                      {member.memberGrade === 2 ? "일반" : "관리자"}
-                    </span>
-                    <span
-                      // 중첩 삼항연산자
-                      className={`${styles.badge} ${
-                        // 로그인실패 3회 이상 and 로그인 위치변경 1회 이상 = 위험도 높음
-                        member.failCount >= 3 && member.locationChangeCount >= 1
-                          ? styles.danger_high
-                          : // 로그인실패 3회이상 or 로그인 위치변경 1회 이상 = 위험도 중간
-                            member.failCount >= 3 ||
+                    <div className={styles.meta_row}>
+                      <span className={styles.meta_label}>상태</span>
+                      <span
+                        className={`${styles.badge} ${
+                          member.memberStatus === 0
+                            ? styles.status_active
+                            : member.memberStatus === 1
+                              ? styles.status_banned
+                              : member.memberStatus === 3
+                                ? styles.status_suspended
+                                : styles.status_dormant
+                        }`}
+                      >
+                        {statusText[member.memberStatus]}
+                      </span>
+                    </div>
+                    <div className={styles.meta_row}>
+                      <span className={styles.meta_label}>등급</span>
+                      <span className={`${styles.badge} ${styles.badge_role}`}>
+                        {member.memberGrade === 2 ? "일반" : "관리자"}
+                      </span>
+                    </div>
+                    <div className={styles.meta_row}>
+                      <span className={styles.meta_label}>위험도</span>
+                      <span
+                        className={`${styles.badge} ${
+                          member.failCount >= 3 &&
+                          member.locationChangeCount >= 1
+                            ? styles.danger_high
+                            : member.failCount >= 3 ||
+                                member.locationChangeCount >= 1
+                              ? styles.danger_mid
+                              : styles.danger_safe
+                        }`}
+                      >
+                        {member.failCount >= 3 &&
+                        member.locationChangeCount >= 1
+                          ? "위험"
+                          : member.failCount >= 3 ||
                               member.locationChangeCount >= 1
-                            ? styles.danger_mid
-                            : // 아니면 안전
-                              styles.danger_safe
-                      }`}
-                    >
-                      {member.failCount >= 3 && member.locationChangeCount >= 1
-                        ? "위험"
-                        : member.failCount >= 3 ||
-                            member.locationChangeCount >= 1
-                          ? "주의"
-                          : "안전"}
-                    </span>
-                    <span className={styles.join_date}>
-                      가입일 {member.enrollDate}
-                    </span>
+                            ? "주의"
+                            : "안전"}
+                      </span>
+                    </div>
                   </div>
                 </button>
               ))
@@ -159,7 +167,9 @@ const AdminMember = ({
                         ? styles.status_active
                         : selectedMember.memberStatus === 1
                           ? styles.status_banned
-                          : styles.status_dormant
+                          : selectedMember.memberStatus === 3
+                            ? styles.status_suspended
+                            : styles.status_dormant
                     }`}
                   >
                     {statusText[selectedMember.memberStatus]}
@@ -180,7 +190,12 @@ const AdminMember = ({
                   <span>가입일</span>
                   <strong>{selectedMember.enrollDate}</strong>
                 </article>
-                <article className={styles.info_item}>
+                <article
+                  className={styles.info_item}
+                  onClick={() => {
+                    boardNav(selectedMember.memberId);
+                  }}
+                >
                   <span>게시글 수</span>
                   <strong>{selectedMember.boardCount}</strong>
                 </article>

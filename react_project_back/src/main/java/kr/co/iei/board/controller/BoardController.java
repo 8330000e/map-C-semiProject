@@ -365,5 +365,7 @@ public class BoardController {
 		List<Report> reportList = boardService.getReportList();
 		return ResponseEntity.ok(reportList);
 	}
+	
+	
 	 
 }

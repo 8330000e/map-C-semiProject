@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.iei.admin.model.dao.AdminDao;
+import kr.co.iei.admin.model.vo.AdminLog;
 import kr.co.iei.admin.model.vo.DashData;
 import kr.co.iei.admin.model.vo.Faq;
 import kr.co.iei.admin.model.vo.ListItem;
@@ -130,41 +131,53 @@ public class AdminService {
 		return anomalyMap;
 	}
 
-	public List<Board> getBoardList(String keyword, String risk, String reportSort, String sort) {
-		List<Board> boardList = adminDao.getBoardList(keyword, risk, reportSort, sort);
+	public List<Board> getBoardList(String keyword, String risk, String reportSort, String sort, String memberId) {
+		List<Board> boardList = adminDao.getBoardList(keyword, risk, reportSort, sort, memberId);
 		return boardList;
 	}
 
 	@Transactional
 	public int processReport(ProcessReport pr) {
+		System.out.println("report 서비스 진입");
 		if (!pr.getBoardAction().equals("미처리")) {
 			int boardResult = adminDao.updateBoardStatus(pr);
+			System.out.println("report 1번 쿼리 result: " + boardResult);
 			if (boardResult == 0) {
 				throw new RuntimeException("게시글 조치 실패");
 			}
 		}
 		
+		System.out.println("report 2번 쿼리 진입 전");
 		if (!pr.getMemberAction().equals("미처리") && !pr.getMemberAction().equals("경고 처리")) {
 			int memberResult = adminDao.updateMemberStatus(pr);
+			System.out.println("report 2번 쿼리 result: " + memberResult);
 				if (memberResult == 0) {
 					throw new RuntimeException("회원 조치 실패");
 				}
 		}
 		
+		System.out.println("report 3번 쿼리 진입 전 " );
 		int reportResult = adminDao.updateReportStatus(pr);
+		System.out.println("report 3번 쿼리 result: " + reportResult);
 			if (reportResult == 0) {
 				throw new RuntimeException("신고 처리 실패");
 		}
 		
 		
-		
+			System.out.println("report 4번 쿼리 진입 전 " );
 		int logResult = adminDao.insertAdminLog(pr);
+		System.out.println("report 4번 쿼리 result: " + logResult);
 			if (logResult == 0) {
 				throw new RuntimeException("로그 저장 실패");
 			}
 		
 
 		return 1;
+	}
+
+	public AdminLog selectAdminLog(Integer reportNo) {
+		AdminLog adminLog = adminDao.selectAdminLog(reportNo);
+		return adminLog;
 	}
 
 }
