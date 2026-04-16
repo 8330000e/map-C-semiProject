@@ -46,6 +46,10 @@
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
+.camp_polygon1::after {
+  animation-delay: 0s;
+}
+
 .camp_polygon2 {
   position: absolute;
   width: 50px;
@@ -54,6 +58,9 @@
   left: 116px;
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon2::after {
+  animation-delay: 0.2s;
 }
 .camp_polygon3 {
   position: absolute;
@@ -64,6 +71,9 @@
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
+.camp_polygon3::after {
+  animation-delay: 0.4s;
+}
 .camp_polygon4 {
   position: absolute;
   width: 50px;
@@ -72,6 +82,9 @@
   top: 40px;
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon4::after {
+  animation-delay: 0.6s;
 }
 .camp_polygon5 {
   position: absolute;
@@ -82,6 +95,9 @@
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
+.camp_polygon5::after {
+  animation-delay: 0.8s;
+}
 .camp_polygon6 {
   position: absolute;
   width: 50px;
@@ -90,6 +106,9 @@
   right: 33px;
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon6::after {
+  animation-delay: 1s;
 }
 .camp_polygon7 {
   position: absolute;
@@ -100,6 +119,9 @@
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
+.camp_polygon7::after {
+  animation-delay: 1.2s;
+}
 .camp_polygon8 {
   position: absolute;
   width: 50px;
@@ -108,6 +130,9 @@
   left: 199px;
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon8::after {
+  animation-delay: 1.4s;
 }
 .camp_polygon9 {
   position: absolute;
@@ -118,6 +143,9 @@
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
+.camp_polygon9::after {
+  animation-delay: 1.6s;
+}
 .camp_polygon0 {
   position: absolute;
   width: 50px;
@@ -127,8 +155,22 @@
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
-.camp_success {
-  background-color: orangered;
+.camp_polygon0::after {
+  animation-delay: 1.8s;
+}
+
+.camp_success::after {
+  content: "🆗";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: red;
+  transform: scale(3) rotate(-15deg);
+  animation: stamp 0.6s ease-out forwards;
+  background-color: #b0d261;
 }
 .campdetailpage_info_wrap {
   padding: 20px;
@@ -215,4 +257,19 @@
 .camp_board_content_wrap {
   display: flex;
   justify-content: space-between;
+}
+@keyframes stamp {
+  0% {
+    opacity: 0;
+    transform: scale(3) rotate(-15deg);
+    filter: blur(4px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.9) rotate(5deg);
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
 }

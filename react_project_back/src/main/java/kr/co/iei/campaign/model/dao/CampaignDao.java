@@ -64,7 +64,7 @@ public interface CampaignDao {
 
 	int insertIntoUpdateTbl(Campaign camp);
 
-	List<CampaignNotice> getNoticeList();
+	List<CampaignNotice> getNoticeList(Map<String, Integer> map);
 
 	int getOnlyCampaignStatus(Campaign camp);
 
@@ -83,6 +83,8 @@ public interface CampaignDao {
 	CampaignNotice selectNoticeDetail(Integer campaignNoticeNo);
 
 	int selectAllCampaignCount();
+
+	int selectCampNoticeCount();
 
 	
 

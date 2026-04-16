@@ -90,6 +90,7 @@ const CreateCampaignPage = () => {
             </div>
             {/**일자 정하는 것 */}
             <Input
+              min={new Date().toISOString().split("T")[0]} //yyyy-mm-dd형식의 문자열만 받는다...그래서 toISOString()->yyyy-mm-ddThh:mm:ss형식->T부분에서 분리->[0],[1]로 나뉨(0이 앞)
               type="date"
               onChange={(e) => {
                 setWriteInfo({
