@@ -12,7 +12,7 @@ import kr.co.iei.campaign.model.vo.CampaignParticipance;
 @Mapper
 public interface CampaignDao {
 
-	List<Campaign> selectAllCampaign(String campaignTitle);
+	List<Campaign> selectAllCampaign(Map<String, Object> map);
 
 	Campaign selectOneCampaign(Integer campaignNo);
 
@@ -75,6 +75,14 @@ public interface CampaignDao {
 	int terminateCamp(Integer campaignNo);
 
 	int alarmTerminateCamp(Map<String, String> map);
+
+	List<Campaign> selectFrontCamp();
+
+	List<CampaignNotice> selectOnlyFiveNotice();
+
+	CampaignNotice selectNoticeDetail(Integer campaignNoticeNo);
+
+	int selectAllCampaignCount();
 
 	
 

@@ -14,6 +14,7 @@ import {
   ArcElement,
   Title,
   Tooltip,
+  plugins,
 } from "chart.js";
 
 Chart.register(DoughnutController, ArcElement, Title, Tooltip);
@@ -33,23 +34,92 @@ const CampaignDetailPage = () => {
   const [deleteBoard, setDeleteBoard] = useState(false);
   const [banMember, setBanMember] = useState(true);
   const [readBan, setReadBan] = useState(false);
-  const data = readComplete && {
-    labels: ["남은기간", "지난기간"],
-    datasets: [
-      {
-        data: [
-          new Date(campaignDetail.campaignExpireDate).getTime() - Date.now(),
-          new Date(campaignDetail.campaignExpireDate).getTime() -
-            new Date(campaignDetail.campaignStartDate).getTime() -
-            (new Date(campaignDetail.campaignExpireDate) - Date.now()),
-        ],
-        backgroundColor: ["#FA9B3B", "#fefefe"],
-      },
-    ],
-  };
-  const option = {
-    cutout: "83%",
-  };
+  const data =
+    readComplete &&
+    new Date(campaignDetail.campaignExpireDate).getTime() - Date.now() > 0
+      ? {
+          labels: ["남은기간", "지난기간"],
+
+          datasets: [
+            {
+              data: [
+                new Date(campaignDetail.campaignExpireDate).getTime() -
+                  Date.now(),
+                new Date(campaignDetail.campaignExpireDate).getTime() -
+                  new Date(campaignDetail.campaignStartDate).getTime() -
+                  (new Date(campaignDetail.campaignExpireDate) - Date.now()),
+              ],
+              backgroundColor: ["#FA9B3B", "#afafaf"],
+            },
+          ],
+        }
+      : {
+          labels: ["남은기간", "지난기간"],
+          datasets: [
+            {
+              data: [0, 100],
+              backgroundColor: ["#FA9B3B", "#afafaf"],
+            },
+          ],
+        };
+  const option =
+    readComplete &&
+    new Date(campaignDetail.campaignExpireDate).getTime() - Date.now() > 0
+      ? {
+          cutout: "83%",
+          plugins: {
+            tooltip: {
+              backgroundColor: "rgba(0, 0, 0, 0.8)",
+              padding: 12,
+              titleFont: {
+                size: 14,
+              },
+              bodyFont: {
+                size: 13,
+              },
+              callbacks: {
+                title: (tooltipItems) => {
+                  // 타이틀 커스터마이징(한번만 가능)
+                  // return "";
+                },
+                label: (context) => {
+                  //이게 출력되는 안쪽의 내용을 바꾸는 설정(내용 커스터마이징))option/plugins/tooltip/callbacks/label/:content
+                  const day =
+                    Math.floor(context.raw / 86400000) > 0
+                      ? Math.floor(context.raw / 86400000) + "일"
+                      : Math.floor(context.raw / 3600000) + "시간";
+                  //context.raw는 데이터셋 안의 각 데이터를 리턴
+                  return `${day}`;
+                },
+              },
+            },
+          },
+        }
+      : {
+          cutout: "83%",
+          plugins: {
+            tooltip: {
+              backgroundColor: "rgba(0, 0, 0, 0.8)",
+              padding: 12,
+              titleFont: {
+                size: 14,
+              },
+              bodyFont: {
+                size: 13,
+              },
+              callbacks: {
+                title: (tooltipItems) => {
+                  // 타이틀 커스터마이징
+                  return "시간 소진";
+                },
+                label: (context) => {
+                  //이게 출력되는 안쪽의 내용을 바꾸는 설정(내용 커스터마이징))option/plugins/tooltip/callbacks/label/:content
+                  return "0일";
+                },
+              },
+            },
+          },
+        };
 
   useEffect(() => {
     axios
@@ -133,11 +203,6 @@ const CampaignDetailPage = () => {
                   <div className={styles.campdetailpage_chart_title}>
                     <h4>시간 경과</h4>
                     {/* toLocaleDateString -> Date 타입에 한하여 날짜를 원하는 나라별표기 형식으로 바꾸는 것(자동으로도 되긴 함) */}
-                    <p>
-                      {`${new Date(campaignDetail.campaignStartDate).toLocaleDateString("kr-KR")}` +
-                        ` ~ ` +
-                        `${new Date(campaignDetail.campaignExpireDate).toLocaleDateString("kr-KR")}`}
-                    </p>
                   </div>
                   <Doughnut data={data} options={option} />
                 </div>
@@ -176,11 +241,40 @@ const CampaignDetailPage = () => {
                 </div>
               </div>
               <div className={styles.campdetailpage_info_wrap}>
-                <p>{"캠페인 주최자 : " + campaignDetail.memberId}</p>
-                <p>{"캠페인 참여인원 : " + campaignDetail.memberCount}</p>
-                <p>
-                  {"캠페인 목표 인원 : " + campaignDetail.campaignGoalMember}
-                </p>
+                <div className={styles.campdetailpage_info1}>
+                  <p>{"캠페인 주최자 : " + campaignDetail.memberId}</p>
+                  <p>{"캠페인 주제 : " + campaignDetail.campaignTitle}</p>
+                  <p>
+                    {"캠페인 진행 날짜 : " +
+                      `${new Date(campaignDetail.campaignStartDate).toLocaleDateString("kr-KR")}` +
+                      ` ~ ` +
+                      `
+                    ${new Date(
+                      new Date(campaignDetail.campaignExpireDate).setDate(
+                        new Date(campaignDetail.campaignExpireDate).getDate() -
+                          1,
+                      ),
+                    ).toLocaleDateString("kr-KR")}
+                    `}
+                    {/* 캠페인 진행 날짜의 campaignExpireDate부분은 실제 등록된 날짜는 다음날 00:00이기 때문에 하루를 뺀 로직임(여기서 시간계산이 차트에 존재해 sql에서 다듬지 않음) */}
+                  </p>
+                </div>
+                <div className={styles.campdetailpage_info2}>
+                  <p>{"캠페인 참여인원 : " + campaignDetail.memberCount}</p>
+                  <p>
+                    {"캠페인 목표 인원 : " + campaignDetail.campaignGoalMember}
+                  </p>
+                  <p>
+                    {"캠페인 달성 여부 : " +
+                      (campaignDetail.campaignStatus >= 3
+                        ? campaignDetail.campaignStatus === 3
+                          ? campaignDetail.campaignStatus === 4
+                            ? "목표달성 실패"
+                            : "조기종료"
+                          : "목표달성 성공"
+                        : "진행중")}
+                  </p>
+                </div>
               </div>
             </div>
             <div className={styles.campdetailpage_sidebar}>
@@ -247,7 +341,9 @@ const CampaignDetailSideBar = ({
       <div className={styles.campdetailpage_sidebar_title}>
         <h3>캠페인 상세내용</h3>
       </div>
-      <div>{campaignDetail.campaignExplanation}</div>
+      <div className={styles.campdetailpage_sidebar_content}>
+        <h4>{campaignDetail.campaignExplanation}</h4>
+      </div>
       <div className={styles.campdetailpage_sidebar_btn_wrap}>
         <Button
           className="btn primary lg"

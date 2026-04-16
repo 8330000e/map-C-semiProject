@@ -49,9 +49,13 @@ public class CampaignController {
 	
 	
 	@GetMapping
-	public ResponseEntity<?> selectAllCampaign(@RequestParam(defaultValue="") String campaignTitle){
-		List<Campaign> list = campaignService.selectAllCampaign(campaignTitle);
-		return ResponseEntity.ok(list);
+	public ResponseEntity<?> selectAllCampaign(@RequestParam(defaultValue="") String campaignTitle,@RequestParam Integer size, @RequestParam Integer page){
+		Map <String ,Object> map = new HashMap<String, Object>();
+		map.put("campaignTitle", campaignTitle);
+		map.put("size", size);
+		map.put("page", page);
+		Map<String,Object> resultMap  = campaignService.selectAllCampaign(map);
+		return ResponseEntity.ok(resultMap);
 	}
 	@GetMapping(value="/{campaignNo}")
 	public ResponseEntity<?> selectOneCampaign(@PathVariable Integer campaignNo){
@@ -237,6 +241,21 @@ public class CampaignController {
 		camp.setMemberId(memberId);
 		int result  = campaignService.leaveMember(camp);
 		return ResponseEntity.ok(result);
+	}
+	@GetMapping(value="/selectFrontCamp")
+	public ResponseEntity<?> selectFrontCamp(){
+		List<Campaign> campList = campaignService.selectFrontCamp();
+		return ResponseEntity.ok(campList);
+	}
+	@GetMapping(value="/onlyFiveNotice")
+	public ResponseEntity<?> selectOnlyFiveNotice(){
+		List<CampaignNotice> campNo = campaignService.selectOnlyFiveNotice();
+		return ResponseEntity.ok(campNo);
+	}
+	@GetMapping(value="/{campaignNoticeNo}/noticeDetail")
+	public ResponseEntity<?> selectNoticeDetail(@PathVariable Integer campaignNoticeNo){
+		CampaignNotice campNo = campaignService.selectNoticeDetail(campaignNoticeNo);
+		return ResponseEntity.ok(campNo);
 	}
 	
 }

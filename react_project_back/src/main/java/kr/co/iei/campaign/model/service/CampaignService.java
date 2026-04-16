@@ -23,9 +23,16 @@ public class CampaignService {
 	@Autowired
 	private CampaignDao campaignDao;
 
-	public List<Campaign> selectAllCampaign(String campaignTitle) {
-		List<Campaign> list = campaignDao.selectAllCampaign(campaignTitle);
-		return list;
+	public Map<String, Object> selectAllCampaign(Map<String, Object> map) {
+		Integer totalCount = campaignDao.selectAllCampaignCount();
+		int size = (Integer)(map.get("size"));
+		System.out.println(totalCount);
+		int totalPage = (int)(Math.ceil((totalCount / (double)size)));
+		System.out.println(totalPage);
+		List<Campaign> list = campaignDao.selectAllCampaign(map);
+		map.put("campList", list);
+		map.put("totalPage", totalPage);
+		return map;
 	}
 
 	public Campaign selectOneCampaign(Integer campaignNo) {
@@ -246,6 +253,30 @@ public class CampaignService {
 	public int leaveMember(Campaign camp) {
 		int result = campaignDao.deletePartMember(camp);
 		return result;
+	}
+
+	public List<Campaign> selectFrontCamp() {
+		List<Campaign> campList = campaignDao.selectFrontCamp();
+		//자바에서 직접 짜르는 로직(비효율)
+//		if(campList.size()>10) {
+//			List<Campaign> list=campList.stream()
+//					.skip(0)//생략가능!?(건너뛸지)
+//					.limit(10)
+//					.toList();
+//			return list;
+//		}
+		return campList;
+	}
+
+	public List<CampaignNotice> selectOnlyFiveNotice() {
+		List<CampaignNotice> campNo = campaignDao.selectOnlyFiveNotice();
+		
+		return campNo;
+	}
+
+	public CampaignNotice selectNoticeDetail(Integer campaignNoticeNo) {
+		CampaignNotice campNo = campaignDao.selectNoticeDetail(campaignNoticeNo);
+		return campNo;
 	}
 	
 

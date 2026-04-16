@@ -4,6 +4,7 @@ import styles from "./HomeBanner.module.css";
 import bannerImage1 from "/pointimages/banner1.jpg"; // 실제 이미지 경로로 수정하세요
 import bannerImage2 from "/pointimages/banner2.jpg"; // (선택) 움직이게 할 경우 두 번째 이미지
 import bannerImage3 from "/pointimages/banner3.jpg";
+import karina2 from "/pointimages/karina2.jpg";
 
 // 배너 컨텐너
 const HomeBanner = () => {
@@ -26,6 +27,11 @@ const HomeBanner = () => {
       image: bannerImage3, // image_0.png에 해당하는 이미지
       title: "진행중인 인류의 위기",
       subtitle: "캠페인 참여로 우리의 미래를 지켜주세요.",
+    },
+    {
+      image: karina2, // image_0.png에ただ한 이미지
+      title: "함께해주세요, 캠페인",
+      subtitle: "소중한 당신의 미래를 지켜요.",
     },
 
     // 더 많은 슬라이드를 추가할 수 있습니다.

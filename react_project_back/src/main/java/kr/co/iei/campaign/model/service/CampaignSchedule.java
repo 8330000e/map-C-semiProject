@@ -73,6 +73,7 @@ public class CampaignSchedule {
 					map1.put("pointChange", partPoint);
 					campaignService.givePartPoint(map1);
 				}else {
+					System.out.println(memberCount);
 					changeStatus = 4;
 				}
 				Campaign camp2 = new Campaign();

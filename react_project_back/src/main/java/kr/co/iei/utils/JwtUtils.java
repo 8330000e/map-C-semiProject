@@ -55,7 +55,7 @@ public class JwtUtils {
 
 		Calendar c = Calendar.getInstance();
 		Date startTime = c.getTime();
-		c.add(Calendar.HOUR, expireHour);
+		c.add(Calendar.MINUTE, expireHour);
 		Date endTime = c.getTime();
 
 		// issuedAt -> 버전을 잘맞춰야함. 그렇지 않으면 에러가남

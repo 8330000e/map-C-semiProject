@@ -33,6 +33,10 @@
 .campaignmain_notice {
   text-align: center;
 }
+
+.campaignmain_notice {
+  height: 40px;
+}
 .campaignmain_list {
   cursor: pointer;
 }
