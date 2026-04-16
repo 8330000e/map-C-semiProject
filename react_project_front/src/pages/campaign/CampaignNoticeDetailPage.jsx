@@ -33,6 +33,9 @@ const CampaignNoticeDetailPage = () => {
           <h2>캠페인 공지 상세보기</h2>
         </div>
         <div className={styles.campNoDe_content}>
+          <div>
+            <div></div>
+          </div>
           <ul>
             <li>{campaignNoticeNo}</li>
             {/* //공지사항 시퀀스 번호 */}
