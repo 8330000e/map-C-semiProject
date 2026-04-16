@@ -31,6 +31,10 @@ const Community = ({
   setAddr,
   setLnglat,
   setCtpvsgg,
+  sido,
+  setSido,
+  sigungu,
+  setSigungu,
   boxaddr,
   setBoxaddr,
 }) => {
@@ -49,9 +53,6 @@ const Community = ({
 
   const [searchType, setSearchType] = useState(1);
   const [searchKeyword, setSearchKeyword] = useState("");
-
-  const [sido, setSido] = useState("");
-  const [sigungu, setSigungu] = useState("");
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -658,13 +659,13 @@ const Community = ({
                             ? setAddr("선택된 위치 없음")
                             : setAddr(addr);
                         }
-                        setSelectLnglat({
-                          lat: 0,
-                          lng: 0,
+                        setLnglat({
+                          lat: lnglat.lat,
+                          lng: lnglat.lng,
                         });
                         setCtpvsgg({
-                          ctpv: "",
-                          sgg: "",
+                          ctpv: ctpvsgg.ctpv,
+                          sgg: ctpvsgg.sgg,
                         });
                         setSelectAddr("");
                         setSelectLnglat({
