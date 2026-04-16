@@ -77,7 +77,9 @@ const CommunityDetail = ({
 
   const getDisplayName = (user) => {
     const name = user?.memberNickname?.trim();
-    return name && name.toLowerCase() !== "null" && name.toLowerCase() !== "undefined"
+    return name &&
+      name.toLowerCase() !== "null" &&
+      name.toLowerCase() !== "undefined"
       ? name
       : user?.memberId;
   };
@@ -146,7 +148,14 @@ const CommunityDetail = ({
       .get(`${BACKSERVER}/boards/${board.boardNo}/comments`)
       .then((res) => {
         const loaded = Array.isArray(res.data) ? res.data : [];
-        console.log("[댓글 목록] boardNo=", board.boardNo, loaded.map((item) => ({ memberId: item.memberId, memberThumb: item.memberThumb })));
+        console.log(
+          "[댓글 목록] boardNo=",
+          board.boardNo,
+          loaded.map((item) => ({
+            memberId: item.memberId,
+            memberThumb: item.memberThumb,
+          })),
+        );
         setComments(
           loaded.map((item) => ({
             ...item,

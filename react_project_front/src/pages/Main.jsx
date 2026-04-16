@@ -42,7 +42,9 @@ const getDisplayName = (item) => {
     item?.writerName?.trim() ||
     item?.memberName?.trim();
   if (!name || ["null", "undefined"].includes(name.toLowerCase())) {
-    return item?.writerId || item?.memberId || item?.buyerId || item?.sellerId || "";
+    return (
+      item?.writerId || item?.memberId || item?.buyerId || item?.sellerId || ""
+    );
   }
   return name;
 };
@@ -464,7 +466,12 @@ const Main = () => {
           <div
             className="realtime_comment roundBorder"
             onClick={handleRealtimeCommentClick}
-            style={{ cursor: visibleRealtimeComment && visibleRealtimeComment.marketNo ? "pointer" : "default" }}
+            style={{
+              cursor:
+                visibleRealtimeComment && visibleRealtimeComment.marketNo
+                  ? "pointer"
+                  : "default",
+            }}
           >
             <div
               className="realtime_comment_viewport"
