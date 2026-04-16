@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import useAuthStore from "../../store/useAuthStore";
 import HomeBanner from "./HomeBanner";
-//import { errorAlert, successAlert } from "../../utils/alert";
+import { successAlert } from "../../utils/alert";
 
 //부모 컴포넌트 , props로 isOpen, onClose를 설정.
 //->여기서 알아야 할 아주 중요한 점 한가지. 컴포넌트로 분할 할 떄
@@ -333,11 +333,10 @@ const PointForGoodPage = () => {
       );
 
       if (response.status === 200) {
-        await Swal.fire({
-          title: "기부 완료!",
-          text: `${amount}P가 성공적으로 기부되었습니다.`,
-          icon: "success",
-        });
+        await successAlert(
+          "기부 완료",
+          "기부가 성공적으로 처리되었습니다. 당신의 성원에 감사드립니다.",
+        );
 
         setIsOpen(false); // 팝업 닫기
         loadDataMemberPoint(); // ★중요: 기부를 한후 사용자의 수정된 포인트 데이터를 불러오기, 화면 갱신!

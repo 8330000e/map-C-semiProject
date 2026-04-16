@@ -11,6 +11,7 @@ import heart from "../../assets/img/heart.svg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { normalizeImageUrl } from "../../utils/getImageUrl";
+import { REGION_DATA } from "../../components/board/Community/regionData";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -58,6 +59,10 @@ const MapCommunityPage = () => {
 
         <div className={styles.right}>
           <Community
+            sido={sido}
+            setSido={setSido}
+            sigungu={sigungu}
+            setSigungu={setSigungu}
             addr={addr}
             lnglat={lnglat}
             ctpvsgg={ctpvsgg}
@@ -104,9 +109,13 @@ const Map = ({
   let detailMode = false;
   let ctpvsgglength = 0;
 
-  const boardView = (boardNo) => {
+  const boardView = (boardNo, addr, ctpv, sgg) => {
     if (boardNo) {
       navigate(`/map-community?boardNo=${boardNo}`);
+      setAddr(addr);
+      setCtpvsgg({ ctpv: ctpv, sgg: sgg });
+      setSido(ctpv);
+      setSigungu(sgg);
     } else {
       navigate("/map-community");
     }
@@ -124,15 +133,13 @@ const Map = ({
     axios
       .get(`${BACKSERVER}/boards/boardCount`)
       .then((res) => {
-        console.log(res.data);
         setCtpvsggList(res.data);
       })
       .catch((err) => {
         console.error("boardCount 데이터 로드 실패:", err);
       });
   }, []);
-  console.log("마커 리스트:", markerList);
-  mapMarkerList = { ...markerList };
+  //console.log("마커 리스트:", markerList);
 
   useEffect(() => {
     if (!mapElement.current) return;
@@ -379,7 +386,12 @@ const Map = ({
                 `,
             size: new naver.maps.Size(22, 35),
             anchor: new naver.maps.Point(11, 35),
-            onClick: boardView(marker.boardNo),
+            onClick: boardView(
+              marker.boardNo,
+              marker.addr,
+              marker.ctpv,
+              marker.sgg,
+            ),
           });
         } else {
           navigate("/map-community");
@@ -461,6 +473,7 @@ const Map = ({
 
       // 클릭: 포커스 토글
       map.data.addListener("click", (e) => {
+        navigate("/map-community");
         detailMode = false;
         defaultMarker.setPosition(e.coord);
         naver.maps.Service.reverseGeocode(
@@ -481,6 +494,9 @@ const Map = ({
               ctpv: response.result.items[0].addrdetail.sido,
               sgg: response.result.items[0].addrdetail.sigugun,
             });
+
+            setSido(response.result.items[0].addrdetail.sido);
+            setSigungu(response.result.items[0].addrdetail.sigugun);
           },
         );
         const feature = e.feature;
