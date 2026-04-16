@@ -133,15 +133,13 @@ const Map = ({
     axios
       .get(`${BACKSERVER}/boards/boardCount`)
       .then((res) => {
-        console.log(res.data);
         setCtpvsggList(res.data);
       })
       .catch((err) => {
         console.error("boardCount 데이터 로드 실패:", err);
       });
   }, []);
-  console.log("마커 리스트:", markerList);
-  mapMarkerList = { ...markerList };
+  //console.log("마커 리스트:", markerList);
 
   useEffect(() => {
     if (!mapElement.current) return;

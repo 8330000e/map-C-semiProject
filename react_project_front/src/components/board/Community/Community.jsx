@@ -69,6 +69,15 @@ const Community = ({
 
   const sigunguOptions = sido ? REGION_DATA[sido] || [] : [];
 
+  const [calco2, setCalco2] = useState({
+    cEle: 0,
+    cGas: 0,
+    cWater: 0,
+    cRoad: 0,
+    cWaste: 0,
+    cTotal: 0,
+  });
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const modeParam = params.get("mode");
@@ -271,6 +280,8 @@ const Community = ({
       );
     });
   }, [mode, addr, lnglat, ctpvsgg]);
+
+  useEffect(() => {}, []);
 
   const submitSearch = (e) => {
     e.preventDefault();
@@ -656,7 +667,7 @@ const Community = ({
                         setMode("write");
                         {
                           addr == "" || addr == "선택된 위치 없음"
-                            ? setAddr("선택된 위치 없음")
+                            ? setAddr("서울특별시 중구 을지로 12")
                             : setAddr(addr);
                         }
                         setLnglat({
@@ -740,7 +751,9 @@ const Community = ({
                 <div className={styles.boardWriteGroup}>
                   <label>오늘의 내 탄소배출량은?</label>
                   {/* 탄소계산 기능 들어갈 자리*/}
-                  <div className={styles.carbonBox}>탄소계산 ⊞</div>
+                  <div className={styles.carbonBox}>
+                    <div></div>
+                  </div>
                 </div>
 
                 <div className={styles.boardWriteGroup}>
