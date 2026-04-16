@@ -10,6 +10,9 @@ import { compressImageFile } from "../../../utils/compressImage";
 import Swal from "sweetalert2";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { REGION_DATA } from "./regionData";
+import calculator from "../../../assets/img/calculator.svg";
+import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
+import NavigateBeforeOutlinedIcon from "@mui/icons-material/NavigateBeforeOutlined";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -77,6 +80,8 @@ const Community = ({
     cWaste: 0,
     cTotal: 0,
   });
+
+  const step = 1;
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -752,7 +757,33 @@ const Community = ({
                   <label>오늘의 내 탄소배출량은?</label>
                   {/* 탄소계산 기능 들어갈 자리*/}
                   <div className={styles.carbonBox}>
-                    <div></div>
+                    <div className={styles.carbonBoxTop}>
+                      <div className={styles.statusbar}>{step} / 5</div>
+                      <div className={styles.carboncal}>
+                        <p>탄소계산기</p>
+                        <img src={calculator} alt="계산기아이콘" />
+                      </div>
+                    </div>
+                    <div className={styles.carbon_content}>
+                      <div className={styles.carbonBox_left}>
+                        <NavigateBeforeOutlinedIcon
+                          sx={{ fontSize: "50px", color: "var(--color1)" }}
+                        />
+                      </div>
+                      <div className={styles.carbon_question}>
+                        <div>
+                          <div>오늘 어떤 활동을 하셨나요?</div>
+                        </div>
+                        <div>
+                          <div>사용시간</div>
+                        </div>
+                      </div>
+                      <div className={styles.carbonBox_right}>
+                        <NavigateNextOutlinedIcon
+                          sx={{ fontSize: "50px", color: "var(--color1)" }}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
 
