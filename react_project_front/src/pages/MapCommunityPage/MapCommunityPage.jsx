@@ -520,19 +520,6 @@ const Map = ({
     };
   }, [markerList]);
 
-  // useEffect(() => {
-  //   if (!mapDivRef.current || !window.naver) {
-  //     return;
-  //   }
-  //   const map = new naver.maps.Map(mapDivRef.current, {
-  //     center: new window.naver.maps.LatLng(
-  //       `${maplnglat.lat}`,
-  //       `${maplnglat.lng}`,
-  //     ),
-  //     zoom: 15,
-  //   });
-  // }, [markerList]);
-
   return (
     <div className={styles.map_div}>
       <div>
