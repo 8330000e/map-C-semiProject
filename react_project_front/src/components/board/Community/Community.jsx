@@ -360,7 +360,7 @@ const Community = ({
           await Swal.fire({
             icon: "success",
             title: "게시글 등록 완료",
-            text: "게시글이 등록되었고, 5포인트가 지급되었습니다.",
+            text: "게시글이 등록되었고, 10포인트가 지급되었습니다.",
             confirmButtonText: "확인",
           });
         } else {
