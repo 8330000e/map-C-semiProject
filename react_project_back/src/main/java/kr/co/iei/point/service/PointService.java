@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.iei.point.dao.PointDao;
+import kr.co.iei.point.vo.PointHistory;
 import kr.co.iei.region.model.vo.RegionContribution;
 
 @Service
@@ -26,7 +27,7 @@ public class PointService {
 		return (totalPoint != null) ? totalPoint:0;
 	}
 
-	public List<RegionContribution> selectPointHistory(String memberId) {
+	public List<PointHistory> selectPointHistory(String memberId) {
 		return pointDao.selectPointHistory(memberId);
 	}
 }

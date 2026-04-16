@@ -30,14 +30,20 @@ const MyPoint = () => {
         setLoading(true);
 
         const [pointRes, historyRes] = await Promise.all([
-          axios.get(`${BACKSERVER}/members/${memberId}/point`),
-          axios.get(`${BACKSERVER}/members/${memberId}/point-history`),
+          axios.get(`${BACKSERVER}/point-give/${memberId}`),
+          axios.get(`${BACKSERVER}/point-history/${memberId}`),
         ]);
+
+        console.log("point 응답:", pointRes.data);
+        console.log("history 응답:", historyRes.data);
 
         setPoint(pointRes.data ?? 0);
         setHistory(Array.isArray(historyRes.data) ? historyRes.data : []);
       } catch (err) {
         console.error("포인트 데이터 조회 실패", err);
+        console.error("응답 상태:", err?.response?.status);
+        console.error("응답 데이터:", err?.response?.data);
+        console.error("요청 URL:", err?.config?.url);
         setPoint(0);
         setHistory([]);
       } finally {
