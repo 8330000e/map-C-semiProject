@@ -50,8 +50,13 @@ header > h1 a:active {
 } */
 .outline {
   border: 2.5px solid #464d3e;
-  background-color: #464d3e;
+  background-color: #2d5a27;
   color: #fff;
+}
+.outline:hover {
+  background-color: #3d7a35;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 .inline {
   border: 2.5px solid #464d3e;
@@ -59,7 +64,14 @@ header > h1 a:active {
   color: #464d3e;
 }
 .login_btn {
+  background-color: #2d5a27;
   font-weight: 800;
+  color: #fff;
+}
+.login_btn:hover {
+  background-color: #3d7a35; /* 마우스 올렸을 때 */
+  transform: translateY(-1px); /* 살짝 위로 뜨는 효과 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 header > .profile_bar_wrap {
   display: flex;
