@@ -765,24 +765,97 @@ const Community = ({
                       </div>
                     </div>
                     <div className={styles.carbon_content}>
-                      <div className={styles.carbonBox_left}>
+                      <button className={styles.carbonBox_left}>
                         <NavigateBeforeOutlinedIcon
-                          sx={{ fontSize: "50px", color: "var(--color1)" }}
+                          sx={{
+                            fontSize: "50px",
+                            color: "var(--color1)",
+                            cursor: "pointer",
+                          }}
                         />
-                      </div>
+                      </button>
                       <div className={styles.carbon_question}>
                         <div>
                           <div>오늘 어떤 활동을 하셨나요?</div>
+                          {/* kWh = 소비전력(W) ÷ 1000 × 시간(h)
+                          CO₂ = kWh × 0.4593 (한국 전력 배출계수)
+                          W × 사용시간(h) = Wh
+                          Wh ÷ 1000 = kWh
+                          kWh × 0.4593 = kg CO₂
+                          TV 시청
+                          100W
+                          컴퓨터 사용
+                          225W
+                          노트북 사용
+                          55W
+                          에어컨 사용
+                          1700W
+                          전기히터 사용
+                          1500W
+                          조명 켜기
+                          10W
+                          세탁기 돌리기
+                          450W
+
+                          m³ = 기기 소비량(m³/h) × 시간(h)
+                          CO₂ = m³ × 2.176 (도시가스 배출계수)
+                          요리하기
+                          0.067m³/10분
+                          보일러 난방
+                          0.375m³/10분
+                          온수 사용
+                          0.25m³/10분
+
+                          m³ = 유량(L/min) × 시간(min) ÷ 1000
+                          CO₂ = m³ × 0.376 (수도 배출계수)
+                          샤워하기
+                          11.5L/min
+                          설거지
+                          5L/min
+                          세수/양치
+                          6L/min
+                          욕조 채우기
+                          17.5L/min
+
+                          km = 속도(km/h) × 시간(h)
+                          CO₂ = km × 배출계수
+                          걷기
+                          4.5km/h
+                          자전거 타기
+                          15km/h
+                          버스 타기
+                          25km/h
+                          지하철 타기
+                          35km/h
+                          자가용 운전
+                          40km/h
+                          고속도로 운전
+                          100km/h
+
+                          CO₂ = 폐기물(kg) × 0.5 (일반쓰레기)
+                          음식물쓰레기 = 끼니 수 × 0.3kg × 1.9
+                          집밥 끼니
+                          끼니당 0.3lg
+                          배달음식
+                          0.2kg
+                          택배 수령
+                          0.5kg
+                          장보기
+                          0.3kg */}
                         </div>
                         <div>
                           <div>사용시간</div>
                         </div>
                       </div>
-                      <div className={styles.carbonBox_right}>
+                      <button className={styles.carbonBox_right}>
                         <NavigateNextOutlinedIcon
-                          sx={{ fontSize: "50px", color: "var(--color1)" }}
+                          sx={{
+                            fontSize: "50px",
+                            color: "var(--color1)",
+                            cursor: "pointer",
+                          }}
                         />
-                      </div>
+                      </button>
                     </div>
                   </div>
                 </div>
