@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import kr.co.iei.region.model.vo.RegionContribution;
+import kr.co.iei.point.vo.PointHistory;
 
 @Mapper
 public interface PointDao {
 
 	Integer selectTotalPoint(String memberId);
 
-	List<RegionContribution> selectPointHistory(String memberId);
+	List<PointHistory> selectPointHistory(String memberId);
 
 }
