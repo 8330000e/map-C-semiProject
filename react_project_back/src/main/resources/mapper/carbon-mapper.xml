@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.iei.carbon.model.dao.CarbonDao">
+
+  <select id="selectRegionEmission" resultType="java.lang.Double">
+    <!--
+      지역별 배출량을 계산하는 SQL 쿼리임.
+      - CARBON_TBL에서 최신 연도 도로 배출량과 나무 흡수량을 합산함.
+      - CARBON_ELE_TBL에서 전기 배출량, CARBON_GAS_TBL에서 가스 배출량,
+        CARBON_HEAT_TBL에서 난방 배출량을 각각 더함.
+      - CTPVSGG_TBL을 기준으로 ctpv/sgg 지역명을 찾아서 ID를 매핑함.
+      - 공백과 대소문자를 제거해서 지역명 비교를 안정적으로 수행함.
+    -->
+    SELECT
+      NVL((SELECT CARBON_ROAD_TCO2 + CARBON_TREE_TCO2
+           FROM CARBON_TBL c
+           WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
+             AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR)
+                                   FROM CARBON_TBL c2
+                                   WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)), 0) +
+      NVL((SELECT CARBON_ELE_TOT FROM CARBON_ELE_TBL e
+           WHERE e.CTPVSGG_ID = r.CTPVSGG_ID), 0) +
+      NVL((SELECT CARBON_GAS_TOT FROM CARBON_GAS_TBL g
+           WHERE g.CTPVSGG_ID = r.CTPVSGG_ID), 0) +
+      NVL((SELECT CARBON_HEAT_TOT FROM CARBON_HEAT_TBL h
+           WHERE h.CTPVSGG_ID = r.CTPVSGG_ID), 0) AS total_emission
+    FROM CTPVSGG_TBL r
+    WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
+      AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
+  </select>
+
+  <select id="selectRegionEmissionHistory" resultType="kr.co.iei.carbon.model.vo.CarbonHistory">
+    <!--
+      선택된 지역의 월별 탄소 배출량 이력 데이터를 가져오는 쿼리임.
+      - CARBON_ELE_TBL, CARBON_GAS_TBL, CARBON_HEAT_TBL에서 각 월별 전기/가스/난방 배출량을 조회함.
+      - CARBON_TBL에서 최신 연도 도로 배출량과 나무 흡수량 합을 가져와서 연간 데이터로 변환함.
+      - road_tree 값을 12로 나누어 월별 배출량으로 계산함.
+      - UNION ALL로 1월부터 12월까지 결과를 하나의 리스트로 이어붙임.
+      - 프론트엔드에서는 period 값을 받아서 '1월', '2월' 등으로 표현함.
+    -->
+    SELECT
+      TO_CHAR(latest_year) || '-01' AS period,
+      NVL(e.CARBON_ELE_JAN, 0) + NVL(g.CARBON_GAS_JAN, 0) + NVL(h.CARBON_HEAT_JAN, 0) + NVL(road_tree, 0) / 12 AS emission
+    FROM (
+      SELECT r.CTPVSGG_ID,
+             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT NVL(c.CARBON_ROAD_TCO2, 0) + NVL(c.CARBON_TREE_TCO2, 0)
+              FROM CARBON_TBL c
+              WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM CTPVSGG_TBL r
+      WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
+        AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
+    ) reg
+    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    UNION ALL
+    SELECT
+      TO_CHAR(latest_year) || '-02' AS period,
+      NVL(e.CARBON_ELE_FEB, 0) + NVL(g.CARBON_GAS_FEB, 0) + NVL(h.CARBON_HEAT_FEB, 0) + NVL(road_tree, 0) / 12 AS emission
+    FROM (
+      SELECT r.CTPVSGG_ID,
+             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT NVL(c.CARBON_ROAD_TCO2, 0) + NVL(c.CARBON_TREE_TCO2, 0)
+              FROM CARBON_TBL c
+              WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM CTPVSGG_TBL r
+      WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
+        AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
+    ) reg
+    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    UNION ALL
+    SELECT
+      TO_CHAR(latest_year) || '-03' AS period,
+      NVL(e.CARBON_ELE_MAR, 0) + NVL(g.CARBON_GAS_MAR, 0) + NVL(h.CARBON_HEAT_MAR, 0) + NVL(road_tree, 0) / 12 AS emission
+    FROM (
+      SELECT r.CTPVSGG_ID,
+             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT NVL(c.CARBON_ROAD_TCO2, 0) + NVL(c.CARBON_TREE_TCO2, 0)
+              FROM CARBON_TBL c
+              WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM CTPVSGG_TBL r
+      WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
+        AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
+    ) reg
+    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    UNION ALL
+    SELECT
+      TO_CHAR(latest_year) || '-04' AS period,
+      NVL(e.CARBON_ELE_APR, 0) + NVL(g.CARBON_GAS_APR, 0) + NVL(h.CARBON_HEAT_APR, 0) + NVL(road_tree, 0) / 12 AS emission
+    FROM (
+      SELECT r.CTPVSGG_ID,
+             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT NVL(c.CARBON_ROAD_TCO2, 0) + NVL(c.CARBON_TREE_TCO2, 0)
+              FROM CARBON_TBL c
+              WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM CTPVSGG_TBL r
+      WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
+        AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
+    ) reg
+    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    UNION ALL
+    SELECT
+      TO_CHAR(latest_year) || '-05' AS period,
+      NVL(e.CARBON_ELE_MAY, 0) + NVL(g.CARBON_GAS_MAY, 0) + NVL(h.CARBON_HEAT_MAY, 0) + NVL(road_tree, 0) / 12 AS emission
+    FROM (
+      SELECT r.CTPVSGG_ID,
+             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT NVL(c.CARBON_ROAD_TCO2, 0) + NVL(c.CARBON_TREE_TCO2, 0)
+              FROM CARBON_TBL c
+              WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM CTPVSGG_TBL r
+      WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
+        AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
+    ) reg
+    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    UNION ALL
+    SELECT
+      TO_CHAR(latest_year) || '-06' AS period,
+      NVL(e.CARBON_ELE_JUN, 0) + NVL(g.CARBON_GAS_JUN, 0) + NVL(h.CARBON_HEAT_JUN, 0) + NVL(road_tree, 0) / 12 AS emission
+    FROM (
+      SELECT r.CTPVSGG_ID,
+             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT NVL(c.CARBON_ROAD_TCO2, 0) + NVL(c.CARBON_TREE_TCO2, 0)
+              FROM CARBON_TBL c
+              WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM CTPVSGG_TBL r
+      WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
+        AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
+    ) reg
+    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    UNION ALL
+    SELECT
+      TO_CHAR(latest_year) || '-07' AS period,
+      NVL(e.CARBON_ELE_JUL, 0) + NVL(g.CARBON_GAS_JUL, 0) + NVL(h.CARBON_HEAT_JUL, 0) + NVL(road_tree, 0) / 12 AS emission
+    FROM (
+      SELECT r.CTPVSGG_ID,
+             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT NVL(c.CARBON_ROAD_TCO2, 0) + NVL(c.CARBON_TREE_TCO2, 0)
+              FROM CARBON_TBL c
+              WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM CTPVSGG_TBL r
+      WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
+        AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
+    ) reg
+    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    UNION ALL
+    SELECT
+      TO_CHAR(latest_year) || '-08' AS period,
+      NVL(e.CARBON_ELE_AUG, 0) + NVL(g.CARBON_GAS_AUG, 0) + NVL(h.CARBON_HEAT_AUG, 0) + NVL(road_tree, 0) / 12 AS emission
+    FROM (
+      SELECT r.CTPVSGG_ID,
+             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT NVL(c.CARBON_ROAD_TCO2, 0) + NVL(c.CARBON_TREE_TCO2, 0)
+              FROM CARBON_TBL c
+              WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM CTPVSGG_TBL r
+      WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
+        AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
+    ) reg
+    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    UNION ALL
+    SELECT
+      TO_CHAR(latest_year) || '-09' AS period,
+      NVL(e.CARBON_ELE_SEP, 0) + NVL(g.CARBON_GAS_SEP, 0) + NVL(h.CARBON_HEAT_SEP, 0) + NVL(road_tree, 0) / 12 AS emission
+    FROM (
+      SELECT r.CTPVSGG_ID,
+             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT NVL(c.CARBON_ROAD_TCO2, 0) + NVL(c.CARBON_TREE_TCO2, 0)
+              FROM CARBON_TBL c
+              WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM CTPVSGG_TBL r
+      WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
+        AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
+    ) reg
+    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    UNION ALL
+    SELECT
+      TO_CHAR(latest_year) || '-10' AS period,
+      NVL(e.CARBON_ELE_OCT, 0) + NVL(g.CARBON_GAS_OCT, 0) + NVL(h.CARBON_HEAT_OCT, 0) + NVL(road_tree, 0) / 12 AS emission
+    FROM (
+      SELECT r.CTPVSGG_ID,
+             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT NVL(c.CARBON_ROAD_TCO2, 0) + NVL(c.CARBON_TREE_TCO2, 0)
+              FROM CARBON_TBL c
+              WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM CTPVSGG_TBL r
+      WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
+        AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
+    ) reg
+    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    UNION ALL
+    SELECT
+      TO_CHAR(latest_year) || '-11' AS period,
+      NVL(e.CARBON_ELE_NOV, 0) + NVL(g.CARBON_GAS_NOV, 0) + NVL(h.CARBON_HEAT_NOV, 0) + NVL(road_tree, 0) / 12 AS emission
+    FROM (
+      SELECT r.CTPVSGG_ID,
+             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT NVL(c.CARBON_ROAD_TCO2, 0) + NVL(c.CARBON_TREE_TCO2, 0)
+              FROM CARBON_TBL c
+              WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM CTPVSGG_TBL r
+      WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
+        AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
+    ) reg
+    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    UNION ALL
+    SELECT
+      TO_CHAR(latest_year) || '-12' AS period,
+      NVL(e.CARBON_ELE_DEC, 0) + NVL(g.CARBON_GAS_DEC, 0) + NVL(h.CARBON_HEAT_DEC, 0) + NVL(road_tree, 0) / 12 AS emission
+    FROM (
+      SELECT r.CTPVSGG_ID,
+             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT NVL(c.CARBON_ROAD_TCO2, 0) + NVL(c.CARBON_TREE_TCO2, 0)
+              FROM CARBON_TBL c
+              WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM CTPVSGG_TBL r
+      WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
+        AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
+    ) reg
+    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    ORDER BY period ASC
+  </select>
+
+  <select id="selectTotalEmission" resultType="java.lang.Double">
+    <!--
+      한국 전체 지역의 총 배출량을 계산하는 SQL 쿼리임.
+      - CARBON_TBL에서는 각 지역의 최신 연도 데이터를 기준으로 도로 + 나무 배출량 합을 계산함.
+      - CARBON_ELE_TBL, CARBON_GAS_TBL, CARBON_HEAT_TBL의 합계를 더해서 전체 총량을 만듦.
+    -->
+    SELECT
+      NVL((SELECT SUM(c.CARBON_ROAD_TCO2 + c.CARBON_TREE_TCO2)
+           FROM CARBON_TBL c
+           JOIN (
+             SELECT CTPVSGG_ID, MAX(CARBON_YEAR) AS latest_year
+             FROM CARBON_TBL
+             GROUP BY CTPVSGG_ID
+           ) latest
+           ON c.CTPVSGG_ID = latest.CTPVSGG_ID
+           AND c.CARBON_YEAR = latest.latest_year), 0) +
+      NVL((SELECT SUM(CARBON_ELE_TOT) FROM CARBON_ELE_TBL), 0) +
+      NVL((SELECT SUM(CARBON_GAS_TOT) FROM CARBON_GAS_TBL), 0) +
+      NVL((SELECT SUM(CARBON_HEAT_TOT) FROM CARBON_HEAT_TBL), 0) AS total_emission
+    FROM DUAL
+  </select>
+
+</mapper>

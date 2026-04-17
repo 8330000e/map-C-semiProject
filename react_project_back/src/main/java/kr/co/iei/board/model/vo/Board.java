@@ -42,8 +42,9 @@ public class Board {
 	    private Integer sggCd;
 	    private String ctpvNm;
 	    private String sggNm;
+	    // boardCount는 지역별 게시글 개수를 담는 필드임.
+	    // 이 값은 프론트에서 숫자로 변환해 지역 통계나 절감 추정 계산에 사용함.
 	    private String boardCount;
-	 
 	    
 	    
 	 // 프론트에서 바로 쓰기 위한 응답용 필드

@@ -52,6 +52,8 @@ public interface MemberDao {
 
 	int insertMemberPoint(String memberId);
 	
+	Map<String, Object> selectCarbonStats();
+
 	void insertLog(Map<String, Object> params);
 	
 	String getLastLocation(String memberId);

@@ -336,6 +336,8 @@ public class BoardController {
 
 	@GetMapping(value="/boardCount")
 	public ResponseEntity<?> selectBoardCount() {
+		// 지역별 게시글 개수를 가져오는 API임.
+		// 프론트엔드는 이 데이터를 받아서 전체 게시물 수와 지역별 절감 추정값을 계산함.
 		List<Board> list = boardService.selectBoardCount();
 		return ResponseEntity.ok(list);
 	}

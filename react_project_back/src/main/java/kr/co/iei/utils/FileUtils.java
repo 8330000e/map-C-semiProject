@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.Blob;
 import com.google.firebase.cloud.StorageClient;
 
 @Component
@@ -36,7 +37,13 @@ public class FileUtils {
         // Firebase Storage에만 업로드합니다.
         try {
             Bucket bucket = StorageClient.getInstance().bucket();
-            bucket.create(objectName, file.getBytes(), file.getContentType());
+            Blob blob = bucket.create(objectName, file.getBytes(), file.getContentType());
+            if (blob != null) {
+                blob = blob.toBuilder()
+                        .setCacheControl("public, max-age=31536000, immutable")
+                        .build()
+                        .update();
+            }
 
             String encodedObjectName = URLEncoder.encode(objectName, StandardCharsets.UTF_8.toString());
             return String.format("https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media", bucket.getName(), encodedObjectName);

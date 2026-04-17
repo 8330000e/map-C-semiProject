@@ -54,6 +54,42 @@
   flex-wrap: nowrap;
 }
 
+.regionChartBox {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 18px;
+  background-color: #f8faf4;
+  border: 1px solid #e8e9e3;
+  border-radius: 16px;
+}
+
+.regionChartHeader {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.regionChartHeader p {
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.regionChartContent {
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.regionChartContent p {
+  color: #777;
+  font-size: 13px;
+  margin: 0;
+}
+
 .mapCommunitySearchWrap {
   flex: 1;
   display: flex;
