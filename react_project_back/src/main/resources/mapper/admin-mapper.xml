@@ -312,18 +312,22 @@
 	</update>
 	
 	<insert id="insertAdminLog">
-		insert into admin_log_tbl values(
+		insert into admin_log_tbl(
+			log_no,
+			admin_id,
+			log_target_id,
+			log_result,
+			log_date,
+			log_action,
+			log_reason,
+			report_no
+		) values(
 	    admin_log_seq.nextval,
 	    #{memberId},
 	    #{targetId},
 	    '게시글: ' || #{boardAction} || ' / 회원: ' || #{memberAction},
 	    sysdate,
-	    <choose>
-	        <when test="memberAction == '1'.toString()">1</when>
-	        <when test="memberAction == '3'.toString()">3</when>
-	        <when test="memberAction == '7'.toString()">7</when>
-	        <otherwise>0</otherwise>
-	    </choose>,
+	    #{logAction},
 	    #{reason},
 	    #{reportNo}
 		)
@@ -342,6 +346,33 @@
 		from board_comment_tbl
 		where board_comment_writer = #{memberId}
 	</select>
+	
+	<update id="releaseMember">
+		update member_tbl1 set
+			lock_until = null,
+			member_status = 0
+		where member_id = #{targetId}
+	</update>
+	
+	<insert id="insertAdminLog2">
+		insert into admin_log_tbl (
+			log_no,
+			admin_id,
+			log_target_id,
+			log_result,
+			log_date,
+			log_action,
+			log_reason
+		) values (
+			admin_log_seq.nextval,
+			#{memberId},
+			#{targetId},
+			'회원 정지 해제',
+			sysdate,
+			#{logAction},
+			#{reason}
+		)
+	</insert>
 	
 
 

@@ -8,7 +8,10 @@ import { useNavigate } from "react-router-dom";
 const AdminMemberPage = () => {
   const [memberList, setMemberList] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null); // 오른쪽 패널에 표시할 회원
-  const [isModalOpen, setIsModalOpen] = useState(false); // 전체 로그 모달 상태값
+
+  const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+
   const [commentList, setCommentList] = useState([]);
   const navigate = useNavigate();
 
@@ -168,8 +171,10 @@ const AdminMemberPage = () => {
         changeFilter={changeFilter}
         selectRecentLogList={selectRecentLogList}
         recentLogList={recentLogList}
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
+        isLogModalOpen={isLogModalOpen}
+        setIsLogModalOpen={setIsLogModalOpen}
+        isCommentModalOpen={isCommentModalOpen}
+        setIsCommentModalOpen={setIsCommentModalOpen}
         selectLogList={selectLogList}
         logList={logList}
         logPage={logPage}
@@ -182,6 +187,7 @@ const AdminMemberPage = () => {
         boardNav={boardNav}
         commentList={commentList}
         selectCommentList={selectCommentList}
+        setCommentList={setCommentList}
       />
     </>
   );

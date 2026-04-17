@@ -23,6 +23,8 @@ const AdminReport = ({
   adminLog,
   selectAdminLog,
   handleRelease,
+  logReason,
+  setLogReason,
 }) => {
   return (
     <>
@@ -293,6 +295,14 @@ const AdminReport = ({
                           {adminLog.logDate}
                         </span>
                       </div>
+                      <input
+                        type="text"
+                        placeholder="해제 사유를 입력하세요."
+                        value={logReason}
+                        onChange={(e) => {
+                          setLogReason(e.target.value);
+                        }}
+                      ></input>
                     </div>
 
                     <div className={styles.modal_btn_wrap}>
@@ -306,7 +316,9 @@ const AdminReport = ({
                       <button
                         type="button"
                         className={styles.btn_release}
-                        onClick={() => handleRelease(selectedReport.targetId)}
+                        onClick={() =>
+                          handleRelease(selectedReport.targetId, logReason)
+                        }
                       >
                         정지 해제
                       </button>

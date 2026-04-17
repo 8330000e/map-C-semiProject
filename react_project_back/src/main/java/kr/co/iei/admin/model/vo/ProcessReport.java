@@ -20,4 +20,5 @@ public class ProcessReport {
 	private String memberId;
 	private String lockReason;
 	private String targetType;
+	private String logAction;
 }

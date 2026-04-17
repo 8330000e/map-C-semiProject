@@ -18,8 +18,10 @@ const AdminMember = ({
   changeFilter,
   selectRecentLogList,
   recentLogList,
-  isModalOpen,
-  setIsModalOpen,
+  isLogModalOpen,
+  setIsLogModalOpen,
+  isCommentModalOpen,
+  setIsCommentModalOpen,
   selectLogList,
   logList,
   logPage,
@@ -32,6 +34,7 @@ const AdminMember = ({
   boardNav,
   selectCommentList,
   commentList,
+  setCommentList,
 }) => {
   return (
     <>
@@ -204,7 +207,7 @@ const AdminMember = ({
                 <article
                   className={styles.info_item}
                   onClick={() => {
-                    setIsModalOpen(true);
+                    setIsCommentModalOpen(true);
                     selectCommentList(selectedMember.memberId);
                   }}
                 >
@@ -264,7 +267,7 @@ const AdminMember = ({
                 <button
                   className={styles.log_modal_btn}
                   onClick={() => {
-                    setIsModalOpen(true); // 모달열기
+                    setIsLogModalOpen(true);
                     setLogPage(0); // page 0부터 시작 (스크롤)
                     selectLogList(selectedMember.memberId, logPage); // logList 호출
                     console.log(logList);
@@ -278,11 +281,11 @@ const AdminMember = ({
         </section>
 
         {/* 전체 로그 모달 - 배경 클릭 시 닫힘 */}
-        {isModalOpen && logList && (
+        {isLogModalOpen && (
           <div
             className={styles.modal_bg}
             onClick={() => {
-              setIsModalOpen(false); // 모달 배경 클릭 시 false로 변경 -> 모달 닫힘
+              setIsLogModalOpen(false); // 모달 배경 클릭 시 false로 변경 -> 모달 닫힘
             }}
           >
             <div
@@ -369,11 +372,11 @@ const AdminMember = ({
             </div>
           </div>
         )}
-        {isModalOpen && commentList && (
+        {isCommentModalOpen && (
           <div
             className={styles.modal_bg}
             onClick={() => {
-              setIsModalOpen(false);
+              setIsCommentModalOpen(false);
             }}
           >
             <div

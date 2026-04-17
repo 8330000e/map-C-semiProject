@@ -80,6 +80,10 @@ public interface AdminDao {
 
 	List<BoardComment> getCommentList(String memberId);
 
+	int releaseMember(String targetId);
+
+	int insertAdminLog2(ProcessReport pr);
+
 	
 	
 	

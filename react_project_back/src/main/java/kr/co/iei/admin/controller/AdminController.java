@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,12 +42,19 @@ import kr.co.iei.utils.FileUtils;
 @CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
 @RestController
 public class AdminController {
+
+    private final BCryptPasswordEncoder bcrypt;
 	@Autowired
 	private AdminService adminService;
 
 	// 파일 업로드 루트 경로 - application.properties에서 가져옴
 	@Value("${file.root}")
 	private String root;
+
+
+    AdminController(BCryptPasswordEncoder bcrypt) {
+        this.bcrypt = bcrypt;
+    }
 
 
 
@@ -204,7 +212,7 @@ public class AdminController {
 	
 	@PostMapping(value="processReport")
 	public ResponseEntity<?> processReport(@RequestBody ProcessReport pr) {
-		  System.out.println("컨트롤러 processReport 진입");
+		  
 		int result = adminService.processReport(pr);
 		return ResponseEntity.ok(result);
 	}
@@ -219,6 +227,12 @@ public class AdminController {
 	public ResponseEntity<?> selectCommentList(@PathVariable String memberId) {
 		List<BoardComment> bcList = adminService.getCommentList(memberId);
 		return ResponseEntity.ok(bcList);
+	}
+	
+	@PostMapping(value="releaseMember")
+	public ResponseEntity<?> releaseMember(@RequestBody ProcessReport pr) {
+		int result = adminService.releaseMember(pr);
+		return ResponseEntity.ok(result);
 	}
 	
 	

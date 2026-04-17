@@ -142,32 +142,33 @@ public class AdminService {
 		System.out.println("report 서비스 진입");
 		if (!pr.getBoardAction().equals("미처리")) {
 			int boardResult = adminDao.updateBoardStatus(pr);
-			System.out.println("report 1번 쿼리 result: " + boardResult);
+			
 			if (boardResult == 0) {
 				throw new RuntimeException("게시글 조치 실패");
 			}
 		}
 		
-		System.out.println("report 2번 쿼리 진입 전");
+		
 		if (!pr.getMemberAction().equals("미처리") && !pr.getMemberAction().equals("경고 처리")) {
 			int memberResult = adminDao.updateMemberStatus(pr);
-			System.out.println("report 2번 쿼리 result: " + memberResult);
+			
 				if (memberResult == 0) {
 					throw new RuntimeException("회원 조치 실패");
 				}
 		}
 		
-		System.out.println("report 3번 쿼리 진입 전 " );
+		
 		int reportResult = adminDao.updateReportStatus(pr);
-		System.out.println("report 3번 쿼리 result: " + reportResult);
+		
 			if (reportResult == 0) {
 				throw new RuntimeException("신고 처리 실패");
 		}
 		
 		
 			System.out.println("report 4번 쿼리 진입 전 " );
+			pr.setLogAction("회원정지");
 		int logResult = adminDao.insertAdminLog(pr);
-		System.out.println("report 4번 쿼리 result: " + logResult);
+		
 			if (logResult == 0) {
 				throw new RuntimeException("로그 저장 실패");
 			}
@@ -184,6 +185,24 @@ public class AdminService {
 	public List<BoardComment> getCommentList(String memberId) {
 		List<BoardComment> bcList = adminDao.getCommentList(memberId);
 		return bcList;
+	}
+
+	@Transactional
+	public int releaseMember(ProcessReport pr) {
+		
+		if (pr.getMemberId() != null && pr.getTargetId() != null) {
+			int releaseResult = adminDao.releaseMember(pr.getTargetId());
+			if (releaseResult != 0) {
+				pr.setLogAction("회원 정지 해제");
+				int result = adminDao.insertAdminLog2(pr);
+				if (result != 0) {
+					return result; 
+				} else {
+					return -1;
+				}
+			}
+		} 
+		return -1;
 	}
 
 }

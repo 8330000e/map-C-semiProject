@@ -29,6 +29,8 @@ const AdminReportPage = () => {
   // 처리완료 신고의 admin_log 데이터
   const [adminLog, setAdminLog] = useState(null);
 
+  const [logReason, setLogReason] = useState("");
+
   // CommunityDetail이 렌더링된 DOM 요소를 직접 참조
   // 원본 버튼 클릭 시 이 요소로 스크롤 내리기 위해 사용
   const detailRef = useRef(null); // 처음엔 아무 요소도 참조하지 않음
@@ -109,7 +111,7 @@ const AdminReportPage = () => {
   };
 
   // 정지 해제 처리
-  const handleRelease = (targetId) => {
+  const handleRelease = (targetId, logReason) => {
     Swal.fire({
       icon: "warning",
       title: "해당 회원의 정지를 해제하시겠습니까?",
@@ -122,12 +124,13 @@ const AdminReportPage = () => {
           .post(`${import.meta.env.VITE_BACKSERVER}/admins/releaseMember`, {
             targetId: targetId,
             memberId: memberId,
+            reason: logReason,
           })
           .then((res) => {
             Swal.fire({
               icon: "success",
               title: "정지가 해제되었습니다.",
-              timer: 1500,
+              timer: 5000,
             });
             resetModal();
             selectReportList();
@@ -210,6 +213,8 @@ const AdminReportPage = () => {
         adminLog={adminLog}
         selectAdminLog={selectAdminLog}
         handleRelease={handleRelease}
+        logReason={logReason}
+        setLogReason={setLogReason}
       />
     </>
   );
