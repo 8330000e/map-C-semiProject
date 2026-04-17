@@ -138,7 +138,7 @@ const useAuthStore = create(
           axios.defaults.headers.common["Authorization"] =
             `Bearer ${state.token}`;
           //타이머 재설정
-          state.startLogoutTimer(state.endTime);
+          state.startLoginTimer(state.endTime);
         }
       },
     },

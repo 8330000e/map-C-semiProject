@@ -23,7 +23,7 @@ const CampaignMain = () => {
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState();
   const navigate = useNavigate();
-  const swiper = useSwiper();
+  const Swiper = useSwiper();
   useEffect(() => {
     axios
       .get(
