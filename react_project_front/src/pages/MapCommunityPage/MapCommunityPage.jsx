@@ -593,8 +593,7 @@ const Map = ({
             }
           });
           // 지도를 클릭해서 위치를 선택하면 해당 지역의 탄소 차트를 표시함.
-          // 사용자가 선택한 위치 기반으로 차트 데이터가 자동 갱신됨.
-          setShowRegionChart(true);
+          // 차트는 사용자가 실제로 위치를 클릭할 때만 열리도록 유지함.
         })
         .catch((err) => console.error("GeoJSON 로드 실패:", err));
 
@@ -641,9 +640,9 @@ const Map = ({
               ctpv: response.result.items[0].addrdetail.sido,
               sgg: response.result.items[0].addrdetail.sigugun,
             });
-
             setSido(response.result.items[0].addrdetail.sido);
             setSigungu(response.result.items[0].addrdetail.sigugun);
+            setShowRegionChart(true);
           },
         );
         const feature = e.feature;
