@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.board.model.dao.BoardDao;
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
@@ -319,6 +320,10 @@ public class BoardService {
 	public List<Board> selectBoardCount() {
 		List<Board> list = boardDao.selectBoardCount();
 		return list;
+	}
+	public List<Report> getGroupList(Integer targetNo, String targetType, Integer reportNo) {
+		List<Report> groupList = boardDao.getGroupList(targetNo, targetType, reportNo);
+		return groupList;
 	}
 
 }

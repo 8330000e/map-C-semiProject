@@ -9,10 +9,16 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 8px;
-  background-color: var(--admin-panel);
+  padding: 10px;
+  background: linear-gradient(
+    145deg,
+    var(--admin-panel) 0%,
+    rgba(91, 140, 255, 0.04) 100%
+  );
   border: 1px solid var(--admin-stroke);
   border-radius: 14px;
+  box-shadow: 0 8px 16px var(--admin-card-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .top_menu a {
@@ -25,15 +31,16 @@
   border-radius: 10px;
   color: var(--admin-muted);
   font-weight: 600;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    box-shadow 0.2s ease;
+  letter-spacing: 0.2px;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .top_menu a:hover {
   background-color: var(--admin-accent-soft);
   color: var(--admin-text);
+  transform: translateY(-1px);
 }
 
 .top_menu a:focus-visible {
@@ -42,9 +49,14 @@
 }
 
 .active {
-  background-color: var(--admin-accent);
+  background: linear-gradient(
+    135deg,
+    var(--admin-accent) 0%,
+    var(--admin-accent-2) 100%
+  ) !important;
   color: #ffffff !important;
-  box-shadow: 0 8px 16px var(--admin-card-shadow);
+  box-shadow: 0 8px 18px rgba(91, 140, 255, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .content {

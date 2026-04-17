@@ -2,6 +2,7 @@
 // UI 렌더링만 담당, 로직/상태/API는 모두 AdminReportPage.jsx에서 처리
 // 모든 데이터와 함수는 props로 받아서 사용
 
+import { Fragment, useRef, useState } from "react";
 import CommunityDetail from "../board/Community/CommunityDetail";
 import styles from "./AdminReport.module.css";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew"; // 상세보기 아이콘
@@ -25,17 +26,70 @@ const AdminReport = ({
   handleRelease,
   logReason,
   setLogReason,
+  setOpenedKey,
+  openedKey,
+  groupList,
+  selectReportGroup,
+  reportStats,
 }) => {
+  // 닫는 중인 그룹 키 (닫기 애니메이션 동안만 유지)
+  const [closingKey, setClosingKey] = useState(null);
+  // 닫기 setTimeout 참조 (새 클릭 시 취소하려고 보관)
+  const closeTimerRef = useRef(null);
+  const CLOSE_DURATION = 450;
+
   return (
     <>
       <div className={styles.report_wrap}>
-        {/* 현황판 - 전체/미처리/처리완료 수 표시 */}
+        {/* 현황판 - 전체/미처리/처리완료 수 + 처리율 스택 바 */}
         <div className={styles.report_header}>
           <h3>신고 현황판</h3>
-          <span>전체 n건</span>
-          <span>미처리 n건</span>
-          <span>처리완료 n건</span>
-          <span>시각화 영역</span>
+          <div className={styles.stat_item}>
+            <span className={styles.stat_label}>전체</span>
+            <span className={styles.stat_value}>{reportStats.total}건</span>
+          </div>
+          <div className={styles.stat_item}>
+            <span className={`${styles.stat_dot} ${styles.dot_pending}`} />
+            <span className={styles.stat_label}>미처리</span>
+            <span className={`${styles.stat_value} ${styles.value_pending}`}>
+              {reportStats.pending}건
+            </span>
+          </div>
+          <div className={styles.stat_item}>
+            <span className={`${styles.stat_dot} ${styles.dot_done}`} />
+            <span className={styles.stat_label}>처리완료</span>
+            <span className={`${styles.stat_value} ${styles.value_done}`}>
+              {reportStats.done}건
+            </span>
+          </div>
+
+          {/* 스택 바 - 미처리/처리완료 비율 */}
+          <div className={styles.stack_bar_wrap}>
+            <div className={styles.stack_bar}>
+              {reportStats.pendingRate > 0 && (
+                <div
+                  className={`${styles.stack_seg} ${styles.seg_pending}`}
+                  style={{ width: `${reportStats.pendingRate}%` }}
+                  title={`미처리 ${reportStats.pending}건 (${reportStats.pendingRate.toFixed(1)}%)`}
+                >
+                  {reportStats.pendingRate >= 12
+                    ? `${reportStats.pendingRate.toFixed(0)}%`
+                    : ""}
+                </div>
+              )}
+              {reportStats.doneRate > 0 && (
+                <div
+                  className={`${styles.stack_seg} ${styles.seg_done}`}
+                  style={{ width: `${reportStats.doneRate}%` }}
+                  title={`처리완료 ${reportStats.done}건 (${reportStats.doneRate.toFixed(1)}%)`}
+                >
+                  {reportStats.doneRate >= 12
+                    ? `${reportStats.doneRate.toFixed(0)}%`
+                    : ""}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* 신고 목록 테이블 */}
@@ -54,28 +108,97 @@ const AdminReport = ({
               </tr>
             </thead>
             <tbody>
-              {reportList.map((report) => (
-                <tr key={report.reportNo}>
-                  <td>{report.reportNo}</td>
-                  <td>{report.targetId}</td>
-                  <td>{report.targetType === "board" ? "게시글" : "댓글"}</td>
-                  <td>{report.reportCategory}</td>
-                  <td>{report.reportCount}</td>
-                  <td>{report.reportDate}</td>
-                  <td>{report.reportStatus === 0 ? "미처리" : "처리완료"}</td>
-                  <td
-                    onClick={() => {
-                      selectDetail(report.targetType, report.targetNo);
-                      setSelectedReport(report);
-                      if (report.reportStatus === 1) {
-                        selectAdminLog(report.reportNo);
-                      }
-                    }}
-                  >
-                    <OpenInNewIcon />
-                  </td>
-                </tr>
-              ))}
+              {reportList.map((report) => {
+                const thisKey = `${report.targetNo}_${report.targetType}`;
+                const isOpened = openedKey === thisKey;
+                const isClosing = closingKey === thisKey;
+                return (
+                  <Fragment key={report.reportNo}>
+                    <tr
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // 기존 닫기 타이머 취소 (중간에 다시 클릭한 경우)
+                        if (closeTimerRef.current) {
+                          clearTimeout(closeTimerRef.current);
+                          closeTimerRef.current = null;
+                        }
+                        if (openedKey === thisKey) {
+                          // 닫기: 먼저 closingKey 세팅 → 애니메이션 끝나면 실제로 제거
+                          setClosingKey(thisKey);
+                          closeTimerRef.current = setTimeout(() => {
+                            setOpenedKey(null);
+                            setClosingKey(null);
+                            closeTimerRef.current = null;
+                          }, CLOSE_DURATION);
+                        } else {
+                          // 열기
+                          setClosingKey(null);
+                          setOpenedKey(thisKey);
+                          selectReportGroup(
+                            report.targetNo,
+                            report.targetType,
+                            report.reportNo,
+                          );
+                        }
+                      }}
+                    >
+                      <td>{report.reportNo}</td>
+                      <td>{report.targetId}</td>
+                      <td>
+                        {report.targetType === "board" ? "게시글" : "댓글"}
+                      </td>
+                      <td>{report.reportCategory}</td>
+                      <td>{report.reportCount}</td>
+                      <td>{report.reportDate}</td>
+                      <td>
+                        {report.reportStatus === 0 ? "미처리" : "처리완료"}
+                      </td>
+                      <td
+                        onClick={() => {
+                          selectDetail(report.targetType, report.targetNo);
+                          setSelectedReport(report);
+                          if (report.reportStatus === 1) {
+                            selectAdminLog(report.reportNo);
+                          }
+                        }}
+                      >
+                        <OpenInNewIcon />
+                      </td>
+                    </tr>
+
+                    {(isOpened || isClosing) &&
+                      groupList.map((group) => (
+                        <tr
+                          key={group.reportNo}
+                          className={`${styles.detail_row_sub} ${isClosing ? styles.detail_row_closing : ""}`}
+                        >
+                          <td>{group.reportNo}</td>
+                          <td>{group.targetId}</td>
+                          <td>
+                            {group.targetType === "board" ? "게시글" : "댓글"}
+                          </td>
+                          <td>{group.reportCategory}</td>
+                          <td>{group.reportCount}</td>
+                          <td>{group.reportDate}</td>
+                          <td>
+                            {group.reportStatus === 0 ? "미처리" : "처리완료"}
+                          </td>
+                          <td
+                            onClick={() => {
+                              selectDetail(group.targetType, group.targetNo);
+                              setSelectedReport(group);
+                              if (group.reportStatus === 1) {
+                                selectAdminLog(group.reportNo);
+                              }
+                            }}
+                          >
+                            <OpenInNewIcon />
+                          </td>
+                        </tr>
+                      ))}
+                  </Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -295,14 +418,16 @@ const AdminReport = ({
                           {adminLog.logDate}
                         </span>
                       </div>
-                      <input
-                        type="text"
+                    </div>
+
+                    <div className={styles.reason_section}>
+                      <textarea
                         placeholder="해제 사유를 입력하세요."
                         value={logReason}
                         onChange={(e) => {
                           setLogReason(e.target.value);
                         }}
-                      ></input>
+                      ></textarea>
                     </div>
 
                     <div className={styles.modal_btn_wrap}>

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
+import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.board.model.service.BoardService;
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
@@ -366,6 +367,15 @@ public class BoardController {
 	public ResponseEntity<?> getReportList() {
 		List<Report> reportList = boardService.getReportList();
 		return ResponseEntity.ok(reportList);
+	}
+	
+	@GetMapping(value="/reportGroup/{targetNo}/{targetType}/{reportNo}")
+	public ResponseEntity<?> selectReportGroup(@PathVariable Integer targetNo,
+											   @PathVariable String targetType,
+											   @PathVariable Integer reportNo)
+	{
+		List<Report> groupList = boardService.getGroupList(targetNo, targetType, reportNo);
+		return ResponseEntity.ok(groupList);
 	}
 	
 	

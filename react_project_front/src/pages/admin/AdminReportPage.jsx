@@ -5,7 +5,7 @@
 import axios from "axios";
 import Swal from "sweetalert2";
 import AdminReport from "../../components/admin/AdminReport";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import useAuthStore from "../../store/useAuthStore";
 
 const AdminReportPage = () => {
@@ -30,6 +30,22 @@ const AdminReportPage = () => {
   const [adminLog, setAdminLog] = useState(null);
 
   const [logReason, setLogReason] = useState("");
+
+  const [openedKey, setOpenedKey] = useState(null);
+
+  const [groupList, setGroupList] = useState([]);
+
+  // 현황판 집계 - 그룹 대표 기준 reportCount 합산 (한 그룹의 처리 상태는 일괄이라 대표 status가 그룹 status)
+  const reportStats = useMemo(() => {
+    const total = reportList.reduce((sum, r) => sum + (r.reportCount || 0), 0);
+    const pending = reportList
+      .filter((r) => r.reportStatus === 0)
+      .reduce((sum, r) => sum + (r.reportCount || 0), 0);
+    const done = total - pending;
+    const pendingRate = total === 0 ? 0 : (pending / total) * 100;
+    const doneRate = total === 0 ? 0 : (done / total) * 100;
+    return { total, pending, done, pendingRate, doneRate };
+  }, [reportList]);
 
   // CommunityDetail이 렌더링된 DOM 요소를 직접 참조
   // 원본 버튼 클릭 시 이 요소로 스크롤 내리기 위해 사용
@@ -95,6 +111,20 @@ const AdminReportPage = () => {
           });
       }
     });
+  };
+
+  const selectReportGroup = (targetNo, targetType, reportNo) => {
+    axios
+      .get(
+        `${import.meta.env.VITE_BACKSERVER}/boards/reportGroup/${targetNo}/${targetType}/${reportNo}`,
+      )
+      .then((res) => {
+        console.log(res);
+        setGroupList(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   // 처리완료 신고의 admin_log 조회
@@ -215,6 +245,11 @@ const AdminReportPage = () => {
         handleRelease={handleRelease}
         logReason={logReason}
         setLogReason={setLogReason}
+        setOpenedKey={setOpenedKey}
+        openedKey={openedKey}
+        groupList={groupList}
+        selectReportGroup={selectReportGroup}
+        reportStats={reportStats}
       />
     </>
   );
