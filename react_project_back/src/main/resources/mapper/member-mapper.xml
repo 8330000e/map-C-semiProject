@@ -96,6 +96,15 @@ fetch first 1 row only
 			member_status
 		from member_tbl1
 	</select>
+
+	<select id="selectCarbonStats" resultType="map">
+		select
+			count(*) as memberCount,
+			sum(nvl(member_co2, 0)) as totalCo2
+		from member_tbl1
+		where member_status &lt;&gt; 2
+		and nvl(member_co2, 0) > 0
+	</select>
 	<update id="updateMemberInfo">
 		update member_tbl1 set member_name = nvl(#{memberName}, member_name),
 			member_nickname=#{memberNickname},

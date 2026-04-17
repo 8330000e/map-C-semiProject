@@ -152,6 +152,10 @@ public class MemberService {
 		return memberList;
 	}
 
+	public Map<String, Object> selectCarbonStats() {
+		return memberDao.selectCarbonStats();
+	}
+
 	public boolean checkPw(Member member) {
 		String memberId = member.getMemberId();
 		Member forCheck = memberDao.memberPw(memberId);

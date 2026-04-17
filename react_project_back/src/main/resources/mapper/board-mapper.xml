@@ -429,16 +429,37 @@
         order by b.board_lat desc
 	</select>
 
+    <!--
+      지역별 게시글 수를 조회하는 SQL 쿼리임.
+      - board_tbl에서 작성된 게시글 개수를 시도/시군구별로 세고,
+      - store_board_tbl에 있는 상점 게시글 수도 같은 지역별로 합산함.
+      - 두 결과를 UNION ALL로 합친 뒤 최종적으로 지역별 게시물 총합을 계산함.
+      이 결과는 프론트에서 지도 통계와 절감량 추정에 사용됨.
+    -->
     <select id="selectBoardCount" resultType="Board">
-        SELECT 
-            b.ctpv,
-            b.sgg, 
-            COUNT(b.board_no) AS board_count
-        FROM board_tbl b
-        LEFT JOIN board_tbl a 
-            ON a.ctpv like '%'||b.ctpv||'%' and a.sgg like '%'||b.sgg||'%'
-        where a.board_no = b.board_no
-        GROUP BY b.ctpv, b.sgg
+        SELECT
+            ctpv,
+            sgg,
+            SUM(board_count) AS board_count
+        FROM (
+            SELECT
+                b.ctpv AS ctpv,
+                b.sgg AS sgg,
+                COUNT(b.board_no) AS board_count
+            FROM board_tbl b
+            GROUP BY b.ctpv, b.sgg
+            UNION ALL
+            SELECT
+                r.ctpv_nm AS ctpv,
+                r.sgg_nm AS sgg,
+                COUNT(s.market_no) AS board_count
+            FROM store_board_tbl s
+            JOIN ctpvsgg_tbl r
+              ON s.ctpvsgg_id = r.ctpvsgg_id
+            WHERE s.is_deleted = 0
+            GROUP BY r.ctpv_nm, r.sgg_nm
+        )
+        GROUP BY ctpv, sgg
     </select>
 	
 	<insert id="insertBoardReport">

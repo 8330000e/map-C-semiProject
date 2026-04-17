@@ -306,6 +306,12 @@ public class Membercontroller {
 		return ResponseEntity.ok(memberList);
 	}
 
+	@GetMapping(value = "/stats")
+	public ResponseEntity<?> selectMemberCarbonStats() {
+		Map<String, Object> stats = memberService.selectCarbonStats();
+		return ResponseEntity.ok(stats);
+	}
+
 	/*
 	 * Member mem = new Member(); mem.setMemberId(memberId);
 	 * mem.setMemberThumb(memberThumb);

@@ -109,6 +109,12 @@ const Community = ({
     sgg: "",
   });
 
+  useEffect(() => {
+    if (!ctpvsgg?.ctpv) return;
+    setSido(ctpvsgg.ctpv || "");
+    setSigungu(ctpvsgg.sgg || "");
+  }, [ctpvsgg]);
+
   // 게시글 목록 메타 로드 기능임.
   // 댓글 개수와 좋아요 상태를 게시글 목록에 채워서 화면에 보여줌.
   //  - 댓글 개수는 /boards/{boardNo}/comments API에서 가져옴.
