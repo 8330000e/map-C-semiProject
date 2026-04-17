@@ -1,4 +1,4 @@
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Community from "../../components/board/Community/Community";
 import styles from "./MapCommunityPage.module.css";
 import defaultImg from "../../assets/img/defaultImg.png";
