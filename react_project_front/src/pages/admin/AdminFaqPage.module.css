@@ -1,9 +1,33 @@
 .faq_write_wrap {
   padding: 24px;
   margin: 16px 12px 24px;
-  background-color: var(--admin-panel-2);
+  background: linear-gradient(
+    145deg,
+    var(--admin-panel-2) 0%,
+    rgba(91, 140, 255, 0.05) 100%
+  );
   border: 1px solid var(--admin-stroke);
   border-radius: 16px;
+  box-shadow: 0 10px 20px var(--admin-card-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.faq_write_wrap::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--admin-accent),
+    var(--admin-accent-2),
+    transparent
+  );
 }
 
 .faq_write_wrap > form {
@@ -83,9 +107,14 @@
 .faq_list_wrap {
   margin: 0 12px 12px;
   border: 1px solid var(--admin-stroke);
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  background-color: var(--admin-panel);
+  background: linear-gradient(
+    145deg,
+    var(--admin-panel) 0%,
+    rgba(91, 140, 255, 0.03) 100%
+  );
+  box-shadow: 0 8px 18px var(--admin-card-shadow);
 }
 
 .table_wrap {
@@ -110,13 +139,28 @@
 .faq_table th {
   position: sticky;
   top: 0;
-  background-color: var(--admin-stroke);
+  background: rgba(46, 60, 109, 0.95);
+  color: #ffffff;
+  font-weight: 600;
   text-align: left;
   z-index: 1;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.18);
+}
+
+.faq_table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.faq_table tbody tr:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.faq_table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.01);
 }
 
 .faq_table tbody tr:hover {
-  background-color: var(--admin-accent-soft);
+  background: rgba(115, 103, 240, 0.18);
 }
 
 .col_category {
@@ -142,10 +186,15 @@
   min-width: 86px;
   padding: 4px 10px;
   border-radius: 999px;
-  background-color: var(--admin-accent-soft);
-  color: var(--admin-text);
+  background: linear-gradient(
+    135deg,
+    var(--admin-accent) 0%,
+    var(--admin-accent-2) 100%
+  );
+  color: #ffffff;
   font-size: 12px;
   font-weight: 700;
+  box-shadow: 0 4px 10px rgba(91, 140, 255, 0.3);
 }
 
 .table_wrap::-webkit-scrollbar {

@@ -6,13 +6,20 @@
 .report_header {
   display: flex;
   align-items: center;
-  gap: 24px;
-  background: rgba(46, 60, 109, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 20px 24px;
+  gap: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(46, 60, 109, 0.7) 0%,
+    rgba(91, 140, 255, 0.15) 100%
+  );
+  border: 1px solid rgba(91, 140, 255, 0.2);
+  border-radius: 14px;
+  padding: 14px 22px;
   margin-bottom: 20px;
   color: #eef2ff;
+  min-height: 60px;
+  box-shadow: 0 10px 20px var(--admin-card-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .report_header h3 {
@@ -20,11 +27,98 @@
   font-weight: 700;
   margin: 0;
   margin-right: 8px;
+  white-space: nowrap;
 }
 
-.report_header span {
-  font-size: 13px;
+.stat_item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.stat_label {
+  font-size: 12.5px;
   color: #aab4d4;
+}
+
+.stat_value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #eef2ff;
+}
+
+.value_pending {
+  color: #ff6b6b;
+}
+
+.value_done {
+  color: #4ade80;
+}
+
+.stat_dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot_pending {
+  background: #ff6b6b;
+  box-shadow: 0 0 8px rgba(255, 107, 107, 0.6);
+}
+
+.dot_done {
+  background: #4ade80;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+}
+
+/* 스택 바 시각화 */
+.stack_bar_wrap {
+  flex: 1;
+  min-width: 0;
+  margin-left: auto;
+}
+
+.stack_bar {
+  display: flex;
+  width: 100%;
+  height: 22px;
+  border-radius: 11px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.stack_seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: default;
+}
+
+.seg_pending {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%);
+  animation: segGlow 2.4s ease-in-out infinite;
+}
+
+.seg_done {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+}
+
+@keyframes segGlow {
+  0%, 100% {
+    box-shadow: inset 0 0 0 rgba(255, 107, 107, 0);
+  }
+  50% {
+    box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.18);
+  }
 }
 
 /* 테이블 */
@@ -138,6 +232,59 @@
 
 .report_table td:last-child:hover {
   color: var(--admin-accent);
+}
+
+/* 아코디언 펼침 - 상세 하위 행 */
+.detail_row_sub {
+  animation: detailFadeIn 0.45s ease-out;
+}
+
+.detail_row_closing {
+  animation: detailFadeOut 0.45s ease-in forwards;
+}
+
+.report_table tbody tr.detail_row_sub,
+.report_table tbody tr.detail_row_sub:nth-child(odd),
+.report_table tbody tr.detail_row_sub:nth-child(even) {
+  background: rgba(12, 18, 40, 0.55);
+}
+
+.report_table tbody tr.detail_row_sub:hover {
+  background: rgba(115, 103, 240, 0.2);
+}
+
+.detail_row_sub td {
+  font-size: 12.5px;
+  color: #c8cfea;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.detail_row_sub td:first-child {
+  border-left: 3px solid rgba(115, 103, 240, 0.7);
+}
+
+@keyframes detailFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes detailFadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
 }
 
 /* 모달 배경 */
@@ -314,6 +461,36 @@
   cursor: pointer;
 }
 
+.btn_release {
+  padding: 8px 24px;
+  border-radius: 8px;
+  border: none;
+  background: #2e7d32;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn_detail {
+  padding: 8px 24px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(115, 103, 240, 0.5);
+  color: #ffffff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.empty_state {
+  text-align: center;
+  padding: 20px;
+  color: #aab4d4;
+  font-size: 13px;
+}
+
 .btn_cancel:hover { background: rgba(255, 255, 255, 0.18); }
 .btn_reject:hover { background: rgba(115, 103, 240, 0.7); }
 .btn_confirm:hover { background: #d32f2f; }
+.btn_release:hover { background: #1b5e20; }
+.btn_detail:hover { background: rgba(115, 103, 240, 0.7); }

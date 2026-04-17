@@ -514,19 +514,48 @@
 			r.report_content,
 			r.report_date,
 			r.report_status,
+			<!-- report 테이블에서 target_type이 board면 board 테이블에서 제목 보여주고 target_type이 comment면 댓글 보여줌  -->
 			case
 				when r.target_type = 'board' then b.board_title
 				when r.target_type = 'comment' then c.board_comment_content
 			end as targetTitle,
+			<!-- target_type이 board면 게시글 작성자 보여주고 comment면 댓글 작성자 보여줌 -->
 			case 
 				when r.target_type = 'board' then b.writer_id
 				when r.target_type = 'comment' then c.board_comment_writer
 			end as targetId,
+			<!-- 바깥 쿼리의 현재 행(r)을 기준으로 report_tbl 원본 전체를 뒤져서 -->
+  			<!-- target_no와 target_type이 현재행과 일치하는 신고 수를 세어 reportCount 컬럼으로 붙임 -->     	
 			(select count(*) from report_tbl where target_no = r.target_no and target_type = r.target_type) as reportCount
-		from report_tbl r
+			
+			
+		from report_tbl r inner join (
+		<!-- target_no랑 target_type이 같으면 한 그룹으로 묶음 -> 각 그룹에서 첫 신고만 뽑아냄 -->                                                                                                          
+      	select target_no, target_type, min(report_no) as first_report_no                                                  
+     	from report_tbl                                                                                                   
+      	group by target_no, target_type
+ 	  ) g on r.report_no = g.first_report_no  
+ 	    <!-- 둘 중 조건에 맞는것만 위 테이블과 합쳐짐 --> 
 		left join board_tbl b on r.target_no = b.board_no and r.target_type = 'board'
 		left join board_comment_tbl c on r.target_no = c.board_comment_no and r.target_type = 'comment'
 		order by r.report_status asc, r.report_date desc
+	</select>
+	
+	<select id="getGroupList" resultType="report">
+		select
+			r.report_no,
+			r.target_no,
+			r.target_type,
+			r.report_category,
+			r.report_date,
+			r.report_status,
+		case
+			when r.target_type = 'board' then b.writer_id
+			when r.target_type = 'comment' then c.board_comment_writer
+		end as targetId
+		from report_tbl r join board_tbl b on r.target_no = b.board_no
+		left join board_comment_tbl c on r.target_no = c.board_comment_no and r.target_type = 'comment'
+		where target_no = #{targetNo} and target_type = #{targetType} and report_no != #{reportNo}
 	</select>
 	
 	

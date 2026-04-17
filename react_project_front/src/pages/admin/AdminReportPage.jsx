@@ -5,7 +5,7 @@
 import axios from "axios";
 import Swal from "sweetalert2";
 import AdminReport from "../../components/admin/AdminReport";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import useAuthStore from "../../store/useAuthStore";
 
 const AdminReportPage = () => {
@@ -26,6 +26,27 @@ const AdminReportPage = () => {
   // 원본 보기 버튼 클릭 시 CommunityDetail 컴포넌트 표시 여부
   const [showDetail, setShowDetail] = useState(false);
 
+  // 처리완료 신고의 admin_log 데이터
+  const [adminLog, setAdminLog] = useState(null);
+
+  const [logReason, setLogReason] = useState("");
+
+  const [openedKey, setOpenedKey] = useState(null);
+
+  const [groupList, setGroupList] = useState([]);
+
+  // 현황판 집계 - 그룹 대표 기준 reportCount 합산 (한 그룹의 처리 상태는 일괄이라 대표 status가 그룹 status)
+  const reportStats = useMemo(() => {
+    const total = reportList.reduce((sum, r) => sum + (r.reportCount || 0), 0);
+    const pending = reportList
+      .filter((r) => r.reportStatus === 0)
+      .reduce((sum, r) => sum + (r.reportCount || 0), 0);
+    const done = total - pending;
+    const pendingRate = total === 0 ? 0 : (pending / total) * 100;
+    const doneRate = total === 0 ? 0 : (done / total) * 100;
+    return { total, pending, done, pendingRate, doneRate };
+  }, [reportList]);
+
   // CommunityDetail이 렌더링된 DOM 요소를 직접 참조
   // 원본 버튼 클릭 시 이 요소로 스크롤 내리기 위해 사용
   const detailRef = useRef(null); // 처음엔 아무 요소도 참조하지 않음
@@ -45,6 +66,7 @@ const AdminReportPage = () => {
   const resetModal = () => {
     setIsModalOpen(false);
     setShowDetail(false);
+    setAdminLog(null);
     setReportAction({
       boardAction: "미처리",
       memberAction: "미처리",
@@ -55,11 +77,9 @@ const AdminReportPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     Swal.fire({
       icon: "question",
       title: "게시글 및 회원 조치를 진행하시겠습니까?",
-      showConfirmButton: true,
       showCancelButton: true,
       confirmButtonText: "확인",
       cancelButtonText: "취소",
@@ -93,7 +113,68 @@ const AdminReportPage = () => {
     });
   };
 
-  // 상세보기 아이콘 클릭 시 호출
+  const selectReportGroup = (targetNo, targetType, reportNo) => {
+    axios
+      .get(
+        `${import.meta.env.VITE_BACKSERVER}/boards/reportGroup/${targetNo}/${targetType}/${reportNo}`,
+      )
+      .then((res) => {
+        console.log(res);
+        setGroupList(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // 처리완료 신고의 admin_log 조회
+  const selectAdminLog = (reportNo) => {
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/admins/adminLog/${reportNo}`)
+      .then((res) => {
+        console.log(res);
+        setAdminLog(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // 정지 해제 처리
+  const handleRelease = (targetId, logReason) => {
+    Swal.fire({
+      icon: "warning",
+      title: "해당 회원의 정지를 해제하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: "해제",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .post(`${import.meta.env.VITE_BACKSERVER}/admins/releaseMember`, {
+            targetId: targetId,
+            memberId: memberId,
+            reason: logReason,
+          })
+          .then((res) => {
+            Swal.fire({
+              icon: "success",
+              title: "정지가 해제되었습니다.",
+              timer: 5000,
+            });
+            resetModal();
+            selectReportList();
+          })
+          .catch((err) => {
+            Swal.fire({
+              icon: "error",
+              title: "해제에 실패했습니다.",
+            });
+          });
+      }
+    });
+  };
+
   // targetType: 'board' 또는 'comment', targetNo: 해당 게시글/댓글 번호
   const selectDetail = (targetType, targetNo) => {
     if (targetType === "board") {
@@ -159,6 +240,16 @@ const AdminReportPage = () => {
         reportAction={reportAction}
         changeReportAction={changeReportAction}
         handleSubmit={handleSubmit}
+        adminLog={adminLog}
+        selectAdminLog={selectAdminLog}
+        handleRelease={handleRelease}
+        logReason={logReason}
+        setLogReason={setLogReason}
+        setOpenedKey={setOpenedKey}
+        openedKey={openedKey}
+        groupList={groupList}
+        selectReportGroup={selectReportGroup}
+        reportStats={reportStats}
       />
     </>
   );

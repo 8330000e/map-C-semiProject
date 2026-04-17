@@ -22,11 +22,14 @@ public class MemberStatusInterceptor implements HandlerInterceptor {
 	
 	@Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws 
-Exception {                                                                                                           
+Exception {                                                                      
+		System.out.println("인터셉터 진입: " + request.getRequestURI());                                                  
+	      
 		// 헤더로 들어오는 토큰 꺼내기 
         String token = request.getHeader("Authorization");                                                            
                                                                                                                     
-        // 토큰이 있고, "Bearer "로 시작하는 경우에만 진행                                                         
+        // 토큰이 있고, "Bearer "로 시작하는 경우에만 진행   
+       
         if (token != null && token.startsWith("Bearer ")) {                                                         
             // "Bearer " 잘라내고 토큰만 추출                                                   
             token = token.substring(7);                                                                               
@@ -37,16 +40,19 @@ Exception {
             // 토큰이 유효해서 loginMember가 null이 아닌 경우                                                      
             if (loginMember != null) {
                 // loginMember에서 memberId 꺼내기                                                                    
-                String memberId = loginMember.getMemberId();                                                          
+                String memberId = loginMember.getMemberId();   
+                System.out.println("memberId: " + memberId);
  
-                // DB에서 해당 유저의 lock_until, lock_reason, member_status 조회                                  
-                Map<String, Object> map = memberDao.getLockInfo(memberId);                                          
+                // DB에서 해당 유저의 lock_until, lock_reason, member_status 조회 
+                                                                                         
+                Map<String, Object> map = memberDao.getLockInfo(memberId);  
+                
                                                                                                                       
                 // 조회 결과가 있으면 (memberId가 존재하지 않으면 map이 null로 리턴됨)                                                          
                 if (map != null) {
                     // member_status 값을 꺼냄 (0=정상, 1=영구정지, 3=기간정지)                                    
                     Integer status = ((Number) map.get("memberStatus")).intValue();                                   
- 
+                   System.out.println("status: " + status);
                     // 1 또는 3이면 차단 (정지상태)                                                
                     if (status == 1 || status == 3) {                                                               
                         // HTTP 상태코드 403 설정                                                      
