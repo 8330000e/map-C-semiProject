@@ -116,10 +116,27 @@ const Login = () => {
   if (!isReady) return null;
 
   return (
-    <div className={styles.login_total_container}>
+    //로그인 전체 컨테이너 -> login_page
+    <div className={`${styles.login_total_container} login_page`}>
+      {/*홈으로 가기 버튼 */}
+      <div
+        className={styles.home_btn}
+        onClick={() => {
+          navigate("/");
+        }}
+      >
+        홈으로 가기
+      </div>
       {/* 전체 배경 컨테이너 추가 */}
       <div className={styles.login_wrap}>
-        <h3 className={styles.page_title}>로그인</h3>
+        <h3 className={styles.page_title}>
+          <img
+            src="/favicon.svg"
+            alt="Logo"
+            className={styles.logo_img_element}
+          />
+          탄소커넥트
+        </h3>
 
         {isLoading && <p className={styles.loading_text}>로그인 중...</p>}
 

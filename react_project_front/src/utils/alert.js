@@ -34,6 +34,18 @@ const baseConfig = {
     popup: "my-rounded-popup",
     confirmButton: "my-rounded-button",
   },
+  //baseConfig가 위에서 넣은 didOpen을 자동으로 복사
+  //-> z-index로 인해 알림창이 배경이미지에 의해 밀려나있었지만
+  //-> 다시 앞으로 떙겨오는 설정.
+  //-> 또 하나 중요한 점 , const errorAlert 설정을 하면서 이 말은 **"알림창이 뜨고 사용자가 확인 버튼을 누를 때까지 다음 코드로 넘어가지 마라"**는 뜻
+  //-> 그런데 내가 z-index를 사용하면서 알림창을 배경화면 뒤로 보내버림. 그래서 알림창을 누르지 못하게 되면서 로딩이 길어짐.
+  didOpen: () => {
+    // SweetAlert2 컨테이너를 찾아서 z-index를 강제로 높이는 설정. 알림창이 배경에 의해 묻혔기 떄문
+    const container = Swal.getContainer();
+    if (container) {
+      container.style.zIndex = "100000";
+    }
+  },
 };
 
 // ------------------------------------------
@@ -42,6 +54,7 @@ const baseConfig = {
 // 이렇게 공용 함수를 만들지 않으면 로고 사이트 네임이 나오지 않음.
 const brandLogoName = `
   <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 5px;">
+<!-- 로고 -->
     <img src="/favicon.svg" style="width: 60px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));" />
     <span style="font-size: 50px; font-weight: bold; color: #2f5b3a;">탄소커넥트</span>
   </div>

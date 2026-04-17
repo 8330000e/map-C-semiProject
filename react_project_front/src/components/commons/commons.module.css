@@ -33,6 +33,7 @@ header > h1 a:active {
   display: flex;
   gap: 10px;
 }
+
 .btn {
   background-color: none;
   width: 90px;
