@@ -19,12 +19,14 @@ const CampaignMain = () => {
   const [readComplete, setReadComplete] = useState(false);
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState();
+  const [searchFilter, setSearchFilter] = useState(1); //1:제목,2:캠페인 생성자
+  const [orderFilter, setOrderFilter] = useState(1); //1: 시간순,2오래된수
   const navigate = useNavigate();
   const swiper = useSwiper();
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/campaigns?campaignTitle=${campaignSendSearch}&size=6&page=${page}`,
+        `${import.meta.env.VITE_BACKSERVER}/campaigns?campaignTitle=${campaignSendSearch}&size=6&page=${page}&searchFilter=${searchFilter}&orderFilter=${orderFilter}`,
       )
       .then((res) => {
         console.log(res.data);
@@ -34,7 +36,7 @@ const CampaignMain = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [campaignSendSearch, page]);
+  }, [campaignSendSearch, page, searchFilter, orderFilter]);
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/campaigns/onlyFiveNotice`)
@@ -90,6 +92,24 @@ const CampaignMain = () => {
                 setCampaignSearch(e.target.value);
               }}
             ></Input>
+            <select
+              value={searchFilter}
+              onChange={(e) => {
+                setSearchFilter(e.target.value);
+              }}
+            >
+              <option value={1}>제목</option>
+              <option value={2}>주최자</option>
+            </select>
+            <select
+              value={orderFilter}
+              onChange={(e) => {
+                setOrderFilter(e.target.value);
+              }}
+            >
+              <option value={1}>최신순</option>
+              <option value={2}>오래된순</option>
+            </select>
           </div>
         </div>
         <div className={styles.campaignmain_content_wrap}>
@@ -167,12 +187,15 @@ const CampaignMain = () => {
               </div>
             );
           })}
-          <Pagination
-            page={page}
-            setPage={setPage}
-            totalPage={totalPage}
-            naviSize={6}
-          />
+          {console.log(totalPage)}
+          {(totalPage != 1 || totalPage != 0) && (
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalPage={totalPage}
+              naviSize={6}
+            />
+          )}
           <div className={styles.campaignmain_btn_wrap}>
             <Button
               onClick={() => {

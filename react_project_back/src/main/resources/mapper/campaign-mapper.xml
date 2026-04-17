@@ -10,8 +10,17 @@
 			   to_char(campaign_expire_date - interval '1' day,'yyyy-mm-dd') as campaign_expire_date
 			   from create_campaign_tbl
 			   where campaign_status in (1,2,3,4)
-			   <if test="campaignTitle != null and campaignTitle != ''">
+			   <if test="campaignTitle != null and campaignTitle != '' and searchFilter==1">
 			   		and campaign_title like '%' || #{campaignTitle} || '%'
+			   </if>
+			   <if test="campaignTitle != null and campaignTitle != '' and searchFilter==2">
+			   		and member_id like '%' || #{campaignTitle} || '%'
+			   </if>
+			   <if test="orderFilter == 1">
+			   		order by campaign_expire_date desc
+			   </if>
+			   <if test="orderFilter == 2">
+			   		order by campaign_expire_date asc
 			   </if>
 			   offset #{page} * #{size} rows fetch next #{size} rows only
 	</select>
@@ -164,6 +173,12 @@
 	</select>
 	<select id="selectAllCampaignCount" resultType="int">
 		select count(*) from create_campaign_tbl where campaign_status in (1,2,3,4)
+		<if test ="searchFilter == 1 and campaignTitle != null and campaign_title !=''">
+			and campaign_title like '%' || #{campaignTitle} || '%'
+		</if>
+		<if test ="searchFilter == 2 and campaignTitle != null and campaign_title !=''">
+		   and member_id like '%' || #{campaignTitle} || '%'
+		</if>
 	</select>
 	<select id="selectCampNoticeCount" resultType="int">
 		select count(*) from campaign_notice_tbl 

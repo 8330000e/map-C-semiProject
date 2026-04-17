@@ -24,7 +24,8 @@ public class CampaignService {
 	private CampaignDao campaignDao;
 
 	public Map<String, Object> selectAllCampaign(Map<String, Object> map) {
-		Integer totalCount = campaignDao.selectAllCampaignCount();
+
+		Integer totalCount = campaignDao.selectAllCampaignCount(map);
 		int size = (Integer)(map.get("size"));
 		System.out.println(totalCount);
 		int totalPage = (int)(Math.ceil((totalCount / (double)size)));
