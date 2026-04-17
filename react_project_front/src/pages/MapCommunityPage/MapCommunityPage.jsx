@@ -592,21 +592,15 @@ const Map = ({
               }
             }
           });
-          setCtpvsgg({
-            ctpv: response.result.items[0].addrdetail.sido,
-            sgg: response.result.items[0].addrdetail.sigugun,
-          });
           // 지도를 클릭해서 위치를 선택하면 해당 지역의 탄소 차트를 표시함.
           // 사용자가 선택한 위치 기반으로 차트 데이터가 자동 갱신됨.
           setShowRegionChart(true);
-        },
-      );
-          setupDataLayer(map);
-          // 중구를 찾았을 때 추가 로직
         })
         .catch((err) => console.error("GeoJSON 로드 실패:", err));
-    });
 
+      setupDataLayer(map);
+      // 중구를 찾았을 때 추가 로직
+    });
     const setupDataLayer = (map) => {
       map.data.setStyle((feature) => ({
         fillColor: "var(--color1)",
@@ -881,7 +875,6 @@ const Map = ({
         <div
           id="map"
           className={styles.map}
-          ref={mapDivRef}
           ref={mapElement}
           style={{ width: "100%", height: "100%" }}
         ></div>
