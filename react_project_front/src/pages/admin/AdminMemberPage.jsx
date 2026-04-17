@@ -9,6 +9,7 @@ const AdminMemberPage = () => {
   const [memberList, setMemberList] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null); // 오른쪽 패널에 표시할 회원
   const [isModalOpen, setIsModalOpen] = useState(false); // 전체 로그 모달 상태값
+  const [commentList, setCommentList] = useState([]);
   const navigate = useNavigate();
 
   const boardNav = (memberId) => {
@@ -75,6 +76,18 @@ const AdminMemberPage = () => {
       .then((res) => {
         console.log(res);
         setMemberList(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const selectCommentList = (memberId) => {
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/admins/comment/${memberId}`)
+      .then((res) => {
+        console.log(res);
+        setCommentList(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -167,6 +180,8 @@ const AdminMemberPage = () => {
         changeLogFilter={changeLogFilter}
         toggleLogSort={toggleLogSort}
         boardNav={boardNav}
+        commentList={commentList}
+        selectCommentList={selectCommentList}
       />
     </>
   );

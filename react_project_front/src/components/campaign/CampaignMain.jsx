@@ -5,10 +5,13 @@ import Button from "@mui/material/Button";
 import { Input } from "../ui/Form";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
-import { Swiper, SwiperSlide, useSwiper } from "Swiper/react";
+
+import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
+
 import "swiper/css/autoplay";
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
+
 import Pagination from "../ui/Pagination";
 
 const CampaignMain = () => {

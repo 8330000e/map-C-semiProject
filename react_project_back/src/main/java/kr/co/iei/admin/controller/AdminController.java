@@ -32,6 +32,7 @@ import kr.co.iei.admin.model.vo.Notice;
 import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.board.model.vo.Board;
+import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.utils.FileUtils;
 
 // 관리자 전용 REST 컨트롤러 - 기본 URL: /admins
@@ -214,6 +215,11 @@ public class AdminController {
 		return ResponseEntity.ok(adminLog);
 	}
 	
+	@GetMapping(value="comment/{memberId}")
+	public ResponseEntity<?> selectCommentList(@PathVariable String memberId) {
+		List<BoardComment> bcList = adminService.getCommentList(memberId);
+		return ResponseEntity.ok(bcList);
+	}
 	
 	
 	

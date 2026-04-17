@@ -30,6 +30,8 @@ const AdminMember = ({
   changeLogFilter,
   toggleLogSort,
   boardNav,
+  selectCommentList,
+  commentList,
 }) => {
   return (
     <>
@@ -199,7 +201,13 @@ const AdminMember = ({
                   <span>게시글 수</span>
                   <strong>{selectedMember.boardCount}</strong>
                 </article>
-                <article className={styles.info_item}>
+                <article
+                  className={styles.info_item}
+                  onClick={() => {
+                    setIsModalOpen(true);
+                    selectCommentList(selectedMember.memberId);
+                  }}
+                >
                   <span>댓글 수</span>
                   <strong>{selectedMember.commentCount}</strong>
                 </article>
@@ -270,7 +278,7 @@ const AdminMember = ({
         </section>
 
         {/* 전체 로그 모달 - 배경 클릭 시 닫힘 */}
-        {isModalOpen && (
+        {isModalOpen && logList && (
           <div
             className={styles.modal_bg}
             onClick={() => {
@@ -353,6 +361,58 @@ const AdminMember = ({
                         <td>{log.logLocation}</td>
                         <td>{log.logResult === 1 ? "실패" : "성공"}</td>
                         <td>{log.logAlert}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+        {isModalOpen && commentList && (
+          <div
+            className={styles.modal_bg}
+            onClick={() => {
+              setIsModalOpen(false);
+            }}
+          >
+            <div
+              className={styles.modal_content}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <h3>댓글 목록</h3>
+              <table className={styles.comment_table}>
+                <colgroup>
+                  <col className={styles.col_board_no} />
+                  <col className={styles.col_comment_no} />
+                  <col className={styles.col_content} />
+                  <col className={styles.col_date} />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>게시글 번호</th>
+                    <th>댓글 번호</th>
+                    <th>댓글 내용</th>
+                    <th>작성일</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {commentList.length === 0 ? (
+                    <tr>
+                      <td colSpan={4}>기록없음</td>
+                    </tr>
+                  ) : (
+                    commentList.map((comment) => (
+                      <tr key={comment.commentNo}>
+                        <td>{comment.boardNo}</td>
+                        <td>{comment.commentNo}</td>
+                        <td className={styles.comment_content_cell}>
+                          {comment.content}
+                        </td>
+                        <td>{comment.createdAt}</td>
                       </tr>
                     ))
                   )}

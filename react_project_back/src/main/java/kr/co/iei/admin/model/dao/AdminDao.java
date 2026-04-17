@@ -18,6 +18,7 @@ import kr.co.iei.admin.model.vo.Notice;
 import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.board.model.vo.Board;
+import kr.co.iei.board.model.vo.BoardComment;
 @Mapper
 public interface AdminDao {
 
@@ -76,6 +77,8 @@ public interface AdminDao {
 	int insertAdminLog(ProcessReport pr);
 
 	AdminLog selectAdminLog(Integer reportNo);
+
+	List<BoardComment> getCommentList(String memberId);
 
 	
 	

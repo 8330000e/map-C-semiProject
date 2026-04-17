@@ -66,7 +66,7 @@ import CampaignNoticeDetailPage from "./pages/campaign/CampaignNoticeDetailPage"
 
 function App() {
   const location = useLocation();
-  const isAdmin = location.pathname.startsWith("/admin"); // 현재 url이 /admin 으로 시작하면 ture 반환
+  const isAdmin = location.pathname.startsWith("/admin"); // 현재 url이 /admin 으로 시작하면 true 반환
   const { memberGrade } = useAuthStore();
   {
     /*1. 로그인로직 
@@ -96,8 +96,9 @@ function App() {
     }
   }, [token]);
 
+  // 403 locked interceptor
   useEffect(() => {
-    // 모든 axios 응답이 여기 거치고 감 / 정상응답은 그냥 보내고 에러 응답이면 검증해야함
+    // 모든 axios 응답이 여기 거치고 감 / 정상응답은 그냥 보내고 403이고 locked: true면 로그아웃 + 로그인페이지로 팅겨냄
     const interceptor = axios.interceptors.response.use(
       // 정상 응답이면 그냥 통과
       (response) => response,

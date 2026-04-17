@@ -19,6 +19,7 @@ import kr.co.iei.admin.model.vo.Notice;
 import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.board.model.vo.Board;
+import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.utils.FileUtils;
 
 @Service
@@ -178,6 +179,11 @@ public class AdminService {
 	public AdminLog selectAdminLog(Integer reportNo) {
 		AdminLog adminLog = adminDao.selectAdminLog(reportNo);
 		return adminLog;
+	}
+
+	public List<BoardComment> getCommentList(String memberId) {
+		List<BoardComment> bcList = adminDao.getCommentList(memberId);
+		return bcList;
 	}
 
 }

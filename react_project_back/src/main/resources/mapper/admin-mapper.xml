@@ -333,6 +333,16 @@
 		select * from admin_log_tbl where report_no = #{reportNo}
 	</select>
 	
+	<select id="getCommentList" resultType="boardComment">
+		select 
+			board_comment_no as commentNo,
+			board_comment_content as content,
+			to_char(board_comment_date, 'YYYY-MM-DD HH24:MI:SS') as createdAt,
+			board_no as boardNo
+		from board_comment_tbl
+		where board_comment_writer = #{memberId}
+	</select>
+	
 
 
 </mapper>
