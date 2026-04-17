@@ -225,8 +225,11 @@ public class CampaignController {
 		return ResponseEntity.ok(result);
 	}
 	@GetMapping(value="/notice")
-	public ResponseEntity<?> getNoticeList(){
-		List<CampaignNotice> campNo = campaignService.getNoticeList();
+	public ResponseEntity<?> getNoticeList(@RequestParam Integer page,@RequestParam Integer size){
+		Map<String,Integer> map = new HashMap<String,Integer>();
+		map.put("size", size);
+		map.put("page", page);
+		Map<String,Object> campNo = campaignService.getNoticeList(map);
 		return ResponseEntity.ok(campNo);
 	}
 	@PatchMapping(value="/{campaignNo}/terminate")

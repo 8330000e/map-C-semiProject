@@ -111,7 +111,10 @@
 	<select id="getNoticeList" resultType="campNo">
 		select 
 		campaign_notice_no,campaign_notice_title,campaign_notice_writer,campaign_notice_date,campaign_no
-		 from campaign_notice_tbl 
+		,(select campaign_title from create_campaign_tbl cct where cct.campaign_no = cnt.campaign_no) as campaign_title
+		 from campaign_notice_tbl cnt
+		 order by campaign_notice_date desc
+		 offset #{size} * #{page} rows fetch next #{size} rows only
 	</select>
 	<select id="getOnlyCampaignStatus" resultType="int">
 		select campaign_status from create_campaign_tbl where campaign_no = #{campaignNo}
@@ -143,7 +146,7 @@
 		offset 0 rows fetch next 10 rows only
 	</select>
 	<select id="selectOnlyFiveNotice" resultType="campNo">
-		select campaign_notice_title,campaign_notice_writer
+		select campaign_notice_title,campaign_notice_writer,campaign_notice_no
 		from campaign_notice_tbl
 		where campaign_notice_date > sysdate - interval '2' day
 		offset 0 rows fetch next 5 rows only
@@ -161,5 +164,8 @@
 	</select>
 	<select id="selectAllCampaignCount" resultType="int">
 		select count(*) from create_campaign_tbl where campaign_status in (1,2,3,4)
+	</select>
+	<select id="selectCampNoticeCount" resultType="int">
+		select count(*) from campaign_notice_tbl 
 	</select>
 </mapper>

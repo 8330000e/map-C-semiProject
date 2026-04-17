@@ -224,9 +224,15 @@ public class CampaignService {
 		return result;
 	}
 
-	public List<CampaignNotice> getNoticeList() {
-		List<CampaignNotice> campNo = campaignDao.getNoticeList();
-		return campNo;
+	public Map<String, Object> getNoticeList(Map<String, Integer> map) {
+		int size=map.get("size");
+		int totalCount = campaignDao.selectCampNoticeCount();
+		int totalPage = (int)(Math.ceil(totalCount / (double)size));
+		List<CampaignNotice> campNo = campaignDao.getNoticeList(map);
+		Map<String , Object> returnMap =new HashMap<String,Object>();
+		returnMap.put("campNo",campNo);
+		returnMap.put("totalPage", totalPage);
+		return returnMap;
 	}
 	@Transactional
 	public int terminateCamp(Integer campaignNo) {

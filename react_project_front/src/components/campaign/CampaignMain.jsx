@@ -66,6 +66,13 @@ const CampaignMain = () => {
   return (
     readComplete && (
       <div className={styles.campaignmain_wrap}>
+        <button
+          onClick={() => {
+            navigate(`/`);
+          }}
+        >
+          돌아가기
+        </button>
         <div className={styles.campaignmain_title_wrap}>
           <h2>캠페인 참여화면</h2>
           <div>
@@ -88,13 +95,6 @@ const CampaignMain = () => {
             ></Input>
           </div>
         </div>
-        <button
-          onClick={() => {
-            navigate(`/campaign/notice`);
-          }}
-        >
-          공지사항
-        </button>
         <div className={styles.campaignmain_content_wrap}>
           <div className={styles.campaignmain_notice}>
             {/* {console.log(integer())}
@@ -115,13 +115,19 @@ const CampaignMain = () => {
               slidesPerView={1} //swiper하나당 몇개 보여줄지
               style={{ height: "40px" }}
               //onSlideChange={() => console.log("slide change")} //slide 한번 할때마다 작동(그행위시마다)
-              // speed={1500} //넘어가는 시간
+              speed={1500} //넘어가는 시간
               // onSwiper={(swiper) => console.log(swiper)}?
             >
               {noticeList.map((notice, index) => {
                 return (
                   <SwiperSlide key={notice.campaignNoticeTitle + index}>
-                    <div>
+                    <div
+                      onClick={() => {
+                        navigate(
+                          `/campaign/noticeDetail/${notice.campaignNoticeNo}`,
+                        );
+                      }}
+                    >
                       {notice.campaignNoticeTitle +
                         " - " +
                         notice.campaignNoticeWriter}
@@ -171,6 +177,13 @@ const CampaignMain = () => {
             naviSize={6}
           />
           <div className={styles.campaignmain_btn_wrap}>
+            <Button
+              onClick={() => {
+                navigate(`/campaign/notice`);
+              }}
+            >
+              공지사항
+            </Button>
             <Button
               onClick={() => {
                 navigate("/campaign/create");

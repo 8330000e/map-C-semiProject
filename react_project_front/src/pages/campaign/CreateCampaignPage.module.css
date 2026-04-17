@@ -1,4 +1,22 @@
+.createcampaign_wrap {
+  width: 900px;
+  margin: 40px auto;
+  border: 1.5px solid var(--gray4);
+  border-radius: 10px;
+}
+.createcampaign_title {
+  margin-top: 30px;
+  text-align: center;
+}
+.createcampaign_content_wrap {
+  padding: 15px;
+}
+.createcampaign_content_wrap > form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
 .createcampaign_btn_wrap {
   display: flex;
-  gap: 50px;
+  justify-content: space-evenly;
 }
