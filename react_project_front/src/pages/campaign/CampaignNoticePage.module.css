@@ -8,6 +8,7 @@
 }
 .camp_notice_content_wrap {
   width: 1000px;
+  min-height: 500px;
   margin: 10px auto;
 }
 .camp_notice_content_title > ul {
@@ -47,7 +48,7 @@
   border-right: 1px solid var(--gray4);
 }
 .camp_notice_list2 {
-  width: 500px;
+  width: 300px;
   height: 100%;
   border-right: 1px solid var(--gray4);
 }
@@ -58,11 +59,25 @@
 }
 .camp_notice_list4 {
   height: 100%;
-  width: 300px;
+  width: 150px;
+  border-right: 1px solid var(--gray4);
+}
+.camp_notice_list5 {
+  height: 100%;
+  width: 250px;
 }
 .camp_notice_btn_wrap {
-  width: 100%;
+  width: 1000px;
+  margin: 20px auto;
   display: flex;
-  margin: 20px 0px;
-  justify-content: end;
+
+  justify-content: space-between;
+}
+.camp_notice_btn_wrap > button {
+  margin-top: 13px;
+  width: 100px;
+  height: 40px;
+}
+.camp_notice_btn_wrap > Pagination {
+  align-self: center;
 }

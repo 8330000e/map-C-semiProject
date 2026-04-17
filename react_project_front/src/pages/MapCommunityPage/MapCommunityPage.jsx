@@ -23,6 +23,7 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { REGION_DATA } from "../../components/board/Community/regionData";
 
 // 백엔드 API 서버 주소를 환경 변수에서 읽어오고, 없으면 로컬 주소를 기본값으로 사용함.
 // 프론트엔드와 백엔드가 분리되어 있어도 환경별로 주소를 쉽게 바꾸기 위함임.
@@ -83,6 +84,10 @@ const MapCommunityPage = () => {
 
         <div className={styles.right}>
           <Community
+            sido={sido}
+            setSido={setSido}
+            sigungu={sigungu}
+            setSigungu={setSigungu}
             addr={addr}
             lnglat={lnglat}
             ctpvsgg={ctpvsgg}
@@ -113,6 +118,9 @@ const Map = ({
   const mapDivRef = useRef(null);
   // 지역별 게시글 통계 목록을 저장함.
   // 이 값은 선택된 시도/시군구의 게시물 수를 계산하는 데 사용됨.
+  const mapElement = useRef(null);
+  const mapRef = useRef(null);
+  const tooltipRef = useRef(null);
   const [ctpvsggList, setCtpvsggList] = useState([]);
   // 지도에 표시할 게시글 마커 데이터를 저장함.
   const [markerList, setMarkerList] = useState([]);
@@ -144,9 +152,13 @@ const Map = ({
   let detailMode = false;
   let ctpvsgglength = 0;
 
-  const boardView = (boardNo) => {
+  const boardView = (boardNo, addr, ctpv, sgg) => {
     if (boardNo) {
       navigate(`/map-community?boardNo=${boardNo}`);
+      setAddr(addr);
+      setCtpvsgg({ ctpv: ctpv, sgg: sgg });
+      setSido(ctpv);
+      setSigungu(sgg);
     } else {
       navigate("/map-community");
     }
@@ -169,7 +181,6 @@ const Map = ({
     axios
       .get(`${BACKSERVER}/boards/boardCount`)
       .then((res) => {
-        console.log(res.data);
         setCtpvsggList(res.data);
       })
       .catch((err) => {
@@ -260,18 +271,26 @@ const Map = ({
   }, [ctpvsgg]);
   console.log("마커 리스트:", markerList);
   mapMarkerList = { ...markerList };
+  //console.log("마커 리스트:", markerList);
 
   useEffect(() => {
-    if (!mapDivRef.current || !window.naver) {
-      return;
-    }
-    const map = new naver.maps.Map(mapDivRef.current, {
-      center: new window.naver.maps.LatLng(
-        `${maplnglat.lat}`,
-        `${maplnglat.lng}`,
-      ),
+    if (!mapElement.current) return;
+
+    // 1. 지도 초기화
+    const location = new window.naver.maps.LatLng(
+      `${maplnglat.lat}`,
+      `${maplnglat.lng}`,
+    );
+    const mapOptions = {
+      center: location,
       zoom: 15,
-    });
+    };
+
+    const map = new window.naver.maps.Map(mapElement.current, mapOptions);
+    mapRef.current = map;
+
+    const tooltip = tooltipRef.current;
+    map.getPanes().floatPane.appendChild(tooltip);
 
     const defaultMarker = new naver.maps.Marker({
       position: new window.naver.maps.LatLng(
@@ -511,7 +530,12 @@ const Map = ({
                 `,
             size: new naver.maps.Size(22, 35),
             anchor: new naver.maps.Point(11, 35),
-            onClick: boardView(marker.boardNo),
+            onClick: boardView(
+              marker.boardNo,
+              marker.addr,
+              marker.ctpv,
+              marker.sgg,
+            ),
           });
         } else {
           navigate("/map-community");
@@ -538,25 +562,35 @@ const Map = ({
       });
     });
 
-    naver.maps.Event.addListener(map, "click", function (e) {
-      console.log("map click");
-      detailMode = false;
-      defaultMarker.setPosition(e.coord);
-      naver.maps.Service.reverseGeocode(
-        {
-          location: e.coord,
-        },
-        (status, response) => {
-          if (status != naver.maps.Service.Status.OK) {
-            alert("주소를 찾을 수 없습니다.");
-            return;
-          }
-          console.log(response);
+    window.naver.maps.Event.once(map, "init", () => {
+      fetch("/sgg.geojson")
+        .then((res) => res.json())
+        .then((geojson) => {
+          // 1. 데이터를 지도에 추가
+          const features = map.data.addGeoJson(geojson);
 
-          setAddr(response.result.items[0].address);
-          setLnglat({
-            lat: e.coord.lat(),
-            lng: e.coord.lng(),
+          // 2. 추가된 feature들 중에서 '중구' 찾기
+          features.forEach((feature) => {
+            // SIG_CD가 '11140'이거나 SIG_KOR_NM이 '중구'인 경우 (데이터 구조에 따라 확인 필요)
+            if (
+              feature.getProperty("SIG_CD") === "11140" ||
+              feature.getProperty("SIG_KOR_NM") === "중구"
+            ) {
+              // 기본 포커스 설정
+              feature.setProperty("focus", true);
+
+              // (선택사항) 중구의 위치를 가져와 지도의 중심을 중구로 이동
+              // const center = e.feature.getBounds().getCenter(); // Bounds를 쓰려면 계산 로직 필요
+              // map.setCenter(new naver.maps.LatLng(37.563656, 126.99751));
+              if (feature.getProperty("SIG_CD") === "11140") {
+                feature.setProperty("focus", true);
+
+                // 툴팁 강제 노출 (중구 근처 좌표 예시)
+                tooltip.style.display = "block";
+                tooltip.style.left = "50%"; // 초기 위치는 적절히 조정 필요
+                tooltip.style.top = "50%";
+              }
+            }
           });
           setCtpvsgg({
             ctpv: response.result.items[0].addrdetail.sido,
@@ -567,7 +601,92 @@ const Map = ({
           setShowRegionChart(true);
         },
       );
+          setupDataLayer(map);
+          // 중구를 찾았을 때 추가 로직
+        })
+        .catch((err) => console.error("GeoJSON 로드 실패:", err));
     });
+
+    const setupDataLayer = (map) => {
+      map.data.setStyle((feature) => ({
+        fillColor: "var(--color1)",
+        fillWeight: 1,
+        fillOpacity: 0,
+        strokeColor: "var(--color1)",
+        strokeWeight: 1,
+        strokeOpacity: 0.5,
+        // focus 속성에 따른 변화
+        ...(feature.getProperty("focus") && {
+          fillOpacity: 0.3,
+          fillColor: "#c6ff40",
+          strokeColor: "#c6ff40",
+          strokeWeight: 3,
+        }),
+      }));
+
+      // 클릭: 포커스 토글
+      map.data.addListener("click", (e) => {
+        navigate("/map-community");
+        detailMode = false;
+        defaultMarker.setPosition(e.coord);
+        naver.maps.Service.reverseGeocode(
+          {
+            location: e.coord,
+          },
+          (status, response) => {
+            if (status != naver.maps.Service.Status.OK) {
+              alert("주소를 찾을 수 없습니다.");
+              return;
+            }
+            console.log(response);
+
+            setAddr(response.result.items[0].address);
+            setLnglat({ lat: e.coord.lat(), lng: e.coord.lng() });
+
+            setCtpvsgg({
+              ctpv: response.result.items[0].addrdetail.sido,
+              sgg: response.result.items[0].addrdetail.sigugun,
+            });
+
+            setSido(response.result.items[0].addrdetail.sido);
+            setSigungu(response.result.items[0].addrdetail.sigugun);
+          },
+        );
+        const feature = e.feature;
+        map.data.forEach((f) => {
+          f.setProperty("focus", false);
+        });
+        feature.setProperty("focus", true);
+        console.log(e.feature.property_SIG_KOR_NM);
+        console.log(ctpvsgg.sgg);
+        e.feature.property_SIG_KOR_NM == ctpvsgg.sgg
+          ? feature.setProperty("focus", !feature.setProperty("focus"))
+          : null;
+      });
+
+      // 마우스 오버: 툴팁 표시 및 스타일 강조
+      map.data.addListener("mouseover", (e) => {
+        const feature = e.feature;
+        const regionName = feature.getProperty("SIG_KOR_NM"); // 파이썬에서 남긴 컬럼명
+
+        tooltip.style.display = "block";
+        tooltip.style.left = `${e.offset.x}px`;
+        tooltip.style.top = `${e.offset.y}px`;
+        tooltip.innerText = regionName;
+
+        map.data.overrideStyle(feature, {
+          fillOpacity: 0.4,
+          strokeWeight: 3,
+          strokeOpacity: 1,
+        });
+      });
+
+      // 마우스 아웃: 툴팁 숨기기
+      map.data.addListener("mouseout", () => {
+        tooltip.style.display = "none";
+        map.data.revertStyle();
+      });
+    };
   }, [markerList]);
 
   // 지역 이름을 비교하기 쉽게 정규화하는 함수임.
@@ -758,7 +877,28 @@ const Map = ({
           </>
         )}
       </div>
-      <div id="map" className={styles.map} ref={mapDivRef}></div>
+      <div style={{ position: "relative", width: "100%", height: "100%" }}>
+        <div
+          id="map"
+          className={styles.map}
+          ref={mapDivRef}
+          ref={mapElement}
+          style={{ width: "100%", height: "100%" }}
+        ></div>
+        <div
+          ref={tooltipRef}
+          style={{
+            position: "absolute",
+            display: "none",
+            zIndex: 1000,
+            padding: "5px 10px",
+            backgroundColor: "white",
+            border: "2px solid black",
+            fontSize: "14px",
+            pointerEvents: "none",
+          }}
+        />
+      </div>
     </div>
   );
 };

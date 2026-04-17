@@ -14,27 +14,25 @@
 .campdetailpage_details_wrap {
   width: 800px;
   /* background-color: aqua; */
-  height: 600px;
+  height: 570px;
   border: 1.5px solid var(--gray4);
   border-radius: 10px;
 }
 .campdetailpage_visible_wrap {
   display: flex;
-  margin-top: 15px;
+  padding: 15px;
+  gap: 5px;
 }
 .campdetailpage_chart {
   position: relative;
   width: 300px;
   height: 300px;
 }
-.campdetailpage_chart_title {
-  display: flex;
-  justify-content: space-between;
-}
+
 .camp_polygon_wrap {
   display: flex;
   position: relative;
-  width: 500px;
+  width: 450px;
   height: 324px;
   background-color: var(--gray6);
   border-radius: 5px;
@@ -44,96 +42,154 @@
   width: 50px;
   height: 50px;
   top: 40px;
-  left: 40px;
+  left: 33px;
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
+.camp_polygon1::after {
+  animation-delay: 0s;
+}
+
 .camp_polygon2 {
   position: absolute;
   width: 50px;
   height: 50px;
   top: 60px;
-  left: 130px;
+  left: 116px;
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon2::after {
+  animation-delay: 0.2s;
 }
 .camp_polygon3 {
   position: absolute;
   width: 50px;
   height: 50px;
   top: 20px;
-  left: 220px;
+  left: 199px;
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon3::after {
+  animation-delay: 0.4s;
 }
 .camp_polygon4 {
   position: absolute;
   width: 50px;
   height: 50px;
-  right: 130px;
+  right: 116px;
   top: 40px;
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon4::after {
+  animation-delay: 0.6s;
 }
 .camp_polygon5 {
   position: absolute;
   width: 50px;
   height: 50px;
-  right: 40px;
+  right: 33px;
   top: 80px;
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon5::after {
+  animation-delay: 0.8s;
 }
 .camp_polygon6 {
   position: absolute;
   width: 50px;
   height: 50px;
   bottom: 80px;
-  right: 40px;
+  right: 33px;
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon6::after {
+  animation-delay: 1s;
 }
 .camp_polygon7 {
   position: absolute;
   width: 50px;
   height: 50px;
-  bottom: 60px;
-  right: 130px;
+  bottom: 40px;
+  right: 116px;
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon7::after {
+  animation-delay: 1.2s;
 }
 .camp_polygon8 {
   position: absolute;
   width: 50px;
   height: 50px;
   bottom: 70px;
-  right: 220px;
+  left: 199px;
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon8::after {
+  animation-delay: 1.4s;
 }
 .camp_polygon9 {
   position: absolute;
   width: 50px;
   height: 50px;
   bottom: 80px;
-  left: 130px;
+  left: 116px;
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+.camp_polygon9::after {
+  animation-delay: 1.6s;
 }
 .camp_polygon0 {
   position: absolute;
   width: 50px;
   height: 50px;
   bottom: 40px;
-  left: 40px;
+  left: 33px;
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
-.camp_success {
-  background-color: orangered;
+.camp_polygon0::after {
+  animation-delay: 1.8s;
+}
+
+.camp_success::after {
+  content: "🆗";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: red;
+  transform: scale(3) rotate(-15deg);
+  animation: stamp 0.6s ease-out forwards;
+  background-color: #b0d261;
+}
+.campdetailpage_info_wrap {
+  padding: 20px;
+  width: 700px;
+  margin: 20px auto;
+  display: flex;
+  border: 1.5px solid var(--gray4);
+  border-radius: 10px;
+  gap: 80px;
+}
+.campdetailpage_info_wrap > div {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 .campdetailpage_sidebar {
   width: 300px;
+  padding: 10px;
   background-color: cadetblue;
   border: 1.5px solid var(--gray4);
   border-radius: 10px;
@@ -142,13 +198,17 @@
 
   align-items: center;
 }
+.campdetailpage_sidebar_content {
+  margin-top: 20px;
+  height: 200px;
+}
 .campdetailpage_sidebar_btn_wrap {
   display: flex;
   flex-direction: column;
   gap: 20px;
   width: 150px;
   margin: 0px auto;
-  margin-top: 300px;
+  margin-top: 50px;
 }
 
 .campdetailpage_board_wrap {
@@ -197,4 +257,19 @@
 .camp_board_content_wrap {
   display: flex;
   justify-content: space-between;
+}
+@keyframes stamp {
+  0% {
+    opacity: 0;
+    transform: scale(3) rotate(-15deg);
+    filter: blur(4px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.9) rotate(5deg);
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
 }

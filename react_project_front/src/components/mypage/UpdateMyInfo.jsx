@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./UpdateMyInfo.module.css";
 import axios from "axios";
@@ -10,8 +10,17 @@ const UpdateMyInfo = () => {
   // 로그인한 회원의 아이디와 닉네임 저장 함수를 전역 상태에서 가져옴.
   const { memberId, setNickname } = useAuthStore();
   const navigate = useNavigate();
+
   // 수정 폼에서 사용할 입력값 상태임.
   const [sendForm, setSendForm] = useState({
+    memberId: memberId,
+    memberName: "",
+    memberNickname: "",
+    memberEmail: "",
+  });
+
+  // 처음 불러온 원본 회원 정보를 저장함.
+  const [originForm, setOriginForm] = useState({
     memberId: memberId,
     memberName: "",
     memberNickname: "",
@@ -26,20 +35,36 @@ const UpdateMyInfo = () => {
       .get(`${import.meta.env.VITE_BACKSERVER}/members/${memberId}`)
       .then((res) => {
         const member = res.data || {};
-        setSendForm((prev) => ({
-          ...prev,
+
+        const loadedForm = {
+          memberId: memberId,
           memberName: member.memberName || "",
           memberNickname: member.memberNickname || "",
           memberEmail: member.memberEmail || "",
-        }));
+        };
+
+        setSendForm(loadedForm);
+        setOriginForm(loadedForm);
       })
       .catch((err) => {
         console.log("회원 정보 로드 실패", err);
       });
   }, [memberId]);
 
+  // 닉네임이나 이메일 값이 실제로 변경되었는지 확인함.
+  const isChanged = useMemo(() => {
+    return (
+      sendForm.memberNickname.trim() !== originForm.memberNickname.trim() ||
+      sendForm.memberEmail.trim() !== originForm.memberEmail.trim()
+    );
+  }, [sendForm, originForm]);
+
   // 수정 버튼을 누르면 서버에 변경 내용을 전송함.
   const sendData = () => {
+    if (!isChanged) {
+      return;
+    }
+
     const payload = {
       memberId: sendForm.memberId,
       memberNickname: sendForm.memberNickname,
@@ -52,6 +77,12 @@ const UpdateMyInfo = () => {
         if (res.data === 1) {
           // 업데이트 성공 시 전역 상태의 닉네임도 갱신함.
           setNickname(sendForm.memberNickname);
+
+          // 수정 성공 후 현재 값을 원본값으로 다시 맞춰줌.
+          setOriginForm({
+            ...sendForm,
+          });
+
           Swal.fire({
             title: "수정성공",
             text: "수정이 정상적으로 처리되었습니다.",
@@ -129,7 +160,9 @@ const UpdateMyInfo = () => {
 
             {/* 수정 버튼 */}
             <div className={styles.updatemyinfo_btn_wrap}>
-              <button type="submit">수정하기</button>
+              <button type="submit" disabled={!isChanged}>
+                수정하기
+              </button>
             </div>
           </form>
         </div>

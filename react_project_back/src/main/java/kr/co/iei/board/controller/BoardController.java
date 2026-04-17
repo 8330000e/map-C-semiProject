@@ -330,8 +330,8 @@ public class BoardController {
 	 
 	@GetMapping(value="/markers")
 	public ResponseEntity<?> selectMarkers() {
-		List<Marker> list = boardService.selectMarkers();
-		return ResponseEntity.ok(list);
+	    List<Marker> list = boardService.selectMarkers();
+	    return ResponseEntity.ok(list);
 	}
 
 	@GetMapping(value="/boardCount")

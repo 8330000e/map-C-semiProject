@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import useAuthStore from "../../store/useAuthStore";
 import HomeBanner from "./HomeBanner";
+import { successAlert } from "../../utils/alert";
 
 //부모 컴포넌트 , props로 isOpen, onClose를 설정.
 //->여기서 알아야 할 아주 중요한 점 한가지. 컴포넌트로 분할 할 떄
@@ -21,10 +22,76 @@ const DonationPage = ({
 }) => {
   const [donatePoint, setDonatePoint] = useState("");
 
+  // 1. ESC 키 이벤트 설정
+  useEffect(() => {
+    // 팝업이 닫혀있으면 리스너를 등록하지 않음
+    if (!isOpen) return;
+
+    const handleEsc = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    console.log("ESC 감시 시작");
+    window.addEventListener("keydown", handleEsc);
+
+    // 클린업 함수: 팝업이 닫히거나 컴포넌트가 사라질 때 리스너 제거
+    return () => {
+      console.log("ESC 감시 종료");
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, [isOpen, onClose]); // isOpen이나 onClose가 바뀔 때마다 실행
+
+  // 팝업이 닫혀있으면 리스너를 등록하지 않음
   if (!isOpen) return null;
 
+  //donatePoint 상태를 감시하여 메시지, 글자 색상, 버튼의 비활성화 여부(isDisabled)를 실시간으로 객체화해서 반환
+
+  const getValidation = () => {
+    const amount = parseInt(donatePoint);
+
+    // 1. 입력값이 없는 경우
+    //isNaN(amount)-> **"Is Not a Number?"**의 줄임말,  내장 표준함수.
+    //말 그대로 **"이거 숫자 아니지?"**라고 물어보는 함수라고 생각하면 된다
+    //즉 포인트 입력칸이 비었거나, 숫자로 변환할 수 없는 이상한 값이네?"를 즉시 파악해서 입력 버튼을 비활성화시키는 것.
+    if (!donatePoint || isNaN(amount)) {
+      return {
+        message: "기부할 포인트를 입력해 주세요.",
+        color: "#666",
+        isDisabled: true,
+      };
+    }
+
+    // 2. 0 이하 입력 시
+    if (amount <= 0) {
+      return {
+        message: "1포인트 이상 입력 가능합니다.",
+        color: "red",
+        isDisabled: true,
+      };
+    }
+
+    // 3. 보유 포인트 초과 시
+    if (amount > totalPoint) {
+      return {
+        message: "가지고 계신 포인트양을 초과합니다!!",
+        color: "red",
+        isDisabled: true,
+      };
+    }
+
+    // 4. 통과
+    return {
+      message: "기부 가능한 포인트입니다.",
+      color: "#2f5b3a",
+      isDisabled: false,
+    };
+  };
+  const validation = getValidation();
+
   //체크박스에서 전체 기부포인트를 누르면 기부하게 하는 함수
-  const handleAllGivePoint = (e) => {
+  const handleAllGivePoint = async (e) => {
     if (e.target.checked) {
       setDonatePoint(totalPoint);
     } else {
@@ -34,7 +101,7 @@ const DonationPage = ({
 
   //기부 포인트란에 포인트를 입력하면 이벤트가 발동하여
   //등록하게 하는 로직
-  const handlePointChange = (e) => {
+  const handlePointChange = async (e) => {
     const value = e.target.value;
 
     // 숫자가 아니면 입력되지 않도록 막는 로직 (정규표현식 활용)
@@ -52,7 +119,7 @@ const DonationPage = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className={styles.content_body}>
-          <h3>신청 정보 확인</h3>
+          <h3>기부 포인트 신청란</h3>
         </div>
 
         <div className={styles.point_header}>
@@ -71,33 +138,44 @@ const DonationPage = ({
           onChange={handlePointChange}
           placeholder="포인트를 입력해 주세요"
         ></input>
+
+        {/* --- [추가] 실시간 검증 문구 영역 
+          p태그에서 getValidation 함수를 css적용
+        --- */}
+        <p
+          style={{
+            color: validation.color,
+            fontSize: "13px",
+            marginBottom: "20px",
+            fontWeight: "500",
+            minHeight: "20px",
+            textAlign: "right",
+            paddingRight: "10px",
+          }}
+        >
+          {validation.message}
+        </p>
+
         <p className={styles.info_point}>
           현재 보유 포인트:<strong>{totalPoint.toLocaleString()}</strong>P
         </p>
         <p className={styles.point_sub_text}>10포인트는 1000원에 해당됩니다.</p>
         <button
           className={styles.submit_btn}
+          //함수가 아닐 경우에는 onclick에 다음과 같은 방식으로 삽입가능
+
+          // --- [추가] 비활성화 설정 ---
+          disabled={validation.isDisabled}
+          style={{
+            opacity: validation.isDisabled ? 0.6 : 1,
+            cursor: validation.isDisabled ? "not-allowed" : "pointer",
+            backgroundColor: validation.isDisabled ? "#a0a0a0" : "#2f5b3a",
+            transition: "all 0.3s ease",
+          }}
           onClick={() => {
             // 1. 유효성 검사: 입력값이 비었거나 보유 포인트보다 많은지 체크
             const amount = parseInt(donatePoint);
-            //통장 잔고가 없거나 혹은 입력이 되지 않았을 경우에는 경고 알림창이 뜨게 하기
-            if (!amount || amount <= 0) {
-              return Swal.fire(
-                "오류",
-                "기부할 포인트를 입력해 주세요",
-                "error",
-              );
-            }
-            if (amount > totalPoint) {
-              return Swal.fire(
-                "잔액 부족",
-                "보유하신 포인트보다 많이 기부할 수 없습니다.",
-                "warning",
-              );
-            }
-
-            // 2. 부모에게 기부 요청 함수 실행 (아래 2단계에서 만들 함수)
-            //-> 기부받을 단체도 추가 해서 같이 보냄
+            // 버튼이 활성화된 상태에서만 클릭되므로 추가 if문 없이 바로 실행
             handleDonateSubmit(amount, selectedGroup.group_id);
           }}
         >
@@ -255,11 +333,10 @@ const PointForGoodPage = () => {
       );
 
       if (response.status === 200) {
-        await Swal.fire({
-          title: "기부 완료!",
-          text: `${amount}P가 성공적으로 기부되었습니다.`,
-          icon: "success",
-        });
+        await successAlert(
+          "기부 완료",
+          "기부가 성공적으로 처리되었습니다. 당신의 성원에 감사드립니다.",
+        );
 
         setIsOpen(false); // 팝업 닫기
         loadDataMemberPoint(); // ★중요: 기부를 한후 사용자의 수정된 포인트 데이터를 불러오기, 화면 갱신!
@@ -327,13 +404,21 @@ const PointForGoodPage = () => {
       </div>
 
       {/* 기부 팝업 컴포넌트 */}
-      <DonationPage
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        totalPoint={totalPoint}
-        handleDonateSubmit={handleDonateSubmit}
-        selectedGroup={selectedGroup}
-      />
+      {/*
+      isOpen && (...): 팝업이 닫히면(false) 자식 컴포넌트가 DOM에서 아예 사라짐
+      왜냐하면 키값이 다시 생성되기 떄문
+      */}
+      {isOpen && (
+        <DonationPage
+          key={selectedGroup?.group_id || "donation-model"} //Key가 바뀌면 컴포넌트는 완전히 새로 태어나,
+          //  즉 팝업창을 열 떄마다 새로운 키값이 주어짐
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          totalPoint={totalPoint}
+          handleDonateSubmit={handleDonateSubmit}
+          selectedGroup={selectedGroup}
+        />
+      )}
     </div>
   );
 };

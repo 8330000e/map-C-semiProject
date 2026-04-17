@@ -60,6 +60,25 @@ public class MissionController {
         return Map.of("completed", completed);
     }
     
+    @PostMapping("/basic/complete")
+    public ResponseEntity<Map<String, String>> completeBasicMission(
+            @RequestBody Map<String, String> param
+    ) {
+        String memberId = param.get("memberId");
+
+        int result = missionService.completeBasicMission(memberId);
+
+        if (result == -1) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "message", "오늘 기본 미션은 이미 완료했습니다."
+            ));
+        }
+
+        return ResponseEntity.ok(Map.of(
+            "message", "기본 미션 완료! 10포인트 지급"
+        ));
+    }
+    
     @GetMapping("/random/today/completed")
     public Map<String, Object> getTodayRandomMissionCompleted(
             @RequestParam String memberId,

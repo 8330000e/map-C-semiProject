@@ -1,6 +1,6 @@
 .camp_settings_content_wrap {
   width: 100%;
-  min-height: 600px;
+  min-height: 650px;
   border: 1.5px solid var(--gray4);
   border-radius: 20px;
 }
@@ -63,6 +63,9 @@
 
 .camp_settings_content_btn_wrap {
   align-self: center;
+}
+.campaignUpdate_textarea {
+  height: 250px;
 }
 /* 캠페인 강제종료 */
 .camp_settings_content_terminate {

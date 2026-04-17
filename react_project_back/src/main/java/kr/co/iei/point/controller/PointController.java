@@ -1,7 +1,5 @@
 package kr.co.iei.point.controller;
 
-
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 //import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-
 import kr.co.iei.point.service.PointService;
-import kr.co.iei.region.model.vo.RegionContribution;
+import kr.co.iei.point.vo.PointHistory;
 
-@CrossOrigin("origins = \"http://localhost:5173\", allowCredentials = \"true\"")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 @RestController
 //@RequestMapping(value = "/points")
 public class PointController {
@@ -33,12 +29,11 @@ public class PointController {
 		return ResponseEntity.ok(totalPoint);
 	}
 	// 나무 키우기에 사용한 포인트 내역 조회
-		@GetMapping(value = "/point-history/{memberId}")
-		public ResponseEntity<?> selectPointHistory(@PathVariable String memberId){
-			System.out.println("★포인트 내역 조회 요청★ ID : " + memberId);
-			
-			List<RegionContribution> historyList = pointService.selectPointHistory(memberId);
-			return ResponseEntity.ok(historyList);
-		}
-	
+	@GetMapping(value = "/point-history/{memberId}")
+	public ResponseEntity<?> selectPointHistory(@PathVariable String memberId){
+		System.out.println("★포인트 내역 조회 요청★ ID : " + memberId);
+		
+		List<PointHistory> historyList = pointService.selectPointHistory(memberId);
+		return ResponseEntity.ok(historyList);
+	}
 }
