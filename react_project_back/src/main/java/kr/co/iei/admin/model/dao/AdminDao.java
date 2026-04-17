@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import kr.co.iei.admin.model.vo.AdminLog;
 import kr.co.iei.admin.model.vo.DashData;
 import kr.co.iei.admin.model.vo.Faq;
 import kr.co.iei.admin.model.vo.ListItem;
@@ -17,6 +18,7 @@ import kr.co.iei.admin.model.vo.Notice;
 import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.board.model.vo.Board;
+import kr.co.iei.board.model.vo.BoardComment;
 @Mapper
 public interface AdminDao {
 
@@ -64,7 +66,7 @@ public interface AdminDao {
 
 	Map<String, Object> getAnomalyCount(String memberId);
 
-	List<Board> getBoardList(String keyword, String risk, String reportSort, String sort);
+	List<Board> getBoardList(String keyword, String risk, String reportSort, String sort, String memberId);
 
 	int updateBoardStatus(ProcessReport pr);
 
@@ -73,6 +75,14 @@ public interface AdminDao {
 	int updateReportStatus(ProcessReport pr);
 
 	int insertAdminLog(ProcessReport pr);
+
+	AdminLog selectAdminLog(Integer reportNo);
+
+	List<BoardComment> getCommentList(String memberId);
+
+	int releaseMember(String targetId);
+
+	int insertAdminLog2(ProcessReport pr);
 
 	
 	

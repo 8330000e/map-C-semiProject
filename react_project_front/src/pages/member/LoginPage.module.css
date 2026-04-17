@@ -11,10 +11,35 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url("/pointimages/login_bg2.png"); /* 배경 이미지 경로 */
+  background-image: url("/images/login_bg_final_clean.png"); /* 배경 이미지 경로 */
   background-size: cover; /* 화면에 꽉 차게 */
   background-position: center; /* 중앙 기준 정렬 */
   background-repeat: no-repeat;
+}
+
+.home_btn {
+  position: fixed;
+  top: 20px;
+  left: 30px;
+  z-index: 10000;
+
+  padding: 10px 16px;
+
+  background: rgba(45, 90, 39, 0.85);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.home_btn:hover {
+  /*transform: scale(1.1);
+  --> 커서가 버튼에게 향할 떄 버튼이 위로 살짝 움직임
+  */
+  background-color: #3d7a35; /* 마우스 올렸을 때 */
+  transform: translateY(-1px); /* 살짝 위로 뜨는 효과 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .login_wrap {
@@ -43,10 +68,22 @@
 /*로그인 제목 설정*/
 .page_title {
   padding: 10px;
-  font-size: 30px;
+  font-size: 33px;
   font-weight: bold;
-  margin-top: -20px;
-  margin-bottom: 20px;
+  margin-top: -10px;
+  margin-bottom: 30px;
+  color: #4a5d45;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* 로고 이미지 요소 스타일 */
+.logo_img_element {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
 }
 
 /*로그인 내부 폼 이미지 설정*/
@@ -99,18 +136,6 @@
   border-color: #999;
 }
 
-.login_btn {
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 10px;
-  background-color: #5d8a1e; /* 이미지와 어울리는 초록색 */
-  color: #fff;
-  font-weight: bold;
-  margin-top: 10px;
-  cursor: pointer;
-}
-
 .search_wrap {
   margin-top: 20px;
   font-size: 0.85rem;
@@ -133,13 +158,15 @@
 /*버튼 클릭 효과*/
 
 .login_btn {
+  /*
+  기존형식
   width: 100%;
   padding: 14px;
   font-size: 24px;
   font-weight: 600;
   color: white;
 
-  background: linear-gradient(135deg, lightgreen, #6a5cff); /*#5f9cff*/
+  background: linear-gradient(135deg, lightgreen, #6a5cff); 
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -149,12 +176,26 @@
 
   position: relative;
   overflow: hidden;
+  */
+  width: 100%;
+  padding: 14px;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  background-color: #5b7252; /* 요청하신 딥그린 색상 */
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
 }
 
 /* hover */
 .login_btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(95, 156, 255, 0.6);
+  transform: translateY(-1px);
+  background-color: #4a5d45;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
 /* 클릭 */

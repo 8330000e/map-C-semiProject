@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import AdminBoard from "../../components/admin/AdminBoard";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 const AdminBoardPage = () => {
   const [boardList, setBoardList] = useState([]);
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const location = useLocation();
+  const memberId = location.state?.memberId;
+  console.log(memberId);
 
   const [boardFilter, setBoardFilter] = useState({
     keyword: "",
@@ -33,6 +37,8 @@ const AdminBoardPage = () => {
     if (boardFilter.risk !== "all") params.risk = boardFilter.risk;
     if (boardFilter.reportSort !== "all")
       params.reportSort = boardFilter.reportSort;
+    if (memberId) params.memberId = memberId;
+
     params.sort = boardFilter.sort;
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/admins/board`, { params })

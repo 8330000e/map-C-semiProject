@@ -5,10 +5,13 @@ import Button from "@mui/material/Button";
 import { Input } from "../ui/Form";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
+
 import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
+
 import "swiper/css/autoplay";
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
+
 import Pagination from "../ui/Pagination";
 
 const CampaignMain = () => {
@@ -22,7 +25,7 @@ const CampaignMain = () => {
   const [searchFilter, setSearchFilter] = useState(1); //1:제목,2:캠페인 생성자
   const [orderFilter, setOrderFilter] = useState(1); //1: 시간순,2오래된수
   const navigate = useNavigate();
-  const swiper = useSwiper();
+  const Swiper = useSwiper();
   useEffect(() => {
     axios
       .get(

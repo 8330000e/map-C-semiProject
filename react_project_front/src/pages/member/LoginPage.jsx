@@ -8,6 +8,7 @@ import useAuthStore from "../../store/useAuthStore";
 import Swal from "sweetalert2";
 import styles from "./LoginPage.module.css";
 import { Link } from "react-router-dom";
+import { errorAlert, successAlert } from "../../utils/alert";
 
 const Login = () => {
   // 페이지 이동 함수 가져오기
@@ -34,15 +35,12 @@ const Login = () => {
 
   const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     console.log("로그인 버튼 클릭됨"); // 버튼 클릭 테스트용 출력
 
     // 1) 값 유효성 검사 (아이디/비밀번호 필수)
     if (!member.memberId || !member.memberPw) {
-      Swal.fire({
-        title: "아이디와 비밀번호를 입력하세요",
-        icon: "error",
-      });
+      await errorAlert("로그인 실패", "아이디/비밀번호를 입력해주세요");
       return;
     }
 
@@ -56,69 +54,89 @@ const Login = () => {
     //페이지/컴포넌트가 렌더링 준비가 끝났는지 체크하는 용도..
     setIsReady(true); //페이지 랜더링 준비 완료
     //여기에서 로딩 함수를 설정하고 axios에다가 타이머 설정
-    let timer = setTimeout(() => {
+    let timer = setTimeout(async () => {
       //3초안에 로그인 안되면 로딩 끝내기
       setIsLoading(false);
-      Swal.fire({
-        icon: "error",
-        title: "로그인 실패",
-        text: "로그인 시간이 초과되었습니다. 다시 시도해주세요.",
-      });
+      await errorAlert("로그인 실패", "로그인 시간초과");
     }, 5000); //5초로 설정
 
-    axios
-      .post(`${BACKSERVER}/members/login`, member)
-      .then((res) => {
-        clearTimeout(timer); //로그인 성공하면 타이머 초기화
-        console.log(res.data);
+    //앞으로 axios는 기본값으로 "Authorization"이라는 서버에서 보내준 인증하는 값 헤더를
+    //자동으로 붙인다. 즉, 토큰을 이제 전역에 적용시키겠다는 의미
+    //로그인 후 받은 JWT 토큰을 헤더에 넣어야 로그인한 상태를 서버가 인식함.
+    try {
+      // 3) Axios 요청 (await 사용)
+      const res = await axios.post(`${BACKSERVER}/members/login`, member);
+      //성공했을 때
 
-        Swal.fire({
-          title: "로그인 성공!!",
-          icon: "success",
-        });
+      clearTimeout(timer); //로그인 성공하면 타이머 초기화
+      console.log(res.data);
 
-        //앞으로 axios는 기본값으로 "Authorization"이라는 서버에서 보내준 인증하는 값 헤더를
-        //자동으로 붙인다. 즉, 토큰을 이제 전역에 적용시키겠다는 의미
-        //로그인 후 받은 JWT 토큰을 헤더에 넣어야 로그인한 상태를 서버가 인식함.
+      await successAlert("로그인 성공", "로그인 성공");
 
-        if (res.data.token) {
-          axios.defaults.headers.common["Authorization"] =
-            `Bearer ${res.data.token}`;
-        }
+      //토큰 설정
+      if (res.data.token) {
+        axios.defaults.headers.common["Authorization"] =
+          `Bearer ${res.data.token}`;
+      }
 
-        useAuthStore.getState().login(res.data); //상태저장
-        navigate("/");
-      })
-      .catch((err) => {
-        if (err.response?.status === 403) {
-          clearTimeout(timer); // 403 타이머 초기화 추가
-          setIsLoading(false); //로딩 끝내기
-          Swal.fire({
-            title: "로그인 불가",
-            html: err.response.data,
-            icon: "error",
-          });
-          return;
-        }
-        clearTimeout(timer); //실패시 타이머 초기화
-        setIsLoading(false); //로딩 끝내기
-        Swal.fire({
-          icon: "error",
-          title: "로그인 실패",
-          text: "아이디 또는 비밀번호가 올바르지 않습니다.",
-        });
-        console.log(err);
+      //상태저장
+      useAuthStore.getState().login(res.data);
+      //성공했을 떄 초기값으로 되돌아가기
+      setMember({
+        memberId: "",
+        memberPw: "",
       });
+
+      navigate("/");
+    } catch (err) {
+      //에러처리
+      clearTimeout(timer); //실패시 타이머 초기화
+      setIsLoading(false); //로딩 끝내기
+      console.error("로그인에러:", err);
+
+      const status = err.response?.status; //403.
+      if (status === 403) {
+        await errorAlert(
+          "로그인 실패",
+          "아이디 또는 비밀번호가 올바르지 않습니다.",
+        );
+      } else {
+        await errorAlert(
+          "오류 발생",
+          "서버와 연결할 수 없습니다. 잠시 후 다시 시도해주세요.",
+        );
+      }
+      //성공하든 실패하든 로딩상태 해제
+    } finally {
+      setIsLoading(false); //로딩 끝내기
+    }
   };
 
   //준비되지 않으면 랜더링 안 함
   if (!isReady) return null;
 
   return (
-    <div className={styles.login_total_container}>
+    //로그인 전체 컨테이너 -> login_page
+    <div className={`${styles.login_total_container} login_page`}>
+      {/*홈으로 가기 버튼 */}
+      <div
+        className={styles.home_btn}
+        onClick={() => {
+          navigate("/");
+        }}
+      >
+        홈으로 가기
+      </div>
       {/* 전체 배경 컨테이너 추가 */}
       <div className={styles.login_wrap}>
-        <h3 className={styles.page_title}>로그인</h3>
+        <h3 className={styles.page_title}>
+          <img
+            src="/favicon.svg"
+            alt="Logo"
+            className={styles.logo_img_element}
+          />
+          탄소커넥트
+        </h3>
 
         {isLoading && <p className={styles.loading_text}>로그인 중...</p>}
 

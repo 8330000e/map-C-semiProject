@@ -3,11 +3,21 @@ import { useEffect, useState } from "react";
 import styles from "./AdminMemberPage.module.css";
 import axios from "axios";
 import AdminMember from "../../components/admin/AdminMember";
+import { useNavigate } from "react-router-dom";
 
 const AdminMemberPage = () => {
   const [memberList, setMemberList] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null); // 오른쪽 패널에 표시할 회원
-  const [isModalOpen, setIsModalOpen] = useState(false); // 전체 로그 모달 상태값
+
+  const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+
+  const [commentList, setCommentList] = useState([]);
+  const navigate = useNavigate();
+
+  const boardNav = (memberId) => {
+    navigate("/admin/boards", { state: { memberId: memberId } });
+  };
 
   // 회원 로그 필터 객체로 한번에 묶음
   const [logFilter, setLogFilter] = useState({
@@ -69,6 +79,18 @@ const AdminMemberPage = () => {
       .then((res) => {
         console.log(res);
         setMemberList(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const selectCommentList = (memberId) => {
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/admins/comment/${memberId}`)
+      .then((res) => {
+        console.log(res);
+        setCommentList(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -149,8 +171,10 @@ const AdminMemberPage = () => {
         changeFilter={changeFilter}
         selectRecentLogList={selectRecentLogList}
         recentLogList={recentLogList}
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
+        isLogModalOpen={isLogModalOpen}
+        setIsLogModalOpen={setIsLogModalOpen}
+        isCommentModalOpen={isCommentModalOpen}
+        setIsCommentModalOpen={setIsCommentModalOpen}
         selectLogList={selectLogList}
         logList={logList}
         logPage={logPage}
@@ -160,6 +184,10 @@ const AdminMemberPage = () => {
         logFilter={logFilter}
         changeLogFilter={changeLogFilter}
         toggleLogSort={toggleLogSort}
+        boardNav={boardNav}
+        commentList={commentList}
+        selectCommentList={selectCommentList}
+        setCommentList={setCommentList}
       />
     </>
   );
