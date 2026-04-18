@@ -268,10 +268,10 @@ const CampaignDetailPage = () => {
                     {"캠페인 달성 여부 : " +
                       (campaignDetail.campaignStatus >= 3
                         ? campaignDetail.campaignStatus === 3
-                          ? campaignDetail.campaignStatus === 4
+                          ? "목표달성 성공"
+                          : campaignDetail.campaignStatus === 4
                             ? "목표달성 실패"
                             : "조기종료"
-                          : "목표달성 성공"
                         : "진행중")}
                   </p>
                 </div>

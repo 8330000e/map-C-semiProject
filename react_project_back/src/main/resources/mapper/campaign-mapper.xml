@@ -144,7 +144,7 @@
 		select 
 				campaign_no,
 				campaign_title,
-				campaign_explanation,
+				campaign_goal_member,
 				campaign_expire_date,
 				campaign_start_date,
 				member_id,

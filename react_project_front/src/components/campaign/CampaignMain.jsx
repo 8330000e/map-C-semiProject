@@ -127,6 +127,8 @@ const CampaignMain = () => {
               direction="vertical"
               modules={[Autoplay]}
               loop={true} //한번 순환후에 계속 돌건지 여부(false면 안돔)
+              // effect="fade"
+              // fadeEffect={(crossFade = true)}//direction이 vertical일때는 사용 불가(애니메이션은 horizontal만 구현)
               autoplay={{
                 delay: 4000, //몇밀리초마다
                 disableOnInteraction: false, //사용자가 건드려도 계속 돌아감(true 면 멈춤)
