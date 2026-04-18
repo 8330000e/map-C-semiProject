@@ -4,7 +4,7 @@ package kr.co.iei.board.model.dao;
 import java.util.HashMap;
 import java.util.List;
 
-
+import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardFile;
@@ -83,7 +83,11 @@ public interface BoardDao {
 
 	List<Report> getReportList();
 
+	// 지역별 게시글 개수를 조회하는 DAO 메서드임.
+	// board_tbl과 store_board_tbl을 합쳐서 같은 ctpv/sgg 지역의 게시글 총합을 계산함.
 	List<Board> selectBoardCount();
+
+	List<Report> getGroupList(Integer targetNo, String targetType, Integer reportNo);
 
     
 

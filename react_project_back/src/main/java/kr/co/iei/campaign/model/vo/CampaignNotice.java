@@ -17,5 +17,6 @@ public class CampaignNotice {
 	private String campaignNoticeWriter;
 	private Integer campaignNo;
 	private String campaignNoticeDate;
-	
+	private String campaignTitle;
+	private Integer totalPage;
 }

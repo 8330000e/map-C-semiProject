@@ -331,6 +331,20 @@ const Main = () => {
     navigate("/mission");
   };
 
+  // 캠페인 정보 불러오는 곳
+  const [campList, setCampList] = useState([]);
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/campaigns/selectFrontCamp`)
+      .then((res) => {
+        console.log(res);
+        setCampList([...res.data]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   return (
     <main className="main_wrap">
       <div className="main_top">
@@ -459,8 +473,8 @@ const Main = () => {
               navigate("/campaign/main");
             }}
           >
-            <p>캠페인 존</p>
-            {/*캠페인 컴포넌트 호출 */}
+            <p>캠페인</p>
+            {/* 캠페인 하나씩 출력(10개 가지고 옴) */}
           </div>
 
           <div

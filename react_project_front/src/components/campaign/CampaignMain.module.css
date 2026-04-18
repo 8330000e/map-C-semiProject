@@ -5,6 +5,7 @@
   padding: 3px 0px;
   background-color: var(--gray6);
   border-radius: 20px;
+  position: relative;
 }
 .campaignmain_title_wrap {
   display: flex;
@@ -32,6 +33,10 @@
 }
 .campaignmain_notice {
   text-align: center;
+}
+
+.campaignmain_notice {
+  height: 40px;
 }
 .campaignmain_list {
   cursor: pointer;
@@ -77,10 +82,22 @@
   width: 800px;
   margin: 30px auto;
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
 }
 .campaignmain_btn_wrap > button {
   border: 1.5px solid var(--gray3);
   background-color: var(--gray8);
   border-radius: 50px;
+}
+.campaignmain_wrap > button {
+  position: absolute;
+  top: -35px;
+  left: 5px;
+  outline: none;
+  border: none;
+  padding: 5px;
+  border-radius: 15%;
+  cursor: pointer;
+  border: 1px solid var(--gray2);
+  background-color: var(--gray8);
 }

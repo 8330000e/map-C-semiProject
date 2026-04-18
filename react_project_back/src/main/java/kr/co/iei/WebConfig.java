@@ -35,6 +35,6 @@ public class WebConfig implements WebMvcConfigurer {
      public void addInterceptors(InterceptorRegistry registry) {                                                     
          registry.addInterceptor(memberStatusInterceptor)
                  .addPathPatterns("/**")           // 모든 요청에 적용
-                 .excludePathPatterns("/member/login"); // 로그인만 제외 (로그인 로직에 따로 추가해뒀음)                                               
+                 .excludePathPatterns("/members/login", "/admins/**"); // 로그인만 제외 (로그인 로직에 따로 추가해뒀음)                                               
      }
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.board.model.dao.BoardDao;
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
@@ -313,9 +314,16 @@ public class BoardService {
 		List<Report> reportList = boardDao.getReportList();
 		return reportList;
 	}
+	// 지역별 게시글 개수를 조회하는 서비스 메서드임.
+	// 이 메서드는 DAO에서 값을 받아와서 컨트롤러에 그대로 전달함.
+	// 프론트에서는 이 데이터를 이용해 지도 상의 지역 통계를 계산함.
 	public List<Board> selectBoardCount() {
 		List<Board> list = boardDao.selectBoardCount();
 		return list;
+	}
+	public List<Report> getGroupList(Integer targetNo, String targetType, Integer reportNo) {
+		List<Report> groupList = boardDao.getGroupList(targetNo, targetType, reportNo);
+		return groupList;
 	}
 
 }

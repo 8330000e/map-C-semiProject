@@ -5,8 +5,9 @@ import styles from "./AdminMember.module.css";
 
 const statusText = {
   0: "정상",
-  1: "정지",
+  1: "영구정지",
   2: "탈퇴",
+  3: "정지",
 };
 
 const AdminMember = ({
@@ -17,8 +18,10 @@ const AdminMember = ({
   changeFilter,
   selectRecentLogList,
   recentLogList,
-  isModalOpen,
-  setIsModalOpen,
+  isLogModalOpen,
+  setIsLogModalOpen,
+  isCommentModalOpen,
+  setIsCommentModalOpen,
   selectLogList,
   logList,
   logPage,
@@ -28,6 +31,10 @@ const AdminMember = ({
   logFilter,
   changeLogFilter,
   toggleLogSort,
+  boardNav,
+  selectCommentList,
+  commentList,
+  setCommentList,
 }) => {
   return (
     <>
@@ -39,7 +46,8 @@ const AdminMember = ({
             <select name="status" value={filter.status} onChange={changeFilter}>
               <option value="ALL">상태</option>
               <option value={0}>정상</option>
-              <option value={1}>정지</option>
+              <option value={1}>영구정지</option>
+              <option value={3}>정지</option>
               <option value={2}>탈퇴</option>
             </select>
             <select name="grade" value={filter.grade} onChange={changeFilter}>
@@ -88,45 +96,50 @@ const AdminMember = ({
                   </div>
 
                   <div className={styles.member_meta}>
-                    {/* 상태 뱃지 - 정상/정지/탈퇴에 따라 다른 색상 클래스 */}
-                    <span
-                      className={`${styles.badge} ${
-                        member.memberStatus === 0
-                          ? styles.status_active
-                          : member.memberStatus === 1
-                            ? styles.status_banned
-                            : styles.status_dormant
-                      }`}
-                    >
-                      {statusText[member.memberStatus]}
-                    </span>
-                    <span className={`${styles.badge} ${styles.badge_role}`}>
-                      {member.memberGrade === 2 ? "일반" : "관리자"}
-                    </span>
-                    <span
-                      // 중첩 삼항연산자
-                      className={`${styles.badge} ${
-                        // 로그인실패 3회 이상 and 로그인 위치변경 1회 이상 = 위험도 높음
-                        member.failCount >= 3 && member.locationChangeCount >= 1
-                          ? styles.danger_high
-                          : // 로그인실패 3회이상 or 로그인 위치변경 1회 이상 = 위험도 중간
-                            member.failCount >= 3 ||
+                    <div className={styles.meta_row}>
+                      <span className={styles.meta_label}>상태</span>
+                      <span
+                        className={`${styles.badge} ${
+                          member.memberStatus === 0
+                            ? styles.status_active
+                            : member.memberStatus === 1
+                              ? styles.status_banned
+                              : member.memberStatus === 3
+                                ? styles.status_suspended
+                                : styles.status_dormant
+                        }`}
+                      >
+                        {statusText[member.memberStatus]}
+                      </span>
+                    </div>
+                    <div className={styles.meta_row}>
+                      <span className={styles.meta_label}>등급</span>
+                      <span className={`${styles.badge} ${styles.badge_role}`}>
+                        {member.memberGrade === 2 ? "일반" : "관리자"}
+                      </span>
+                    </div>
+                    <div className={styles.meta_row}>
+                      <span className={styles.meta_label}>위험도</span>
+                      <span
+                        className={`${styles.badge} ${
+                          member.failCount >= 3 &&
+                          member.locationChangeCount >= 1
+                            ? styles.danger_high
+                            : member.failCount >= 3 ||
+                                member.locationChangeCount >= 1
+                              ? styles.danger_mid
+                              : styles.danger_safe
+                        }`}
+                      >
+                        {member.failCount >= 3 &&
+                        member.locationChangeCount >= 1
+                          ? "위험"
+                          : member.failCount >= 3 ||
                               member.locationChangeCount >= 1
-                            ? styles.danger_mid
-                            : // 아니면 안전
-                              styles.danger_safe
-                      }`}
-                    >
-                      {member.failCount >= 3 && member.locationChangeCount >= 1
-                        ? "위험"
-                        : member.failCount >= 3 ||
-                            member.locationChangeCount >= 1
-                          ? "주의"
-                          : "안전"}
-                    </span>
-                    <span className={styles.join_date}>
-                      가입일 {member.enrollDate}
-                    </span>
+                            ? "주의"
+                            : "안전"}
+                      </span>
+                    </div>
                   </div>
                 </button>
               ))
@@ -159,7 +172,9 @@ const AdminMember = ({
                         ? styles.status_active
                         : selectedMember.memberStatus === 1
                           ? styles.status_banned
-                          : styles.status_dormant
+                          : selectedMember.memberStatus === 3
+                            ? styles.status_suspended
+                            : styles.status_dormant
                     }`}
                   >
                     {statusText[selectedMember.memberStatus]}
@@ -180,11 +195,22 @@ const AdminMember = ({
                   <span>가입일</span>
                   <strong>{selectedMember.enrollDate}</strong>
                 </article>
-                <article className={styles.info_item}>
+                <article
+                  className={styles.info_item}
+                  onClick={() => {
+                    boardNav(selectedMember.memberId);
+                  }}
+                >
                   <span>게시글 수</span>
                   <strong>{selectedMember.boardCount}</strong>
                 </article>
-                <article className={styles.info_item}>
+                <article
+                  className={styles.info_item}
+                  onClick={() => {
+                    setIsCommentModalOpen(true);
+                    selectCommentList(selectedMember.memberId);
+                  }}
+                >
                   <span>댓글 수</span>
                   <strong>{selectedMember.commentCount}</strong>
                 </article>
@@ -241,7 +267,7 @@ const AdminMember = ({
                 <button
                   className={styles.log_modal_btn}
                   onClick={() => {
-                    setIsModalOpen(true); // 모달열기
+                    setIsLogModalOpen(true);
                     setLogPage(0); // page 0부터 시작 (스크롤)
                     selectLogList(selectedMember.memberId, logPage); // logList 호출
                     console.log(logList);
@@ -255,11 +281,11 @@ const AdminMember = ({
         </section>
 
         {/* 전체 로그 모달 - 배경 클릭 시 닫힘 */}
-        {isModalOpen && (
+        {isLogModalOpen && (
           <div
             className={styles.modal_bg}
             onClick={() => {
-              setIsModalOpen(false); // 모달 배경 클릭 시 false로 변경 -> 모달 닫힘
+              setIsLogModalOpen(false); // 모달 배경 클릭 시 false로 변경 -> 모달 닫힘
             }}
           >
             <div
@@ -338,6 +364,58 @@ const AdminMember = ({
                         <td>{log.logLocation}</td>
                         <td>{log.logResult === 1 ? "실패" : "성공"}</td>
                         <td>{log.logAlert}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+        {isCommentModalOpen && (
+          <div
+            className={styles.modal_bg}
+            onClick={() => {
+              setIsCommentModalOpen(false);
+            }}
+          >
+            <div
+              className={styles.modal_content}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <h3>댓글 목록</h3>
+              <table className={styles.comment_table}>
+                <colgroup>
+                  <col className={styles.col_board_no} />
+                  <col className={styles.col_comment_no} />
+                  <col className={styles.col_content} />
+                  <col className={styles.col_date} />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>게시글 번호</th>
+                    <th>댓글 번호</th>
+                    <th>댓글 내용</th>
+                    <th>작성일</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {commentList.length === 0 ? (
+                    <tr>
+                      <td colSpan={4}>기록없음</td>
+                    </tr>
+                  ) : (
+                    commentList.map((comment) => (
+                      <tr key={comment.commentNo}>
+                        <td>{comment.boardNo}</td>
+                        <td>{comment.commentNo}</td>
+                        <td className={styles.comment_content_cell}>
+                          {comment.content}
+                        </td>
+                        <td>{comment.createdAt}</td>
                       </tr>
                     ))
                   )}

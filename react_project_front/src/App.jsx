@@ -61,11 +61,12 @@ import CampaignMemoWritePage from "./pages/campaign/CampaignMemoWritePage";
 import CampaignUpdateDeletePage from "./pages/campaign/CampaignUpdateDeletePage";
 import PointForGoodPage from "./pages/pointadmin/PointForGoodPage";
 import CampaignNotice from "./pages/campaign/CampaignNoticePage";
+import Swal from "sweetalert2";
 import CampaignNoticeDetailPage from "./pages/campaign/CampaignNoticeDetailPage";
 
 function App() {
   const location = useLocation();
-  const isAdmin = location.pathname.startsWith("/admin"); // 현재 url이 /admin 으로 시작하면 ture 반환
+  const isAdmin = location.pathname.startsWith("/admin"); // 현재 url이 /admin 으로 시작하면 true 반환
   const { memberGrade } = useAuthStore();
   {
     /*1. 로그인로직 
@@ -95,8 +96,9 @@ function App() {
     }
   }, [token]);
 
+  // 403 locked interceptor
   useEffect(() => {
-    // 모든 axios 응답이 여기 거치고 감 / 정상응답은 그냥 보내고 에러 응답이면 검증해야함
+    // 모든 axios 응답이 여기 거치고 감 / 정상응답은 그냥 보내고 403이고 locked: true면 로그아웃 + 로그인페이지로 팅겨냄
     const interceptor = axios.interceptors.response.use(
       // 정상 응답이면 그냥 통과
       (response) => response,
@@ -105,8 +107,15 @@ function App() {
         // 에러 응답 코드가 403이고 응답 데이터에 locked: true가 있는 경우에만 ?.은 옵셔널 체이닝 null이여도 안터지고 undefined로 빠짐
         // 옵셔널 체이닝 없으면 data가 null인 상태에서 .으로 추가접근 > null에 접근 터짐
         if (error.response.status === 403 && error.response.data?.locked) {
-          useAuthStore.getState().logout();
-          window.location.href = "/login";
+          Swal.fire({
+            icon: "error",
+            title: "계정이 정지되었습니다.",
+            text: "로그인페이지로 이동합니다.",
+            timer: 5000,
+          }).then(() => {
+            useAuthStore.getState().logout();
+            window.location.href = "/members/login";
+          });
         }
         return Promise.reject(error); // locked를 제외한 다른 오류는 각자 axios catch에 돌려줌
       },
@@ -174,7 +183,7 @@ function App() {
             path="/campaign/noticeDetail/:campaignNoticeNo"
             element={<CampaignNoticeDetailPage />}
           ></Route>
-          <Route path="/admin/*" element={<AdminPage />} />
+
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/support/*" element={<SupportPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

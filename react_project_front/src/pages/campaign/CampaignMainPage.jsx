@@ -12,14 +12,14 @@ const CampaignMainPage = () => {
     memberId && (
       <div className={styles.campaign_main_wrap}>
         <div className={styles.campaign_content_wrap}>
-          <Button
+          {/* <Button
             className="btn primary sm"
             onClick={() => {
               navigate("/");
             }}
           >
             돌아가기
-          </Button>
+          </Button> */}
           <CampaignMain />
         </div>
       </div>

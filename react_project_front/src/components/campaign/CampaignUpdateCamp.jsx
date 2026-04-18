@@ -46,6 +46,7 @@ const CampaignUpdateCamp = () => {
           ></Input>
           <label htmlFor="campaignExplanation">설명</label>
           <TextArea
+            className={styles.campaignUpdate_textarea}
             id="campaignExplanation"
             name="campaignExplanation"
             value={campList.campaignExplanation}

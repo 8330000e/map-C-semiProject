@@ -3,7 +3,11 @@
 }
 
 .admin_profile {
-  background-color: var(--admin-panel-2);
+  background: linear-gradient(
+    145deg,
+    var(--admin-panel-2) 0%,
+    rgba(91, 140, 255, 0.08) 100%
+  );
   border: 1px solid var(--admin-stroke);
   border-radius: 14px;
   padding: 16px;
@@ -12,6 +16,23 @@
   flex-direction: column;
   align-items: center;
   gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.admin_profile::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(
+    circle,
+    rgba(91, 140, 255, 0.25) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
 }
 
 .admin_profile img {
@@ -20,7 +41,18 @@
   object-fit: cover;
   border-radius: 50%;
   background-color: var(--admin-bg);
-  border: 1px solid var(--admin-stroke-strong);
+  border: 2px solid var(--admin-stroke-strong);
+  box-shadow: 0 0 0 4px rgba(91, 140, 255, 0.1),
+    0 6px 14px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.admin_profile img:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 0 4px rgba(91, 140, 255, 0.2),
+    0 10px 20px rgba(0, 0, 0, 0.5);
 }
 
 .side_menu_wrap a {
@@ -28,21 +60,50 @@
   align-items: center;
   padding: 12px 14px;
   margin: 8px 0;
-  border-radius: 8px;
+  border-radius: 10px;
   color: var(--admin-muted);
-  transition: all 0.2s;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.side_menu_wrap a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background: var(--admin-accent);
+  border-radius: 0 3px 3px 0;
+  transition: height 0.25s ease;
 }
 
 .side_menu_wrap a:hover {
   background-color: var(--admin-accent-soft);
   color: var(--admin-text);
+  transform: translateX(2px);
+}
+
+.side_menu_wrap a:hover::before {
+  height: 60%;
 }
 
 .active_menu {
-  background-color: var(--admin-accent);
-  color: #ffffff;
+  background: linear-gradient(
+    135deg,
+    var(--admin-accent) 0%,
+    var(--admin-accent-2) 100%
+  ) !important;
+  color: #ffffff !important;
   font-weight: 700;
-  box-shadow: 0 6px 12px var(--admin-card-shadow);
+  box-shadow: 0 6px 16px rgba(91, 140, 255, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.active_menu::before {
+  display: none;
 }
 
 .menu_item > span {

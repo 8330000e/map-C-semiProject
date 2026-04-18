@@ -1,4 +1,4 @@
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Community from "../../components/board/Community/Community";
 import styles from "./MapCommunityPage.module.css";
 import defaultImg from "../../assets/img/defaultImg.png";
@@ -7,15 +7,40 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import CelebrationOutlinedIcon from "@mui/icons-material/CelebrationOutlined";
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
+import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import heart from "../../assets/img/heart.svg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { normalizeImageUrl } from "../../utils/getImageUrl";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
 import { REGION_DATA } from "../../components/board/Community/regionData";
 
+// 백엔드 API 서버 주소를 환경 변수에서 읽어오고, 없으면 로컬 주소를 기본값으로 사용함.
+// 프론트엔드와 백엔드가 분리되어 있어도 환경별로 주소를 쉽게 바꾸기 위함임.
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
+// 이미지 URL 정규화 도구를 가져와서 마커 이미지나 사용자 썸네일을 올바른 경로로 변환함.
 const getImageUrl = normalizeImageUrl;
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+);
 
 const MapCommunityPage = () => {
   const [sido, setSido] = useState("");
@@ -91,11 +116,29 @@ const Map = ({
   // const [detailMode, setDetailMode] = useState(false);
   const navigate = useNavigate();
   const mapDivRef = useRef(null);
+  // 지역별 게시글 통계 목록을 저장함.
+  // 이 값은 선택된 시도/시군구의 게시물 수를 계산하는 데 사용됨.
   const mapElement = useRef(null);
   const mapRef = useRef(null);
   const tooltipRef = useRef(null);
   const [ctpvsggList, setCtpvsggList] = useState([]);
+  // 지도에 표시할 게시글 마커 데이터를 저장함.
   const [markerList, setMarkerList] = useState([]);
+  // 전체 회원 통계에서 가져온 총 절감 탄소량을 저장함.
+  // 이 값은 메인 통계 영역에서 참고용으로 보여주는 값임.
+  const [totalCo2, setTotalCo2] = useState(0);
+  // 선택한 지역의 실제 탄소 배출량을 DB에서 가져와서 저장함.
+  // 이 값은 지역별 차트 아래에 표시되는 실제 배출량 수치임.
+  // 백엔드 API는 해당 지역의 최신 공공 데이터 기반 배출량을 계산해서 넘겨줌.
+  const [actualCo2, setActualCo2] = useState(0);
+  // 지역 탄소 배출 변화를 그리기 위한 차트 데이터 상태임.
+  // labels와 datasets를 포함한 Chart.js 데이터 구조를 저장함.
+  const [regionChartData, setRegionChartData] = useState(null);
+  const [chartLoading, setChartLoading] = useState(false);
+  // 지역 탄소 배출 변화 차트 노출 여부를 관리함.
+  // 페이지 진입 시에는 차트를 바로 보여주지 않고,
+  // 사용자가 지도를 클릭하거나 마커를 선택했을 때 차트를 표시함.
+  const [showRegionChart, setShowRegionChart] = useState(false);
   let mapMarkerList = [];
   let mapaddr = "서울특별시 중구";
   let maplnglat = {
@@ -122,6 +165,8 @@ const Map = ({
   };
 
   useEffect(() => {
+    // 지도에 표시할 게시물 마커를 백엔드에서 가져오는 API 호출임.
+    // 마커 위치는 게시글의 위도/경도로 표시하기 위해 필요함.
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/boards/markers`)
       .then((res) => {
@@ -130,6 +175,9 @@ const Map = ({
       .catch((err) => {
         console.error("마커 데이터 로드 실패:", err);
       });
+
+    // 지역별 게시글 개수 통계를 가져오는 API 호출임.
+    // 이 데이터는 선택된 지역의 게시물 수를 기반으로 절감량을 추정하는 데 사용됨.
     axios
       .get(`${BACKSERVER}/boards/boardCount`)
       .then((res) => {
@@ -138,7 +186,91 @@ const Map = ({
       .catch((err) => {
         console.error("boardCount 데이터 로드 실패:", err);
       });
+
+    // 전체 회원 탄소 통계를 가져오는 API 호출임.
+    // 메인 맵 통계 영역에 사용할 수 있도록 총 절감량을 백엔드에서 가져오는 부분임.
+    axios
+      .get(`${BACKSERVER}/members/stats`)
+      .then((res) => {
+        setTotalCo2(res.data?.totalCo2 ?? 0);
+      })
+      .catch((err) => {
+        console.error("회원 탄소 통계 로드 실패:", err);
+      });
   }, []);
+
+  useEffect(() => {
+    // 선택된 지역 정보(ctpv, sgg)가 바뀔 때마다 실제 탄소 배출량을 다시 요청함.
+    // 이 API는 백엔드에서 실제 DB의 공공 데이터 기반 탄소 배출량을 계산해서 반환함.
+    if (!ctpvsgg.ctpv || !ctpvsgg.sgg) {
+      setActualCo2(0);
+      setRegionChartData(null);
+      setShowRegionChart(false);
+      return;
+    }
+
+    axios
+      .get(
+        `${BACKSERVER}/carbon/region?ctpv=${encodeURIComponent(
+          ctpvsgg.ctpv,
+        )}&sgg=${encodeURIComponent(ctpvsgg.sgg)}`,
+      )
+      .then((res) => {
+        setActualCo2(res.data ?? 0);
+      })
+      .catch((err) => {
+        console.error("지역 탄소 배출량 로드 실패:", err);
+        setActualCo2(0);
+      });
+
+    const fetchRegionChart = async () => {
+      setChartLoading(true);
+      try {
+        const response = await axios.get(`${BACKSERVER}/carbon/region/history`, {
+          params: {
+            ctpv: ctpvsgg.ctpv,
+            sgg: ctpvsgg.sgg,
+          },
+        });
+        const history = Array.isArray(response.data) ? response.data : [];
+        // period 값은 '2024-01' 형태로 넘어옴.
+        // 이 값을 '1월', '2월'처럼 사람이 보기 쉬운 텍스트로 변환함.
+        const formatMonthLabel = (period) => {
+          const parts = (period || "").split("-");
+          if (parts.length !== 2) return period;
+          const month = parseInt(parts[1], 10);
+          return Number.isNaN(month) ? period : `${month}월`;
+        };
+        setRegionChartData({
+          // 차트의 x축 레이블로 쓰일 값들을 저장함.
+          labels: history.map((item) => formatMonthLabel(item.period)),
+          datasets: [
+            {
+              // 라인 차트에 보여줄 데이터 시리즈 이름임.
+              label: "월별 탄소 배출량 (kg)",
+              // 실제 차트 y값 데이터 배열임.
+              data: history.map((item) => item.emission),
+              borderColor: "#8fbf5a",
+              backgroundColor: "rgba(143, 191, 90, 0.25)",
+              tension: 0.3,
+              fill: true,
+              pointRadius: 4,
+              pointHoverRadius: 8,
+            },
+          ],
+        });
+      } catch (err) {
+        console.error("지역 탄소 차트 로드 실패:", err);
+        setRegionChartData(null);
+      } finally {
+        setChartLoading(false);
+      }
+    };
+
+    fetchRegionChart();
+  }, [ctpvsgg]);
+  console.log("마커 리스트:", markerList);
+  mapMarkerList = { ...markerList };
   //console.log("마커 리스트:", markerList);
 
   useEffect(() => {
@@ -225,9 +357,21 @@ const Map = ({
               alert("주소를 찾을 수 없습니다.");
               return;
             }
-            mapaddr = response.result.items[0].address;
-            ((mapctpvsgg.ctpv = response.result.items[0].addrdetail.sido),
-              (mapctpvsgg.sgg = response.result.items[0].addrdetail.sigugun));
+            const selectedAddr = response.result.items[0].address;
+            const selectedCtpv = response.result.items[0].addrdetail.sido;
+            const selectedSgg = response.result.items[0].addrdetail.sigugun;
+            mapaddr = selectedAddr;
+            setAddr(selectedAddr);
+            setLnglat({
+              lat: marker.boardLat,
+              lng: marker.boardLng,
+            });
+            setCtpvsgg({ ctpv: selectedCtpv, sgg: selectedSgg });
+            // 마커를 클릭해서 지역이 확정되면 차트를 보여줌.
+            // 사용자는 선택한 마커의 지역 탄소 배출 변화를 바로 확인할 수 있음.
+            setShowRegionChart(true);
+            mapctpvsgg.ctpv = selectedCtpv;
+            mapctpvsgg.sgg = selectedSgg;
           },
         );
 
@@ -448,12 +592,14 @@ const Map = ({
               }
             }
           });
-          setupDataLayer(map);
-          // 중구를 찾았을 때 추가 로직
+          // 지도를 클릭해서 위치를 선택하면 해당 지역의 탄소 차트를 표시함.
+          // 차트는 사용자가 실제로 위치를 클릭할 때만 열리도록 유지함.
         })
         .catch((err) => console.error("GeoJSON 로드 실패:", err));
-    });
 
+      setupDataLayer(map);
+      // 중구를 찾았을 때 추가 로직
+    });
     const setupDataLayer = (map) => {
       map.data.setStyle((feature) => ({
         fillColor: "var(--color1)",
@@ -494,9 +640,9 @@ const Map = ({
               ctpv: response.result.items[0].addrdetail.sido,
               sgg: response.result.items[0].addrdetail.sigugun,
             });
-
             setSido(response.result.items[0].addrdetail.sido);
             setSigungu(response.result.items[0].addrdetail.sigugun);
+            setShowRegionChart(true);
           },
         );
         const feature = e.feature;
@@ -536,6 +682,102 @@ const Map = ({
     };
   }, [markerList]);
 
+  // 지역 이름을 비교하기 쉽게 정규화하는 함수임.
+  // 공백 제거, '특별시', '광역시', '시', '군', '구', '도' 같은 접미사를 제거한 뒤 소문자로 변환함.
+  const normalizeRegionName = (name) =>
+    (name || "")
+      .toString()
+      .replace(/\s+/g, "")
+      .replace(/특별시|광역시|시|군|구|도$/g, "")
+      .toLowerCase();
+
+  // 시도/시군구 데이터를 하나의 문자열 키로 만든 뒤 비교하기 위함.
+  // 예: '서울특별시' + '중구'를 '서울|중구' 형태로 변환.
+  const getRegionKey = (ctpv, sgg) =>
+    `${normalizeRegionName(ctpv)}|${normalizeRegionName(sgg)}`;
+
+  // 현재 선택된 지역과 일치하는 통계 데이터를 ctpvsggList에서 찾음.
+  // 이 값은 선택한 구역의 게시글 개수를 기준으로 함.
+  const selectedRegion = ctpvsggList.find((item) =>
+    getRegionKey(item.ctpv, item.sgg) === getRegionKey(ctpvsgg.ctpv, ctpvsgg.sgg),
+  );
+  // 선택된 지역의 게시물 개수를 가져오는 값임.
+  // 백엔드에서 지역별 게시물 수를 계산해서 boardCount 필드로 전달함.
+  const selectedRegionCount = Number(selectedRegion?.boardCount ?? 0);
+  // 선택된 지역 게시물 수에 2kg를 곱한 값은 간단한 절감 추정치임.
+  // 실제 배출량 감소가 아니라 지역 게시물 활동량을 보기 쉽게 보여주기 위한 값임.
+  const estimatedRegionCo2 = selectedRegionCount * 2;
+
+  // 차트 위에 값 텍스트를 직접 표시하는 플러그인임.
+  // 점 위에 라벨이 겹치면 가독성이 떨어지므로,
+  // 데이터 개수가 적을 때만 플러그인을 적용함.
+  const regionValuePlugin = {
+    id: "regionValuePlugin",
+    afterDatasetsDraw: (chart) => {
+      const { ctx } = chart;
+      chart.data.datasets.forEach((dataset, datasetIndex) => {
+        const meta = chart.getDatasetMeta(datasetIndex);
+        meta.data.forEach((point, index) => {
+          const value = dataset.data[index];
+          ctx.save();
+          ctx.fillStyle = "#333";
+          ctx.font = "12px Arial";
+          ctx.textAlign = "center";
+          ctx.fillText(
+            typeof value === "number" ? value.toLocaleString() : value,
+            point.x,
+            point.y - 10,
+          );
+          ctx.restore();
+        });
+      });
+    },
+  };
+
+  const regionChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: `${ctpvsgg.ctpv} ${ctpvsgg.sgg} 월간 탄소 배출 변화`,
+        color: "#333",
+      },
+      tooltip: {
+        position: "nearest",
+        yAlign: "bottom",
+        xAlign: "center",
+        callbacks: {
+          title: (context) => context[0]?.label || "",
+          label: (context) => `${context.parsed.y?.toLocaleString()} kg`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        type: "category",
+        title: {
+          display: false,
+        },
+        ticks: {
+          maxRotation: 0,
+          minRotation: 0,
+          autoSkip: false,
+        },
+      },
+      y: {
+        title: {
+          // 차트 내부 y축 제목은 숨김 처리함.
+          // 내부 글자가 복잡하면 사용자 보기 어려우므로 외부에 별도 레이블을 쓴다.
+          display: false,
+        },
+        beginAtZero: true,
+      },
+    },
+  };
+
   return (
     <div className={styles.map_div}>
       <div>
@@ -553,15 +795,7 @@ const Map = ({
                 <div>
                   <div className={styles.spot_box_top_posts}>
                     <DescriptionOutlinedIcon sx={{ fontSize: "24px" }} />
-                    <div>
-                      {(() => {
-                        const target = ctpvsggList.find(
-                          (item) =>
-                            item.ctpv + item.sgg === ctpvsgg.ctpv + ctpvsgg.sgg,
-                        );
-                        return <div>{target ? target.boardCount : 0}</div>;
-                      })()}
-                    </div>
+                    <div>{selectedRegionCount.toLocaleString()}</div>
                   </div>
                 </div>
               </div>
@@ -570,8 +804,8 @@ const Map = ({
                   <CelebrationOutlinedIcon sx={{ fontSize: "30px" }} />
                 </p>
                 <p>
-                  <strong>1,321명</strong>의 구민들이 탄소 배출량{" "}
-                  <strong>10,151kg</strong>을 절감했습니다!
+                  <strong>{selectedRegionCount.toLocaleString()}</strong>명의 구민들이 탄소 배출량{" "}
+                  <strong>{estimatedRegionCo2.toLocaleString()}kg</strong>을 절감했습니다!
                 </p>
               </div>
             </div>
@@ -581,8 +815,58 @@ const Map = ({
                   sx={{ color: "#fff", fontSize: "18px" }}
                 />
               </p>
-              <p>탄소 배출량</p>
+              <p>
+                {/* 실제 DB 기반 지역 탄소 배출량을 보여줌. */}
+                탄소 배출량 {actualCo2.toLocaleString()}kg
+              </p>
             </div>
+            {showRegionChart && (
+              <div className={styles.regionChartBox}>
+                <button
+                  className={styles.closeButton}
+                  type="button"
+                  onClick={() => setShowRegionChart(false)}
+                  aria-label="차트 닫기"
+                >
+                  <CloseOutlinedIcon sx={{ fontSize: 18 }} />
+                </button>
+                <div className={styles.regionChartHeader}>
+                  <p>
+                    {ctpvsgg.ctpv && ctpvsgg.sgg
+                      ? `${ctpvsgg.ctpv} ${ctpvsgg.sgg} 탄소 배출 변화`
+                      : "지역을 선택하면 차트를 표시합니다"}
+                  </p>
+                </div>
+                <div className={styles.regionChartContent}>
+                  {chartLoading ? (
+                    <p>차트 로딩 중...</p>
+                  ) : regionChartData && regionChartData.labels.length > 0 ? (
+                    <div className={styles.regionChartWithLabel}>
+                      {/*
+                        y축 제목을 차트 바깥에 별도로 표시함.
+                        이렇게 하면 글자가 세로로 쌓인 형태로 보여서
+                        사용자가 더 쉽게 읽을 수 있음.
+                      */}
+                      <div className={styles.regionChartYAxisLabel}>
+                        <span>배</span>
+                        <span>출</span>
+                        <span>량</span>
+                        <span>(kg)</span>
+                      </div>
+                      <div className={styles.regionChartCanvas}>
+                        <Line
+                          options={regionChartOptions}
+                          data={regionChartData}
+                          plugins={regionChartData.labels.length <= 6 ? [regionValuePlugin] : []}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <p>선택된 지역의 차트 데이터를 찾을 수 없습니다.</p>
+                  )}
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>
@@ -590,7 +874,6 @@ const Map = ({
         <div
           id="map"
           className={styles.map}
-          ref={mapDivRef}
           ref={mapElement}
           style={{ width: "100%", height: "100%" }}
         ></div>

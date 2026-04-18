@@ -15,7 +15,7 @@ public class MemberScheduler {
 	@Autowired
 	private MemberDao memberDao;
 	
-	@Scheduled(fixedRate = 60000)
+	@Scheduled(fixedRate = 60000, initialDelay = 10000)
 	public void unlockExpiredMembers() {
 		System.out.println("회원 상태변경 스케줄러 실행 " + new Date());
 		memberDao.unlockExpiredMembers();

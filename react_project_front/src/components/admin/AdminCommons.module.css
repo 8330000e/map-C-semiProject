@@ -72,13 +72,24 @@ header > h1 a:active {
   border: 1px solid var(--admin-stroke-strong);
   background-color: var(--admin-bg);
   color: var(--admin-text);
-  border-radius: 8px;
-  padding: 8px 14px;
+  border-radius: 10px;
+  padding: 8px 16px;
   cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.2s ease;
 }
 
 .profile_bar_wrap > button:hover {
-  background-color: var(--admin-accent-soft);
+  background: linear-gradient(
+    135deg,
+    var(--admin-accent) 0%,
+    var(--admin-accent-2) 100%
+  );
+  border-color: transparent;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(91, 140, 255, 0.3);
 }
 
 /* AdminFooter.jsx */
