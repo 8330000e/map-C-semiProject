@@ -14,7 +14,12 @@ import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import Swal from "sweetalert2";
 import RankList from "../components/mainpage/RankList";
 import { normalizeImageUrl } from "../utils/getImageUrl";
+import { Swiper, SwiperSlide } from "swiper/react";
+// import { AutoPlay, EffectFade } from "swiper/modules";
+import { Autoplay, EffectFade } from "swiper/modules";
 
+import "swiper/css";
+import "swiper/css/effect-fade";
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
 const getSaleStatusLabel = (productStatus) => {
@@ -466,15 +471,51 @@ const Main = () => {
         </div>
 
         <div className="main_content_two">
-          <div
-            className="campaign_zone roundBorder"
-            onClick={() => {
-              console.log("클릭버튼");
-              navigate("/campaign/main");
-            }}
-          >
-            <p>캠페인</p>
-            {/* 캠페인 하나씩 출력(10개 가지고 옴) */}
+          <div className="campaign_zone roundBorder">
+            <Swiper
+              modules={[Autoplay, EffectFade]}
+              loop={campList.length > 1} //한번 순환후에 계속 돌건지 여부(false면 안돔)
+              effect="fade"
+              fadeEffect={{ crossFade: true }} //direction이 vertical일때는 사용 불가(애니메이션은 horizontal만 구현)
+              autoplay={{
+                delay: 5000, //몇밀리초마다
+                disableOnInteraction: false, //사용자가 건드려도 계속 돌아감(true 면 멈춤)
+                pauseOnMouseEnter: true, //마우스 들어가면 정지
+              }}
+              slidesPerView={1} //swiper하나당 몇개 보여줄지
+              // style={{ height: "40px" }}
+              //onSlideChange={() => console.log("slide change")} //slide 한번 할때마다 작동(그행위시마다)
+              speed={1250} //넘어가는 시간
+            >
+              {campList.map((camp, index) => {
+                return (
+                  <SwiperSlide
+                    key={camp.campaignTitle + index}
+                    onClick={() => {
+                      navigate(`/campaign/detail/${camp.campaignNo}`);
+                    }}
+                  >
+                    <div className="camp_swiper_wrap">
+                      <div className="camp_swiper_title">
+                        <h4>{camp.campaignTitle}</h4>
+                      </div>
+                      <div>
+                        {"참여달성 : " +
+                          (camp.memberCount / camp.campaignGoalMember) * 100 +
+                          "%"}
+                      </div>
+                      <div>{"주최자 : " + camp.memberId}</div>
+                      <div>
+                        {"종료일" +
+                          new Date(camp.campaignExpireDate).toLocaleDateString(
+                            "kr-KR",
+                          )}
+                      </div>
+                    </div>
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
           </div>
 
           <div

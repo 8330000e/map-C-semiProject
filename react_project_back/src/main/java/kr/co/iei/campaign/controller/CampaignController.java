@@ -49,11 +49,14 @@ public class CampaignController {
 	
 	
 	@GetMapping
-	public ResponseEntity<?> selectAllCampaign(@RequestParam(defaultValue="") String campaignTitle,@RequestParam Integer size, @RequestParam Integer page){
+	public ResponseEntity<?> selectAllCampaign(@RequestParam(defaultValue="") String campaignTitle,@RequestParam Integer size, @RequestParam Integer page
+			,@RequestParam Integer searchFilter,@RequestParam Integer orderFilter){
 		Map <String ,Object> map = new HashMap<String, Object>();
 		map.put("campaignTitle", campaignTitle);
 		map.put("size", size);
 		map.put("page", page);
+		map.put("searchFilter", searchFilter);
+		map.put("orderFilter", orderFilter);
 		Map<String,Object> resultMap  = campaignService.selectAllCampaign(map);
 		return ResponseEntity.ok(resultMap);
 	}

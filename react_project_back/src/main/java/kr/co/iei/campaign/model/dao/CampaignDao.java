@@ -82,7 +82,7 @@ public interface CampaignDao {
 
 	CampaignNotice selectNoticeDetail(Integer campaignNoticeNo);
 
-	int selectAllCampaignCount();
+	int selectAllCampaignCount(Map<String, Object> map);
 
 	int selectCampNoticeCount();
 

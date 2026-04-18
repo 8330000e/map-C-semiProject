@@ -6,7 +6,7 @@ import { Input } from "../ui/Form";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 
-import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css/autoplay";
 import "swiper/css";
@@ -22,12 +22,14 @@ const CampaignMain = () => {
   const [readComplete, setReadComplete] = useState(false);
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState();
+  const [searchFilter, setSearchFilter] = useState(1); //1:제목,2:캠페인 생성자
+  const [orderFilter, setOrderFilter] = useState(1); //1: 시간순,2오래된수
   const navigate = useNavigate();
-  const Swiper = useSwiper();
+  // const Swiper = useSwiper();
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/campaigns?campaignTitle=${campaignSendSearch}&size=6&page=${page}`,
+        `${import.meta.env.VITE_BACKSERVER}/campaigns?campaignTitle=${campaignSendSearch}&size=6&page=${page}&searchFilter=${searchFilter}&orderFilter=${orderFilter}`,
       )
       .then((res) => {
         console.log(res.data);
@@ -37,7 +39,7 @@ const CampaignMain = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [campaignSendSearch, page]);
+  }, [campaignSendSearch, page, searchFilter, orderFilter]);
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/campaigns/onlyFiveNotice`)
@@ -93,6 +95,24 @@ const CampaignMain = () => {
                 setCampaignSearch(e.target.value);
               }}
             ></Input>
+            <select
+              value={searchFilter}
+              onChange={(e) => {
+                setSearchFilter(e.target.value);
+              }}
+            >
+              <option value={1}>제목</option>
+              <option value={2}>주최자</option>
+            </select>
+            <select
+              value={orderFilter}
+              onChange={(e) => {
+                setOrderFilter(e.target.value);
+              }}
+            >
+              <option value={1}>최신순</option>
+              <option value={2}>오래된순</option>
+            </select>
           </div>
         </div>
         <div className={styles.campaignmain_content_wrap}>
@@ -107,6 +127,8 @@ const CampaignMain = () => {
               direction="vertical"
               modules={[Autoplay]}
               loop={true} //한번 순환후에 계속 돌건지 여부(false면 안돔)
+              // effect="fade"
+              // fadeEffect={(crossFade = true)}//direction이 vertical일때는 사용 불가(애니메이션은 horizontal만 구현)
               autoplay={{
                 delay: 4000, //몇밀리초마다
                 disableOnInteraction: false, //사용자가 건드려도 계속 돌아감(true 면 멈춤)
@@ -128,7 +150,11 @@ const CampaignMain = () => {
                         );
                       }}
                     >
-                      {notice.campaignNoticeTitle +
+                      {notice.campaignNo +
+                        "." +
+                        notice.campaignTitle +
+                        " : " +
+                        notice.campaignNoticeTitle +
                         " - " +
                         notice.campaignNoticeWriter}
                     </div>
@@ -170,12 +196,15 @@ const CampaignMain = () => {
               </div>
             );
           })}
-          <Pagination
-            page={page}
-            setPage={setPage}
-            totalPage={totalPage}
-            naviSize={6}
-          />
+          {console.log(totalPage)}
+          {(totalPage != 1 || totalPage != 0) && (
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalPage={totalPage}
+              naviSize={6}
+            />
+          )}
           <div className={styles.campaignmain_btn_wrap}>
             <Button
               onClick={() => {
