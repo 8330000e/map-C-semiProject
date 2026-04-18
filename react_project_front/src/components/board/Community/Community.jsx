@@ -10,6 +10,9 @@ import { compressImageFile } from "../../../utils/compressImage";
 import Swal from "sweetalert2";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { REGION_DATA } from "./regionData";
+import calculator from "../../../assets/img/calculator.svg";
+import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
+import NavigateBeforeOutlinedIcon from "@mui/icons-material/NavigateBeforeOutlined";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -31,6 +34,10 @@ const Community = ({
   setAddr,
   setLnglat,
   setCtpvsgg,
+  sido,
+  setSido,
+  sigungu,
+  setSigungu,
   boxaddr,
   setBoxaddr,
 }) => {
@@ -50,9 +57,6 @@ const Community = ({
   const [searchType, setSearchType] = useState(1);
   const [searchKeyword, setSearchKeyword] = useState("");
 
-  const [sido, setSido] = useState("");
-  const [sigungu, setSigungu] = useState("");
-
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
@@ -67,6 +71,17 @@ const Community = ({
   const [sortType, setSortType] = useState("popular");
 
   const sigunguOptions = sido ? REGION_DATA[sido] || [] : [];
+
+  const [calco2, setCalco2] = useState({
+    cEle: 0,
+    cGas: 0,
+    cWater: 0,
+    cRoad: 0,
+    cWaste: 0,
+    cTotal: 0,
+  });
+
+  const step = 1;
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -271,6 +286,8 @@ const Community = ({
     });
   }, [mode, addr, lnglat, ctpvsgg]);
 
+  useEffect(() => {}, []);
+
   const submitSearch = (e) => {
     e.preventDefault();
     setSearchType(type);
@@ -360,7 +377,7 @@ const Community = ({
           await Swal.fire({
             icon: "success",
             title: "게시글 등록 완료",
-            text: "게시글이 등록되었고, 5포인트가 지급되었습니다.",
+            text: "게시글이 등록되었고, 10포인트가 지급되었습니다.",
             confirmButtonText: "확인",
           });
         } else {
@@ -655,16 +672,16 @@ const Community = ({
                         setMode("write");
                         {
                           addr == "" || addr == "선택된 위치 없음"
-                            ? setAddr("선택된 위치 없음")
+                            ? setAddr("서울특별시 중구 을지로 12")
                             : setAddr(addr);
                         }
-                        setSelectLnglat({
-                          lat: 0,
-                          lng: 0,
+                        setLnglat({
+                          lat: lnglat.lat,
+                          lng: lnglat.lng,
                         });
                         setCtpvsgg({
-                          ctpv: "",
-                          sgg: "",
+                          ctpv: ctpvsgg.ctpv,
+                          sgg: ctpvsgg.sgg,
                         });
                         setSelectAddr("");
                         setSelectLnglat({
@@ -739,7 +756,108 @@ const Community = ({
                 <div className={styles.boardWriteGroup}>
                   <label>오늘의 내 탄소배출량은?</label>
                   {/* 탄소계산 기능 들어갈 자리*/}
-                  <div className={styles.carbonBox}>탄소계산 ⊞</div>
+                  <div className={styles.carbonBox}>
+                    <div className={styles.carbonBoxTop}>
+                      <div className={styles.statusbar}>{step} / 5</div>
+                      <div className={styles.carboncal}>
+                        <p>탄소계산기</p>
+                        <img src={calculator} alt="계산기아이콘" />
+                      </div>
+                    </div>
+                    <div className={styles.carbon_content}>
+                      <button className={styles.carbonBox_left}>
+                        <NavigateBeforeOutlinedIcon
+                          sx={{
+                            fontSize: "50px",
+                            color: "var(--color1)",
+                            cursor: "pointer",
+                          }}
+                        />
+                      </button>
+                      <div className={styles.carbon_question}>
+                        <div>
+                          <div>오늘 어떤 활동을 하셨나요?</div>
+                          {/* kWh = 소비전력(W) ÷ 1000 × 시간(h)
+                          CO₂ = kWh × 0.4593 (한국 전력 배출계수)
+                          W × 사용시간(h) = Wh
+                          Wh ÷ 1000 = kWh
+                          kWh × 0.4593 = kg CO₂
+                          TV 시청
+                          100W
+                          컴퓨터 사용
+                          225W
+                          노트북 사용
+                          55W
+                          에어컨 사용
+                          1700W
+                          전기히터 사용
+                          1500W
+                          조명 켜기
+                          10W
+                          세탁기 돌리기
+                          450W
+
+                          m³ = 기기 소비량(m³/h) × 시간(h)
+                          CO₂ = m³ × 2.176 (도시가스 배출계수)
+                          요리하기
+                          0.067m³/10분
+                          보일러 난방
+                          0.375m³/10분
+                          온수 사용
+                          0.25m³/10분
+
+                          m³ = 유량(L/min) × 시간(min) ÷ 1000
+                          CO₂ = m³ × 0.376 (수도 배출계수)
+                          샤워하기
+                          11.5L/min
+                          설거지
+                          5L/min
+                          세수/양치
+                          6L/min
+                          욕조 채우기
+                          17.5L/min
+
+                          km = 속도(km/h) × 시간(h)
+                          CO₂ = km × 배출계수
+                          걷기
+                          4.5km/h
+                          자전거 타기
+                          15km/h
+                          버스 타기
+                          25km/h
+                          지하철 타기
+                          35km/h
+                          자가용 운전
+                          40km/h
+                          고속도로 운전
+                          100km/h
+
+                          CO₂ = 폐기물(kg) × 0.5 (일반쓰레기)
+                          음식물쓰레기 = 끼니 수 × 0.3kg × 1.9
+                          집밥 끼니
+                          끼니당 0.3lg
+                          배달음식
+                          0.2kg
+                          택배 수령
+                          0.5kg
+                          장보기
+                          0.3kg */}
+                        </div>
+                        <div>
+                          <div>사용시간</div>
+                        </div>
+                      </div>
+                      <button className={styles.carbonBox_right}>
+                        <NavigateNextOutlinedIcon
+                          sx={{
+                            fontSize: "50px",
+                            color: "var(--color1)",
+                            cursor: "pointer",
+                          }}
+                        />
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 <div className={styles.boardWriteGroup}>
