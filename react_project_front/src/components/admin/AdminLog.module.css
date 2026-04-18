@@ -1,0 +1,114 @@
+.log_wrap {
+  padding: 16px 12px;
+}
+
+/* 검색 바 */
+.filter_bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.filter_bar input {
+  flex: 1;
+  min-height: 38px;
+  border: 2px solid var(--admin-stroke);
+  border-radius: 10px;
+  background-color: var(--admin-input-bg);
+  color: var(--admin-text);
+  padding: 6px 12px;
+  font-size: 14px;
+  outline: none;
+}
+
+.filter_bar input:focus-visible {
+  outline: 2px solid var(--admin-accent);
+  outline-offset: 1px;
+}
+
+/* 로그 테이블 */
+.log_table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.log_table th,
+.log_table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: left;
+  font-size: 13px;
+  color: #eef2ff;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.log_table thead th {
+  background: rgba(46, 60, 109, 0.95);
+  color: #ffffff;
+  font-weight: 600;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.18);
+}
+
+.log_table thead select {
+  background: transparent;
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 2px 4px;
+  outline: none;
+}
+
+.log_table thead select option {
+  background-color: #1f2a4a;
+  color: #eef2ff;
+}
+
+.log_table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.log_table tbody tr:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.log_table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.log_table tbody tr:hover {
+  background: rgba(115, 103, 240, 0.18);
+}
+
+/* 정렬 가능 th */
+.sort_th {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+.sort_th:hover {
+  background: rgba(91, 140, 255, 0.22) !important;
+}
+
+.sort_arrow {
+  display: inline-block;
+  width: 14px;
+  margin-left: 4px;
+  text-align: center;
+  color: var(--admin-accent, #5b8cff);
+  font-size: 11px;
+}
+
+.empty_state {
+  text-align: center;
+  padding: 30px;
+  color: #aab4d4;
+  font-size: 13px;
+}

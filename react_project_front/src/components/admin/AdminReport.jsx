@@ -9,32 +9,32 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew"; // 상세보기 아�
 
 const AdminReport = ({
   reportList,
-  selectDetail,
-  resetModal,
-  isModalOpen,
-  boardDetail,
   selectedReport,
   setSelectedReport,
+  boardDetail,
+  groupList,
+  openedKey,
+  setOpenedKey,
+  isModalOpen,
   showDetail,
   setShowDetail,
-  detailRef,
-  reportAction,
-  changeReportAction,
-  handleSubmit,
   adminLog,
-  selectAdminLog,
-  handleRelease,
   logReason,
   setLogReason,
-  setOpenedKey,
-  openedKey,
-  groupList,
-  selectReportGroup,
-  reportStats,
   reportFilter,
+  changeReportFilter,
   toggleCountSort,
   toggleDateSort,
-  changeReportFilter,
+  reportAction,
+  changeReportAction,
+  detailRef,
+  resetModal,
+  selectDetail,
+  selectReportGroup,
+  selectAdminLog,
+  handleSubmit,
+  handleRelease,
+  reportStats,
 }) => {
   // 닫는 중인 그룹 키 (닫기 애니메이션 동안만 유지)
   const [closingKey, setClosingKey] = useState(null);
@@ -329,22 +329,14 @@ const AdminReport = ({
                         />
                       </div>
                       <div className={styles.action_row}>
-                        <span>비공개 처리</span>
+                        <span>블라인드 처리</span>
                         <input
                           type="radio"
                           name="commentAction"
-                          value="비공개 처리"
-                          checked={reportAction.commentAction === "비공개 처리"}
-                          onChange={changeReportAction}
-                        />
-                      </div>
-                      <div className={styles.action_row}>
-                        <span>삭제 처리</span>
-                        <input
-                          type="radio"
-                          name="commentAction"
-                          value="삭제 처리"
-                          checked={reportAction.commentAction === "삭제 처리"}
+                          value="블라인드 처리"
+                          checked={
+                            reportAction.commentAction === "블라인드 처리"
+                          }
                           onChange={changeReportAction}
                         />
                       </div>

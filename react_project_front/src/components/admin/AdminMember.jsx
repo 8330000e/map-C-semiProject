@@ -16,29 +16,101 @@ const AdminMember = ({
   setSelectedMember,
   filter,
   changeFilter,
-  selectRecentLogList,
+  logFilter,
+  changeLogFilter,
+  toggleLogSort,
   recentLogList,
+  logList,
+  logPage,
+  setLogPage,
+  selectRecentLogList,
+  selectLogList,
+  anomalyData,
+  selectAnomalyCount,
+  commentList,
+  setCommentList,
+  selectCommentList,
   isLogModalOpen,
   setIsLogModalOpen,
   isCommentModalOpen,
   setIsCommentModalOpen,
-  selectLogList,
-  logList,
-  logPage,
-  setLogPage,
-  selectAnomalyCount,
-  anomalyData,
-  logFilter,
-  changeLogFilter,
-  toggleLogSort,
   boardNav,
-  selectCommentList,
-  commentList,
-  setCommentList,
+  memberStats,
 }) => {
   return (
     <>
       <div className={styles.member_wrap}>
+        {/* 회원 현황판 - 전체/정지/접속중/미접속, 접속률 스택 바 */}
+        <div className={styles.member_header}>
+          <h3>회원 현황판</h3>
+          <div className={styles.stat_item}>
+            <span className={styles.stat_label}>전체</span>
+            <span className={styles.stat_value}>{memberStats.total}명</span>
+          </div>
+          <div className={styles.stat_item}>
+            <span className={styles.stat_label}>정지</span>
+            <span
+              className={`${styles.stat_value} ${styles.value_suspended}`}
+            >
+              {memberStats.suspended}명
+            </span>
+          </div>
+          <div className={styles.stat_item}>
+            <span className={`${styles.stat_dot} ${styles.dot_online}`}></span>
+            <span className={styles.stat_label}>접속중</span>
+            <span className={`${styles.stat_value} ${styles.value_online}`}>
+              {memberStats.online}명
+            </span>
+          </div>
+          <div className={styles.stat_item}>
+            <span className={`${styles.stat_dot} ${styles.dot_offline}`}></span>
+            <span className={styles.stat_label}>미접속</span>
+            <span className={styles.stat_value}>{memberStats.offline}명</span>
+          </div>
+          <div className={styles.stack_bar_wrap}>
+            <div className={styles.stack_bar}>
+              {/* 둘 다 있으면 작은쪽 최소 4% 폭 보장, 1% 미만이면 "<1%" 라벨 */}
+              {(() => {
+                const { online, offline, onlineRate, offlineRate } =
+                  memberStats;
+                let onW = onlineRate;
+                let offW = offlineRate;
+                if (online > 0 && offline > 0) {
+                  if (onlineRate < offlineRate) {
+                    onW = Math.max(onlineRate, 4);
+                    offW = 100 - onW;
+                  } else {
+                    offW = Math.max(offlineRate, 4);
+                    onW = 100 - offW;
+                  }
+                }
+                const fmt = (r) =>
+                  r > 0 && r < 1 ? "<1%" : `${r.toFixed(0)}%`;
+                return (
+                  <>
+                    {online > 0 && (
+                      <div
+                        className={`${styles.stack_seg} ${styles.seg_online}`}
+                        style={{ width: `${onW}%` }}
+                      >
+                        {fmt(onlineRate)}
+                      </div>
+                    )}
+                    {offline > 0 && (
+                      <div
+                        className={`${styles.stack_seg} ${styles.seg_offline}`}
+                        style={{ width: `${offW}%` }}
+                      >
+                        {fmt(offlineRate)}
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+
         {/* 왼쪽: 회원 목록 패널 */}
         <section className={`${styles.panel} ${styles.member_left}`}>
           {/* 필터 바 - 상태/권한 셀렉트 + 키워드 검색 */}
@@ -85,13 +157,23 @@ const AdminMember = ({
                   }}
                 >
                   <div className={styles.member_identity}>
-                    {/* 이름 첫 글자 표시 */}
-                    <span className={styles.avatar}>
-                      {member.memberName?.charAt(0)}
+                    {/* 이름 첫 글자 + 접속중이면 아바타 우측하단 점 표시 */}
+                    <span className={styles.avatar_wrap}>
+                      <span className={styles.avatar}>
+                        {member.memberName?.charAt(0)}
+                      </span>
+                      {member.isOnline === 1 && (
+                        <span className={styles.online_dot}></span>
+                      )}
                     </span>
                     <div className={styles.identity_text}>
                       <span>{member.memberId}</span>
-                      <strong>{member.memberName}</strong>
+                      <strong>
+                        {member.memberName}
+                        {member.isOnline === 1 && (
+                          <span className={styles.online_badge}>접속중</span>
+                        )}
+                      </strong>
                     </div>
                   </div>
 
@@ -270,7 +352,6 @@ const AdminMember = ({
                     setIsLogModalOpen(true);
                     setLogPage(0); // page 0부터 시작 (스크롤)
                     selectLogList(selectedMember.memberId, logPage); // logList 호출
-                    console.log(logList);
                   }}
                 >
                   전체보기

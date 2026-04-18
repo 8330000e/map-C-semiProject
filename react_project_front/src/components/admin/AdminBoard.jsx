@@ -9,13 +9,14 @@ import CommunityDetail from "../board/Community/CommunityDetail";
 // 제목, 작성일시, 신고수, 상세보기 칸 너비를 적절히 맞춤
 const AdminBoard = ({
   boardList,
-  getBoardDetail,
+  selectedBoard,
   isModalOpen,
   setIsModalOpen,
-  selectedBoard,
   boardFilter,
-  toggleSort,
   changeBoardFilter,
+  toggleSort,
+  getBoardDetail,
+  boardStats,
 }) => {
   // 작성일시를 날짜/시간으로 분리해서 보여줌.
   // 날짜는 위, 시간은 아래 줄로 내려서 화면이 넓어지지 않도록 처리함.
@@ -33,6 +34,53 @@ const AdminBoard = ({
   return (
     <>
       <section className={styles.board_wrap}>
+        {/* 게시글 현황판 - 총 게시글/오늘 작성, 감지된 키워드 비율 스택 바 */}
+        <div className={styles.board_header}>
+          <h3>게시글 현황판</h3>
+          <div className={styles.stat_item}>
+            <span className={styles.stat_label}>총 게시글</span>
+            <span className={styles.stat_value}>{boardStats.total}개</span>
+          </div>
+          <div className={styles.stat_item}>
+            <span className={styles.stat_label}>오늘 작성</span>
+            <span className={`${styles.stat_value} ${styles.value_today}`}>
+              {boardStats.todayCount}개
+            </span>
+          </div>
+          <div className={styles.stat_item}>
+            <span className={`${styles.stat_dot} ${styles.dot_safe}`}></span>
+            <span className={styles.stat_label}>정상</span>
+            <span className={styles.stat_value}>{boardStats.safe}개</span>
+          </div>
+          <div className={styles.stat_item}>
+            <span className={`${styles.stat_dot} ${styles.dot_detected}`}></span>
+            <span className={styles.stat_label}>키워드 감지</span>
+            <span className={`${styles.stat_value} ${styles.value_detected}`}>
+              {boardStats.detected}개
+            </span>
+          </div>
+          <div className={styles.stack_bar_wrap}>
+            <div className={styles.stack_bar}>
+              {boardStats.safeRate > 0 && (
+                <div
+                  className={`${styles.stack_seg} ${styles.seg_safe}`}
+                  style={{ width: `${boardStats.safeRate}%` }}
+                >
+                  {boardStats.safeRate.toFixed(0)}%
+                </div>
+              )}
+              {boardStats.detectedRate > 0 && (
+                <div
+                  className={`${styles.stack_seg} ${styles.seg_detected}`}
+                  style={{ width: `${boardStats.detectedRate}%` }}
+                >
+                  {boardStats.detectedRate.toFixed(0)}%
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
         <table className={styles.board_table}>
           <thead>
             <tr>

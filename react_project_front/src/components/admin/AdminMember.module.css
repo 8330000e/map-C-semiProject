@@ -7,6 +7,122 @@
   padding: 16px 12px 12px;
 }
 
+/* 회원 현황판 - 양쪽 패널 위로 전체 폭 차지 */
+.member_header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(46, 60, 109, 0.7) 0%,
+    rgba(91, 140, 255, 0.15) 100%
+  );
+  border: 1px solid rgba(91, 140, 255, 0.2);
+  border-radius: 14px;
+  padding: 14px 22px;
+  color: #eef2ff;
+  min-height: 60px;
+  box-shadow: 0 10px 20px var(--admin-card-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.member_header h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 8px 0 0;
+  white-space: nowrap;
+}
+
+.stat_item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.stat_label {
+  font-size: 12.5px;
+  color: #aab4d4;
+}
+
+.stat_value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #eef2ff;
+}
+
+.value_suspended {
+  color: #ff6b6b;
+}
+
+.value_online {
+  color: #4ade80;
+}
+
+.stat_dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot_online {
+  background: #4ade80;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+}
+
+.dot_offline {
+  background: #aab4d4;
+  box-shadow: 0 0 8px rgba(170, 180, 212, 0.4);
+}
+
+.stack_bar_wrap {
+  flex: 1;
+  min-width: 0;
+  margin-left: auto;
+}
+
+.stack_bar {
+  display: flex;
+  width: 100%;
+  height: 22px;
+  border-radius: 11px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.stack_seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.seg_online {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  animation: segGlow 2.4s ease-in-out infinite;
+}
+
+.seg_offline {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+}
+
+@keyframes segGlow {
+  0%, 100% {
+    box-shadow: inset 0 0 0 rgba(74, 222, 128, 0);
+  }
+  50% {
+    box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.18);
+  }
+}
+
 .panel {
   background: linear-gradient(
     145deg,
@@ -203,6 +319,63 @@
   color: var(--admin-text);
   font-size: 18px;
   flex-shrink: 0;
+}
+
+/* 아바타 + 온라인 점 래퍼 - 점을 우측하단에 절대 위치 */
+.avatar_wrap {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.online_dot {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #4ade80;
+  border: 2px solid #1b2539;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.7);
+  animation: onlinePulse 1.8s ease-in-out infinite;
+}
+
+@keyframes onlinePulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(74, 222, 128, 0);
+  }
+}
+
+/* 이름 옆 접속중 뱃지 */
+.online_badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 8px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.25) 0%, rgba(34, 197, 94, 0.35) 100%);
+  border: 1px solid rgba(74, 222, 128, 0.5);
+  color: #4ade80;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  vertical-align: middle;
+  text-shadow: 0 0 6px rgba(74, 222, 128, 0.4);
+}
+
+.online_badge::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.9);
+  animation: onlinePulse 1.8s ease-in-out infinite;
 }
 
 .avatar_lg {
