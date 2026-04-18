@@ -31,6 +31,10 @@ const AdminReport = ({
   groupList,
   selectReportGroup,
   reportStats,
+  reportFilter,
+  toggleCountSort,
+  toggleDateSort,
+  changeReportFilter,
 }) => {
   // 닫는 중인 그룹 키 (닫기 애니메이션 동안만 유지)
   const [closingKey, setClosingKey] = useState(null);
@@ -99,10 +103,51 @@ const AdminReport = ({
               <tr>
                 <th>신고번호</th>
                 <th>신고대상 아이디</th>
-                <th>유형</th>
-                <th>신고 카테고리</th>
-                <th>신고수</th>
-                <th>신고일</th>
+                <th>
+                  <select
+                    value={reportFilter.type}
+                    onChange={changeReportFilter}
+                    name="type"
+                  >
+                    <option value={"all"}>유형</option>
+                    <option value={"board"}>게시글</option>
+                    <option value={"comment"}>댓글</option>
+                  </select>
+                </th>
+                <th>
+                  <select
+                    value={reportFilter.category}
+                    onChange={changeReportFilter}
+                    name="category"
+                  >
+                    <option value={"all"}>신고 카테고리</option>
+                    <option value={"스팸/광고"}>스팸/광고</option>
+                    <option value={"욕설/비방"}>욕설/비방</option>
+                    <option value={"허위정보"}>허위정보</option>
+                    <option value={"부적절한 댓글"}>부적절한 댓글</option>
+                    <option value={"기타"}>기타</option>
+                  </select>
+                </th>
+                <th onClick={toggleCountSort} className={styles.sort_th}>
+                  신고수
+                  <span className={styles.sort_arrow}>
+                    {reportFilter.sortBy === "reportCount"
+                      ? reportFilter.sortOrder === "desc"
+                        ? "▼"
+                        : "▲"
+                      : ""}
+                  </span>
+                </th>
+                <th onClick={toggleDateSort} className={styles.sort_th}>
+                  신고일
+                  <span className={styles.sort_arrow}>
+                    {reportFilter.sortBy === "reportDate"
+                      ? reportFilter.sortOrder === "desc"
+                        ? "▼"
+                        : "▲"
+                      : ""}
+                  </span>
+                </th>
                 <th>처리여부</th>
                 <th>상세보기</th>
               </tr>
@@ -155,7 +200,7 @@ const AdminReport = ({
                       </td>
                       <td
                         onClick={() => {
-                          selectDetail(report.targetType, report.targetNo);
+                          selectDetail(report.boardNo);
                           setSelectedReport(report);
                           if (report.reportStatus === 1) {
                             selectAdminLog(report.reportNo);
@@ -185,7 +230,7 @@ const AdminReport = ({
                           </td>
                           <td
                             onClick={() => {
-                              selectDetail(group.targetType, group.targetNo);
+                              selectDetail(group.boardNo);
                               setSelectedReport(group);
                               if (group.reportStatus === 1) {
                                 selectAdminLog(group.reportNo);
@@ -236,39 +281,75 @@ const AdminReport = ({
               <form onSubmit={handleSubmit}>
                 <div className={styles.action_wrap}>
                   {/* 게시글 조치 라디오 - name="boardAction"으로 그룹화, 하나만 선택 가능 */}
-                  <div className={styles.action_section}>
-                    <h4>게시글 조치</h4>
-                    <div className={styles.action_row}>
-                      <span>미처리</span>
-                      <input
-                        type="radio"
-                        name="boardAction"
-                        value="미처리"
-                        checked={reportAction.boardAction === "미처리"}
-                        onChange={changeReportAction}
-                      />
+                  {selectedReport.targetType === "board" ? (
+                    <div className={styles.action_section}>
+                      <h4>게시글 조치</h4>
+                      <div className={styles.action_row}>
+                        <span>미처리</span>
+                        <input
+                          type="radio"
+                          name="boardAction"
+                          value="미처리"
+                          checked={reportAction.boardAction === "미처리"}
+                          onChange={changeReportAction}
+                        />
+                      </div>
+                      <div className={styles.action_row}>
+                        <span>비공개 처리</span>
+                        <input
+                          type="radio"
+                          name="boardAction"
+                          value="비공개 처리"
+                          checked={reportAction.boardAction === "비공개 처리"}
+                          onChange={changeReportAction}
+                        />
+                      </div>
+                      <div className={styles.action_row}>
+                        <span>삭제 처리</span>
+                        <input
+                          type="radio"
+                          name="boardAction"
+                          value="삭제 처리"
+                          checked={reportAction.boardAction === "삭제 처리"}
+                          onChange={changeReportAction}
+                        />
+                      </div>
                     </div>
-                    <div className={styles.action_row}>
-                      <span>비공개 처리</span>
-                      <input
-                        type="radio"
-                        name="boardAction"
-                        value="비공개 처리"
-                        checked={reportAction.boardAction === "비공개 처리"}
-                        onChange={changeReportAction}
-                      />
+                  ) : (
+                    <div className={styles.action_section}>
+                      <h4>댓글 조치</h4>
+                      <div className={styles.action_row}>
+                        <span>미처리</span>
+                        <input
+                          type="radio"
+                          name="commentAction"
+                          value="미처리"
+                          checked={reportAction.commentAction === "미처리"}
+                          onChange={changeReportAction}
+                        />
+                      </div>
+                      <div className={styles.action_row}>
+                        <span>비공개 처리</span>
+                        <input
+                          type="radio"
+                          name="commentAction"
+                          value="비공개 처리"
+                          checked={reportAction.commentAction === "비공개 처리"}
+                          onChange={changeReportAction}
+                        />
+                      </div>
+                      <div className={styles.action_row}>
+                        <span>삭제 처리</span>
+                        <input
+                          type="radio"
+                          name="commentAction"
+                          value="삭제 처리"
+                          checked={reportAction.commentAction === "삭제 처리"}
+                          onChange={changeReportAction}
+                        />
+                      </div>
                     </div>
-                    <div className={styles.action_row}>
-                      <span>삭제 처리</span>
-                      <input
-                        type="radio"
-                        name="boardAction"
-                        value="삭제 처리"
-                        checked={reportAction.boardAction === "삭제 처리"}
-                        onChange={changeReportAction}
-                      />
-                    </div>
-                  </div>
+                  )}
 
                   {/* 회원 조치 라디오 - name="memberAction"으로 그룹화, 하나만 선택 가능 */}
                   <div className={styles.action_section}>

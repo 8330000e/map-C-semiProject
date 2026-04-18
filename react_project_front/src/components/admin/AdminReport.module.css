@@ -152,6 +152,41 @@
   border-bottom: 2px solid rgba(255, 255, 255, 0.18);
 }
 
+.sort_th {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.sort_th:hover {
+  background: rgba(91, 140, 255, 0.22) !important;
+}
+
+.sort_arrow {
+  display: inline-block;
+  width: 14px;
+  margin-left: 4px;
+  text-align: center;
+  color: var(--admin-accent, #5b8cff);
+  font-size: 11px;
+}
+
+.report_table thead select {
+  background: transparent;
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 2px 4px;
+  outline: none;
+}
+
+.report_table thead select option {
+  background-color: #1f2a4a;
+  color: #eef2ff;
+}
+
 .report_table tbody tr {
   transition: background-color 0.2s ease;
 }
