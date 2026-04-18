@@ -155,9 +155,9 @@
 		offset 0 rows fetch next 10 rows only
 	</select>
 	<select id="selectOnlyFiveNotice" resultType="campNo">
-		select campaign_notice_title,campaign_notice_writer,campaign_notice_no
+		select campaign_notice_title,campaign_notice_writer,campaign_notice_no,campaign_no
 		from campaign_notice_tbl
-		where campaign_notice_date > sysdate - interval '2' day
+		where campaign_notice_date > sysdate - interval '10' day
 		offset 0 rows fetch next 5 rows only
 			   
 	</select>

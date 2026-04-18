@@ -277,12 +277,18 @@ public class CampaignService {
 
 	public List<CampaignNotice> selectOnlyFiveNotice() {
 		List<CampaignNotice> campNo = campaignDao.selectOnlyFiveNotice();
-		
+
+		for(CampaignNotice notice:campNo) {
+			int campaignNo=notice.getCampaignNo();
+			Campaign camp= campaignDao.selectOneCampaign(campaignNo);
+			notice.setCampaignTitle(camp.getCampaignTitle());
+		}
 		return campNo;
 	}
 
 	public CampaignNotice selectNoticeDetail(Integer campaignNoticeNo) {
 		CampaignNotice campNo = campaignDao.selectNoticeDetail(campaignNoticeNo);
+		
 		return campNo;
 	}
 	

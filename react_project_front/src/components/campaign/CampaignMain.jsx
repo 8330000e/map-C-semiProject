@@ -150,7 +150,11 @@ const CampaignMain = () => {
                         );
                       }}
                     >
-                      {notice.campaignNoticeTitle +
+                      {notice.campaignNo +
+                        "." +
+                        notice.campaignTitle +
+                        " : " +
+                        notice.campaignNoticeTitle +
                         " - " +
                         notice.campaignNoticeWriter}
                     </div>
