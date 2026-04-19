@@ -73,15 +73,121 @@ const Community = ({
   const sigunguOptions = sido ? REGION_DATA[sido] || [] : [];
 
   const [calco2, setCalco2] = useState({
+    cEleA: [],
     cEle: 0,
+    cGasA: [],
     cGas: 0,
+    cWaterA: [],
     cWater: 0,
+    cRoadA: [],
     cRoad: 0,
+    cWasteA: [],
     cWaste: 0,
     cTotal: 0,
   });
 
-  const step = 1;
+  const ele = [
+    "TV 시청",
+    "컴퓨터 사용",
+    "에어컨 사용",
+    "전기히터 사용",
+    "조명 켜기",
+    "세탁기 돌리기",
+  ];
+  const gas = ["요리하기", "보일러 난방", "온수 사용"];
+  const waster = ["샤워하기", "설거지", "세수/양치", "욕조 채우기"];
+  const road = [
+    "걷기",
+    "자전거 타기",
+    "버스 타기",
+    "지하철 타기",
+    "자가용 운전",
+    "고속도로 운전",
+  ];
+  const waste = ["집밥 끼니", "배달음식", "택배 수령", "장보기"];
+
+  const [step, setStep] = useState(1);
+
+  const [wasteCount, setWasteCount] = useState(0);
+
+  const inputChange = (e) => {
+    const { name, value } = e.target;
+    setCalco2({ ...calco2, [name]: value });
+  };
+
+  const selectCo2 = (categoryKey, value) => {
+    setCalco2((prev) => {
+      const currentList = prev[categoryKey] || [];
+
+      // 있으면 빼고, 없으면 넣고 (숫자끼리 비교)
+      const newList = currentList.includes(value)
+        ? currentList.filter((v) => v !== value)
+        : [...currentList, value];
+      return { ...prev, [categoryKey]: newList };
+    });
+  };
+
+  const keys = ["cEle", "cGas", "cWater", "cRoad", "cWaste"];
+  const currentKey = keys[step - 1];
+  const value = calco2[currentKey];
+
+  // 드래그 상태 관리
+  const [isDragging, setIsDragging] = useState(false);
+  const [startY, setStartY] = useState(0);
+
+  // 1. 값 업데이트 공통 함수
+  const updateValue = (newValue) => {
+    // 0 미만으로 내려가지 않게 방어
+    const finalValue = newValue < 0 ? 0 : newValue;
+    setCalco2((prev) => ({ ...prev, [currentKey]: finalValue }));
+  };
+
+  // 2. 마우스 휠 핸들러
+  const handleWheel = (e) => {
+    // e.deltaY가 양수면 아래로(값 감소), 음수면 위로(값 증가)
+    const direction = e.deltaY > 0 ? -1 : 1;
+    updateValue(value + direction);
+  };
+
+  // 3. 드래그 시작 (MouseDown)
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartY(e.clientY); // 클릭한 지점의 Y좌표 저장
+  };
+
+  // 4. 드래그 중 (MouseMove)
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+
+    const diff = startY - e.clientY; // 얼마나 움직였나 계산
+    // 10픽셀 이동할 때마다 1씩 변하게 조절 (감도 조절 가능)
+    if (Math.abs(diff) > 10) {
+      const direction = diff > 0 ? 1 : -1;
+      updateValue(value + direction);
+      setStartY(e.clientY); // 기준점 초기화
+    }
+  };
+
+  // 5. 드래그 끝 (MouseUp, MouseLeave)
+  const stopDragging = () => setIsDragging(false);
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (calco2.cTotal === 0) {
+      return;
+    }
+    // axios
+    //   .post(`${import.meta.env.VITE_BACKSERVER}/boards/co2cal}`, calco2)
+    //   .then((res) => {
+    //     console.log(res);
+    //     if (res.data === 1) {
+    //       console.log("탄소계싼기 성공");
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -91,6 +197,7 @@ const Community = ({
 
     if (modeParam === "write") {
       setMode("write");
+      document.title = "탄소커넥트 | 게시글 작성하기";
     } else {
       setMode("list");
     }
@@ -764,7 +871,7 @@ const Community = ({
                   {/* 탄소계산 기능 들어갈 자리*/}
                   <div className={styles.carbonBox}>
                     <div className={styles.carbonBoxTop}>
-                      <div className={styles.statusbar}>{step} / 5</div>
+                      <div className={styles.statusbar}>{step} / 6</div>
                       <div className={styles.carboncal}>
                         <p>탄소계산기</p>
                         <img src={calculator} alt="계산기아이콘" />
@@ -775,173 +882,255 @@ const Community = ({
                         <NavigateBeforeOutlinedIcon
                           sx={{
                             fontSize: "50px",
-                            color: "var(--color1)",
+                            color: step > 1 ? "var(--color1)" : "var(--gray5)",
                             cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            if (step > 1) {
+                              setStep(step - 1);
+                            } else {
+                              setStep(step);
+                            }
                           }}
                         />
                       </button>
                       <div className={styles.carbon_question}>
                         <div>
-                          <div>오늘 어떤 활동을 하셨나요?</div>
-                          {/* kWh = 소비전력(W) ÷ 1000 × 시간(h)
-                          CO₂ = kWh × 0.4593 (한국 전력 배출계수)
-                          W × 사용시간(h) = Wh
-                          Wh ÷ 1000 = kWh
-                          kWh × 0.4593 = kg CO₂
-                          TV 시청
-                          100W
-                          컴퓨터 사용
-                          225W
-                          노트북 사용
-                          55W
-                          에어컨 사용
-                          1700W
-                          전기히터 사용
-                          1500W
-                          조명 켜기
-                          10W
-                          세탁기 돌리기
-                          450W
-
-                          m³ = 기기 소비량(m³/h) × 시간(h)
-                          CO₂ = m³ × 2.176 (도시가스 배출계수)
-                          요리하기
-                          0.067m³/10분
-                          보일러 난방
-                          0.375m³/10분
-                          온수 사용
-                          0.25m³/10분
-
-                          m³ = 유량(L/min) × 시간(min) ÷ 1000
-                          CO₂ = m³ × 0.376 (수도 배출계수)
-                          샤워하기
-                          11.5L/min
-                          설거지
-                          5L/min
-                          세수/양치
-                          6L/min
-                          욕조 채우기
-                          17.5L/min
-
-                          km = 속도(km/h) × 시간(h)
-                          CO₂ = km × 배출계수
-                          걷기
-                          4.5km/h
-                          자전거 타기
-                          15km/h
-                          버스 타기
-                          25km/h
-                          지하철 타기
-                          35km/h
-                          자가용 운전
-                          40km/h
-                          고속도로 운전
-                          100km/h
-
-                          CO₂ = 폐기물(kg) × 0.5 (일반쓰레기)
-                          음식물쓰레기 = 끼니 수 × 0.3kg × 1.9
-                          집밥 끼니
-                          끼니당 0.3lg
-                          배달음식
-                          0.2kg
-                          택배 수령
-                          0.5kg
-                          장보기
-                          0.3kg */}
+                          <div>{step < 6 && "오늘 어떤 활동을 하셨나요?"}</div>
+                          {step == 1 && (
+                            <ul>
+                              {ele?.map((item, i) => {
+                                return (
+                                  <li key={i + 1}>
+                                    <button
+                                      type="button"
+                                      value={i + 1}
+                                      onClick={() => selectCo2("cEleA", i + 1)}
+                                      style={{
+                                        backgroundColor: calco2.cEleA.includes(
+                                          i + 1,
+                                        )
+                                          ? "var(--color1)"
+                                          : "var(--gray5)",
+                                      }}
+                                    >
+                                      {item}
+                                    </button>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          )}
+                          {step == 2 && (
+                            <ul>
+                              <li>요리하기</li>
+                              <li>보일러 난방</li>
+                              <li>온수 사용</li>
+                            </ul>
+                          )}
+                          {step == 3 && (
+                            <ul>
+                              <li>샤워하기</li>
+                              <li>설거지</li>
+                              <li>세수/양치</li>
+                              <li>욕조 채우기</li>
+                            </ul>
+                          )}
+                          {step == 4 && (
+                            <ul>
+                              <li>걷기</li>
+                              <li>자전거 타기</li>
+                              <li>버스 타기</li>
+                              <li>지하철 타기</li>
+                              <li>자가용 운전</li>
+                              <li>고속도로 운전</li>
+                            </ul>
+                          )}
+                          {step == 5 && (
+                            <ul>
+                              <li>집밥 끼니</li>
+                              <li>배달음식</li>
+                              <li>택배 수령</li>
+                              <li>장보기</li>
+                            </ul>
+                          )}
+                          {step == 6 && (
+                            <div className={styles.result_warp}>
+                              <div>{memberNickname}님의 총 탄소배출량</div>
+                              <div className={styles.result_count}></div>
+                              <div>CO₂</div>
+                              <div>{}</div>
+                              <div>KG</div>
+                              <div className={styles.result_ment}>
+                                <p>대단해요 {memberNickname}님!</p>
+                                <p>2024년 기준</p>
+                                <p>
+                                  {} 탄소배출량의 {}%를 절감하셨어요!
+                                </p>
+                              </div>
+                            </div>
+                          )}
                         </div>
                         <div>
-                          <div>사용시간</div>
+                          <div>
+                            {(step === 3 && "이용시간") ||
+                              (step === 4 && "횟수") ||
+                              (step < 6 && "사용시간")}
+                          </div>
+                          <div>
+                            {(step === 4 && (
+                              <div>
+                                <div>
+                                  <p>{wasteCount > 0 && wasteCount - 1}</p>
+                                  <p>{wasteCount}</p>
+                                  <p>{wasteCount + 1}</p>
+                                </div>
+                                <div>번</div>
+                              </div>
+                            )) ||
+                              (step < 6 && (
+                                <div>
+                                  <div>
+                                    <div
+                                      onWheel={handleWheel}
+                                      onMouseDown={handleMouseDown}
+                                      onMouseMove={handleMouseMove}
+                                      onMouseUp={stopDragging}
+                                      onMouseLeave={stopDragging}
+                                      style={{
+                                        width: "200px",
+                                        height: "200px",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        cursor: "ns-resize", // 위아래 화살표 커서
+                                        userSelect: "none", // 드래그 시 텍스트 블록 방지
+                                        borderRadius: "20px",
+                                      }}
+                                    >
+                                      <div
+                                        style={{
+                                          fontSize: "14px",
+                                          marginBottom: "10px",
+                                        }}
+                                      >
+                                        휠이나 드래그로 조절
+                                      </div>
+                                      <div
+                                        style={{
+                                          fontSize: "40px",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        {value}
+                                      </div>
+                                    </div>
+                                    <div>분</div>
+                                  </div>
+                                </div>
+                              ))}
+                          </div>
                         </div>
+                        <button className={styles.carbonBox_right}>
+                          <NavigateNextOutlinedIcon
+                            sx={{
+                              fontSize: "50px",
+                              color:
+                                step > 5 ? "var(--gray5)" : "var(--color1)",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              if (step > 0 && step < 6) {
+                                setStep(step + 1);
+                              } else {
+                                setStep(step);
+                              }
+                            }}
+                          />
+                        </button>
                       </div>
-                      <button className={styles.carbonBox_right}>
-                        <NavigateNextOutlinedIcon
-                          sx={{
-                            fontSize: "50px",
-                            color: "var(--color1)",
-                            cursor: "pointer",
-                          }}
-                        />
-                      </button>
                     </div>
                   </div>
-                </div>
 
-                <div className={styles.boardWriteGroup}>
-                  <label>장소</label>
-                  <div className={styles.map_div}>
-                    <div className={styles.spot_box}>
-                      <p>선택된 위치</p>
-                      <p>{addr}</p>
+                  <div className={styles.boardWriteGroup}>
+                    <label>장소</label>
+                    <div className={styles.map_div}>
+                      <div className={styles.spot_box}>
+                        <p>선택된 위치</p>
+                        <p>{addr}</p>
+                      </div>
+                      <div
+                        className={`${styles.spotSelectBtn} ${addr === selectAddr ? styles.selectedBtn : ""}`}
+                        onClick={insertSpot}
+                      >
+                        {addr === selectAddr ? "선택완료" : "장소선택"}
+                      </div>
+                      <div className={styles.lnglat}>
+                        <p>lng: {lnglat.lat}</p>
+                        <p>lat: {lnglat.lng}</p>
+                      </div>
+                      <div
+                        id="map"
+                        className={styles.writeMapBox}
+                        ref={mapDivRef}
+                      ></div>
                     </div>
-                    <div
-                      className={`${styles.spotSelectBtn} ${addr === selectAddr ? styles.selectedBtn : ""}`}
-                      onClick={insertSpot}
-                    >
-                      {addr === selectAddr ? "선택완료" : "장소선택"}
-                    </div>
-                    <div className={styles.lnglat}>
-                      <p>lng: {lnglat.lat}</p>
-                      <p>lat: {lnglat.lng}</p>
-                    </div>
-                    <div
-                      id="map"
-                      className={styles.writeMapBox}
-                      ref={mapDivRef}
-                    ></div>
                   </div>
+
+                  <div className={styles.boardWriteNotice}>
+                    <p>
+                      탄소커넥트는 누구나 기분 좋게 참여할 수 있는 커뮤니티를
+                      만들기 위해 커뮤니티 이용규칙을 제정하여 운영하고
+                      있습니다.
+                    </p>
+
+                    <p>
+                      위반 시 게시물이 삭제되고 서비스 이용이 일정 기간 제한될
+                      수 있습니다.
+                    </p>
+
+                    <p>
+                      아래는 핵심 요약 사항이며, 게시물 작성 전 반드시
+                      확인해주세요.
+                    </p>
+
+                    <ul>
+                      <li>
+                        <strong>정치/사회 관련 행위 금지</strong>
+                        <br />
+                        국가기관, 정치단체, 언론, 시민단체 관련 언급 및 의견
+                        표현 금지
+                      </li>
+
+                      <li>
+                        <strong>홍보 및 판매 금지</strong>
+                        <br />
+                        영리 여부와 관계없이 사업체/개인 홍보, 바이럴 행위 금지
+                      </li>
+
+                      <li>
+                        <strong>불법 촬영물 금지</strong>
+                        <br />
+                        관련 법률에 따라 삭제 및 이용 제한 가능
+                      </li>
+
+                      <li>
+                        <strong>기타 금지 행위</strong>
+                        <br />
+                        욕설, 혐오, 차별, 폭력, 음란물, 공포/속임 콘텐츠 등
+                      </li>
+                    </ul>
+                  </div>
+
+                  <button
+                    type="button"
+                    className={styles.boardSubmitBtn}
+                    onClick={mode === "edit" ? submitEdit : submitWrite}
+                  >
+                    {mode === "edit" ? "수정 완료" : "작성 완료"}
+                  </button>
                 </div>
-
-                <div className={styles.boardWriteNotice}>
-                  <p>
-                    탄소커넥트는 누구나 기분 좋게 참여할 수 있는 커뮤니티를
-                    만들기 위해 커뮤니티 이용규칙을 제정하여 운영하고 있습니다.
-                  </p>
-
-                  <p>
-                    위반 시 게시물이 삭제되고 서비스 이용이 일정 기간 제한될 수
-                    있습니다.
-                  </p>
-
-                  <p>
-                    아래는 핵심 요약 사항이며, 게시물 작성 전 반드시
-                    확인해주세요.
-                  </p>
-
-                  <ul>
-                    <li>
-                      <strong>정치/사회 관련 행위 금지</strong>
-                      <br />
-                      국가기관, 정치단체, 언론, 시민단체 관련 언급 및 의견 표현
-                      금지
-                    </li>
-
-                    <li>
-                      <strong>홍보 및 판매 금지</strong>
-                      <br />
-                      영리 여부와 관계없이 사업체/개인 홍보, 바이럴 행위 금지
-                    </li>
-
-                    <li>
-                      <strong>불법 촬영물 금지</strong>
-                      <br />
-                      관련 법률에 따라 삭제 및 이용 제한 가능
-                    </li>
-
-                    <li>
-                      <strong>기타 금지 행위</strong>
-                      <br />
-                      욕설, 혐오, 차별, 폭력, 음란물, 공포/속임 콘텐츠 등
-                    </li>
-                  </ul>
-                </div>
-
-                <button
-                  type="button"
-                  className={styles.boardSubmitBtn}
-                  onClick={mode === "edit" ? submitEdit : submitWrite}
-                >
-                  {mode === "edit" ? "수정 완료" : "작성 완료"}
-                </button>
               </div>
             </div>
           )}
