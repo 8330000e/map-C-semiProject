@@ -116,6 +116,16 @@ function App() {
             useAuthStore.getState().logout();
             window.location.href = "/members/login";
           });
+        } else if (
+          error.response.status === 403 &&
+          error.response.data === "AdminOnly"
+        ) {
+          Swal.fire({
+            title: "권한이 없습니다.",
+            icon: "error",
+          }).then(() => {
+            window.location.href = "/";
+          });
         }
         return Promise.reject(error); // locked를 제외한 다른 오류는 각자 axios catch에 돌려줌
       },

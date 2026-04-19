@@ -41,6 +41,15 @@ const useAuthStore = create(
 
       //2. 로그아웃
       logout: () => {
+        // 상태 클리어 전에 현재 memberId 확보 - 모든 로그아웃 경로(수동/타이머만료/인터셉터)에서 로그 찍히게
+        const currentId = get().memberId;
+        if (currentId) {
+          axios
+            .post(
+              `${import.meta.env.VITE_BACKSERVER}/members/logout/${currentId}`,
+            )
+            .catch(() => {}); // 토큰 만료 등 실패해도 무시 (로그용)
+        }
         // 다시 초기값 상태로 되돌림
         set({
           memberId: null,
