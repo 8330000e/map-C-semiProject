@@ -187,7 +187,7 @@ const AdminMemberPage = () => {
       });
   };
 
-  // 현황판 집계 - 전체/정지/접속중/미접속 (isOnline=1: 최근 30분 내 로그인)
+  // 현황판 집계 - 전체/정지/접속중/미접속
   const memberStats = useMemo(() => {
     const total = memberList.length;
     const suspended = memberList.filter(
