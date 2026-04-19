@@ -37,6 +37,7 @@ const CampaignNoticeDetailPage = () => {
   return (
     memberId &&
     readComplete && (
+<<<<<<< HEAD
       <div className={styles.campNoDe_outer_wrap}>
         <div className={styles.campNoDe_inner_wrap}>
           <div className={styles.campNoDe_title_wrap}>
@@ -204,7 +205,40 @@ const CampaignNoticeDetailPage = () => {
               닫기
             </button>
           </div>
+=======
+      <div className={styles.campNoDe_wrap}>
+        <div className={styles.campNoDe_title_wrap}>
+          <h2>캠페인 공지 상세보기</h2>
+>>>>>>> parent of 9db86ca (Merge branch 'main' into mjw0406)
         </div>
+        <div className={styles.campNoDe_content}>
+          <div>
+            <div></div>
+          </div>
+          <ul>
+            <li>{campaignNoticeNo}</li>
+            {/* //공지사항 시퀀스 번호 */}
+            <li>{noticeDetail.campaignNoticeTitle}</li>
+            {/* //공지사항 제목 */}
+            <li>{noticeDetail.campaignNoticeContent}</li>
+            {/* //공지사항 내용 */}
+            <li>{noticeDetail.campaignNoticeWriter}</li>
+            {/* //공지사항 작성자(현재 접속한 아이디와 동일시 수정,삭제 가능) */}
+            <li>{noticeDetail.campaignNoticeDate}</li>
+            {/* //공지 등록 날짜 */}
+            <li>{noticeDetail.campaignTitle}</li>
+            {/* //캠페인의 제목(어떤 캠페인의 공지 사항인지)*/}
+          </ul>
+        </div>
+        <Button
+          className="btn primary sm"
+          onClick={() => {
+            navigate(`/campaign/notice`);
+          }}
+        >
+          돌아가기
+        </Button>
+        {/* //공지사항 전체로 가는 버튼 */}
       </div>
     )
   );

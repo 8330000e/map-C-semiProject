@@ -364,14 +364,8 @@ public class BoardController {
 	}
 	
 	@GetMapping(value="/report")
-	public ResponseEntity<?> getReportList(
-										   @RequestParam(defaultValue = "reportDate") String sortBy,
-										   @RequestParam(defaultValue = "desc") String sortOrder,
-										   @RequestParam(required = false) String type,
-										   @RequestParam(required = false) String category,
-										   @RequestParam(required = false) Integer status			   
-																							) {
-		List<Report> reportList = boardService.getReportList(sortBy, sortOrder, type, category, status);
+	public ResponseEntity<?> getReportList() {
+		List<Report> reportList = boardService.getReportList();
 		return ResponseEntity.ok(reportList);
 	}
 	
@@ -383,10 +377,6 @@ public class BoardController {
 		List<Report> groupList = boardService.getGroupList(targetNo, targetType, reportNo);
 		return ResponseEntity.ok(groupList);
 	}
-	
-
-	
-	
 	
 	
 	 

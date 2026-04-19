@@ -2,7 +2,6 @@
 // 데이터/API 처리는 AdminMemberPage.jsx에서 담당
 
 import styles from "./AdminMember.module.css";
-import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 
 const statusText = {
   0: "정상",
@@ -17,109 +16,29 @@ const AdminMember = ({
   setSelectedMember,
   filter,
   changeFilter,
-  logFilter,
-  changeLogFilter,
-  toggleLogSort,
-  recentLogList,
-  logList,
-  logPage,
-  setLogPage,
   selectRecentLogList,
-  selectLogList,
-  anomalyData,
-  selectAnomalyCount,
-  commentList,
-  setCommentList,
-  selectCommentList,
+  recentLogList,
   isLogModalOpen,
   setIsLogModalOpen,
   isCommentModalOpen,
   setIsCommentModalOpen,
+  selectLogList,
+  logList,
+  logPage,
+  setLogPage,
+  selectAnomalyCount,
+  anomalyData,
+  logFilter,
+  changeLogFilter,
+  toggleLogSort,
   boardNav,
-  memberStats,
-  excelDownload,
+  selectCommentList,
+  commentList,
+  setCommentList,
 }) => {
   return (
     <>
       <div className={styles.member_wrap}>
-        {/* 회원 현황판 - 전체/정지/접속중/미접속, 접속률 스택 바 */}
-        <div className={styles.member_header}>
-          <h3>회원 현황판</h3>
-          <div className={styles.stat_item}>
-            <span className={styles.stat_label}>전체</span>
-            <span className={styles.stat_value}>{memberStats.total}명</span>
-          </div>
-          <div className={styles.stat_item}>
-            <span className={styles.stat_label}>정지</span>
-            <span className={`${styles.stat_value} ${styles.value_suspended}`}>
-              {memberStats.suspended}명
-            </span>
-          </div>
-          <div className={styles.stat_item}>
-            <span className={`${styles.stat_dot} ${styles.dot_online}`}></span>
-            <span className={styles.stat_label}>접속중</span>
-            <span className={`${styles.stat_value} ${styles.value_online}`}>
-              {memberStats.online}명
-            </span>
-          </div>
-          <div className={styles.stat_item}>
-            <span className={`${styles.stat_dot} ${styles.dot_offline}`}></span>
-            <span className={styles.stat_label}>미접속</span>
-            <span className={styles.stat_value}>{memberStats.offline}명</span>
-          </div>
-          {/* 회원 목록 엑셀 다운로드 - 우측 끝 배치 */}
-          <button
-            type="button"
-            className={styles.excel_btn}
-            onClick={() => excelDownload("member")}
-          >
-            <FileDownloadOutlinedIcon style={{ fontSize: 16 }} />
-            회원목록 Excel
-          </button>
-          <div className={styles.stack_bar_wrap}>
-            <div className={styles.stack_bar}>
-              {/* 둘 다 있으면 작은쪽 최소 4% 폭 보장, 1% 미만이면 "<1%" 라벨 */}
-              {(() => {
-                const { online, offline, onlineRate, offlineRate } =
-                  memberStats;
-                let onW = onlineRate;
-                let offW = offlineRate;
-                if (online > 0 && offline > 0) {
-                  if (onlineRate < offlineRate) {
-                    onW = Math.max(onlineRate, 4);
-                    offW = 100 - onW;
-                  } else {
-                    offW = Math.max(offlineRate, 4);
-                    onW = 100 - offW;
-                  }
-                }
-                const fmt = (r) =>
-                  r > 0 && r < 1 ? "<1%" : `${r.toFixed(0)}%`;
-                return (
-                  <>
-                    {online > 0 && (
-                      <div
-                        className={`${styles.stack_seg} ${styles.seg_online}`}
-                        style={{ width: `${onW}%` }}
-                      >
-                        {fmt(onlineRate)}
-                      </div>
-                    )}
-                    {offline > 0 && (
-                      <div
-                        className={`${styles.stack_seg} ${styles.seg_offline}`}
-                        style={{ width: `${offW}%` }}
-                      >
-                        {fmt(offlineRate)}
-                      </div>
-                    )}
-                  </>
-                );
-              })()}
-            </div>
-          </div>
-        </div>
-
         {/* 왼쪽: 회원 목록 패널 */}
         <section className={`${styles.panel} ${styles.member_left}`}>
           {/* 필터 바 - 상태/권한 셀렉트 + 키워드 검색 */}
@@ -166,23 +85,13 @@ const AdminMember = ({
                   }}
                 >
                   <div className={styles.member_identity}>
-                    {/* 이름 첫 글자 + 접속중이면 아바타 우측하단 점 표시 */}
-                    <span className={styles.avatar_wrap}>
-                      <span className={styles.avatar}>
-                        {member.memberName?.charAt(0)}
-                      </span>
-                      {member.isOnline === 1 && (
-                        <span className={styles.online_dot}></span>
-                      )}
+                    {/* 이름 첫 글자 표시 */}
+                    <span className={styles.avatar}>
+                      {member.memberName?.charAt(0)}
                     </span>
                     <div className={styles.identity_text}>
                       <span>{member.memberId}</span>
-                      <strong>
-                        {member.memberName}
-                        {member.isOnline === 1 && (
-                          <span className={styles.online_badge}>접속중</span>
-                        )}
-                      </strong>
+                      <strong>{member.memberName}</strong>
                     </div>
                   </div>
 
@@ -361,18 +270,10 @@ const AdminMember = ({
                     setIsLogModalOpen(true);
                     setLogPage(0); // page 0부터 시작 (스크롤)
                     selectLogList(selectedMember.memberId, logPage); // logList 호출
+                    console.log(logList);
                   }}
                 >
                   전체보기
-                </button>
-                {/* 해당 회원 로그 전체 엑셀 다운로드 */}
-                <button
-                  type="button"
-                  className={styles.log_excel_btn}
-                  onClick={() => excelDownload("log")}
-                >
-                  <FileDownloadOutlinedIcon style={{ fontSize: 16 }} />
-                  로그 Excel 내보내기
                 </button>
               </section>
             </>
@@ -405,7 +306,6 @@ const AdminMember = ({
               }}
             >
               <h3>전체기록</h3>
-
               <table>
                 <thead>
                   <tr>
