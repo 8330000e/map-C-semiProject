@@ -86,48 +86,35 @@ const Community = ({
     cTotal: 0,
   });
 
-  const ele = [
-    "TV 시청",
-    "컴퓨터 사용",
-    "에어컨 사용",
-    "전기히터 사용",
-    "조명 켜기",
-    "세탁기 돌리기",
-  ];
-  const gas = ["요리하기", "보일러 난방", "온수 사용"];
-  const waster = ["샤워하기", "설거지", "세수/양치", "욕조 채우기"];
-  const road = [
-    "걷기",
-    "자전거 타기",
-    "버스 타기",
-    "지하철 타기",
-    "자가용 운전",
-    "고속도로 운전",
-  ];
-  const waste = ["집밥 끼니", "배달음식", "택배 수령", "장보기"];
+  const ele = ['TV 시청', '컴퓨터 사용', '에어컨 사용', '전기히터 사용', '조명 켜기', '세탁기 돌리기'];
+  const gas = ['요리하기', '보일러 난방','온수 사용'];
+  const waster = ['샤워하기','설거지','세수/양치','욕조 채우기'];
+  const road = ['걷기','자전거 타기','버스 타기','지하철 타기','자가용 운전','고속도로 운전'];
+  const waste = ['집밥 끼니','배달음식','택배 수령','장보기'];
 
-  const [step, setStep] = useState(1);
+  const [step,setStep] = useState(1);
 
-  const [wasteCount, setWasteCount] = useState(0);
+  const [wasteCount,setWasteCount] = useState(0);
 
   const inputChange = (e) => {
     const { name, value } = e.target;
     setCalco2({ ...calco2, [name]: value });
   };
-
+  
   const selectCo2 = (categoryKey, value) => {
     setCalco2((prev) => {
       const currentList = prev[categoryKey] || [];
-
+      
       // 있으면 빼고, 없으면 넣고 (숫자끼리 비교)
       const newList = currentList.includes(value)
-        ? currentList.filter((v) => v !== value)
+        ? currentList.filter(v => v !== value)
         : [...currentList, value];
       return { ...prev, [categoryKey]: newList };
     });
   };
 
-  const keys = ["cEle", "cGas", "cWater", "cRoad", "cWaste"];
+  
+  const keys = ['cEle', 'cGas', 'cWater', 'cRoad', 'cWaste'];
   const currentKey = keys[step - 1];
   const value = calco2[currentKey];
 
@@ -139,7 +126,7 @@ const Community = ({
   const updateValue = (newValue) => {
     // 0 미만으로 내려가지 않게 방어
     const finalValue = newValue < 0 ? 0 : newValue;
-    setCalco2((prev) => ({ ...prev, [currentKey]: finalValue }));
+    setCalco2(prev => ({ ...prev, [currentKey]: finalValue }));
   };
 
   // 2. 마우스 휠 핸들러
@@ -170,6 +157,7 @@ const Community = ({
 
   // 5. 드래그 끝 (MouseUp, MouseLeave)
   const stopDragging = () => setIsDragging(false);
+  
 
   const submit = (e) => {
     e.preventDefault();
@@ -882,13 +870,13 @@ const Community = ({
                         <NavigateBeforeOutlinedIcon
                           sx={{
                             fontSize: "50px",
-                            color: step > 1 ? "var(--color1)" : "var(--gray5)",
+                            color: step > 1 ? 'var(--color1)' : 'var(--gray5)',
                             cursor: "pointer",
                           }}
-                          onClick={() => {
-                            if (step > 1) {
-                              setStep(step - 1);
-                            } else {
+                          onClick={()=>{
+                            if(step > 1) {
+                              setStep(step-1);
+                            }else{
                               setStep(step);
                             }
                           }}
@@ -896,248 +884,192 @@ const Community = ({
                       </button>
                       <div className={styles.carbon_question}>
                         <div>
-                          <div>{step < 6 && "오늘 어떤 활동을 하셨나요?"}</div>
-                          {step == 1 && (
-                            <ul>
-                              {ele?.map((item, i) => {
-                                return (
-                                  <li key={i + 1}>
-                                    <button
-                                      type="button"
-                                      value={i + 1}
-                                      onClick={() => selectCo2("cEleA", i + 1)}
-                                      style={{
-                                        backgroundColor: calco2.cEleA.includes(
-                                          i + 1,
-                                        )
-                                          ? "var(--color1)"
-                                          : "var(--gray5)",
-                                      }}
-                                    >
-                                      {item}
-                                    </button>
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                          )}
-                          {step == 2 && (
-                            <ul>
-                              <li>요리하기</li>
-                              <li>보일러 난방</li>
-                              <li>온수 사용</li>
-                            </ul>
-                          )}
-                          {step == 3 && (
-                            <ul>
-                              <li>샤워하기</li>
-                              <li>설거지</li>
-                              <li>세수/양치</li>
-                              <li>욕조 채우기</li>
-                            </ul>
-                          )}
-                          {step == 4 && (
-                            <ul>
-                              <li>걷기</li>
-                              <li>자전거 타기</li>
-                              <li>버스 타기</li>
-                              <li>지하철 타기</li>
-                              <li>자가용 운전</li>
-                              <li>고속도로 운전</li>
-                            </ul>
-                          )}
-                          {step == 5 && (
-                            <ul>
-                              <li>집밥 끼니</li>
-                              <li>배달음식</li>
-                              <li>택배 수령</li>
-                              <li>장보기</li>
-                            </ul>
-                          )}
-                          {step == 6 && (
-                            <div className={styles.result_warp}>
-                              <div>{memberNickname}님의 총 탄소배출량</div>
-                              <div className={styles.result_count}></div>
+                          <div>{step < 6 &&"오늘 어떤 활동을 하셨나요?"}</div>
+                            {step == 1 && <ul>{ele?.map((item, i)=>{
+                             return (<li key={i+1}><button type="button" value={i+1} onClick={()=>selectCo2('cEleA', i+1)} style={{
+                            backgroundColor: calco2.cEleA.includes(i+1) ? 'var(--color1)' : 'var(--gray5)',
+                          }}>{item}</button></li>);
+                            })}</ul> }
+                          {step == 2 && <ul>
+                          <li>요리하기</li>
+                          <li>보일러 난방</li>
+                          <li>온수 사용</li></ul>}
+                          {step == 3 && <ul>
+                          <li>샤워하기</li>
+                          <li>설거지</li>
+                          <li>세수/양치</li>
+                          <li>욕조 채우기</li></ul>}
+                          {step == 4 && <ul>
+                          <li>걷기</li>
+                          <li>자전거 타기</li>
+                          <li>버스 타기</li>
+                          <li>지하철 타기</li>
+                          <li>자가용 운전</li>
+                          <li>고속도로 운전</li></ul>}
+                          {step == 5 && <ul>
+                          <li>집밥 끼니</li>
+                          <li>배달음식</li>
+                          <li>택배 수령</li>
+                          <li>장보기</li></ul>}
+                          {step == 6 &&
+                          <div className={styles.result_warp}>
+                            <div>{memberNickname}님의 총 탄소배출량</div>
+                            <div className={styles.result_count}></div>
                               <div>CO₂</div>
                               <div>{}</div>
                               <div>KG</div>
-                              <div className={styles.result_ment}>
-                                <p>대단해요 {memberNickname}님!</p>
-                                <p>2024년 기준</p>
-                                <p>
-                                  {} 탄소배출량의 {}%를 절감하셨어요!
-                                </p>
-                              </div>
+                            <div className={styles.result_ment}>
+                              <p>대단해요 {memberNickname}님!</p>
+                              <p>2024년 기준</p>
+                              <p>{} 탄소배출량의 {}%를 절감하셨어요!</p>
                             </div>
-                          )}
+                          </div>}
+                          
                         </div>
                         <div>
-                          <div>
-                            {(step === 3 && "이용시간") ||
-                              (step === 4 && "횟수") ||
-                              (step < 6 && "사용시간")}
-                          </div>
-                          <div>
-                            {(step === 4 && (
-                              <div>
-                                <div>
-                                  <p>{wasteCount > 0 && wasteCount - 1}</p>
-                                  <p>{wasteCount}</p>
-                                  <p>{wasteCount + 1}</p>
-                                </div>
-                                <div>번</div>
+                          <div>{step === 3 && "이용시간" || step === 4 && "횟수" || step < 6 && "사용시간"}</div>
+                          <div>{ step === 4 && 
+                          (<div>
+                            <div>
+                              <p>{wasteCount > 0 && wasteCount -1}</p>
+                              <p>{wasteCount}</p>
+                              <p>{wasteCount +1}</p>
+                            </div>
+                            <div>번</div>
+                          </div>) 
+                          || step < 6 && 
+                          (<div>
+                            <div>
+                             <div
+                                onWheel={handleWheel}
+                                onMouseDown={handleMouseDown}
+                                onMouseMove={handleMouseMove}
+                                onMouseUp={stopDragging}
+                                onMouseLeave={stopDragging}
+                                style={{
+                                  width: '200px',
+                                  height: '200px',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  cursor: 'ns-resize', // 위아래 화살표 커서
+                                  userSelect: 'none',   // 드래그 시 텍스트 블록 방지
+                                  borderRadius: '20px',
+                                }}
+                              >
+                                <div style={{ fontSize: '14px', marginBottom: '10px' }}>휠이나 드래그로 조절</div>
+                                <div style={{ fontSize: '40px', fontWeight: 'bold' }}>{value}</div>
                               </div>
-                            )) ||
-                              (step < 6 && (
-                                <div>
-                                  <div>
-                                    <div
-                                      onWheel={handleWheel}
-                                      onMouseDown={handleMouseDown}
-                                      onMouseMove={handleMouseMove}
-                                      onMouseUp={stopDragging}
-                                      onMouseLeave={stopDragging}
-                                      style={{
-                                        width: "200px",
-                                        height: "200px",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        cursor: "ns-resize", // 위아래 화살표 커서
-                                        userSelect: "none", // 드래그 시 텍스트 블록 방지
-                                        borderRadius: "20px",
-                                      }}
-                                    >
-                                      <div
-                                        style={{
-                                          fontSize: "14px",
-                                          marginBottom: "10px",
-                                        }}
-                                      >
-                                        휠이나 드래그로 조절
-                                      </div>
-                                      <div
-                                        style={{
-                                          fontSize: "40px",
-                                          fontWeight: "bold",
-                                        }}
-                                      >
-                                        {value}
-                                      </div>
-                                    </div>
-                                    <div>분</div>
-                                  </div>
-                                </div>
-                              ))}
-                          </div>
+                              <div>분</div>
+                            </div>
+                          </div>)}
                         </div>
-                        <button className={styles.carbonBox_right}>
-                          <NavigateNextOutlinedIcon
-                            sx={{
-                              fontSize: "50px",
-                              color:
-                                step > 5 ? "var(--gray5)" : "var(--color1)",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => {
-                              if (step > 0 && step < 6) {
-                                setStep(step + 1);
-                              } else {
-                                setStep(step);
-                              }
-                            }}
-                          />
-                        </button>
                       </div>
+                      <button className={styles.carbonBox_right}>
+                        <NavigateNextOutlinedIcon
+                          sx={{
+                            fontSize: "50px",
+                            color: step > 5 ? "var(--gray5)" : "var(--color1)",
+                            cursor: "pointer",
+                          }}
+                          onClick={()=>{
+                            if(step > 0 && step < 6) {
+                              setStep(step+1);
+                            }else{
+                              setStep(step);
+                            }
+                          }}
+                        />
+                      </button>
                     </div>
                   </div>
-
-                  <div className={styles.boardWriteGroup}>
-                    <label>장소</label>
-                    <div className={styles.map_div}>
-                      <div className={styles.spot_box}>
-                        <p>선택된 위치</p>
-                        <p>{addr}</p>
-                      </div>
-                      <div
-                        className={`${styles.spotSelectBtn} ${addr === selectAddr ? styles.selectedBtn : ""}`}
-                        onClick={insertSpot}
-                      >
-                        {addr === selectAddr ? "선택완료" : "장소선택"}
-                      </div>
-                      <div className={styles.lnglat}>
-                        <p>lng: {lnglat.lat}</p>
-                        <p>lat: {lnglat.lng}</p>
-                      </div>
-                      <div
-                        id="map"
-                        className={styles.writeMapBox}
-                        ref={mapDivRef}
-                      ></div>
-                    </div>
-                  </div>
-
-                  <div className={styles.boardWriteNotice}>
-                    <p>
-                      탄소커넥트는 누구나 기분 좋게 참여할 수 있는 커뮤니티를
-                      만들기 위해 커뮤니티 이용규칙을 제정하여 운영하고
-                      있습니다.
-                    </p>
-
-                    <p>
-                      위반 시 게시물이 삭제되고 서비스 이용이 일정 기간 제한될
-                      수 있습니다.
-                    </p>
-
-                    <p>
-                      아래는 핵심 요약 사항이며, 게시물 작성 전 반드시
-                      확인해주세요.
-                    </p>
-
-                    <ul>
-                      <li>
-                        <strong>정치/사회 관련 행위 금지</strong>
-                        <br />
-                        국가기관, 정치단체, 언론, 시민단체 관련 언급 및 의견
-                        표현 금지
-                      </li>
-
-                      <li>
-                        <strong>홍보 및 판매 금지</strong>
-                        <br />
-                        영리 여부와 관계없이 사업체/개인 홍보, 바이럴 행위 금지
-                      </li>
-
-                      <li>
-                        <strong>불법 촬영물 금지</strong>
-                        <br />
-                        관련 법률에 따라 삭제 및 이용 제한 가능
-                      </li>
-
-                      <li>
-                        <strong>기타 금지 행위</strong>
-                        <br />
-                        욕설, 혐오, 차별, 폭력, 음란물, 공포/속임 콘텐츠 등
-                      </li>
-                    </ul>
-                  </div>
-
-                  <button
-                    type="button"
-                    className={styles.boardSubmitBtn}
-                    onClick={mode === "edit" ? submitEdit : submitWrite}
-                  >
-                    {mode === "edit" ? "수정 완료" : "작성 완료"}
-                  </button>
                 </div>
+
+                <div className={styles.boardWriteGroup}>
+                  <label>장소</label>
+                  <div className={styles.map_div}>
+                    <div className={styles.spot_box}>
+                      <p>선택된 위치</p>
+                      <p>{addr}</p>
+                    </div>
+                    <div
+                      className={`${styles.spotSelectBtn} ${addr === selectAddr ? styles.selectedBtn : ""}`}
+                      onClick={insertSpot}
+                    >
+                      {addr === selectAddr ? "선택완료" : "장소선택"}
+                    </div>
+                    <div className={styles.lnglat}>
+                      <p>lng: {lnglat.lat}</p>
+                      <p>lat: {lnglat.lng}</p>
+                    </div>
+                    <div
+                      id="map"
+                      className={styles.writeMapBox}
+                      ref={mapDivRef}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className={styles.boardWriteNotice}>
+                  <p>
+                    탄소커넥트는 누구나 기분 좋게 참여할 수 있는 커뮤니티를
+                    만들기 위해 커뮤니티 이용규칙을 제정하여 운영하고 있습니다.
+                  </p>
+
+                  <p>
+                    위반 시 게시물이 삭제되고 서비스 이용이 일정 기간 제한될 수
+                    있습니다.
+                  </p>
+
+                  <p>
+                    아래는 핵심 요약 사항이며, 게시물 작성 전 반드시
+                    확인해주세요.
+                  </p>
+
+                  <ul>
+                    <li>
+                      <strong>정치/사회 관련 행위 금지</strong>
+                      <br />
+                      국가기관, 정치단체, 언론, 시민단체 관련 언급 및 의견 표현
+                      금지
+                    </li>
+
+                    <li>
+                      <strong>홍보 및 판매 금지</strong>
+                      <br />
+                      영리 여부와 관계없이 사업체/개인 홍보, 바이럴 행위 금지
+                    </li>
+
+                    <li>
+                      <strong>불법 촬영물 금지</strong>
+                      <br />
+                      관련 법률에 따라 삭제 및 이용 제한 가능
+                    </li>
+
+                    <li>
+                      <strong>기타 금지 행위</strong>
+                      <br />
+                      욕설, 혐오, 차별, 폭력, 음란물, 공포/속임 콘텐츠 등
+                    </li>
+                  </ul>
+                </div>
+
+                <button
+                  type="button"
+                  className={styles.boardSubmitBtn}
+                  onClick={mode === "edit" ? submitEdit : submitWrite}
+                >
+                  {mode === "edit" ? "수정 완료" : "작성 완료"}
+                </button>
               </div>
+            </div>
             </div>
           )}
         </div>
       </div>
     </section>
   );
-};
+}; 
 
 export default Community;
