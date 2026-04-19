@@ -32,11 +32,11 @@ public class CampaignSchedule {
 	
 	//cron (초, 분 , 시, 일자, 월, 요일(0~6(일요일은 0과7이 혼용?인듯함){요일 지정시 일자나 월 특정으로 지정시 혼동 가능(예를 들어서 9일을 지정하고 수요일을 지정,9일은 수요일이 아닐때)}))
 	//@Scheduled(fixedDelay = 3000)
-	@Scheduled(cron="0 0 10 * * *")
+	@Scheduled(cron="0 * * * * *")
 	public void test() {
 //		System.out.println(1);
 		List<Campaign> campList = campaignDao.selectCampaignStatus(); 
-//		System.out.println(campList);
+		System.out.println(campList);
 		for (Campaign camp : campList) {
 			int campaignNo=camp.getCampaignNo();
 			int campStatus=camp.getCampaignStatus();

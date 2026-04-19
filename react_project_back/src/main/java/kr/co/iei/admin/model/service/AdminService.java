@@ -87,6 +87,12 @@ public class AdminService {
 		return result;
 	}
 
+	// FAQ 삭제
+	@Transactional
+	public int deleteFaq(Integer faqNo) {
+		return adminDao.deleteFaq(faqNo);
+	}
+
 	// QnA 목록 조회 - 전체 건수로 totalPage 계산 후 ListResponse에 담아서 반환
 	public ListResponse selectQnaList(ListItem listItem) {
 		int totalCount = adminDao.getTotalCount();
@@ -140,15 +146,27 @@ public class AdminService {
 	@Transactional
 	public int processReport(ProcessReport pr) {
 		System.out.println("report 서비스 진입");
-		if (!pr.getBoardAction().equals("미처리")) {
+		if ("board".equals(pr.getTargetType())
+				&& pr.getBoardAction() != null
+				&& !pr.getBoardAction().equals("미처리")) {
 			int boardResult = adminDao.updateBoardStatus(pr);
-			
+
 			if (boardResult == 0) {
 				throw new RuntimeException("게시글 조치 실패");
 			}
 		}
-		
-		
+
+		if ("comment".equals(pr.getTargetType())
+				&& pr.getCommentAction() != null
+				&& !pr.getCommentAction().equals("미처리")) {
+			int commentResult = adminDao.updateCommentStatus(pr);
+
+			if (commentResult == 0) {
+				throw new RuntimeException("댓글 조치 실패");
+			}
+		}
+
+
 		if (!pr.getMemberAction().equals("미처리") && !pr.getMemberAction().equals("경고 처리")) {
 			int memberResult = adminDao.updateMemberStatus(pr);
 			

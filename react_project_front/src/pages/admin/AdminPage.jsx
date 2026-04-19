@@ -13,6 +13,7 @@ import AdminSupport from "./AdminSupport";
 import AdminBoardPage from "./AdminBoardPage.jsx";
 import AdminReport from "../../components/admin/AdminReport.jsx";
 import AdminReportPage from "./AdminReportPage.jsx";
+import AdminChatBot from "../../components/admin/AdminChatBot.jsx";
 
 const AdminPage = () => {
   useEffect(() => {
@@ -57,6 +58,7 @@ const AdminPage = () => {
         </section>
       </div>
       <AdminFooter />
+      <AdminChatBot />
     </>
   );
 };

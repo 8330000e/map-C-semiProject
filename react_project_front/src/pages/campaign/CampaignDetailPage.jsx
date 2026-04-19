@@ -188,9 +188,8 @@ const CampaignDetailPage = () => {
         console.log(err);
       });
   }, [deleteBoard]);
-  if (readBan && banMember) {
+  if (readBan && banMember && memberId) {
     return (
-      memberId &&
       readComplete && (
         <div className={styles.campdetailpage_wrap}>
           <div className={styles.campdetailpage_title}>
@@ -268,10 +267,10 @@ const CampaignDetailPage = () => {
                     {"캠페인 달성 여부 : " +
                       (campaignDetail.campaignStatus >= 3
                         ? campaignDetail.campaignStatus === 3
-                          ? campaignDetail.campaignStatus === 4
+                          ? "목표달성 성공"
+                          : campaignDetail.campaignStatus === 4
                             ? "목표달성 실패"
                             : "조기종료"
-                          : "목표달성 성공"
                         : "진행중")}
                   </p>
                 </div>
@@ -304,7 +303,7 @@ const CampaignDetailPage = () => {
         </div>
       )
     );
-  } else {
+  } else if (memberId) {
     return (
       <div>
         <p>
@@ -318,6 +317,20 @@ const CampaignDetailPage = () => {
           }}
         >
           돌아가기
+        </Button>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <h1>회원가입 후 이용해주세요</h1>
+        <Button
+          className="btn primary sm"
+          onClick={() => {
+            navigate(`/`);
+          }}
+        >
+          메인으로 돌아가기
         </Button>
       </div>
     );

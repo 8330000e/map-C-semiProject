@@ -46,6 +46,9 @@ public interface AdminDao {
 	// FAQ 수정
 	int editFaq(Faq faq);
 
+	// FAQ 삭제
+	int deleteFaq(Integer faqNo);
+
 	// QnA 목록 조회 - page/size 기반 페이지네이션
 	List<Qna> selectQnaList(ListItem listItem);
 
@@ -69,6 +72,8 @@ public interface AdminDao {
 	List<Board> getBoardList(String keyword, String risk, String reportSort, String sort, String memberId);
 
 	int updateBoardStatus(ProcessReport pr);
+
+	int updateCommentStatus(ProcessReport pr);
 
 	int updateMemberStatus(ProcessReport pr);
 

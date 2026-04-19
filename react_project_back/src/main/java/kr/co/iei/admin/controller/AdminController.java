@@ -139,6 +139,13 @@ public class AdminController {
 		return ResponseEntity.ok(result);
 	}
 
+	// FAQ 삭제
+	@DeleteMapping(value="faq/{faqNo}")
+	public ResponseEntity<?> deleteFaq(@PathVariable Integer faqNo) {
+		int result = adminService.deleteFaq(faqNo);
+		return ResponseEntity.ok(result);
+	}
+
 	// 1:1 문의 목록 조회 - page/size 파라미터로 페이지네이션
 	@GetMapping(value="qna")
 	public ResponseEntity<?> selectQnaList(@ModelAttribute ListItem listItem) {

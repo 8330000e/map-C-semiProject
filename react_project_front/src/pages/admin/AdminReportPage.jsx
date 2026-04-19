@@ -35,6 +35,40 @@ const AdminReportPage = () => {
 
   const [groupList, setGroupList] = useState([]);
 
+  const [reportFilter, setReportFilter] = useState({
+    type: "all",
+    category: "all",
+    status: "all",
+    sortBy: "reportDate",
+    sortOrder: "desc",
+  });
+
+  const toggleCountSort = () => {
+    setReportFilter({
+      ...reportFilter,
+      sortBy: "reportCount",
+      sortOrder:
+        reportFilter.sortBy === "reportCount"
+          ? reportFilter.sortOrder === "desc"
+            ? "asc"
+            : "desc"
+          : "desc",
+    });
+  };
+
+  const toggleDateSort = () => {
+    setReportFilter({
+      ...reportFilter,
+      sortBy: "reportDate",
+      sortOrder:
+        reportFilter.sortBy === "reportDate"
+          ? reportFilter.sortOrder === "desc"
+            ? "asc"
+            : "desc"
+          : "desc",
+    });
+  };
+
   // 현황판 집계 - 그룹 대표 기준 reportCount 합산 (한 그룹의 처리 상태는 일괄이라 대표 status가 그룹 status)
   const reportStats = useMemo(() => {
     const total = reportList.reduce((sum, r) => sum + (r.reportCount || 0), 0);
@@ -53,6 +87,7 @@ const AdminReportPage = () => {
 
   const [reportAction, setReportAction] = useState({
     boardAction: "미처리",
+    commentAction: "미처리",
     memberAction: "미처리",
     reason: "",
     lockReason: "",
@@ -69,6 +104,7 @@ const AdminReportPage = () => {
     setAdminLog(null);
     setReportAction({
       boardAction: "미처리",
+      commentAction: "미처리",
       memberAction: "미처리",
       reason: "",
       lockReason: "",
@@ -176,28 +212,39 @@ const AdminReportPage = () => {
   };
 
   // targetType: 'board' 또는 'comment', targetNo: 해당 게시글/댓글 번호
-  const selectDetail = (targetType, targetNo) => {
-    if (targetType === "board") {
-      // 게시글인 경우 백엔드에서 게시글 상세 데이터 조회
-      axios
-        .get(`${import.meta.env.VITE_BACKSERVER}/boards/detail/${targetNo}`)
-        .then((res) => {
-          console.log(res);
-          setBoardDetail(res.data);
-          setIsModalOpen(true); // 모달 열기
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      // 댓글인 경우 처리 예정
-    }
+  const selectDetail = (boardNo) => {
+    // 게시글인 경우 백엔드에서 게시글 상세 데이터 조회
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/boards/detail/${boardNo}`)
+      .then((res) => {
+        console.log(res);
+        setBoardDetail(res.data);
+        setIsModalOpen(true); // 모달 열기
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const changeReportFilter = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setReportFilter({ ...reportFilter, [name]: value });
   };
 
   // 신고 목록 전체 조회
   const selectReportList = () => {
+    const params = {
+      sortBy: reportFilter.sortBy,
+      sortOrder: reportFilter.sortOrder,
+    };
+    if (reportFilter.type !== "all") params.type = reportFilter.type;
+    if (reportFilter.category !== "all")
+      params.category = reportFilter.category;
+    if (reportFilter.status !== "all") params.status = reportFilter.status;
+
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/boards/report`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/boards/report`, { params })
       .then((res) => {
         console.log(res);
         setReportList(res.data);
@@ -210,7 +257,7 @@ const AdminReportPage = () => {
   // 페이지 진입하자마자 신고 목록 불러오기
   useEffect(() => {
     selectReportList();
-  }, []);
+  }, [reportFilter]);
 
   // showDetail이 true로 바뀌는 순간 실행
   // CommunityDetail이 렌더링된 후 해당 위치로 스크롤
@@ -250,6 +297,10 @@ const AdminReportPage = () => {
         groupList={groupList}
         selectReportGroup={selectReportGroup}
         reportStats={reportStats}
+        reportFilter={reportFilter}
+        toggleCountSort={toggleCountSort}
+        toggleDateSort={toggleDateSort}
+        changeReportFilter={changeReportFilter}
       />
     </>
   );

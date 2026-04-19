@@ -155,7 +155,7 @@ const AdminMemberPage = () => {
   // 모달 로그 필터
   useEffect(() => {
     // 회원 목록에서 선택된 회원이 있고 모달이 열려 있을때만 동작
-    if (selectedMember && isModalOpen) {
+    if (selectedMember) {
       setLogPage(0); // 로그 필터가 변경되면 다시 조회 해야하니까 logPage0으로 돌림
       selectLogList(selectedMember.memberId, 0); // logList 다시 호출
     }
