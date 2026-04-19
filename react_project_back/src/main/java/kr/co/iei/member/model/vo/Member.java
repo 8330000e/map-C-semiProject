@@ -36,9 +36,13 @@ public class Member {
     private Integer reportCount;				// 게시글이 신고당한 횟수 
     
     private Date lockUntil;						// 정지관련 
+    private String lockReason;
     
     private Integer failCount;
     private Integer locationChangeCount;
+
+    // 최근 30분 내 '로그인' 액션 기록이 있으면 1, 없으면 0 (현황판 접속중 집계용)
+    private Integer isOnline;
 
     public Integer getMemberStatus() {
         return memberStatus;

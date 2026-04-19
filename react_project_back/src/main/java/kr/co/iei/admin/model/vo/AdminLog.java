@@ -11,11 +11,19 @@ import lombok.NoArgsConstructor;
 @Data
 @Alias(value="adminLog")
 public class AdminLog {
-	private String logTargetId;
+	
+	
+	private Integer suspendDays;
+	
+	
+	private Integer logNo;
 	private String adminId;
+	private String logTargetId;
 	private String logResult;
 	private String logDate;
-	private Integer suspendDays;
 	private String logReason;
 	private Integer reportNo;
+	private String logAction;
+	
+	
 }
