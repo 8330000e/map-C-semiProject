@@ -31,8 +31,10 @@ ChartJS.register(
 const DashBoard = ({
   totalMember,
   todayMember,
+  thisMonthMember,
   monthlyGrowthRate,
   dailyGrowthRate,
+  thisMonthRatio,
   monthSign,
   dailySign,
   categoryCount,
@@ -40,8 +42,6 @@ const DashBoard = ({
   totalReportCount,
   maxCategory,
   maxCount,
-  thisMonthMember,
-  thisMonthRatio,
   weeklyCount,
 }) => {
   // 라인 차트 - 주간 회원 증가 추이
