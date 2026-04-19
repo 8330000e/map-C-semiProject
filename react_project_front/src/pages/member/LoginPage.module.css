@@ -6,7 +6,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 9999;
+  z-index: 99999;
 
   display: flex;
   justify-content: center;
@@ -48,6 +48,7 @@
   margin: 80px auto;
   /* 하단에 이미지가 들어갈 공간(약 120px~150px)을 padding-bottom으로 확보합니다 */
   padding: 40px 40px;
+  /*아예 배경색을 없애지 않으면서 배경을 채우게 하는 로직  */
   background-color: rgba(
     255,
     255,
