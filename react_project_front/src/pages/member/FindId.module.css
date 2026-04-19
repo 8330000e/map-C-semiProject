@@ -1,13 +1,33 @@
+.total_find_id_container {
+  /* 조건 1: 화면 전체를 강제로 덮어 헤더/푸터 차단 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999; /* 헤더보다 높은 값을 주어야 함 */
+
+  /* 배경 설정 */
+  background-color: #f8faf7; /* 이미지가 안 뜰 경우를 대비한 기본색 */
+  background-image: url("/images/login_bg_final_clean.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .find_id_wrap {
   width: 500px;
   min-height: 65vh;
   margin: 80px auto;
   padding: 50px 35px 180px;
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.5);
   border-radius: 25px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
+
   /* 내부 요소들을 세로 축 중앙 정렬 */
   align-items: center;
   justify-content: flex-start; /* 위에서부터 차례대로 배치 */

@@ -52,14 +52,15 @@
 }
 
 /* 본문 흰색 박스 */
-.notice_body {
-  background-color: #fff;
+/* .notice_body {
+  /* background-color: #fff;
   border: 1px solid #ccc;
-  min-height: 200px;
-  padding: 20px;
-  margin: 10px 0;
-  line-height: 1.6;
-}
+  min-height: 200px; */
+/* padding: 20px;
+  margin: 10px 0; */
+/* line-height: 1.6; */
+/* font-size: 24px; */
+/* }  */
 
 .notice_footer {
   margin-top: 15px;
@@ -74,8 +75,12 @@
 /* 우측 하단 버튼 배치 */
 .action_wrap {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-top: 10px;
+}
+.notice_detail_change_btn {
+  display: flex;
+  gap: 15px;
 }
 
 .close_btn {

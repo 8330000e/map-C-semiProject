@@ -485,7 +485,7 @@ const Main = () => {
               slidesPerView={1} //swiper하나당 몇개 보여줄지
               // style={{ height: "40px" }}
               //onSlideChange={() => console.log("slide change")} //slide 한번 할때마다 작동(그행위시마다)
-              speed={1250} //넘어가는 시간
+              speed={1700} //넘어가는 시간
             >
               {campList.map((camp, index) => {
                 return (
