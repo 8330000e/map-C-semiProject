@@ -62,7 +62,7 @@
 			-- 어제 가입자
 			(select count (case when trunc(enroll_date) = trunc(sysdate - 1) then 1 end) from member_tbl1) as yesterdayMember,
 			-- 신고 카테고리별 건수
-			(select count(case when report_category = '스팸/광고' then 1 end) from report_tbl) as spam,
+			(select count(case when report_category = '광고/스팸' then 1 end) from report_tbl) as spam,
 			(select count(case when report_category = '욕설/비방' then 1 end) from report_tbl) as hate,
 			(select count(case when report_category = '부적절한 게시글' then 1 end) from report_tbl) as inappropriateBoard,
 			(select count(case when report_category = '부적절한 댓글' then 1 end) from report_tbl) as inappropriateComment,
@@ -261,7 +261,7 @@
 					and detectedKeyword is not null and reportCount > 0
 				</when>
 				<when test="risk == 'mid'">
-					and (detectedKeyword is not null or reportCount > 0)
+					and detectedKeyword is not null or reportCount > 0
 				</when>
 				<when test="risk == 'low'">
 					and detectedKeyword is null and reportCount = 0
@@ -294,15 +294,6 @@
 				<when test="boardAction == '삭제 처리'">2</when>
 			</choose>
 		where board_no = #{targetNo}
-	</update>
-
-	<update id="updateCommentStatus">
-		update board_comment_tbl set board_comment_status =
-			<choose>
-				<when test="commentAction == '비공개 처리'">1</when>
-				<when test="commentAction == '삭제 처리'">2</when>
-			</choose>
-		where board_comment_no = #{targetNo}
 	</update>
 	
 	                                                                                                                        
@@ -337,25 +328,16 @@
 			log_action,
 			log_reason,
 			report_no
+		) values(
+	    admin_log_seq.nextval,
+	    #{memberId},
+	    #{targetId},
+	    '게시글: ' || #{boardAction} || ' / 회원: ' || #{memberAction},
+	    sysdate,
+	    #{logAction},
+	    #{reason},
+	    #{reportNo}
 		)
-		select
-			admin_log_seq.nextval,
-			#{memberId},
-			#{targetId},
-			<choose>
-				<when test="targetType == 'comment'">
-					'댓글: ' || #{commentAction} || ' / 회원: ' || #{memberAction},
-				</when>
-				<otherwise>
-					'게시글: ' || #{boardAction} || ' / 회원: ' || #{memberAction},
-				</otherwise>
-			</choose>
-			sysdate,
-			#{logAction},
-			#{reason},
-			r.report_no
-		from report_tbl r
-		where r.target_no = #{targetNo} and r.target_type = #{targetType}
 	</insert>
 	
 	<select id="selectAdminLog" resultType="adminLog">

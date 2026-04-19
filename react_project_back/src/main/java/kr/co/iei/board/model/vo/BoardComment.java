@@ -28,5 +28,4 @@ public class BoardComment {
     private Long commentGroup;
     private Integer commentDepth;
     private Integer isSecret;
-    private Integer boardCommentStatus;
 }

@@ -58,7 +58,6 @@ const AdminPage = () => {
         </section>
       </div>
       <AdminFooter />
-      <AdminChatBot />
     </>
   );
 };
