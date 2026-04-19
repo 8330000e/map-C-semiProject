@@ -7,6 +7,27 @@ const AdminLogPage = () => {
   // 관리자 조치 로그 목록
   const [adminLogList, setAdminLogList] = useState([]);
 
+  const excelDownload = () => {
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/admins/admins-excel`, {
+        responseType: "blob",
+      })
+      .then((res) => {
+        console.log(res);
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "관리자로그.xlsx";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   // 로그 필터 - 키워드/조치유형/정렬
   const [logFilter, setLogFilter] = useState({
     keyword: "",
@@ -57,6 +78,7 @@ const AdminLogPage = () => {
         logFilter={logFilter}
         changeLogFilter={changeLogFilter}
         toggleSort={toggleSort}
+        excelDownload={excelDownload}
       />
     </>
   );

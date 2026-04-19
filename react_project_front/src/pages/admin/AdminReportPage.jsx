@@ -2,7 +2,7 @@
 // 데이터 조회, 상태 선언 등 모든 로직은 여기서 처리하고
 // AdminReport 컴포넌트에 props로 내려줌
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { createElement, useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import AdminReport from "../../components/admin/AdminReport";
@@ -220,6 +220,74 @@ const AdminReportPage = () => {
     });
   };
 
+  // AI 위반 여부 판단 - 신고 게시글 내용 + 카테고리 + 사유를 Gemini에 보내 분석
+  const analyzeReportByAi = () => {
+    if (!selectedReport) return;
+    const content =
+      (boardDetail?.boardTitle ? boardDetail.boardTitle + "\n\n" : "") +
+      (boardDetail?.boardContent || "");
+    Swal.fire({
+      title: "AI가 분석 중입니다...",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
+    axios
+      .post(`${import.meta.env.VITE_BACKSERVER}/admins/ai/analyze-report`, {
+        content,
+        category: selectedReport.reportCategory || "",
+        reason: selectedReport.reportContent || "",
+      })
+      .then((res) => {
+        Swal.fire({
+          title: "AI 위반 판단 결과",
+          html: `<pre style="text-align:left; white-space:pre-wrap; font-family:inherit; font-size:13px;">${
+            res.data.analysis || ""
+          }</pre>`,
+          icon: "info",
+          confirmButtonText: "확인",
+          width: 600,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        Swal.fire({ icon: "error", title: "AI 판단에 실패했습니다." });
+      });
+  };
+
+  // AI 경고/정지 안내 메시지 초안 - lockReason textarea에 채워 넣음
+  const draftWarningByAi = () => {
+    if (!selectedReport) return;
+    const actionText = (() => {
+      const a = reportAction.memberAction;
+      if (a === "경고 처리") return "경고";
+      if (a === "영구정지") return "영구정지";
+      if (a === "1" || a === "3" || a === "7") return `이용 정지 ${a}일`;
+      return "경고";
+    })();
+    Swal.fire({
+      title: "AI가 작성 중입니다...",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
+    axios
+      .post(`${import.meta.env.VITE_BACKSERVER}/admins/ai/warning-draft`, {
+        category: selectedReport.reportCategory || "",
+        action: actionText,
+        extra: reportAction.reason || selectedReport.reportContent || "",
+      })
+      .then((res) => {
+        Swal.close();
+        setReportAction((prev) => ({
+          ...prev,
+          lockReason: res.data.text || "",
+        }));
+      })
+      .catch((err) => {
+        console.log(err);
+        Swal.fire({ icon: "error", title: "AI 작성에 실패했습니다." });
+      });
+  };
+
   // 정지 해제 처리 - releaseMember 엔드포인트 호출
   const handleRelease = (targetId, logReason) => {
     Swal.fire({
@@ -302,6 +370,8 @@ const AdminReportPage = () => {
         handleSubmit={handleSubmit}
         handleRelease={handleRelease}
         reportStats={reportStats}
+        analyzeReportByAi={analyzeReportByAi}
+        draftWarningByAi={draftWarningByAi}
       />
     </>
   );

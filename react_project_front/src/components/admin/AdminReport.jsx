@@ -35,6 +35,8 @@ const AdminReport = ({
   handleSubmit,
   handleRelease,
   reportStats,
+  analyzeReportByAi,
+  draftWarningByAi,
 }) => {
   // 닫는 중인 그룹 키 (닫기 애니메이션 동안만 유지)
   const [closingKey, setClosingKey] = useState(null);
@@ -276,6 +278,18 @@ const AdminReport = ({
                   {selectedReport?.reportContent}
                 </span>
               </div>
+              {selectedReport?.reportStatus === 0 &&
+                selectedReport?.targetType === "board" && (
+                  <div className={styles.ai_analyze_wrap}>
+                    <button
+                      type="button"
+                      className={styles.btn_ai_analyze}
+                      onClick={analyzeReportByAi}
+                    >
+                      🤖 AI 위반 여부 판단
+                    </button>
+                  </div>
+                )}
             </div>
             {selectedReport.reportStatus === 0 ? (
               <form onSubmit={handleSubmit}>
@@ -411,16 +425,26 @@ const AdminReport = ({
 
                 {/* 처리 사유 입력 */}
                 <div className={styles.reason_section}>
-                  {(reportAction.memberAction === "1" ||
+                  {(reportAction.memberAction === "경고 처리" ||
+                    reportAction.memberAction === "1" ||
                     reportAction.memberAction === "3" ||
                     reportAction.memberAction === "7" ||
                     reportAction.memberAction === "영구정지") && (
-                    <textarea
-                      placeholder="회원에게 보여줄 메세지"
-                      name="lockReason"
-                      value={reportAction.lockReason}
-                      onChange={changeReportAction}
-                    />
+                    <>
+                      <textarea
+                        placeholder="회원에게 보여줄 메세지"
+                        name="lockReason"
+                        value={reportAction.lockReason}
+                        onChange={changeReportAction}
+                      />
+                      <button
+                        type="button"
+                        className={styles.btn_ai_draft}
+                        onClick={draftWarningByAi}
+                      >
+                        🤖 AI가 안내 메시지 작성
+                      </button>
+                    </>
                   )}
 
                   <textarea

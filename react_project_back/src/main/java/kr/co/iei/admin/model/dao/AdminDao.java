@@ -120,4 +120,6 @@ public interface AdminDao {
 	// 시스템(관리자) 로그 목록 조회 - 키워드/조치유형/정렬 필터
 	List<AdminLog> getAdminLogList(String keyword, String action, String sort);
 
+	List<Log> getLogExcel(String memberId);
+
 }

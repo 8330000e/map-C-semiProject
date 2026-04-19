@@ -24,6 +24,27 @@ const AdminBoardPage = () => {
     reportSort: "all",
   });
 
+  const excelDownload = () => {
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/admins/boards-excel`, {
+        responseType: "blob",
+      })
+      .then((res) => {
+        console.log(res);
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "게시글목록.xlsx";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   // 작성일시 정렬 토글 (최신순 <-> 오래된순)
   const toggleSort = () => {
     setBoardFilter((prev) => ({
@@ -110,6 +131,7 @@ const AdminBoardPage = () => {
       toggleSort={toggleSort}
       getBoardDetail={getBoardDetail}
       boardStats={boardStats}
+      excelDownload={excelDownload}
     />
   );
 };

@@ -529,3 +529,39 @@
 .btn_confirm:hover { background: #d32f2f; }
 .btn_release:hover { background: #1b5e20; }
 .btn_detail:hover { background: rgba(115, 103, 240, 0.7); }
+
+/* AI 위반 판단/초안 버튼 */
+.ai_analyze_wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.btn_ai_analyze,
+.btn_ai_draft {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid rgba(91, 140, 255, 0.55);
+  background: rgba(91, 140, 255, 0.15);
+  color: #c7d4ff;
+  border-radius: 9px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.btn_ai_analyze:hover,
+.btn_ai_draft:hover {
+  background: rgba(91, 140, 255, 0.3);
+  border-color: rgba(91, 140, 255, 0.8);
+  color: #ffffff;
+}
+
+.btn_ai_draft {
+  align-self: flex-end;
+  margin: 4px 0 10px;
+}

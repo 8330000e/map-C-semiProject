@@ -36,6 +36,7 @@ public class Member {
     private Integer reportCount;				// 게시글이 신고당한 횟수 
     
     private Date lockUntil;						// 정지관련 
+    private String lockReason;
     
     private Integer failCount;
     private Integer locationChangeCount;

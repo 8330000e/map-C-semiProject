@@ -3,6 +3,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import GppBadIcon from "@mui/icons-material/GppBad";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import CommunityDetail from "../board/Community/CommunityDetail";
 
 // 관리자 게시판 리스트 레이아웃을 조정함
@@ -17,6 +18,7 @@ const AdminBoard = ({
   toggleSort,
   getBoardDetail,
   boardStats,
+  excelDownload,
 }) => {
   // 작성일시를 날짜/시간으로 분리해서 보여줌.
   // 날짜는 위, 시간은 아래 줄로 내려서 화면이 넓어지지 않도록 처리함.
@@ -53,7 +55,9 @@ const AdminBoard = ({
             <span className={styles.stat_value}>{boardStats.safe}개</span>
           </div>
           <div className={styles.stat_item}>
-            <span className={`${styles.stat_dot} ${styles.dot_detected}`}></span>
+            <span
+              className={`${styles.stat_dot} ${styles.dot_detected}`}
+            ></span>
             <span className={styles.stat_label}>키워드 감지</span>
             <span className={`${styles.stat_value} ${styles.value_detected}`}>
               {boardStats.detected}개
@@ -79,6 +83,14 @@ const AdminBoard = ({
               )}
             </div>
           </div>
+          <button
+            type="button"
+            className={styles.excel_btn}
+            onClick={excelDownload}
+          >
+            <FileDownloadOutlinedIcon style={{ fontSize: 16 }} />
+            게시글 목록 Excel
+          </button>
         </div>
 
         <table className={styles.board_table}>

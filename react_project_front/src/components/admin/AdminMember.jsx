@@ -2,6 +2,7 @@
 // 데이터/API 처리는 AdminMemberPage.jsx에서 담당
 
 import styles from "./AdminMember.module.css";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 
 const statusText = {
   0: "정상",
@@ -36,6 +37,7 @@ const AdminMember = ({
   setIsCommentModalOpen,
   boardNav,
   memberStats,
+  excelDownload,
 }) => {
   return (
     <>
@@ -49,9 +51,7 @@ const AdminMember = ({
           </div>
           <div className={styles.stat_item}>
             <span className={styles.stat_label}>정지</span>
-            <span
-              className={`${styles.stat_value} ${styles.value_suspended}`}
-            >
+            <span className={`${styles.stat_value} ${styles.value_suspended}`}>
               {memberStats.suspended}명
             </span>
           </div>
@@ -67,6 +67,15 @@ const AdminMember = ({
             <span className={styles.stat_label}>미접속</span>
             <span className={styles.stat_value}>{memberStats.offline}명</span>
           </div>
+          {/* 회원 목록 엑셀 다운로드 - 우측 끝 배치 */}
+          <button
+            type="button"
+            className={styles.excel_btn}
+            onClick={() => excelDownload("member")}
+          >
+            <FileDownloadOutlinedIcon style={{ fontSize: 16 }} />
+            회원목록 Excel
+          </button>
           <div className={styles.stack_bar_wrap}>
             <div className={styles.stack_bar}>
               {/* 둘 다 있으면 작은쪽 최소 4% 폭 보장, 1% 미만이면 "<1%" 라벨 */}
@@ -356,6 +365,15 @@ const AdminMember = ({
                 >
                   전체보기
                 </button>
+                {/* 해당 회원 로그 전체 엑셀 다운로드 */}
+                <button
+                  type="button"
+                  className={styles.log_excel_btn}
+                  onClick={() => excelDownload("log")}
+                >
+                  <FileDownloadOutlinedIcon style={{ fontSize: 16 }} />
+                  로그 Excel 내보내기
+                </button>
               </section>
             </>
           )}
@@ -387,6 +405,7 @@ const AdminMember = ({
               }}
             >
               <h3>전체기록</h3>
+
               <table>
                 <thead>
                   <tr>

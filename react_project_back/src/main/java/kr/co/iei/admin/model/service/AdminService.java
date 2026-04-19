@@ -1,12 +1,21 @@
 package kr.co.iei.admin.model.service;
 
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
+
 
 import kr.co.iei.admin.model.dao.AdminDao;
 import kr.co.iei.admin.model.vo.AdminLog;
@@ -33,6 +42,12 @@ public class AdminService {
 
 	@Value("${file.root}")
 	private String root;
+	
+	 @Value("${gemini.api.key}")                           
+     private String apiKey;
+	 
+	 @Value("${gemini.api.url}")               
+     private String apiUrl;   
 
 	// ============================== 대시보드 ==============================
 
@@ -257,6 +272,142 @@ public class AdminService {
 	public List<AdminLog> getAdminLogList(String keyword, String action, String sort) {
 		List<AdminLog> adminLogList = adminDao.getAdminLogList(keyword, action, sort);
 		return adminLogList;
+	}
+
+	public List<Log> getLogExcel(String memberId) {
+		List<Log> logList = adminDao.getLogExcel(memberId);
+		return logList;
+	}
+	
+	@Transactional
+	public Map<String, Object> askGemini(List<Map<String, Object>> messages) {
+		RestTemplate restTemplate = new RestTemplate();
+
+		System.out.println("apiKey: " + apiKey);
+        System.out.println("apiUrl: " + apiUrl);
+
+        // 시스템 프롬프트 - 챗봇 성격 지정
+        Map<String, Object> systemInstruction = Map.of(
+            "parts", List.of(Map.of(
+                "text", "너는 map-C 관리자 도우미다. 회원/게시글/신고 관련 질문에 한국어로 간결히 답해라."
+            ))
+        );
+
+        // Gemini 요청 바디 조립
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("systemInstruction", systemInstruction);
+        requestBody.put("contents", messages);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+        // Gemini 호출
+        String url = apiUrl + "?key=" + apiKey;
+        ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
+
+        // 응답에서 content 객체만 꺼내서 리턴 (프론트 messages에 그대로 push 가능한 형태)
+        Map<String, Object> responseBody = response.getBody();
+        List<Map<String, Object>> candidates = (List<Map<String, Object>>) responseBody.get("candidates");
+        Map<String, Object> content = (Map<String, Object>) candidates.get(0).get("content");
+
+        return content; // { role: "model", parts: [{ text: "..." }] }
+
+
+	}
+
+	// Gemini 단발 호출 헬퍼 - 시스템 프롬프트 + 유저 프롬프트 받아서 답변 텍스트만 리턴
+	private String callGeminiOnce(String systemPrompt, String userPrompt) {
+		RestTemplate restTemplate = new RestTemplate();
+
+		Map<String, Object> systemInstruction = Map.of(
+			"parts", List.of(Map.of("text", systemPrompt))
+		);
+
+		// Gemini contents 포맷: [{role:"user", parts:[{text:...}]}]
+		List<Map<String, Object>> contents = List.of(Map.of(
+			"role", "user",
+			"parts", List.of(Map.of("text", userPrompt))
+		));
+
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("systemInstruction", systemInstruction);
+		requestBody.put("contents", contents);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+		String url = apiUrl + "?key=" + apiKey;
+		ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
+
+		Map<String, Object> responseBody = response.getBody();
+		List<Map<String, Object>> candidates = (List<Map<String, Object>>) responseBody.get("candidates");
+		Map<String, Object> content = (Map<String, Object>) candidates.get(0).get("content");
+		List<Map<String, Object>> parts = (List<Map<String, Object>>) content.get("parts");
+		return (String) parts.get(0).get("text");
+	}
+
+	// 공지사항 제목/본문 초안 생성
+	// 응답에서 첫 "제목:" 줄은 title, 그 뒤 본문은 content로 분리
+	public Map<String, String> draftNotice(String topic) {
+		String systemPrompt = "너는 map-C 서비스의 관리자다. 회원 공지사항을 작성한다. 반드시 아래 형식만 지켜 출력하라.\n"
+			+ "제목: [공지 제목 한 줄]\n"
+			+ "[본문을 2~4문단, 공손하고 명료한 어투로 작성. 마크다운/이모지 금지]\n"
+			+ "불필요한 머리말, 설명, 안내 문구는 절대 넣지 말 것.";
+		String userPrompt = "다음 주제로 공지사항 초안을 작성해줘: " + topic;
+
+		String raw = callGeminiOnce(systemPrompt, userPrompt);
+
+		// "제목:" 시작 라인 찾아서 분리
+		String title = "";
+		String content = raw.trim();
+		String[] lines = content.split("\n", 2);
+		if (lines.length >= 1 && lines[0].startsWith("제목:")) {
+			title = lines[0].substring("제목:".length()).trim();
+			content = lines.length > 1 ? lines[1].trim() : "";
+		}
+
+		Map<String, String> result = new HashMap<>();
+		result.put("title", title);
+		result.put("content", content);
+		return result;
+	}
+
+	// 신고 게시글 위반 여부 판단
+	public Map<String, String> analyzeReport(String boardContent, String category, String reason) {
+		String systemPrompt = "너는 map-C 서비스의 관리자 운영 도우미다. 신고된 게시글의 이용약관/커뮤니티 가이드라인 위반 여부를 판단한다.\n"
+			+ "스팸/광고, 욕설/비방, 허위정보, 부적절한 컨텐츠 관점에서 간결히 분석하라.\n"
+			+ "반드시 아래 형식으로 한국어 답변:\n"
+			+ "판단: [위반 / 경계 / 정상 중 택1]\n"
+			+ "근거: [2~3문장 간결하게]\n"
+			+ "권고 조치: [비공개/삭제/경고/정지/조치없음 중 택1 + 이유 한 줄]";
+		String userPrompt = "신고 카테고리: " + category + "\n"
+			+ "신고 사유: " + reason + "\n"
+			+ "대상 게시글 내용:\n" + boardContent;
+
+		String analysis = callGeminiOnce(systemPrompt, userPrompt);
+
+		Map<String, String> result = new HashMap<>();
+		result.put("analysis", analysis);
+		return result;
+	}
+
+	// 회원에게 보낼 경고/정지 메시지 초안 생성
+	public Map<String, String> draftWarning(String category, String action, String extra) {
+		String systemPrompt = "너는 map-C 서비스의 관리자다. 제재 받는 회원에게 보낼 안내 메시지를 작성한다.\n"
+			+ "공손하지만 단호한 톤, 4~6줄 이내, 한국어로만 작성.\n"
+			+ "위반 행위 → 조치 내용 → 재발 방지 당부 순서로 구성.\n"
+			+ "머리말/서명/마크다운 없이 본문만 출력.";
+		String userPrompt = "위반 카테고리: " + category + "\n"
+			+ "조치: " + action + "\n"
+			+ "참고 사유: " + (extra == null ? "" : extra);
+
+		String text = callGeminiOnce(systemPrompt, userPrompt);
+
+		Map<String, String> result = new HashMap<>();
+		result.put("text", text.trim());
+		return result;
 	}
 
 }

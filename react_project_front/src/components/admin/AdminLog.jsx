@@ -1,8 +1,15 @@
 // 시스템 로그 UI 컴포넌트 - 검색/필터 바 + 로그 테이블
 // 데이터/API 처리는 AdminLogPage.jsx에서 담당
 import styles from "./AdminLog.module.css";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 
-const AdminLog = ({ adminLogList, logFilter, changeLogFilter, toggleSort }) => {
+const AdminLog = ({
+  adminLogList,
+  logFilter,
+  changeLogFilter,
+  toggleSort,
+  excelDownload,
+}) => {
   return (
     <>
       <section className={styles.log_wrap}>
@@ -15,6 +22,14 @@ const AdminLog = ({ adminLogList, logFilter, changeLogFilter, toggleSort }) => {
             onChange={changeLogFilter}
             placeholder="관리자/대상ID/신고번호/사유 검색"
           />
+          <button
+            type="button"
+            className={styles.excel_btn}
+            onClick={excelDownload}
+          >
+            <FileDownloadOutlinedIcon style={{ fontSize: 16 }} />
+            관리자 로그 Excel
+          </button>
         </div>
 
         <table className={styles.log_table}>

@@ -73,6 +73,45 @@ const AdminMemberPage = () => {
     }));
   };
 
+  const excelDownload = (type) => {
+    let url = "";
+    let filename = "";
+
+    if (type === "member") {
+      url = "/admins/members-excel";
+      filename = "회원목록.xlsx";
+    } else if (type === "log") {
+      url = `/admins/logs-excel/${selectedMember.memberId}`;
+      filename = `${selectedMember.memberId}_로그.xlsx`;
+    }
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}${url}`, {
+        responseType: "blob",
+      })
+      .then((res) => {
+        console.log(res);
+        // blob 데이터 덩어리에 접근할 수 있는 가짜 url (메모리 상의 가짜 주소)
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        // 클릭용 a태그 생성
+        const a = document.createElement("a");
+        // a태그에 위에서 만든 가짜 url 연결
+        a.href = url;
+        // 다운로드될 파일 이름
+        a.download = filename;
+        // body 어딘가에 a태그 붙임
+        document.body.appendChild(a);
+        // 클릭하면
+        a.click();
+        // a태그 body에서 지워버림
+        document.body.removeChild(a);
+        // url 지우기 (메모리 누수 방지라고 함 spring workbook 닫는거랑 비슷할듯)
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   // 회원 목록 조회 - ALL이면 params에서 제외 (백엔드 required=false)
   const selectMemberList = () => {
     const params = {}; // 빈 객체로 시작
@@ -203,6 +242,7 @@ const AdminMemberPage = () => {
         setIsCommentModalOpen={setIsCommentModalOpen}
         boardNav={boardNav}
         memberStats={memberStats}
+        excelDownload={excelDownload}
       />
     </>
   );

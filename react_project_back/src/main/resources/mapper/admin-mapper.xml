@@ -170,7 +170,7 @@
 		select
 			m.member_id, m.member_name, m.member_nickname,
 			m.member_email, m.member_grade, m.member_thumb,
-			m.member_status, to_char(m.enroll_date, 'YYYY-MM-DD') as enrollDate,
+			m.member_status, to_char(m.enroll_date, 'YYYY-MM-DD') as enrollDate, m.lock_reason, m.lock_until,
 			-- 게시글/댓글/신고 수는 서브쿼리로 각각 카운트
 			(select count(*) from board_tbl b where b.writer_id = m.member_id) as boardCount,
 			(select count(*) from board_comment_tbl c where c.board_comment_writer = m.member_id) as commentCount,
@@ -457,6 +457,23 @@
 			<when test="sort == 'asc'">asc</when>
 			<otherwise>desc</otherwise>
 		</choose>
+	</select>
+	
+	<select id="getLogExcel" resultType="log">
+		select
+			member_log_no,
+			member_id,
+			log_ip,
+			log_time,
+			log_action,
+			log_detail,
+			log_device,
+			log_location,
+			log_result,
+			log_alert
+		from member_log_tbl
+		where member_id = #{memberId}
+		order by log_time desc
 	</select>
 
 </mapper>
