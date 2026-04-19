@@ -68,40 +68,42 @@ const FindId = () => {
   };
 
   return (
-    <div className={styles.find_id_wrap}>
-      <h1 className={styles.page_title}>아이디 찾기 페이지</h1>
-      {/*
+    <div className={styles.total_find_id_container}>
+      <div className={styles.find_id_wrap}>
+        <h1 className={styles.page_title}>아이디 찾기 페이지</h1>
+        {/*
       이메일 인증 컴포넌트에서 이메일 인증이 완료되면 setEmailVerified(true)로
       상태 변경
       */}
 
-      <div className={styles.input_wrap}>
-        <EmailAuth
-          memberEmail={memberEmail}
-          //아이디찾기에서는 업데이트가 아니고 단순히 이메일 인증이기 때문에
-          //setMember({ ...member, memberEmail: email })이런식으로 안 해도 됨.
-          //즉 이메일이 업데이트 되었을 때 다른 정보는 건드리지 말고 이메일 정보만 업데이트 해주게 할 필요가 없음.
-          setMemberEmail={setMemberEmail}
-          onVerified={setEmailVerified}
-        ></EmailAuth>
-      </div>
+        <div className={styles.input_wrap}>
+          <EmailAuth
+            memberEmail={memberEmail}
+            //아이디찾기에서는 업데이트가 아니고 단순히 이메일 인증이기 때문에
+            //setMember({ ...member, memberEmail: email })이런식으로 안 해도 됨.
+            //즉 이메일이 업데이트 되었을 때 다른 정보는 건드리지 말고 이메일 정보만 업데이트 해주게 할 필요가 없음.
+            setMemberEmail={setMemberEmail}
+            onVerified={setEmailVerified}
+          ></EmailAuth>
+        </div>
 
-      <div>
-        {/*disabled={!emailVerified}
+        <div>
+          {/*disabled={!emailVerified}
           이메일 인증이 끝난 이후 아이디 찾기 버튼 누르게 하기를 하려고 했으나
           그게 아니라 이메일 인증이 끝나면 자동으로 회원 아이디가 조회되게 하기 
           하나의 새로운 페이지로 이동하게 하거나 혹은 팜업창을 뜨게 할 수도 있음.
 
           
         */}
-        <div className={styles.btn_wrap}>
-          <button
-            type="button"
-            className={`${styles.find_id_btn} ${!emailVerified ? styles.disabled_btn : ""}`}
-            onClick={handleFindId}
-          >
-            아이디 찾기
-          </button>
+          <div className={styles.btn_wrap}>
+            <button
+              type="button"
+              className={`${styles.find_id_btn} ${!emailVerified ? styles.disabled_btn : ""}`}
+              onClick={handleFindId}
+            >
+              아이디 찾기
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -263,6 +263,16 @@ public class CampaignController {
 		CampaignNotice campNo = campaignService.selectNoticeDetail(campaignNoticeNo);
 		return ResponseEntity.ok(campNo);
 	}
+	@PatchMapping(value="/updateDetailNotice")
+	public ResponseEntity<?> updateDetailNotice(@RequestBody CampaignNotice campNo){
+		int result = campaignService.updateDetailNotice(campNo);
+		return ResponseEntity.ok(result);
+	}
+	@DeleteMapping(value="/{campaignNoticeNo}/deleteNoticeDetail")
+	public ResponseEntity<?> deleteNoticeDetail(@PathVariable Integer campaignNoticeNo){
+		int result = campaignService.deleteNoticeDetail(campaignNoticeNo);
+		return ResponseEntity.ok(result);
+	}
 	
 }
 
