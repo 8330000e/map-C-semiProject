@@ -2,37 +2,39 @@
 // 데이터 조회, 상태 선언 등 모든 로직은 여기서 처리하고
 // AdminReport 컴포넌트에 props로 내려줌
 
-import { createElement, useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import AdminReport from "../../components/admin/AdminReport";
+import { useEffect, useMemo, useRef, useState } from "react";
 import useAuthStore from "../../store/useAuthStore";
 
 const AdminReportPage = () => {
-  const { memberId } = useAuthStore();
-
-  // 신고 목록 전체 (게시글/댓글 신고 모두 포함, 그룹 대표 기준)
+  // 신고 목록 전체 (게시글/댓글 신고 모두 포함)
   const [reportList, setReportList] = useState([]);
 
-  // 신고 목록에서 클릭한 신고 1건 (모달에 신고 상세 표시용)
-  const [selectedReport, setSelectedReport] = useState(null);
+  const { memberId } = useAuthStore();
 
   // 상세보기 모달에서 CommunityDetail 컴포넌트에 넘길 게시글/댓글 데이터
   const [boardDetail, setBoardDetail] = useState({});
 
-  // 그룹 펼침 - 펼쳐진 그룹의 상세 신고 목록 + 현재 펼쳐진 키
-  const [groupList, setGroupList] = useState([]);
-  const [openedKey, setOpenedKey] = useState(null);
-
-  // 모달 open / 원본보기 토글
+  // 모달 열림/닫힘 상태 (true: 열림, false: 닫힘)
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // 신고 목록에서 클릭한 신고 1건 (모달에 신고 상세 표시용)
+  const [selectedReport, setSelectedReport] = useState(null);
+
+  // 원본 보기 버튼 클릭 시 CommunityDetail 컴포넌트 표시 여부
   const [showDetail, setShowDetail] = useState(false);
 
-  // 처리완료 신고의 admin_log + 정지 해제 사유
+  // 처리완료 신고의 admin_log 데이터
   const [adminLog, setAdminLog] = useState(null);
+
   const [logReason, setLogReason] = useState("");
 
-  // 신고 목록 필터 - 유형/카테고리/상태/정렬
+  const [openedKey, setOpenedKey] = useState(null);
+
+  const [groupList, setGroupList] = useState([]);
+
   const [reportFilter, setReportFilter] = useState({
     type: "all",
     category: "all",
@@ -41,20 +43,6 @@ const AdminReportPage = () => {
     sortOrder: "desc",
   });
 
-  // 신고 처리 action - 게시글/댓글/회원 조치 + 사유
-  const [reportAction, setReportAction] = useState({
-    boardAction: "미처리",
-    commentAction: "미처리",
-    memberAction: "미처리",
-    reason: "",
-    lockReason: "",
-  });
-
-  // CommunityDetail이 렌더링된 DOM 요소를 직접 참조
-  // 원본 버튼 클릭 시 이 요소로 스크롤 내리기 위해 사용
-  const detailRef = useRef(null); // 처음엔 아무 요소도 참조하지 않음
-
-  // 신고수 정렬 토글 - 현재 sortBy가 reportCount면 desc/asc 뒤집기, 아니면 desc로 시작
   const toggleCountSort = () => {
     setReportFilter({
       ...reportFilter,
@@ -68,7 +56,6 @@ const AdminReportPage = () => {
     });
   };
 
-  // 신고일 정렬 토글 - 동일 패턴
   const toggleDateSort = () => {
     setReportFilter({
       ...reportFilter,
@@ -79,33 +66,6 @@ const AdminReportPage = () => {
             ? "asc"
             : "desc"
           : "desc",
-    });
-  };
-
-  // 셀렉트 변경 시 reportFilter 상태 업데이트
-  const changeReportFilter = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setReportFilter({ ...reportFilter, [name]: value });
-  };
-
-  // 라디오 변경 시 reportAction 상태 업데이트
-  const changeReportAction = (e) => {
-    const { name, value } = e.target;
-    setReportAction((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // 모달 닫을 때 관련 상태 초기화
-  const resetModal = () => {
-    setIsModalOpen(false);
-    setShowDetail(false);
-    setAdminLog(null);
-    setReportAction({
-      boardAction: "미처리",
-      commentAction: "미처리",
-      memberAction: "미처리",
-      reason: "",
-      lockReason: "",
     });
   };
 
@@ -121,67 +81,36 @@ const AdminReportPage = () => {
     return { total, pending, done, pendingRate, doneRate };
   }, [reportList]);
 
-  // 신고 목록 전체 조회 - 필터 ALL이면 params에서 제외
-  const selectReportList = () => {
-    const params = {
-      sortBy: reportFilter.sortBy,
-      sortOrder: reportFilter.sortOrder,
-    };
-    if (reportFilter.type !== "all") params.type = reportFilter.type;
-    if (reportFilter.category !== "all")
-      params.category = reportFilter.category;
-    if (reportFilter.status !== "all") params.status = reportFilter.status;
+  // CommunityDetail이 렌더링된 DOM 요소를 직접 참조
+  // 원본 버튼 클릭 시 이 요소로 스크롤 내리기 위해 사용
+  const detailRef = useRef(null); // 처음엔 아무 요소도 참조하지 않음
 
-    axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/boards/report`, { params })
-      .then((res) => {
-        setReportList(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const [reportAction, setReportAction] = useState({
+    boardAction: "미처리",
+    commentAction: "미처리",
+    memberAction: "미처리",
+    reason: "",
+    lockReason: "",
+  });
+
+  const changeReportAction = (e) => {
+    const { name, value } = e.target;
+    setReportAction((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 그룹 펼침 - 같은 target_no + target_type 기준 나머지 신고 목록 조회
-  const selectReportGroup = (targetNo, targetType, reportNo) => {
-    axios
-      .get(
-        `${import.meta.env.VITE_BACKSERVER}/boards/reportGroup/${targetNo}/${targetType}/${reportNo}`,
-      )
-      .then((res) => {
-        setGroupList(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const resetModal = () => {
+    setIsModalOpen(false);
+    setShowDetail(false);
+    setAdminLog(null);
+    setReportAction({
+      boardAction: "미처리",
+      commentAction: "미처리",
+      memberAction: "미처리",
+      reason: "",
+      lockReason: "",
+    });
   };
 
-  // 게시글 상세 조회 - 원본 보기 + 모달 열기
-  const selectDetail = (boardNo) => {
-    axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/boards/detail/${boardNo}`)
-      .then((res) => {
-        setBoardDetail(res.data);
-        setIsModalOpen(true); // 모달 열기
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  // 처리완료 신고의 admin_log 조회
-  const selectAdminLog = (reportNo) => {
-    axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/admins/adminLog/${reportNo}`)
-      .then((res) => {
-        setAdminLog(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  // 신고 처리 확정 - 게시글/댓글 조치 + 회원 조치 + admin_log 삽입
   const handleSubmit = (e) => {
     e.preventDefault();
     Swal.fire({
@@ -220,75 +149,34 @@ const AdminReportPage = () => {
     });
   };
 
-  // AI 위반 여부 판단 - 신고 게시글 내용 + 카테고리 + 사유를 Gemini에 보내 분석
-  const analyzeReportByAi = () => {
-    if (!selectedReport) return;
-    const content =
-      (boardDetail?.boardTitle ? boardDetail.boardTitle + "\n\n" : "") +
-      (boardDetail?.boardContent || "");
-    Swal.fire({
-      title: "AI가 분석 중입니다...",
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading(),
-    });
+  const selectReportGroup = (targetNo, targetType, reportNo) => {
     axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/admins/ai/analyze-report`, {
-        content,
-        category: selectedReport.reportCategory || "",
-        reason: selectedReport.reportContent || "",
-      })
+      .get(
+        `${import.meta.env.VITE_BACKSERVER}/boards/reportGroup/${targetNo}/${targetType}/${reportNo}`,
+      )
       .then((res) => {
-        Swal.fire({
-          title: "AI 위반 판단 결과",
-          html: `<pre style="text-align:left; white-space:pre-wrap; font-family:inherit; font-size:13px;">${
-            res.data.analysis || ""
-          }</pre>`,
-          icon: "info",
-          confirmButtonText: "확인",
-          width: 600,
-        });
+        console.log(res);
+        setGroupList(res.data);
       })
       .catch((err) => {
         console.log(err);
-        Swal.fire({ icon: "error", title: "AI 판단에 실패했습니다." });
       });
   };
 
-  // AI 경고/정지 안내 메시지 초안 - lockReason textarea에 채워 넣음
-  const draftWarningByAi = () => {
-    if (!selectedReport) return;
-    const actionText = (() => {
-      const a = reportAction.memberAction;
-      if (a === "경고 처리") return "경고";
-      if (a === "영구정지") return "영구정지";
-      if (a === "1" || a === "3" || a === "7") return `이용 정지 ${a}일`;
-      return "경고";
-    })();
-    Swal.fire({
-      title: "AI가 작성 중입니다...",
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading(),
-    });
+  // 처리완료 신고의 admin_log 조회
+  const selectAdminLog = (reportNo) => {
     axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/admins/ai/warning-draft`, {
-        category: selectedReport.reportCategory || "",
-        action: actionText,
-        extra: reportAction.reason || selectedReport.reportContent || "",
-      })
+      .get(`${import.meta.env.VITE_BACKSERVER}/admins/adminLog/${reportNo}`)
       .then((res) => {
-        Swal.close();
-        setReportAction((prev) => ({
-          ...prev,
-          lockReason: res.data.text || "",
-        }));
+        console.log(res);
+        setAdminLog(res.data);
       })
       .catch((err) => {
         console.log(err);
-        Swal.fire({ icon: "error", title: "AI 작성에 실패했습니다." });
       });
   };
 
-  // 정지 해제 처리 - releaseMember 엔드포인트 호출
+  // 정지 해제 처리
   const handleRelease = (targetId, logReason) => {
     Swal.fire({
       icon: "warning",
@@ -323,7 +211,50 @@ const AdminReportPage = () => {
     });
   };
 
-  // 페이지 진입/필터 변경 시 신고 목록 불러오기
+  // targetType: 'board' 또는 'comment', targetNo: 해당 게시글/댓글 번호
+  const selectDetail = (boardNo) => {
+    // 게시글인 경우 백엔드에서 게시글 상세 데이터 조회
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/boards/detail/${boardNo}`)
+      .then((res) => {
+        console.log(res);
+        setBoardDetail(res.data);
+        setIsModalOpen(true); // 모달 열기
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const changeReportFilter = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setReportFilter({ ...reportFilter, [name]: value });
+  };
+
+  // 신고 목록 전체 조회
+  const selectReportList = () => {
+    const params = {
+      sortBy: reportFilter.sortBy,
+      sortOrder: reportFilter.sortOrder,
+    };
+    if (reportFilter.type !== "all") params.type = reportFilter.type;
+    if (reportFilter.category !== "all")
+      params.category = reportFilter.category;
+    if (reportFilter.status !== "all") params.status = reportFilter.status;
+
+    axios
+      .get(`${import.meta.env.VITE_BACKSERVER}/boards/report`, { params })
+      .then((res) => {
+        console.log(res);
+        setReportList(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // 페이지 진입하자마자 신고 목록 불러오기
   useEffect(() => {
     selectReportList();
   }, [reportFilter]);
@@ -344,34 +275,32 @@ const AdminReportPage = () => {
     <>
       <AdminReport
         reportList={reportList}
+        selectDetail={selectDetail}
+        boardDetail={boardDetail}
+        resetModal={resetModal}
+        isModalOpen={isModalOpen}
         selectedReport={selectedReport}
         setSelectedReport={setSelectedReport}
-        boardDetail={boardDetail}
-        groupList={groupList}
-        openedKey={openedKey}
-        setOpenedKey={setOpenedKey}
-        isModalOpen={isModalOpen}
         showDetail={showDetail}
         setShowDetail={setShowDetail}
-        adminLog={adminLog}
-        logReason={logReason}
-        setLogReason={setLogReason}
-        reportFilter={reportFilter}
-        changeReportFilter={changeReportFilter}
-        toggleCountSort={toggleCountSort}
-        toggleDateSort={toggleDateSort}
+        detailRef={detailRef}
         reportAction={reportAction}
         changeReportAction={changeReportAction}
-        detailRef={detailRef}
-        resetModal={resetModal}
-        selectDetail={selectDetail}
-        selectReportGroup={selectReportGroup}
-        selectAdminLog={selectAdminLog}
         handleSubmit={handleSubmit}
+        adminLog={adminLog}
+        selectAdminLog={selectAdminLog}
         handleRelease={handleRelease}
+        logReason={logReason}
+        setLogReason={setLogReason}
+        setOpenedKey={setOpenedKey}
+        openedKey={openedKey}
+        groupList={groupList}
+        selectReportGroup={selectReportGroup}
         reportStats={reportStats}
-        analyzeReportByAi={analyzeReportByAi}
-        draftWarningByAi={draftWarningByAi}
+        reportFilter={reportFilter}
+        toggleCountSort={toggleCountSort}
+        toggleDateSort={toggleDateSort}
+        changeReportFilter={changeReportFilter}
       />
     </>
   );

@@ -1,8 +1,10 @@
 // 대시보드 페이지 - 서버에서 통계 데이터 받아서 DashBoard 컴포넌트에 props로 넘겨줌
 // 데이터 계산도 여기서 다 처리하고 UI는 DashBoard.jsx에서 담당
+import styles from "./DashBoardPage.module.css";
+
+import DashBoard from "../../components/admin/DashBoard";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import DashBoard from "../../components/admin/DashBoard";
 
 const DashBoardPage = () => {
   // 회원 통계 상태값들
@@ -12,12 +14,9 @@ const DashBoardPage = () => {
   const [thisMonthMember, setThisMonthMember] = useState(null); // 이번달 가입
   const [lastMonthMember, setLastMonthMember] = useState(null); // 저번달 가입
 
-  // 신고 카테고리별 건수 배열 [부적절게시글, 부적절댓글, 스팸, 욕설, 허위, 기타]
+  // 신고 카테고리별 건수 배열 [광고, 욕설, 스팸, 기타]
   const [categoryCount, setCategoryCount] = useState([]); // 카테고리별 총 신고수
   const [pendingReport, setPendingReport] = useState(null); // 미처리 신고수
-
-  // 주간 회원 증가 추이 [4주전, 3주전, 2주전, 1주전]
-  const [weeklyCount, setWeeklyCount] = useState([]);
 
   // 전체 신고 건수 - categoryCount 배열 합산
   const totalReportCount = categoryCount.reduce((a, b) => a + b, 0); // a: 누적값, b: 현재 요소 배열을 순회하면서 누적값을 만들기 0은 초기값
@@ -57,11 +56,14 @@ const DashBoardPage = () => {
     "기타",
   ][maxIndex];
 
-  // 페이지 진입 시 대시보드 통계 한 번에 불러오기
+  // 주간 회원 증가 추이 [4주전, 3주전, 2주전, 1주전]
+  const [weeklyCount, setWeeklyCount] = useState([]);
+
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKSERVER}/admins/dashdata`)
       .then((res) => {
+        console.log(res);
         setTotalMember(res.data.totalMember);
         setTodayMember(res.data.todayMember);
         setYesterdayMember(res.data.yesterdayMember);
@@ -73,6 +75,7 @@ const DashBoardPage = () => {
           res.data.inappropriateComment,
           res.data.spam,
           res.data.hate,
+
           res.data.falseInfo,
           res.data.etc,
         ]);
