@@ -440,7 +440,25 @@ const SaleHistory = () => {
     const displayAmount = Number(item.tradePrice ?? item.amount ?? item.productPrice ?? 0).toLocaleString("ko-KR");
     const saleStatus = isDeliveryPendingTrade(item, tradeInfo) ? "배송대기" : getSaleCardStatus(item);
     const imageUrl = getImageUrl(
-      item.productThumb || item.boardThumb || item.thumb || item.marketThumb || item.thumbnail || tradeInfo?.productThumb,
+      item.productThumb ||
+      item.boardThumb ||
+      item.thumb ||
+      item.marketThumb ||
+      item.thumbnail ||
+      (Array.isArray(item.images) && (item.images[0]?.url || item.images[0])) ||
+      tradeInfo?.productThumb ||
+      tradeInfo?.thumbnail ||
+      tradeInfo?.marketThumb ||
+      (Array.isArray(tradeInfo?.images) && (tradeInfo.images[0]?.url || tradeInfo.images[0])) ||
+      board?.productThumb ||
+      board?.thumb ||
+      board?.boardThumb ||
+      board?.marketThumb ||
+      board?.thumbnail ||
+      board?.mainImage ||
+      board?.marketImage ||
+      (Array.isArray(board?.images) && (board.images[0]?.url || board.images[0])) ||
+      board?.image
     );
 
     const displayTraderName = getDisplayName(item) || getDisplayName(tradeInfo);
