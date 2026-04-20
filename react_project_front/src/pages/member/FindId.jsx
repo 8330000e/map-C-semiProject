@@ -68,27 +68,7 @@ const FindId = () => {
   };
 
   return (
-    <div className={`${styles.total_find_id_container} login_page`}>
-      {/*홈으로 가기 버튼 */}
-      <div
-        className={styles.home_btn}
-        onClick={() => {
-          navigate("/");
-        }}
-      >
-        홈으로 가기
-      </div>
-
-      {/*로그인으로 가기 버튼 */}
-      <div
-        className={styles.login_btn}
-        onClick={() => {
-          navigate("/members/login");
-        }}
-      >
-        로그인으로 가기
-      </div>
-
+    <div className={styles.total_find_id_container}>
       <div className={styles.find_id_wrap}>
         <h1 className={styles.page_title}>아이디 찾기 페이지</h1>
         {/*
