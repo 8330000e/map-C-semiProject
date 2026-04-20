@@ -15,10 +15,11 @@
   background-repeat: no-repeat;
 }
 
+/*헤더의 홈으로 가기 버튼*/
 .home_btn {
   position: fixed;
   top: 20px;
-  left: 30px;
+  left: 30px; /*버튼 위치 잡아주는 녀석*/
   z-index: 10000;
 
   padding: 10px 16px;
@@ -40,12 +41,38 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
+/*헤더의 로그인가기 버튼*/
+.login_btn {
+  position: fixed;
+  top: 20px;
+  right: 30px; /*버튼 위치 잡아주는 녀석*/
+  z-index: 10000;
+
+  padding: 10px 16px;
+
+  background: rgba(45, 90, 39, 0.85);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.login_btn:hover {
+  /*transform: scale(1.1);
+  --> 커서가 버튼에게 향할 떄 버튼이 위로 살짝 움직임
+  */
+  background-color: #3d7a35; /* 마우스 올렸을 때 */
+  transform: translateY(-1px); /* 살짝 위로 뜨는 효과 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
 .find_pw_wrap {
   width: 500px;
   min-height: 65vh;
   margin: 80px auto;
   padding: 50px 35px 180px;
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.5);
   border-radius: 25px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -53,7 +80,7 @@
   position: relative;
   overflow: hidden;
 
-  border: 3px solid lightgreen;
+  border: 1px solid rgba(144, 238, 144, 0.5);
 }
 
 .page_title {
@@ -89,7 +116,7 @@
 .find_pw_btn {
   padding: 10px 20px;
   font-size: 1rem;
-  background-color: #6c63ff;
+  background-color: #5b7252;
   color: #fff;
   border: none;
   border-radius: 6px;
