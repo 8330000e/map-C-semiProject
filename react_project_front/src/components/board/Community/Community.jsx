@@ -416,8 +416,6 @@ const Community = ({
     });
   }, [mode, addr, lnglat, ctpvsgg]);
 
-  useEffect(() => {}, []);
-
   const submitSearch = (e) => {
     e.preventDefault();
     setSearchType(type);
@@ -468,6 +466,7 @@ const Community = ({
         ctpv: ctpvsgg.ctpv,
         sgg: ctpvsgg.sgg,
         addr: addr,
+        memberCo2: calco2.cTotal,
       };
 
       const res = await axios.post(`${BACKSERVER}/boards`, requestData);
@@ -498,6 +497,18 @@ const Community = ({
               "Content-Type": "multipart/form-data",
             },
           });
+
+          await axios
+            .post(
+              `${BACKSERVER}/boards/calco2/${boardNo}&memberId=${memberId}&ctpv=${ctpvsgg.ctpv}&sgg=${ctpvsgg.sgg}`,
+              calco2,
+            )
+            .then((res) => {
+              console.log(res);
+            })
+            .catch((err) => {
+              console.error("탄소계산 데이터 로드 실패", err);
+            });
         }
 
         // ⭐ 추가 (핵심)
@@ -822,6 +833,20 @@ const Community = ({
                           ctpv: "",
                           sgg: "",
                         });
+                        setStep(1);
+                        setCalco2({
+                          cEleA: [],
+                          cEle: 0,
+                          cGasA: [],
+                          cGas: 0,
+                          cRoadA: [],
+                          cRoad: 0,
+                          cWaterA: [],
+                          cWater: 0,
+                          cWasteA: [],
+                          cWaste: 0,
+                          cTotal: 0,
+                        });
                       }}
                     >
                       게시글 작성
@@ -1054,10 +1079,10 @@ const Community = ({
                           )}
                         </div>
                         <div>
-                          {(step === 3 && (
+                          {(step === 4 && (
                             <div className={styles.caltiemtext}>이용시간</div>
                           )) ||
-                            (step === 4 && (
+                            (step === 5 && (
                               <div className={styles.caltiemtext}>횟수</div>
                             )) ||
                             (step < 6 && (
@@ -1113,7 +1138,7 @@ const Community = ({
                                 )}
                               </div>
                               <div>
-                                {step < 6 ? (step === 4 && "번") || "분" : null}
+                                {step < 6 ? (step === 5 && "번") || "분" : null}
                               </div>
                             </div>
                           </div>
@@ -1127,7 +1152,7 @@ const Community = ({
                               cursor: "pointer",
                             }}
                             onClick={() => {
-                              step == 6 && total();
+                              total();
                               if (step > 0 && step < 6) {
                                 setStep(step + 1);
                               } else {

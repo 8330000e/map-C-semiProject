@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +30,7 @@ import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
+import kr.co.iei.board.model.vo.Calco2;
 import kr.co.iei.board.model.vo.Marker;
 import kr.co.iei.board.model.vo.Report;
 import kr.co.iei.member.model.vo.Member;
@@ -79,6 +81,7 @@ public class BoardController {
                 map.put("ctpv", board.getCtpv());
                 map.put("sgg", board.getSgg());
                 map.put("addr", board.getAddr());
+				map.put("memberCo2", board.getMemberCo2());
                 map.put("updatedAt", board.getUpdatedAt());
                 map.put("writerNickname", board.getWriterNickname());
                 map.put("createDate", board.getCreateDate());
@@ -103,6 +106,14 @@ public class BoardController {
         String device = DeviceParser.parse(request.getHeader("User-Agent"));
 	    return boardService.insertBoard(board, ip, device);
 	}
+
+	@PostMapping(value = "/calco2")
+	public ResponseEntity<?> insertCalco2Data(@ModelAttribute Calco2 calco2) {
+		System.out.println("칼카본투:"+calco2);
+		int result = boardService.insertCalco2Data(calco2);
+		return ResponseEntity.ok(result);
+	}
+
 	// 에디터 이미지 업로드 기능임. 업로드된 파일을 서버에 저장하고 URL 경로를 리턴함.
 	@PostMapping("/editor/upload")
 	public String uploadEditorImage(@RequestParam("upfile") MultipartFile upfile) {
