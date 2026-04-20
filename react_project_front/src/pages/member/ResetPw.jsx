@@ -71,72 +71,96 @@ const ResetPw = () => {
   };
 
   return (
-    <div className={styles.reset_pw_wrap}>
-      <h1 className={styles.page_title}>비밀번호 변경 페이지</h1>
-      <form>
-        <div className={styles.input_wrap}>
-          <label htmlFor="memberId" className={styles.label_id}>
-            아이디
-          </label>
-          <input
-            type="text"
-            name="memberId"
-            value={member.memberId}
-            className={styles.input_id}
-            onChange={(e) => setMember({ ...member, memberId: e.target.value })}
-            placeholder="아이디 입력"
-          />
-        </div>
+    <div className={`${styles.total_reset_pw_container} login_page`}>
+      {/*홈으로 가기 버튼 */}
+      <div
+        className={styles.home_btn}
+        onClick={() => {
+          navigate("/");
+        }}
+      >
+        홈으로 가기
+      </div>
 
-        {/* 변경할 비밀번호 */}
-        <div className={styles.input_wrap}>
-          <label htmlFor="newPassword">새 비밀번호</label>
-          <input
-            type="password"
-            id="memberPw"
-            name="memberPw"
-            value={member.memberPw}
-            className={styles.input_pw}
-            onChange={handleNewPwChange}
-            placeholder="새 비밀번호를 입력하세요"
-          />
-        </div>
-        {/* 비밀번호 재입력 
+      {/*로그인으로 가기 버튼 */}
+      <div
+        className={styles.login_btn}
+        onClick={() => {
+          navigate("/members/login");
+        }}
+      >
+        로그인으로 가기
+      </div>
+
+      <div className={styles.reset_pw_wrap}>
+        <h1 className={styles.page_title}>비밀번호 변경 페이지</h1>
+        <form>
+          <div className={styles.input_wrap}>
+            <label htmlFor="memberId" className={styles.label_id}>
+              아이디
+            </label>
+            <input
+              type="text"
+              name="memberId"
+              value={member.memberId}
+              className={styles.input_id}
+              onChange={(e) =>
+                setMember({ ...member, memberId: e.target.value })
+              }
+              placeholder="아이디 입력"
+            />
+          </div>
+
+          {/* 변경할 비밀번호 */}
+          <div className={styles.input_wrap}>
+            <label htmlFor="newPassword">새 비밀번호</label>
+            <input
+              type="password"
+              id="memberPw"
+              name="memberPw"
+              value={member.memberPw}
+              className={styles.input_pw}
+              onChange={handleNewPwChange}
+              placeholder="새 비밀번호를 입력하세요"
+            />
+          </div>
+          {/* 비밀번호 재입력 
           데이터베이스로부터 입력에 따라 값이 변하는 구조라면 
           memberPwRe가 맞지만, 이건 단지 비밀번호 일치 확인용이기 떄문에
           confirmPassword로 이름을 지어줘도 크게 상관없음     
         */}
 
-        <div className={styles.input_wrap}>
-          <label htmlFor="confirmPassword">비밀번호 확인</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            value={memberPwRe}
-            className={styles.input_repw}
-            onChange={handleRePwChange}
-            placeholder="비밀번호를 다시 입력하세요"
-          />
-        </div>
+          <div className={styles.input_wrap}>
+            <label htmlFor="confirmPassword">비밀번호 확인</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={memberPwRe}
+              className={styles.input_repw}
+              onChange={handleRePwChange}
+              placeholder="비밀번호를 다시 입력하세요"
+            />
+          </div>
 
-        {/* 비밀번호 일치 여부 메시지 */}
+          {/* 비밀번호 일치 여부 메시지 */}
 
-        {checkPw === 1 && (
-          <span style={{ color: "green" }}>비밀번호가 일치합니다</span>
-        )}
-        {checkPw === 2 && (
-          <span style={{ color: "red" }}>비밀번호가 일치하지 않습니다</span>
-        )}
+          {checkPw === 1 && (
+            <span style={{ color: "green" }}>비밀번호가 일치합니다</span>
+          )}
+          {checkPw === 2 && (
+            <span style={{ color: "red" }}>비밀번호가 일치하지 않습니다</span>
+          )}
 
-        <button
-          type="submit"
-          className={styles.reset_pw_btn}
-          onClick={requestResetPw}
-        >
-          비밀번호 변경
-        </button>
-      </form>
+          <button
+            type="submit"
+            className={styles.reset_pw_btn}
+            onClick={requestResetPw}
+          >
+            비밀번호 변경
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

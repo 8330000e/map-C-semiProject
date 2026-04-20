@@ -1,18 +1,71 @@
 /*회원가입 디자인 창*/
 /* JoinPage.module.css */
 
-.page_layout {
-  width: 100%;
-  min-height: 100vh; /* 화면 꽉 채우기 */
-  overflow: visible; /* 레이아웃 밖으로 나가는 것 방지 */
+.total_join_container {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999999;
 
   display: flex;
-
   justify-content: center;
-  align-items: flex-start;
-  gap: 40px;
-  padding: 0px;
-  margin: 0px;
+  align-items: center;
+  background-image: url("/images/login_bg_final_clean.png"); /* 배경 이미지 경로 */
+  background-size: cover; /* 화면에 꽉 차게 */
+  background-position: center; /* 중앙 기준 정렬 */
+  background-repeat: no-repeat;
+}
+
+.home_btn {
+  position: fixed;
+  top: 20px;
+  left: 30px;
+  z-index: 10000;
+
+  padding: 10px 16px;
+
+  background: rgba(45, 90, 39, 0.85);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.home_btn:hover {
+  /*transform: scale(1.1);
+  --> 커서가 버튼에게 향할 떄 버튼이 위로 살짝 움직임
+  */
+  background-color: #3d7a35; /* 마우스 올렸을 때 */
+  transform: translateY(-1px); /* 살짝 위로 뜨는 효과 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.login_btn {
+  position: fixed;
+  top: 20px;
+  right: 30px; /*버튼 위치 잡아주는 녀석*/
+  z-index: 10000;
+
+  padding: 10px 16px;
+
+  background: rgba(45, 90, 39, 0.85);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.login_btn:hover {
+  /*transform: scale(1.1);
+  --> 커서가 버튼에게 향할 떄 버튼이 위로 살짝 움직임
+  */
+  background-color: #3d7a35; /* 마우스 올렸을 때 */
+  transform: translateY(-1px); /* 살짝 위로 뜨는 효과 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .left_section {
@@ -41,24 +94,27 @@
   width: 600px;
   margin: 0 auto;
 
-  padding: 60px 40px;
+  padding: 40px 40px 40px;
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
-  border: 3px solid lightgreen;
+  border: 1px solid rgba(144, 238, 144, 0.5);
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   position: relative;
-  margin-top: 40px;
-  margin-bottom: 40px;
+  margin-top: 120px;
+  margin-bottom: 60px;
 
-  /*------------토끼 이미지 설정-----------*/
+  /*------------토끼 이미지 설정
+  
+  
   background-image: url("/images/signup-background-rabbit.png");
   background-repeat: no-repeat;
-  background-position: center bottom; /*센터 아래 배치 이미지를 아래에 배치 설정*/
-  background-size: 100% 600px; /*가로폭에 맞춰 이미지 크기 조정*/
+  background-position: center bottom; 센터 아래 배치 이미지를 아래에 배치 설정
+  background-size: 100% 600px; 가로폭에 맞춰 이미지 크기 조정
+  -----------*/
   /*100% 600px -> 가로는 100%로 채우고 세로는 길이 조절 *?
   /*중요한 점 이미지위에 폼 내용이 오도록 padding 하단을 넉넉히 주기.*/
-  padding-bottom: 140px;
+  padding-bottom: 40px;
 }
 
 /* 폼 내부의 다른 요소들이 이미지 위에 오도록 z-index를 줍니다 */
@@ -68,15 +124,15 @@
 }
 
 .page_title {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   color: #333;
 }
 
 .input_wrap {
-  margin-bottom: 20px;
+  margin-bottom: 12px; /* 항목 간 간격 축소 (20px -> 12px) */
   display: flex;
   flex-direction: column;
 }
@@ -89,7 +145,7 @@
 
 .input_field {
   padding: 10px 12px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   border: 1px solid #ccc;
   border-radius: 6px;
   outline: none;
@@ -98,6 +154,13 @@
 
 .input_field:focus {
   border-color: #6c63ff; /* 포커스 색상 */
+  /* 1. 브라우저 기본 외곽선을 제거 
+    ->외곽선을 제거하지 않으면 포커스 선과 겹치지 않으면서 붕떠보임
+  */
+  outline: none;
+  /* 3. 테두리가 둥근 모서리를 완벽하게 따라가도록 부드러운 그림자 효과를 줍니다 */
+  /* 0 0 0 2px는 테두리처럼 보이게 하는 트릭 */
+  box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.2);
 }
 
 .check_msg {
@@ -116,10 +179,11 @@
   margin-top: 20px;
 }
 
+/*이메일 버튼*/
 .join_btn {
   padding: 10px 20px;
   font-size: 1rem;
-  background-color: #6c63ff;
+  background-color: #5b7252;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -128,7 +192,7 @@
 }
 
 .join_btn:hover {
-  background-color: #5a52d4;
+  background-color: #5b7252;
 }
 
 .sidebar_img {
@@ -156,6 +220,20 @@
   border: 1px solid #ccc;
   font-size: 1rem;
   box-sizing: border-box;
+  /*outline을 제거하면 파란색 외곽선이 사라지는 이유는? 
+  --> 브라우저에서는 자동으로 색을 주는 설정이 있는데 , outline을 설정하게 되면 그 자동으로 색을 주는 설정을 쓰지 않음
+  --> 그래서 색이 사라지는 거임. 따라서 별도로 focus 설정을 해줘야 다시 외곽선에다가 칼라를 줄 수 있음. 
+  */
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+/* 이메일 입력창 포커스 시 스타일 추가 */
+.input_item input:focus {
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.2);
+  /* 부드러운 전환 효과 */
+  transition: all 0.2s ease;
 }
 
 .join_btn {
