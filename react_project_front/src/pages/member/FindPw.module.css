@@ -123,3 +123,13 @@
   cursor: pointer;
   transition: background 0.3s ease;
 }
+
+/* ★ 비활성화(disabled) 상태 디자인 ★ */
+.find_pw_btn:disabled {
+  background-color: #ccc;
+  color: #888888;
+  cursor: not-allowed; /* 마우스 올리면 금지 표시(🚫)가 뜸 */
+  opacity: 0.6; /* 살짝 투명하게 해서 죽어있는 느낌 강조 */
+  box-shadow: none; /* 혹시 있을지 모를 그림자 제거 */
+  pointer-events: none;
+}
