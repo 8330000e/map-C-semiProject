@@ -20,4 +20,5 @@ public class Log {
 	private String logDevice;
 	private String logLocation;
 	private Integer logResult;
+	private String logAlert;
 }
