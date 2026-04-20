@@ -22,6 +22,22 @@ const getSaleStatusLabel = (productStatus) => {
   return "판매중";
 };
 
+const getTradeStatusLabel = (tradeStatus) => {
+  if (tradeStatus === 0 || tradeStatus === "0") return "요청";
+  if (tradeStatus === 1 || tradeStatus === "1") return "진행중";
+  if (tradeStatus === 2 || tradeStatus === "2") return "완료";
+  if (tradeStatus === 3 || tradeStatus === "3") return "취소";
+  if (tradeStatus === 4 || tradeStatus === "4") return "환불";
+  return "판매중";
+};
+
+const getSaleCardStatus = (item) => {
+  if (item?.tradeStatus != null && item.tradeStatus !== "") {
+    return getTradeStatusLabel(item.tradeStatus);
+  }
+  return getSaleStatusLabel(item.status ?? item.productStatus);
+};
+
 const getShippingStatusLabel = (status) => {
   const normalized = String(status ?? "").trim();
   if (!normalized) return "배송전";
@@ -96,6 +112,11 @@ const getShippingStatusValue = (item, tradeInfo) => {
 // 택배 거래인 경우에만 배송대기 여부를 판별함.
 // 택배 거래이면서 송장번호가 없거나 배송상태가 완료가 아니면 배송대기로 보고함.
 const isDeliveryPendingTrade = (item, tradeInfo) => {
+  const tradeStatus = item.tradeStatus ?? tradeInfo?.tradeStatus;
+  if (tradeStatus != null && String(tradeStatus) !== "0" && String(tradeStatus) !== "1") {
+    return false;
+  }
+
   const tradeType = getTradeTypeLabel(item, tradeInfo);
   if (tradeType !== "택배" && tradeType !== "직거래/택배") return false;
 
@@ -121,6 +142,11 @@ const getBoardForMarketNo = (marketNo, boards) => {
 // 화면에 보여줄 배송 상태 텍스트를 계산함.
 // 송장번호가 없으면 무조건 "배송대기"로 표시함.
 const getDisplayShippingStatusLabel = (item, tradeInfo) => {
+  const tradeStatus = item.tradeStatus ?? tradeInfo?.tradeStatus;
+  if (tradeStatus === 2 || tradeStatus === "2") {
+    return "배송완료";
+  }
+
   const shippingStatus = getShippingStatusValue(item, tradeInfo);
   const invoiceNumber = tradeInfo?.invoiceNumber ?? item.invoiceNumber;
   const hasInvoice = Boolean((invoiceNumber ?? "").toString().trim());
@@ -130,13 +156,27 @@ const getDisplayShippingStatusLabel = (item, tradeInfo) => {
   return getShippingStatusLabel(shippingStatus);
 };
 
-const getItemTitle = (item) => {
-  return item.title || item.marketTitle || item.marketName || item.boardTitle || "";
+const getItemTitle = (item, tradeInfo) => {
+  return (
+    item.title ||
+    item.marketTitle ||
+    item.marketName ||
+    item.boardTitle ||
+    item.orderName ||
+    item.productName ||
+    item.productTitle ||
+    item.orderInfo?.orderName ||
+    tradeInfo?.marketTitle ||
+    tradeInfo?.productName ||
+    tradeInfo?.productTitle ||
+    tradeInfo?.orderName ||
+    ""
+  );
 };
 
 const stripStatusTag = (title) => {
   if (!title) return "";
-  return title.replace(/^\s*\[(판매중|거래중|판매완료|예약중)\]\s*/i, "");
+  return title.replace(/^\s*\[(판매중|거래중|판매완료|예약중|배송대기|요청|진행중|취소|환불|완료)\]\s*/i, "");
 };
 
 const getBoardTitleStatus = (item) => {
@@ -265,16 +305,31 @@ const SaleHistory = () => {
     loadTradeInfos();
   }, [memberId, salesHistory, tradeInfoMap]);
 
+  const isBoardCurrentlyTraded = (board) => {
+    return salesHistory.some((item) => {
+      const boardKey = String(board.marketNo ?? board.id ?? "");
+      const itemKey = String(item.marketNo ?? item.id ?? "");
+      const activeTradeStatus = [0, 1, 2, "0", "1", "2"];
+      return boardKey && itemKey && boardKey === itemKey && activeTradeStatus.includes(item.tradeStatus);
+    });
+  };
+
   const sellingItems = useMemo(
-    () => sellerBoards.filter(isBoardSelling),
-    [sellerBoards],
+    () => sellerBoards.filter((board) => isBoardSelling(board) && !isBoardCurrentlyTraded(board)),
+    [sellerBoards, salesHistory],
   );
 
   const deliveryWaitingItems = useMemo(
     () =>
       salesHistory.filter((item) => {
+        // [판매중] 태그가 있는 항목은 판매중으로 처리함
         if (hasSellingTag(item)) return false;
+        // 주문 취소된 거래는 배송대기에서 제외함
+        if (String(item.tradeStatus) === "3") return false;
         const tradeInfo = getTradeInfoForItem(item, tradeInfoMap);
+        // tradeInfo에서도 취소 상태이면 제외함
+        if (String(tradeInfo?.tradeStatus) === "3") return false;
+        // 그 외에는 배송대기인지 별도 함수로 판단함
         return isDeliveryPendingTrade(item, tradeInfo);
       }),
     [salesHistory, tradeInfoMap],
@@ -292,7 +347,8 @@ const SaleHistory = () => {
         if (tradeType === "택배" || tradeType === "직거래/택배") {
           return getDisplayShippingStatusLabel(item, tradeInfo) === "배송완료";
         }
-        return getSaleStatusLabel(item.status ?? item.productStatus ?? item.tradeStatus) === "판매완료";
+        if (item.tradeStatus === 2 || item.tradeStatus === "2") return true;
+        return getSaleStatusLabel(item.status ?? item.productStatus) === "판매완료";
       }),
     [salesHistory, tradeInfoMap],
   );
@@ -364,7 +420,7 @@ const SaleHistory = () => {
     );
   };
 
-  const renderSaleCard = (item) => {
+  const renderSaleCard = (item, index) => {
     const marketNo = item.marketNo ?? item.id;
     const tradeInfo = marketNo ? tradeInfoMap[marketNo] : null;
     const displayShippingStatus = getShippingStatusValue(item, tradeInfo);
@@ -375,19 +431,48 @@ const SaleHistory = () => {
     const hasDelivery = displayTradeType === "택배" || displayTradeType === "직거래/택배";
     const hasShippingInfo = hasDelivery && hasShippingDetails(item, tradeInfo);
     const linkMarketNo = marketNo;
-    const displayTitle = stripStatusTag(getItemTitle(item));
+    const board = getBoardForMarketNo(marketNo, sellerBoards);
+    const displayTitle = stripStatusTag(
+      getItemTitle(item, tradeInfo) || board?.marketTitle || board?.title || board?.boardTitle || board?.marketName || ""
+    );
     const displayDate = item.date
       ? new Date(item.date).toLocaleDateString("ko-KR")
       : item.createdAt
       ? new Date(item.createdAt).toLocaleDateString("ko-KR")
       : "-";
     const displayAmount = Number(item.tradePrice ?? item.amount ?? item.productPrice ?? 0).toLocaleString("ko-KR");
-    const saleStatus = getSaleStatusLabel(item.status ?? item.productStatus ?? item.tradeStatus);
-    const imageUrl = getImageUrl(item.productThumb || item.boardThumb || item.thumb || item.marketThumb || item.thumbnail);
+    const saleStatus = isDeliveryPendingTrade(item, tradeInfo) ? "배송대기" : getSaleCardStatus(item);
+    // 이미지 경로를 여러 필드에서 순서대로 찾아서 사용함.
+    // 판매중 / 배송대기 / 판매완료 항목 모두에서 이미지 경로를 최대한 찾도록 함.
+    const imageUrl = getImageUrl(
+      item.productThumb ||
+      item.boardThumb ||
+      item.thumb ||
+      item.marketThumb ||
+      item.thumbnail ||
+      (Array.isArray(item.images) && (item.images[0]?.url || item.images[0])) ||
+      tradeInfo?.productThumb ||
+      tradeInfo?.thumbnail ||
+      tradeInfo?.marketThumb ||
+      (Array.isArray(tradeInfo?.images) && (tradeInfo.images[0]?.url || tradeInfo.images[0])) ||
+      board?.productThumb ||
+      board?.thumb ||
+      board?.boardThumb ||
+      board?.marketThumb ||
+      board?.thumbnail ||
+      board?.mainImage ||
+      board?.marketImage ||
+      (Array.isArray(board?.images) && (board.images[0]?.url || board.images[0])) ||
+      board?.image
+    );
 
     const displayTraderName = getDisplayName(item) || getDisplayName(tradeInfo);
     return (
-      <Link key={`${marketNo}-${displayTitle}`} to={`/mypage/history/sale/${linkMarketNo}`} className={styles.sale_card}>
+      <Link
+        key={`${item.tradeNo ?? marketNo ?? `sale-${index}`}-${displayTitle}-${index}`}
+        to={`/mypage/history/sale/${linkMarketNo}`}
+        className={styles.sale_card}
+      >
         <div className={styles.sale_card_inner}>
           <div className={styles.sale_card_image_wrap}>
             {imageUrl ? (

@@ -226,20 +226,24 @@ header {
   width: 320px;
   height: 150px;
   background-color: #eef3e8;
+  padding: 10px;
+  padding-left: 10px;
 }
+
 .camp_swiper_wrap {
   width: 280px;
-  height: 130px;
+  height: 105px;
   background-color: #fff;
-  margin: 0px auto;
-  margin-top: 5px;
-  padding: 10px;
+  margin: 2.5px auto;
+  padding: 5px;
+  padding-left: 15px;
   border-radius: 18px;
-  background-image: url("/images/login-background.png"); /* 배경 이미지 경로 */
-  background-size: cover; /* 화면에 꽉 차게 */
-
-  background-position: bottom; /* 중앙 기준 정렬 */
-  background-repeat: no-repeat;
+  /*
+  background-image: url("/images/login-background.png");  배경 이미지 경로
+  background-size: cover;  화면에 꽉 차게
+  background-position: bottom;  중앙 기준 정렬 
+  background-repeat: no-repeat; */
+  background-color: var(--gray8);
 }
 
 .realtime_comment {

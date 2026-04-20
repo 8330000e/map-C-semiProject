@@ -472,6 +472,7 @@ const Main = () => {
 
         <div className="main_content_two">
           <div className="campaign_zone roundBorder">
+            <h4>인기 캠페인</h4>
             <Swiper
               modules={[Autoplay, EffectFade]}
               loop={campList.length > 1} //한번 순환후에 계속 돌건지 여부(false면 안돔)

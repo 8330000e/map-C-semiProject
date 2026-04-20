@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
+import { getSafeImageUrl } from "../../utils/getImageUrl";
 import { getCompletedSaleByMarketNo, removeCompletedPurchaseByMarketNo } from "./orderHistoryStorage";
 import styles from "./SaleHistory.module.css";
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
@@ -92,7 +93,7 @@ const SaleDetail = () => {
 
       const originalTradeType = normalizeTradeType(item.tradeType || item.tradeTypeText);
       const payload = {
-        tradeStatus: 0,
+        tradeStatus: 3,
         shippingStatus: 0,
         tradeType: originalTradeType,
         tradeTypeText: originalTradeType,
@@ -186,7 +187,7 @@ const SaleDetail = () => {
       </div>
     );
   }
-  const saleStatus = getSaleStatusLabel(item.productStatus);
+  const saleStatus = saleOrder?.tradeStatus != null ? getTradeInfoStatusLabel(saleOrder.tradeStatus) : getSaleStatusLabel(item.productStatus);
   const isSeller = saleOrder?.sellerId && saleOrder.sellerId === memberId;
   const itemAddress = item.orderInfo?.address || item.address || "";
   const defaultTradeMethod = tradeTypeLabel(item.tradeType, item.tradeTypeText, item.deliveryMethod, itemAddress);
@@ -413,13 +414,30 @@ const SaleDetail = () => {
           {reviews.length === 0 ? (
             <p>아직 등록된 후기가 없습니다.</p>
           ) : (
-            reviews.map((rev) => (
-              <div key={rev.reviewNo} className={styles.review_card}>
-                <div className={styles.review_score}>★ {rev.rating}</div>
-                <div className={styles.review_meta}>{rev.buyerNickname || rev.buyerId} · {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString("ko-KR") : "-"}</div>
-                <p>{rev.reviewContent}</p>
-              </div>
-            ))
+            reviews.map((rev) => {
+              const imageUrl = getSafeImageUrl(rev.reviewThumb);
+              return (
+                <div key={rev.reviewNo} className={styles.review_card}>
+                  <div className={styles.review_score}>★ {rev.rating}</div>
+                  <div className={styles.review_meta}>{rev.buyerNickname || rev.buyerId} · {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString("ko-KR") : "-"}</div>
+                  <p>{rev.reviewContent}</p>
+                  {imageUrl && (
+                    <div className={styles.review_image_wrap}>
+                      <img
+                        src={imageUrl}
+                        alt="구매자 후기 이미지"
+                        className={styles.review_image}
+                        loading="lazy"
+                        decoding="async"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })
           )}
         </div>
       ) : (

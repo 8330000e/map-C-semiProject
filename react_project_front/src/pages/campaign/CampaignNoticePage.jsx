@@ -32,7 +32,7 @@ const CampaignNotice = () => {
     readList && (
       <div className={styles.camp_notice_wrap}>
         <div className={styles.camp_notice_title}>
-          <h2>공지사항</h2>
+          <h2>캠페인 공지사항</h2>
         </div>
         <div className={styles.camp_notice_content_wrap}>
           <div className={styles.camp_notice_content_title}>

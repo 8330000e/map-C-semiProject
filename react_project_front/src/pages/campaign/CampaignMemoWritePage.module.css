@@ -1,0 +1,43 @@
+.campMemoWrite_wrap {
+  width: 900px;
+  margin: 0px auto;
+}
+.campMemoWrite_title {
+  text-align: center;
+}
+.campMemoWrite_content_wrap {
+  position: relative;
+  margin: 20px;
+  border: 1px solid var(--gray4);
+  border-radius: 18px;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.return_btn {
+  position: absolute;
+  top: -30px;
+  left: 0px;
+  cursor: pointer;
+}
+.return_btn:hover {
+  transform: translateX(-5px);
+  transition-duration: 0.3s;
+}
+.campMemoWrite_img_wrap {
+  width: 400px;
+  height: 260px;
+}
+.campMemoWrite_img_wrap > img {
+  width: 100%;
+  height: 100%;
+}
+.btn_wrap1 {
+  width: 150px;
+}
+.btn_wrap2 {
+  margin-top: 40px;
+  width: 150px;
+  align-self: center;
+}
