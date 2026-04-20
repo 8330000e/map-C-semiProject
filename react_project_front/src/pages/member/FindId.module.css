@@ -9,7 +9,7 @@
 
   /* 배경 설정 */
   background-color: #f8faf7; /* 이미지가 안 뜰 경우를 대비한 기본색 */
-  background-image: url("/images/login_bg_final_clean.png");
+  background-image: url("/images/find_id_bg.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -109,7 +109,7 @@
 .find_id_btn {
   padding: 10px 20px;
   font-size: 1rem;
-  background-color: #6c63ff;
+  background-color: #5b7252;
   color: #fff;
   border: none;
   border-radius: 6px;

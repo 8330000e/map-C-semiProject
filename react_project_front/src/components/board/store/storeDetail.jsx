@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import useAuthStore from "../../../store/useAuthStore";
-import { normalizeImageUrl } from "../../../utils/getImageUrl";
+import { normalizeImageUrl, getSafeImageUrl } from "../../../utils/getImageUrl";
 import userImg from "../../../assets/user.png";
 import styles from "./storeDetail.module.css";
 import storeStyles from "./store.module.css";
@@ -792,7 +792,7 @@ const StoreDetail = () => {
           <div className={styles.comment_list}>
             {transactionReviews.length === 0 && <p>등록된 거래 후기가 없습니다.</p>}
             {transactionReviews.map((comment) => {
-              const imageUrl = getImageUrl(comment.reviewThumb);
+              const imageUrl = getSafeImageUrl(comment.reviewThumb);
               return (
                 <div
                   key={comment.reviewNo}
