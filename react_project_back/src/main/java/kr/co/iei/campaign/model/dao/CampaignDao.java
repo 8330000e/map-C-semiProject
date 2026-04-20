@@ -86,6 +86,10 @@ public interface CampaignDao {
 
 	int selectCampNoticeCount();
 
+	int updateDetailNotice(CampaignNotice campNo);
+
+	int deleteDetailNotice(Integer campaignNoticeNo);
+
 	
 
 }

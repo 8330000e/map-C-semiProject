@@ -88,7 +88,7 @@
 		select total_point from member_point_tbl where member_id=#{memberId}
 	</select>
 	<insert id="insertPointState">
-		insert into point_tbl values(point_no_seq.nextval,#{memberId},#{pointChange},'campaign','캠페인성공보상',sysdate + interval '1' year)
+		insert into point_tbl values(point_seq.nextval,#{memberId},#{pointChange},'campaign','캠페인성공보상',sysdate + interval '1' year)
 	</insert>
 	<update id="updatePoint">
 		update member_point_tbl set total_point = total_point + #{pointChange} where member_id=#{memberId}
@@ -183,4 +183,11 @@
 	<select id="selectCampNoticeCount" resultType="int">
 		select count(*) from campaign_notice_tbl 
 	</select>
+	<update id="updateDetailNotice">
+		update campaign_notice_tbl set campaign_notice_title=#{campaignNoticeTitle} ,campaign_notice_content=#{campaignNoticeContent}
+		where campaign_notice_no = #{campaignNoticeNo}
+	</update>
+	<delete id="deleteDetailNotice">
+		delete campaign_notice_tbl where campaign_notice_no = #{campaignNoticeNo}
+	</delete>
 </mapper>

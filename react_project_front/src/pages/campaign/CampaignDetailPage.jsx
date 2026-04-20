@@ -196,6 +196,14 @@ const CampaignDetailPage = () => {
             <h2>캠페인 상세보기</h2>
           </div>
           <div className={styles.campdetailpage_content_wrap}>
+            <div
+              className={styles.return_btn}
+              onClick={() => {
+                navigate("/campaign/main");
+              }}
+            >
+              {"<" + "돌아가기"}
+            </div>
             <div className={styles.campdetailpage_details_wrap}>
               <div className={styles.campdetailpage_visible_wrap}>
                 <div className={styles.campdetailpage_chart}>
@@ -358,14 +366,14 @@ const CampaignDetailSideBar = ({
         <h4>{campaignDetail.campaignExplanation}</h4>
       </div>
       <div className={styles.campdetailpage_sidebar_btn_wrap}>
-        <Button
+        {/* <Button
           className="btn primary lg"
           onClick={() => {
             navigate("/campaign/main");
           }}
         >
           돌아가기
-        </Button>
+        </Button> */}
         <Button
           className="btn primary lg"
           onClick={(e) => {

@@ -10,10 +10,20 @@
   display: flex;
   gap: 100px;
   width: fit-content;
+  position: relative;
+}
+.return_btn {
+  position: absolute;
+  top: -30px;
+  cursor: pointer;
+}
+.return_btn:hover {
+  transform: translateX(-5px);
+  transition-duration: 0.3s;
 }
 .campdetailpage_details_wrap {
   width: 800px;
-  /* background-color: aqua; */
+  background-color: #eef3e8;
   height: 570px;
   border: 1.5px solid var(--gray4);
   border-radius: 10px;
@@ -74,7 +84,7 @@
 }
 .camp_polygon2.camp_success::after {
   content: "20%";
-  animation-delay: 0.2s;
+  animation-delay: 0.1s;
 }
 .camp_polygon3 {
   position: absolute;
@@ -87,7 +97,7 @@
 }
 .camp_polygon3.camp_success::after {
   content: "30%";
-  animation-delay: 0.4s;
+  animation-delay: 0.2s;
 }
 .camp_polygon4 {
   position: absolute;
@@ -100,7 +110,7 @@
 }
 .camp_polygon4.camp_success::after {
   content: "40%";
-  animation-delay: 0.6s;
+  animation-delay: 0.3s;
 }
 .camp_polygon5 {
   position: absolute;
@@ -113,7 +123,7 @@
 }
 .camp_polygon5.camp_success::after {
   content: "50%";
-  animation-delay: 0.8s;
+  animation-delay: 0.4s;
 }
 .camp_polygon6 {
   position: absolute;
@@ -126,7 +136,7 @@
 }
 .camp_polygon6.camp_success::after {
   content: "60%";
-  animation-delay: 1s;
+  animation-delay: 0.5s;
 }
 .camp_polygon7 {
   position: absolute;
@@ -139,7 +149,7 @@
 }
 .camp_polygon7.camp_success::after {
   content: "70%";
-  animation-delay: 1.2s;
+  animation-delay: 0.6s;
 }
 .camp_polygon8 {
   position: absolute;
@@ -152,7 +162,7 @@
 }
 .camp_polygon8.camp_success::after {
   content: "80%";
-  animation-delay: 1.4s;
+  animation-delay: 0.7s;
 }
 .camp_polygon9 {
   position: absolute;
@@ -165,7 +175,7 @@
 }
 .camp_polygon9.camp_success::after {
   content: "90%";
-  animation-delay: 1.6s;
+  animation-delay: 0.8s;
 }
 .camp_polygon0 {
   position: absolute;
@@ -178,7 +188,7 @@
 }
 .camp_polygon0.camp_success::after {
   content: "성공!";
-  animation-delay: 1.8s;
+  animation-delay: 1.4s;
 }
 
 .camp_success::after {
@@ -213,7 +223,7 @@
 .campdetailpage_sidebar {
   width: 300px;
   padding: 10px;
-  background-color: cadetblue;
+  background-color: #eef3e8;
   border: 1.5px solid var(--gray4);
   border-radius: 10px;
   display: flex;

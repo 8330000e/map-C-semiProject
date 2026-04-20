@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import useAuthStore from "../../store/useAuthStore";
 import styles from "./CampaignNoticeDetailPage.module.css";
+import { Input, TextArea } from "../../components/ui/Form";
+import Swal from "sweetalert2";
 
 const CampaignNoticeDetailPage = () => {
   const { memberId } = useAuthStore();
@@ -11,6 +13,13 @@ const CampaignNoticeDetailPage = () => {
   const navigate = useNavigate();
   const [noticeDetail, setNoticeDetail] = useState(); //공지사항 정보 담는 state
   const [readComplete, setReadComplete] = useState(false); //axios 읽고 return부분 작성하라고 정의한 state
+  const [ifUpdate, setIfUpdate] = useState(true);
+  const [updateNotice, setUpdateNotice] = useState({
+    campaignNoticeNo: campaignNoticeNo,
+    campaignNoticeTitle: "",
+    campaignNoticeContent: "",
+  });
+  const [updateComplete, setUpdateComplete] = useState(false);
   useEffect(() => {
     axios
       .get(
@@ -165,7 +174,7 @@ const CampaignNoticeDetailPage = () => {
                       if (result.isConfirmed) {
                         axios
                           .delete(
-                            `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNoticeNo}/deleteNoticeDetail`,
+                            `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNoticeNo}/deleteDetailNotice`,
                           )
                           .then((res) => {
                             console.log(res.data);
