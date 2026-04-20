@@ -85,6 +85,19 @@ const Header = () => {
     setAvatarError(false);
   }, [memberThumb]);
 
+  useEffect(() => {
+    const checkAlarm = () => {
+      axios
+        .patch(`${import.meta.env.VITE_BACKSERVER}/alarms/checked`, memberId)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+  }, [alarmMode]);
+
   return (
     <>
       <header className={styles.header}>
@@ -170,6 +183,9 @@ const Header = () => {
                       cursor: "pointer",
                     }}
                     onClick={() => setAlarmMode(!alarmMode)}
+                    onClick={() => {
+                      checkAlarm;
+                    }}
                   />
                   {alarmMode ? <Alarm /> : null}
                 </div>
