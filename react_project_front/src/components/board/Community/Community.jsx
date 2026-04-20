@@ -869,7 +869,7 @@ const Community = ({
                                       value={i + 1}
                                       onClick={() => selectCo2("cEleA", i + 1)}
                                       style={{
-                                        backgroundColor: calco2.cEleA.includes(
+                                        backgroundColor: calco2.cEleA?.includes(
                                           i + 1,
                                         )
                                           ? "var(--color1)"
@@ -945,16 +945,39 @@ const Community = ({
                                 {step < 6 && (
                                   <div>
                                     <KeyboardArrowUpOutlinedIcon
+                                      sx={{ cursor: "pointer" }}
                                       onClick={() => {
-                                        setCalco2(value);
+                                        const currentKey = keys?.[step - 1];
+
+                                        if (!currentKey) return;
+
+                                        setCalco2((prev) => {
+                                          const currentCount =
+                                            prev[currentKey] || 0;
+
+                                          return {
+                                            ...prev,
+                                            [currentKey]: currentCount + 1,
+                                          };
+                                        });
                                       }}
                                     />
-                                    <p>{value}</p>
+                                    <p>{calco2[keys[step - 1]] || 0}</p>
                                     <KeyboardArrowDownOutlinedIcon
+                                      sx={{ cursor: "pointer" }}
                                       onClick={() => {
+                                        const currentKey = keys?.[step - 1];
+
+                                        if (!currentKey) return;
+
                                         setCalco2((prev) => {
-                                          const count = prev.keys[step - 1];
-                                          return count > 0 ? count - 1 : 0;
+                                          const currentCount =
+                                            prev[currentKey] || 0;
+
+                                          return {
+                                            ...prev,
+                                            [currentKey]: currentCount - 1,
+                                          };
                                         });
                                       }}
                                     />
