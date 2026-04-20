@@ -275,7 +275,7 @@ const Join = () => {
             
       <img src={joinBg} className={styles.join_img} alt="배경 이미지" />
             */}
-    </div>
+    </div> //페이지 레이아웃
   );
 };
 export default Join;

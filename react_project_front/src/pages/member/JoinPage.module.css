@@ -1,46 +1,18 @@
 /*회원가입 디자인 창*/
 /* JoinPage.module.css */
 
-.total_join_container {
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 999999;
+.page_layout {
+  width: 100%;
+  min-height: 100vh; /* 화면 꽉 채우기 */
+  overflow: visible; /* 레이아웃 밖으로 나가는 것 방지 */
 
   display: flex;
+
   justify-content: center;
-  align-items: center;
-  background-image: url("/images/login_bg_final_clean.png"); /* 배경 이미지 경로 */
-  background-size: cover; /* 화면에 꽉 차게 */
-  background-position: center; /* 중앙 기준 정렬 */
-  background-repeat: no-repeat;
-}
-
-.home_btn {
-  position: fixed;
-  top: 20px;
-  left: 30px;
-  z-index: 10000;
-
-  padding: 10px 16px;
-
-  background: rgba(45, 90, 39, 0.85);
-  color: white;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s ease;
-}
-
-.home_btn:hover {
-  /*transform: scale(1.1);
-  --> 커서가 버튼에게 향할 떄 버튼이 위로 살짝 움직임
-  */
-  background-color: #3d7a35; /* 마우스 올렸을 때 */
-  transform: translateY(-1px); /* 살짝 위로 뜨는 효과 */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  align-items: flex-start;
+  gap: 40px;
+  padding: 0px;
+  margin: 0px;
 }
 
 .login_btn {
@@ -104,11 +76,8 @@
   margin-top: 40px;
   margin-bottom: 40px;
 
-  /*------------토끼 이미지 설정
-  
-  
+  /*------------토끼 이미지 설정-----------*/
   background-image: url("/images/signup-background-rabbit.png");
-  -----------*/
   background-repeat: no-repeat;
   background-position: center bottom; /*센터 아래 배치 이미지를 아래에 배치 설정*/
   background-size: 100% 600px; /*가로폭에 맞춰 이미지 크기 조정*/

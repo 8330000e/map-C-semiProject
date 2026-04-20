@@ -113,6 +113,11 @@
 		where faq_no = #{faqNo}
 	</update>
 
+	<!-- FAQ 삭제 -->
+	<delete id="deleteFaq">
+		delete from faq_tbl where faq_no = #{faqNo}
+	</delete>
+
 	<!--
 		QnA 목록 조회 - 미답변(status=0) 우선, 최신순
 		Oracle 페이지네이션: OFFSET ~ ROWS FETCH NEXT ~ ROWS ONLY
@@ -311,6 +316,8 @@
 		where target_no = #{targetNo} and target_type = #{targetType}
 	</update>
 	
+	<!-- 그룹(target_no + target_type) 내 모든 신고 건에 로그 삽입
+	     → 아코디언의 어떤 하위 신고를 눌러도 처리 내역이 동일하게 조회됨 -->
 	<insert id="insertAdminLog">
 		insert into admin_log_tbl(
 			log_no,
