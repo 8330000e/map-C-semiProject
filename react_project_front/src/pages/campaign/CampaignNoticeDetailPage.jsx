@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import useAuthStore from "../../store/useAuthStore";
 import styles from "./CampaignNoticeDetailPage.module.css";
-import { Input, TextArea } from "../../components/ui/Form";
-import Swal from "sweetalert2";
 
 const CampaignNoticeDetailPage = () => {
   const { memberId } = useAuthStore();
@@ -13,13 +11,6 @@ const CampaignNoticeDetailPage = () => {
   const navigate = useNavigate();
   const [noticeDetail, setNoticeDetail] = useState(); //공지사항 정보 담는 state
   const [readComplete, setReadComplete] = useState(false); //axios 읽고 return부분 작성하라고 정의한 state
-  const [ifUpdate, setIfUpdate] = useState(true);
-  const [updateNotice, setUpdateNotice] = useState({
-    campaignNoticeNo: campaignNoticeNo,
-    campaignNoticeContent: "",
-    campaignNoticeTitle: "",
-  });
-  const [updateComplete, setUpdateComplete] = useState(false);
   useEffect(() => {
     axios
       .get(
@@ -33,7 +24,7 @@ const CampaignNoticeDetailPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [updateComplete]); //캠페인 컨트롤러 마지막 부분에 적혀 있음
+  }, []); //캠페인 컨트롤러 마지막 부분에 적혀 있음
   return (
     memberId &&
     readComplete && (

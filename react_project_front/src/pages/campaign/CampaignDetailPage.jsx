@@ -289,7 +289,6 @@ const CampaignDetailPage = () => {
               />
             </div>
           </div>
-          <h2 className={styles.postBoard_title}>공유게시판</h2>
           <PostBoard
             navigate={navigate}
             inCampaign={inCampaign}
