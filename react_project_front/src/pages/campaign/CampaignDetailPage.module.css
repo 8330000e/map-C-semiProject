@@ -44,9 +44,13 @@
   position: relative;
   width: 450px;
   height: 324px;
-  background-color: var(--gray6);
+  background-color: #6b7280;
   border-radius: 5px;
 }
+.camp_polygon_wrap > h4 {
+  padding: 5px;
+}
+
 .camp_polygon1::after,
 .camp_polygon2::after,
 .camp_polygon3::after,

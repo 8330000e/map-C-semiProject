@@ -29,10 +29,12 @@
   border: 1.5px solid var(--gray4);
   border-radius: 20px;
   padding: 20px;
+  background-color: #eef3e8;
 }
 .camp_settings_content_wrap {
   width: 700px;
   min-height: 600px;
+  background-color: #eef3e8;
 }
 
 /* .camp_settings_content_wrap {

@@ -49,7 +49,7 @@ const CampaignDetailPage = () => {
                   new Date(campaignDetail.campaignStartDate).getTime() -
                   (new Date(campaignDetail.campaignExpireDate) - Date.now()),
               ],
-              backgroundColor: ["#FA9B3B", "#afafaf"],
+              backgroundColor: ["#FA9B3B", "#6b7280"],
             },
           ],
         }

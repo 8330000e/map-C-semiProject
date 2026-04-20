@@ -33,7 +33,7 @@ const CampaignNoticeDetailPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []); //캠페인 컨트롤러 마지막 부분에 적혀 있음
+  }, [updateComplete]); //캠페인 컨트롤러 마지막 부분에 적혀 있음
   return (
     memberId &&
     readComplete && (
@@ -99,50 +99,59 @@ const CampaignNoticeDetailPage = () => {
                 )}
               </div>
               {/* 5. 캠페인 제목 (필요시 추가 노출) */}
-              {noticeDetail.campaignTitle && (
-                <div className={styles.campaign_ref}>
-                  대상 캠페인: {noticeDetail.campaignTitle}
+              <div className={styles.notice_footer2}>
+                {noticeDetail.campaignTitle && (
+                  <div className={styles.campaign_ref}>
+                    대상 캠페인: {noticeDetail.campaignTitle}
+                  </div>
+                )}
+                <div className={styles.update_btn_wrap}>
+                  <button
+                    disabled={ifUpdate}
+                    style={
+                      ifUpdate ? { display: "none" } : { display: "block" }
+                    }
+                    onClick={() => {
+                      axios
+                        .patch(
+                          `${import.meta.env.VITE_BACKSERVER}/campaigns/updateDetailNotice`,
+                          updateNotice,
+                        )
+                        .then((res) => {
+                          console.log(res.data);
+                          if (res.data === 1) {
+                            setUpdateComplete(!updateComplete);
+                            Swal.fire({
+                              title: "수정완료",
+                              text: "공지사항 수정을 완료했습니다.",
+                              icon: "success",
+                            }).then(() => {
+                              setIfUpdate(true);
+                              {
+                                console.log(updateComplete);
+                              }
+                            });
+                          }
+                        })
+                        .catch((err) => {
+                          console.log(err);
+                        });
+                    }}
+                  >
+                    수정확인
+                  </button>
+                  <button
+                    disabled={ifUpdate}
+                    style={
+                      ifUpdate ? { display: "none" } : { display: "block" }
+                    }
+                    onClick={() => {
+                      setIfUpdate(true);
+                    }}
+                  >
+                    취소
+                  </button>
                 </div>
-              )}
-              <div className={styles.update_btn_wrap}>
-                <button
-                  disabled={ifUpdate}
-                  style={ifUpdate ? { display: "none" } : { display: "block" }}
-                  onClick={() => {
-                    axios
-                      .patch(
-                        `${import.meta.env.VITE_BACKSERVER}/campaigns/updateDetailNotice`,
-                        updateNotice,
-                      )
-                      .then((res) => {
-                        console.log(res.data);
-                        if (res.data === 1) {
-                          setUpdateComplete(!updateComplete);
-                          Swal.fire({
-                            title: "수정완료",
-                            text: "공지사항 수정을 완료했습니다.",
-                            icon: "success",
-                          }).then(() => {
-                            setIfUpdate(true);
-                          });
-                        }
-                      })
-                      .catch((err) => {
-                        console.log(err);
-                      });
-                  }}
-                >
-                  수정확인
-                </button>
-                <button
-                  disabled={ifUpdate}
-                  style={ifUpdate ? { display: "none" } : { display: "block" }}
-                  onClick={() => {
-                    setIfUpdate(true);
-                  }}
-                >
-                  취소
-                </button>
               </div>
             </div>
           </div>

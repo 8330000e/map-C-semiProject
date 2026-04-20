@@ -207,12 +207,14 @@ public class CampaignService {
 	@Transactional
 	public int updateCamp(Campaign camp) {
 		int result=0;
+		System.out.println(camp);
 		result = campaignDao.campaignUpdateTblUpdate(camp);
 		System.out.println(camp.getCampaignTitle());
 		System.out.println(result);
 		if(result==1) {
 			int campaignStatus = campaignDao.getOnlyCampaignStatus(camp);
 			System.out.println(campaignStatus);
+//			System.out.println(result);
 			if(campaignStatus == 1) {
 				return 1;
 			}else {
@@ -299,6 +301,7 @@ public class CampaignService {
 
 	public int deleteDetailNotice(Integer campaignNoticeNo) {
 		int result = campaignDao.deleteDetailNotice(campaignNoticeNo);
+		
 		return result;
 	}
 	

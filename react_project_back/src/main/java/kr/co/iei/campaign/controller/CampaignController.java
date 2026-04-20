@@ -225,6 +225,7 @@ public class CampaignController {
 	public ResponseEntity<?> updateCamp(@PathVariable Integer campaignNo,@RequestBody Campaign camp){
 		camp.setCampaignNo(campaignNo);
 		int result = campaignService.updateCamp(camp);
+//		System.out.println(result);
 		return ResponseEntity.ok(result);
 	}
 	@GetMapping(value="/notice")

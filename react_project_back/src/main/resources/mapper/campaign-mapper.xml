@@ -16,6 +16,12 @@
 			   <if test="campaignTitle != null and campaignTitle != '' and searchFilter==2">
 			   		and member_id like '%' || #{campaignTitle} || '%'
 			   </if>
+			   <if test="orderFilter == 3">
+			   		and campaign_status in(1,2)
+			   </if>
+			   <if test="orderFilter==4">
+			   		and campaign_status in(3,4)
+			   </if>
 			   <if test="orderFilter == 1">
 			   		order by campaign_expire_date desc
 			   </if>
@@ -178,6 +184,12 @@
 		</if>
 		<if test ="searchFilter == 2 and campaignTitle != null and campaign_title !=''">
 		   and member_id like '%' || #{campaignTitle} || '%'
+		</if>
+		<if test="orderFilter==3">
+			and campaign_status in(1,2)
+		</if>
+		<if test="orderFilter==4">
+			and campaign_status in(3,4)
 		</if>
 	</select>
 	<select id="selectCampNoticeCount" resultType="int">

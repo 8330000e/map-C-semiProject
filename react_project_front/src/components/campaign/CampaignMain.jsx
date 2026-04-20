@@ -113,6 +113,8 @@ const CampaignMain = () => {
             >
               <option value={1}>최신순</option>
               <option value={2}>오래된순</option>
+              <option value={3}>진행중</option>
+              <option value={4}>종료 캠페인</option>
             </select>
           </div>
         </div>
