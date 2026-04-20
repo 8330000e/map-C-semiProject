@@ -260,6 +260,11 @@
   flex-wrap: wrap; /*컨텐츠 다음으로 넘기는 것*/
   /* box-sizing: border-box; */
 }
+.campaign_pagination {
+  position: absolute;
+  bottom: 30px;
+  left: 550px;
+}
 .board_max_wrap {
   width: 320px;
   height: 300px;

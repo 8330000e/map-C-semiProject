@@ -94,9 +94,16 @@ public class CampaignService {
 		return result;
 	}
 
-	public List<CampaignParticipance> getCampBoardList(Integer campaignNo) {
-		List<CampaignParticipance> campPart = campaignDao.getCampBoardList(campaignNo);
-		return campPart;
+	public Map<String, Object> getCampBoardList(CampaignParticipance camp) {
+		int campaignNo=camp.getCampaignNo();
+		int size = camp.getSize();
+		Integer totalCount = campaignDao.countCampBoardList(campaignNo);
+		int totalPage = (int)(Math.ceil((totalCount / (double)size)));
+		List<CampaignParticipance> campPart = campaignDao.getCampBoardList(camp);
+		Map <String,Object> map = new HashMap<String,Object>();
+		map.put("campPart", campPart);
+		map.put("totalPage",totalPage);
+		return map;
 	}
 
 	public CampaignParticipance getCampBoardDetail(Integer campaignParticipanceNo) {
