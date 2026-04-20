@@ -22,4 +22,5 @@ public class Report {
 	private String targetTitle;
 	private String targetId;
 	private Integer reportCount;
+	private Integer boardNo;
 }

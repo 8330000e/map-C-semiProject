@@ -195,7 +195,8 @@
             C.PARENT_COMMENT_NO AS parentCommentNo,
             C.COMMENT_GROUP AS commentGroup,
             C.COMMENT_DEPTH AS commentDepth,
-            CASE WHEN C.IS_SECRET = 'Y' THEN 1 ELSE 0 END AS isSecret
+            CASE WHEN C.IS_SECRET = 'Y' THEN 1 ELSE 0 END AS isSecret,
+            C.BOARD_COMMENT_STATUS as boardCommentStatus
         FROM BOARD_COMMENT_TBL C
         LEFT JOIN MEMBER_TBL M ON C.BOARD_COMMENT_WRITER = M.MEMBER_ID
         WHERE C.BOARD_NO = #{boardNo}
@@ -524,6 +525,12 @@
 				when r.target_type = 'board' then b.writer_id
 				when r.target_type = 'comment' then c.board_comment_writer
 			end as targetId,
+			<!-- 게시글이면 해당 게시글 번호, 댓글이면 해당 댓글의 게시글 번호 -->	
+			case            
+      			when r.target_type = 'board' then r.target_no                                                                                                     
+      			when r.target_type = 'comment' then c.board_no
+  			end as boardNo,
+			
 			<!-- 바깥 쿼리의 현재 행(r)을 기준으로 report_tbl 원본 전체를 뒤져서 -->
   			<!-- target_no와 target_type이 현재행과 일치하는 신고 수를 세어 reportCount 컬럼으로 붙임 -->     	
 			(select count(*) from report_tbl where target_no = r.target_no and target_type = r.target_type) as reportCount
@@ -538,7 +545,25 @@
  	    <!-- 둘 중 조건에 맞는것만 위 테이블과 합쳐짐 --> 
 		left join board_tbl b on r.target_no = b.board_no and r.target_type = 'board'
 		left join board_comment_tbl c on r.target_no = c.board_comment_no and r.target_type = 'comment'
-		order by r.report_status asc, r.report_date desc
+		<where>
+			<if test="type != null">
+				and r.target_type = #{type}
+			</if>
+			<if test="category != null">
+				and r.report_category = #{category}
+			</if>
+			<if test="status != null">
+				and r.report_status = #{status}
+			</if>
+		</where>
+		<choose>
+			<when test="sortBy == 'reportCount'">
+				order by reportCount ${sortOrder}, r.report_status asc
+			</when>
+			<otherwise>
+				order by r.report_status asc, r.report_date ${sortOrder}
+			</otherwise>
+		</choose>
 	</select>
 	
 	<select id="getGroupList" resultType="report">
@@ -547,13 +572,21 @@
 			r.target_no,
 			r.target_type,
 			r.report_category,
+			r.report_content,
 			r.report_date,
 			r.report_status,
+			(select count(*) from report_tbl where target_no = r.target_no and target_type = r.target_type) as reportCount,
 		case
 			when r.target_type = 'board' then b.writer_id
 			when r.target_type = 'comment' then c.board_comment_writer
-		end as targetId
-		from report_tbl r join board_tbl b on r.target_no = b.board_no
+		end as targetId,
+		<!-- 게시글이면 해당 게시글 번호, 댓글이면 해당 댓글의 게시글 번호 -->	
+		case            
+      		when r.target_type = 'board' then r.target_no                                                                                                     
+      		when r.target_type = 'comment' then c.board_no
+  		end as boardNo
+		from report_tbl r
+		left join board_tbl b on r.target_no = b.board_no and r.target_type = 'board'
 		left join board_comment_tbl c on r.target_no = c.board_comment_no and r.target_type = 'comment'
 		where target_no = #{targetNo} and target_type = #{targetType} and report_no != #{reportNo}
 	</select>

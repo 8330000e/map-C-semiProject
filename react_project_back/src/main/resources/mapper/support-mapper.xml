@@ -20,7 +20,7 @@
 		<where>
 			notice_public = 1
 			<if test="category != null">
-				and notice_category = #{noticeCategory}
+				and notice_category = #{category}
 			</if>
 		</where>
 		order by notice_fixed desc, notice_date desc
