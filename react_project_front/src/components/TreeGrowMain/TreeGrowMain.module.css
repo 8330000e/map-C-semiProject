@@ -339,6 +339,11 @@
   font-weight: 600;
   margin-bottom: 6px;
 }
+.unit {
+  font-size: 0.8em; /* 핵심: 작게 */
+  opacity: 0.6; /* 살짝 흐리게 */
+  margin-left: 2px; /* 숫자랑 간격 */
+}
 
 .waterButton {
   background: #7fbd32;

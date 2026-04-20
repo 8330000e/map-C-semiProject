@@ -58,10 +58,10 @@ public class RegionService {
             case 2: return 1.2; // 서울
             case 3: return 1.0; // 경기
             case 4: return 2.1; // 인천
-            case 5: return 1.6; // 충청
-            case 6: return 1.7; // 전라
-            case 7: return 1.1; // 경상
-            case 8: return 3.0; // 강원
+            case 5: return 3.0; // 강원
+            case 6: return 1.6; // 충청
+            case 7: return 1.7; // 전라
+            case 8: return 1.1; // 경상
             case 9: return 3.0; // 제주
             default: return 1.0;
         }

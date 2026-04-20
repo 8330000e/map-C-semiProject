@@ -47,13 +47,9 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
       인천: 2.1,
       충청: 1.6,
       충청권: 1.6,
-      전라: 1.7,
       전라권: 1.7,
-      경상: 1.1,
       경상권: 1.1,
-      강원: 3.0,
       강원권: 3.0,
-      제주: 3.0,
       제주권: 3.0,
     };
 
@@ -595,7 +591,9 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
               </div>
 
               <span className={styles.waterText}>
-                {regionWater}H2O/{currentStageTarget}H2O
+                {regionWater}
+                <span className={styles.unit}>H2O</span>/{currentStageTarget}
+                <span className={styles.unit}>H2O</span>
               </span>
             </div>
 
