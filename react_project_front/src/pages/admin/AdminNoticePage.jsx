@@ -1,5 +1,6 @@
 // 공지사항 관리 페이지 - 등록/수정/삭제 API 처리 담당, UI는 AdminNotice.jsx에서
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import AdminNotice from "../../components/admin/AdminNotice";
@@ -17,10 +18,27 @@ const emptyNotice = {
 };
 
 const AdminNoticePage = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [isEdit, setIsEdit] = useState(false); // true면 수정 모드, false면 등록 모드
   const [imageFile, setImageFile] = useState(null); // 새로 선택한 이미지 파일
   const [notice, setNotice] = useState({ ...emptyNotice }); // 폼 입력값
   const [noticeList, setNoticeList] = useState([]); // 공지사항 목록
+
+  // 챗봇에서 AI 초안을 들고 넘어온 경우 폼에 자동으로 채워줌
+  useEffect(() => {
+    const draft = location.state?.draft;
+    if (draft) {
+      setNotice({
+        ...emptyNotice,
+        noticeTitle: draft.title || "",
+        noticeContent: draft.content || "",
+      });
+      // history state 지워서 새로고침 시 중복 세팅 방지
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.state]);
 
   // 폼 초기화 - 등록/수정 완료 후 호출
   const resetNoticeForm = () => {

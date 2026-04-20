@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Alias(value="pr")
 public class ProcessReport {
 	private String boardAction;
+	private String commentAction;
 	private String memberAction;
 	private String reason;
 	private Integer reportNo;
