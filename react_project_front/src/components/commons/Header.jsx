@@ -79,6 +79,7 @@ const Header = () => {
     // 페이지 이동이 일어나면 드로어를 자동으로 닫음.
     // 다른 페이지로 이동했을 때 드로어가 그대로 열려 있지 않도록 함.
     setDrawer(false);
+    setAlarmMode(false);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -137,6 +138,7 @@ const Header = () => {
                 <div
                   className={`${styles.profile_item} ${drawer ? styles.drawer_open : styles.drawer_close}`}
                   onClick={() => {
+                    setAlarmMode(false);
                     setDrawer((prev) => !prev);
                   }}
                 >
@@ -169,7 +171,10 @@ const Header = () => {
                       marginTop: 0.5,
                       cursor: "pointer",
                     }}
-                    onClick={() => setAlarmMode(!alarmMode)}
+                    onClick={() => {
+                      setDrawer(false);
+                      setAlarmMode((prev) => !prev);
+                    }}
                   />
                   {alarmMode ? <Alarm /> : null}
                 </div>
