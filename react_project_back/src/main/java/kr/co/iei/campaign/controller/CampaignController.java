@@ -225,6 +225,7 @@ public class CampaignController {
 	public ResponseEntity<?> updateCamp(@PathVariable Integer campaignNo,@RequestBody Campaign camp){
 		camp.setCampaignNo(campaignNo);
 		int result = campaignService.updateCamp(camp);
+//		System.out.println(result);
 		return ResponseEntity.ok(result);
 	}
 	@GetMapping(value="/notice")
@@ -262,6 +263,16 @@ public class CampaignController {
 	public ResponseEntity<?> selectNoticeDetail(@PathVariable Integer campaignNoticeNo){
 		CampaignNotice campNo = campaignService.selectNoticeDetail(campaignNoticeNo);
 		return ResponseEntity.ok(campNo);
+	}
+	@PatchMapping(value="/updateDetailNotice")
+	public ResponseEntity<?> updateDetailNotice(@RequestBody CampaignNotice campNo){
+		int result = campaignService.updateDetailNotice(campNo);
+		return ResponseEntity.ok(result);
+	}
+	@DeleteMapping(value="/{campaignNoticeNo}/deleteDetailNotice")
+	public ResponseEntity<?> deleteNoticeDetail(@PathVariable Integer campaignNoticeNo){
+		int result = campaignService.deleteDetailNotice(campaignNoticeNo);
+		return ResponseEntity.ok(result);
 	}
 	
 }

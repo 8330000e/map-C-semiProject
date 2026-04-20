@@ -3,7 +3,7 @@ import useAuthStore from "../../store/useAuthStore";
 import styles from "./CampaignMemoWritePage.module.css";
 import { useRef, useState } from "react";
 import Button from "../../components/ui/Button";
-import { TextArea } from "../../components/ui/Form";
+import { Input } from "../../components/ui/Form";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { compressImageFile } from "../../utils/compressImage";
@@ -18,6 +18,8 @@ const CampaignMemoWritePage = () => {
   const [writeMemo, setWriteMemo] = useState({
     campaignMemo: "",
   });
+  const [pickImg, setPickImg] = useState(false);
+  const [imageUrl, setImageUrl] = useState();
   const insertMemo = async () => {
     let thumb = ref.current.files && ref.current.files[0];
     console.log(fileExist);
@@ -47,6 +49,7 @@ const CampaignMemoWritePage = () => {
       .then((res) => {
         console.log(res.data);
         if (res.data === 1) {
+          URL.revokeObjectURL(imageUrl);
           Swal.fire({
             title: "파일 삽입 성공",
             icon: "success",
@@ -69,38 +72,68 @@ const CampaignMemoWritePage = () => {
           <h2>메모작성</h2>
         </div>
         <div className={styles.campMemoWrite_content_wrap}>
-          <Button
-            className="btn primary lg"
+          <div
+            className={styles.return_btn}
             onClick={() => {
-              ref.current.click();
+              navigate(`/campaign/detail/${campaignNo}`);
             }}
           >
-            사진선택
-          </Button>
+            {"<" + "돌아가기"}
+          </div>
+          <div className={styles.campMemoWrite_img_wrap}>
+            <img
+              style={pickImg ? { opacity: "1" } : { opacity: "0" }}
+              loading="lazy"
+              decoding="async"
+              alt="캠페인 이미지"
+              src={pickImg ? imageUrl : null}
+            />
+          </div>
+          <div className={styles.btn_wrap1}>
+            <Button
+              className="btn primary sm"
+              onClick={() => {
+                ref.current.click();
+              }}
+            >
+              사진선택
+            </Button>
+          </div>
+
           <input
             type="file"
             ref={ref}
             accept="image/*"
             style={{ display: "none" }}
-            onChange={() => {
-              setFileExist(!fileExist);
+            onChange={(e) => {
+              if (!e.target.files[0]) {
+                return;
+              }
+              setFileExist(true);
+              setPickImg(true);
+              if (imageUrl) {
+                URL.revokeObjectURL(imageUrl); //그거 삭제 시키는 로직(아예 없앰)(없애지 않으면 계속 url이 저장되어 있음)
+              }
+              setImageUrl(URL.createObjectURL(e.target.files[0])); //임시로 URL가져와서 이미지나 파일 띄울수 있는 로직
             }}
           />
-          <input readOnly value={fileExist ? ref.current.value : "없음"} />
+          {/* <input readOnly value={fileExist ? ref.current.value : "없음"} /> */}
           <div>
             <label htmlFor="memoText">작성할 메모</label>
-            <TextArea
+            <Input
               id="memoText"
               name="campaignMemo"
               value={writeMemo.campaignMemo}
               onChange={(e) => {
                 setWriteMemo({ ...writeMemo, [e.target.name]: e.target.value });
               }}
-            ></TextArea>
+            ></Input>
           </div>
-          <Button className="btn primary lg" onClick={insertMemo}>
-            메모 등록
-          </Button>
+          <div className={styles.btn_wrap2}>
+            <Button className="btn primary lg" onClick={insertMemo}>
+              메모 등록
+            </Button>
+          </div>
         </div>
       </div>
     )

@@ -49,7 +49,7 @@ const CampaignDetailPage = () => {
                   new Date(campaignDetail.campaignStartDate).getTime() -
                   (new Date(campaignDetail.campaignExpireDate) - Date.now()),
               ],
-              backgroundColor: ["#FA9B3B", "#afafaf"],
+              backgroundColor: ["#FA9B3B", "#6b7280"],
             },
           ],
         }
@@ -113,7 +113,7 @@ const CampaignDetailPage = () => {
                   return "시간 소진";
                 },
                 label: (context) => {
-                  //이게 출력되는 안쪽의 내용을 바꾸는 설정(내용 커스터마이징))option/plugins/tooltip/callbacks/label/:content
+                  //이게 출력되는 안쪽의 내용을 바꾸는 설정(내용 커스터마이징))option/plugins/tooltip/callbacks/label/:context
                   return "0일";
                 },
               },
@@ -196,6 +196,14 @@ const CampaignDetailPage = () => {
             <h2>캠페인 상세보기</h2>
           </div>
           <div className={styles.campdetailpage_content_wrap}>
+            <div
+              className={styles.return_btn}
+              onClick={() => {
+                navigate("/campaign/main");
+              }}
+            >
+              {"<" + "돌아가기"}
+            </div>
             <div className={styles.campdetailpage_details_wrap}>
               <div className={styles.campdetailpage_visible_wrap}>
                 <div className={styles.campdetailpage_chart}>
@@ -358,14 +366,14 @@ const CampaignDetailSideBar = ({
         <h4>{campaignDetail.campaignExplanation}</h4>
       </div>
       <div className={styles.campdetailpage_sidebar_btn_wrap}>
-        <Button
+        {/* <Button
           className="btn primary lg"
           onClick={() => {
             navigate("/campaign/main");
           }}
         >
           돌아가기
-        </Button>
+        </Button> */}
         <Button
           className="btn primary lg"
           onClick={(e) => {
@@ -506,7 +514,7 @@ const PostBoard = ({
                       <button
                         onClick={() => {
                           navigate(
-                            `/campaign/update/${list.campaignParticipanceNo}`,
+                            `/campaign/update/${list.campaignParticipanceNo}/${campaignNo}`,
                           );
                         }}
                       >

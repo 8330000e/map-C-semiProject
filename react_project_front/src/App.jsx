@@ -185,7 +185,7 @@ function App() {
             element={<CampaignMemoWritePage />}
           />
           <Route
-            path="campaign/update/:campaignParticipanceNo"
+            path="campaign/update/:campaignParticipanceNo/:campaignNo"
             element={<CampaignUpdateDeletePage />}
           ></Route>
           <Route path="/campaign/notice" element={<CampaignNotice />}></Route>
