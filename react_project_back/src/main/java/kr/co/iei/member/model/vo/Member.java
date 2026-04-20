@@ -41,6 +41,9 @@ public class Member {
     private Integer failCount;
     private Integer locationChangeCount;
 
+    // 최근 30분 내 '로그인' 액션 기록이 있으면 1, 없으면 0 (현황판 접속중 집계용)
+    private Integer isOnline;
+
     public Integer getMemberStatus() {
         return memberStatus;
     }

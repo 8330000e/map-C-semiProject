@@ -56,7 +56,6 @@ public class AdminController {
 	@Autowired
 	private AdminService adminService;
 
-	@Autowired
 	private final BCryptPasswordEncoder bcrypt;
 
 	// 파일 업로드 루트 경로 - application.properties에서 가져옴
