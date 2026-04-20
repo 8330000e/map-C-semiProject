@@ -1,6 +1,5 @@
 package kr.co.iei;
 
-import kr.co.iei.utils.AdminInterceptor;
 import kr.co.iei.utils.MemberStatusInterceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 	@Autowired
 	private MemberStatusInterceptor memberStatusInterceptor;
-	@Autowired AdminInterceptor adminInterceptor;
     
     
     
@@ -35,11 +33,11 @@ public class WebConfig implements WebMvcConfigurer {
 	
 	 @Override                                                                                                         
      public void addInterceptors(InterceptorRegistry registry) {                                                     
-         registry.addInterceptor(memberStatusInterceptor)
+         registry.addInterceptor(memberStatusInterceptor) // memberStatusInterceptor 등록
                  .addPathPatterns("/**")           // 모든 요청에 적용
-                 .excludePathPatterns("/members/login", "/admins/**"); // 로그인만 제외 (로그인 로직에 따로 추가해뒀음)       
+                 .excludePathPatterns("/members/login", "/admins/**"); // 로그인만 제외 (로그인 로직에 따로 추가해뒀음) + 관리자도 제외     
          
-         registry.addInterceptor(adminInterceptor)
-         		 .addPathPatterns("/admins/**");
+         registry.addInterceptor(adminInterceptor) // adminInterceptor 등록
+         		 .addPathPatterns("/admins/**"); // 모든 /admin/* 요청에 적용  
      }
 }

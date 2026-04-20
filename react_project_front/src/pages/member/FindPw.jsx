@@ -60,6 +60,17 @@ const FindPw = () => {
       >
         홈으로 가기
       </div>
+
+      {/*로그인으로 가기 버튼 */}
+      <div
+        className={styles.login_btn}
+        onClick={() => {
+          navigate("/members/login");
+        }}
+      >
+        로그인으로 가기
+      </div>
+
       <div className={styles.find_pw_wrap}>
         <h1 className={styles.page_title}>비밀번호 찾기 페이지</h1>
         <div className={styles.input_wrap}>

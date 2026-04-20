@@ -22,8 +22,7 @@ public class MemberStatusInterceptor implements HandlerInterceptor {
 	
 	@Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws 
-Exception {                                                                      
-		System.out.println("인터셉터 진입: " + request.getRequestURI());                                                  
+Exception {                                                                                                                   
 	      
 		// 헤더로 들어오는 토큰 꺼내기 
         String token = request.getHeader("Authorization");                                                            
@@ -41,10 +40,8 @@ Exception {
             if (loginMember != null) {
                 // loginMember에서 memberId 꺼내기                                                                    
                 String memberId = loginMember.getMemberId();   
-                System.out.println("memberId: " + memberId);
  
-                // DB에서 해당 유저의 lock_until, lock_reason, member_status 조회 
-                                                                                         
+                // DB에서 해당 유저의 lock_until, lock_reason, member_status 조회                                            
                 Map<String, Object> map = memberDao.getLockInfo(memberId);  
                 
                                                                                                                       
@@ -61,13 +58,16 @@ Exception {
                         response.setContentType("application/json;charset=UTF-8");                                    
                         // 프론트에서 구분할 수 있도록 "locked": true 응답                                           
                         response.getWriter().write("{\"locked\": true}");                                       
-                        // return false 하는 순간 response 프론트로 날아감                                      
+                        
+                        // return false -> 해당 요청은 컨트롤러로 못넘어감 -> 요청했던 프론트로 돌아가야함 
+                        // 원래라면 요청한 프론트 then, catch로 돌아감 > 프론트에도 인터셉터 넣어둠
+                        // 요청한 쪽 말고 app.jsx의 인터셉터가 가로챔
                         return false;                                                                                 
                     }                                                                                               
                 }                                                                                                     
             }                                                                                                       
         }
-        // 정상 회원이거나 토큰이 없는 요청 → 컨트롤러로 그대로 진행                                              
+        // 정상 회원이거나 토큰이 없는 요청 -> 원래 요청 보냈던 컨트롤러로 그대로 진행                                              
         return true;                                                                                                  
     }                                       
 }
