@@ -62,6 +62,9 @@ const PurchaseDetail = () => {
   const [editReviewId, setEditReviewId] = useState(null);
   const [editRating, setEditRating] = useState(5);
   const [editComment, setEditComment] = useState("");
+  const [editReviewImageUrl, setEditReviewImageUrl] = useState("");
+  const [editReviewImage, setEditReviewImage] = useState(null);
+  const [editOriginalReviewThumb, setEditOriginalReviewThumb] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const myReview = useMemo(
@@ -238,6 +241,38 @@ const PurchaseDetail = () => {
     }
   };
 
+  const onEditFileChange = async (e) => {
+    let file = e.target.files[0];
+    if (!file) return;
+    setEditReviewImage(file);
+
+    if (file.type.startsWith("image/")) {
+      file = await compressImageFile(file, {
+        maxWidth: 1200,
+        maxHeight: 1200,
+        quality: 0.75,
+      });
+    }
+
+    const formData = new FormData();
+    formData.append("upfile", file, file.name);
+
+    try {
+      const res = await axios.post(`${BACKSERVER}/boards/editor/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      const uploadedUrl = getSafeImageUrl(res.data, "board/editor");
+      setEditReviewImageUrl(uploadedUrl || "");
+    } catch (error) {
+      console.error("수정 중 후기 이미지 업로드 실패", error);
+      alert("후기 이미지 업로드에 실패했습니다.");
+      setEditReviewImage(null);
+      setEditReviewImageUrl("");
+    }
+  };
+
   const handleOrderAction = async (actionType) => {
     if (!item?.marketNo || !item?.sellerId) {
       alert("상품 정보가 부족하여 처리할 수 없습니다.");
@@ -329,7 +364,8 @@ const PurchaseDetail = () => {
     setEditReviewId(review.reviewNo);
     setEditRating(review.rating);
     setEditComment(review.reviewContent);
-    setReviewImageUrl(review.reviewThumb || "");
+    setEditOriginalReviewThumb(review.reviewThumb || "");
+    setEditReviewImageUrl(review.reviewThumb || "");
   };
 
   const cancelEditing = () => {
@@ -338,6 +374,9 @@ const PurchaseDetail = () => {
     setEditComment("");
     setReviewImage(null);
     setReviewImageUrl("");
+    setEditReviewImageUrl("");
+    setEditReviewImage(null);
+    setEditOriginalReviewThumb("");
   };
 
   const saveEdit = async () => {
@@ -351,12 +390,12 @@ const PurchaseDetail = () => {
         buyerNickname: item.buyerNickname || loginMemberId,
         rating: editRating,
         reviewContent: editComment,
-        reviewThumb: reviewImageUrl || myReview?.reviewThumb || null,
+        reviewThumb: editReviewImageUrl || editOriginalReviewThumb || null,
       });
       setReviews((prev) =>
         prev.map((rev) =>
           rev.reviewNo === editReviewId
-            ? { ...rev, rating: editRating, reviewContent: editComment, reviewThumb: reviewImageUrl || rev.reviewThumb }
+            ? { ...rev, rating: editRating, reviewContent: editComment, reviewThumb: editReviewImageUrl || rev.reviewThumb }
             : rev,
         ),
       );
@@ -582,6 +621,25 @@ const PurchaseDetail = () => {
                     value={editComment}
                     onChange={(e) => setEditComment(e.target.value)}
                   />
+                  <div className={styles.review_row}>
+                    <label>후기 사진 변경 (선택):</label>
+                    <input type="file" accept="image/*" onChange={onEditFileChange} />
+                    {editReviewImage && <span>{editReviewImage.name}</span>}
+                  </div>
+                  {editReviewImageUrl && (
+                    <div className={styles.review_image_wrap}>
+                      <img
+                        src={getSafeImageUrl(editReviewImageUrl)}
+                        alt="수정 중인 후기 이미지"
+                        className={styles.review_image}
+                        loading="lazy"
+                        decoding="async"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                    </div>
+                  )}
                   <div className={styles.review_actions}>
                     <button className="btn" onClick={saveEdit}>저장</button>
                     <button className="btn" onClick={cancelEditing}>취소</button>
