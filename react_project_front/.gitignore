@@ -39,9 +39,6 @@ dist/
 .env.test.local
 .env.production.local
 
-# Secret application properties
-application-secret.properties
-
 # Logs
 npm-debug.log*
 yarn-debug.log*
