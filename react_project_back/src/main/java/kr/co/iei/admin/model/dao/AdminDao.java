@@ -84,22 +84,6 @@ public interface AdminDao {
 	// 이상기록 카운트 - 최근 24시간 로그인 실패 / 위치변경
 	Map<String, Object> getAnomalyCount(String memberId);
 
-	List<Board> getBoardList(String keyword, String risk, String reportSort, String sort, String memberId);
-
-	int updateBoardStatus(ProcessReport pr);
-
-	int updateCommentStatus(ProcessReport pr);
-
-	int updateMemberStatus(ProcessReport pr);
-
-	int updateReportStatus(ProcessReport pr);
-
-	int insertAdminLog(ProcessReport pr);
-
-	AdminLog selectAdminLog(Integer reportNo);
-
-	List<BoardComment> getCommentList(String memberId);
-
 	// 회원 정지 해제 - lock_until = null, status = 0
 	int releaseMember(String targetId);
 
