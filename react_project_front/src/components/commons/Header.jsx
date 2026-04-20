@@ -52,9 +52,18 @@ const Header = () => {
     });
 
     if (result.isConfirmed) {
-      // 백엔드 호출은 useAuthStore.logout()에서 일괄 처리 (타이머만료/인터셉터 경로와 동일)
-      logout();
-      navigate("/");
+      axios
+        .post(`${import.meta.env.VITE_BACKSERVER}/members/logout/${memberId}`)
+        .then((res) => {
+          console.log(res);
+          logout();
+          navigate("/");
+        })
+        .catch((err) => {
+          console.log(err);
+          logout();
+          navigate("/");
+        });
     }
   };
 

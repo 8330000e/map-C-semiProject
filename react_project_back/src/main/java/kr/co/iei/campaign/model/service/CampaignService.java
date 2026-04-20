@@ -291,6 +291,16 @@ public class CampaignService {
 		
 		return campNo;
 	}
+	@Transactional
+	public int updateDetailNotice(CampaignNotice campNo) {
+		int result = campaignDao.updateDetailNotice(campNo);
+		return result;
+	}
+	@Transactional
+	public int deleteNoticeDetail(Integer campaignNoticeNo) {
+		int result = campaignDao.deleteNoticeDetail(campaignNoticeNo);
+		return result;
+	}
 	
 
 }

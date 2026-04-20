@@ -310,8 +310,8 @@ public class BoardService {
 		Board board = boardDao.getBoardDetail(boardNo);
 		return board;
 	}
-	public List<Report> getReportList(String sortBy, String sortOrder, String type, String category, Integer status) {
-		List<Report> reportList = boardDao.getReportList(sortBy, sortOrder, type, category, status);
+	public List<Report> getReportList() {
+		List<Report> reportList = boardDao.getReportList();
 		return reportList;
 	}
 	// 지역별 게시글 개수를 조회하는 서비스 메서드임.

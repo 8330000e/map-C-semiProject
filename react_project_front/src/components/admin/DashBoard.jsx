@@ -31,10 +31,8 @@ ChartJS.register(
 const DashBoard = ({
   totalMember,
   todayMember,
-  thisMonthMember,
   monthlyGrowthRate,
   dailyGrowthRate,
-  thisMonthRatio,
   monthSign,
   dailySign,
   categoryCount,
@@ -42,6 +40,8 @@ const DashBoard = ({
   totalReportCount,
   maxCategory,
   maxCount,
+  thisMonthMember,
+  thisMonthRatio,
   weeklyCount,
 }) => {
   // 라인 차트 - 주간 회원 증가 추이
@@ -71,7 +71,7 @@ const DashBoard = ({
     labels: [
       "부적절한 게시글",
       "부적절한 댓글",
-      "스팸/광고",
+      "광고/스팸",
       "욕설/비방",
       "허위정보",
       "기타",

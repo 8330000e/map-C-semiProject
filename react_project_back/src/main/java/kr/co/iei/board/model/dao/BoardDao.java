@@ -81,7 +81,7 @@ public interface BoardDao {
 	
 	List<Board> selectCtpvsgg();
 
-	List<Report> getReportList(String sortBy, String sortOrder, String type, String category, Integer status);
+	List<Report> getReportList();
 
 	// 지역별 게시글 개수를 조회하는 DAO 메서드임.
 	// board_tbl과 store_board_tbl을 합쳐서 같은 ctpv/sgg 지역의 게시글 총합을 계산함.

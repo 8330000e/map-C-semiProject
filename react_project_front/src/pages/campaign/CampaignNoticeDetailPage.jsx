@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import useAuthStore from "../../store/useAuthStore";
 import styles from "./CampaignNoticeDetailPage.module.css";
+import { Input, TextArea } from "../../components/ui/Form";
+import Swal from "sweetalert2";
 
 const CampaignNoticeDetailPage = () => {
   const { memberId } = useAuthStore();
@@ -11,6 +13,13 @@ const CampaignNoticeDetailPage = () => {
   const navigate = useNavigate();
   const [noticeDetail, setNoticeDetail] = useState(); //공지사항 정보 담는 state
   const [readComplete, setReadComplete] = useState(false); //axios 읽고 return부분 작성하라고 정의한 state
+  const [ifUpdate, setIfUpdate] = useState(true);
+  const [updateNotice, setUpdateNotice] = useState({
+    campaignNoticeNo: campaignNoticeNo,
+    campaignNoticeContent: "",
+    campaignNoticeTitle: "",
+  });
+  const [updateComplete, setUpdateComplete] = useState(false);
   useEffect(() => {
     axios
       .get(
@@ -24,61 +33,42 @@ const CampaignNoticeDetailPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []); //캠페인 컨트롤러 마지막 부분에 적혀 있음
+  }, [updateComplete]); //캠페인 컨트롤러 마지막 부분에 적혀 있음
   return (
     memberId &&
     readComplete && (
-      <div className={styles.campNoDe_outer_wrap}>
-        <div className={styles.campNoDe_inner_wrap}>
-          <div className={styles.campNoDe_title_wrap}>
-            <h2>캠페인 공지사항</h2>
-          </div>
-
-          <div className={styles.campNoDe_content}>
-            {/* 1. 제목 및 시퀀스 번호 (번호는 작게 표시하거나 숨김 처리 가능) */}
-            <div className={styles.notice_header}>
-              <span className={styles.label_box}>
-                제목:{noticeDetail.campaignNoticeTitle}
-                <small className={styles.notice_no}> #{campaignNoticeNo}</small>
-              </span>
-            </div>
-
-            {/* 2. 작성자 */}
-            <div className={styles.notice_info}>
-              <span className={styles.label_box}>
-                작성자:{noticeDetail.campaignNoticeWriter}
-              </span>
-            </div>
-
-            {/* 3. 본문 내용 (이미지 중앙 흰색 큰 박스) */}
-            <div className={styles.notice_body}>
-              {noticeDetail.campaignNoticeContent}
-            </div>
-
-            {/* 4. 날짜 및 캠페인 제목 (이미지 왼쪽 하단) */}
-            <div className={styles.notice_footer}>
-              <div className={styles.label_box}>
-                작성일:{noticeDetail.campaignNoticeDate}
-              </div>
-              {/* 5. 캠페인 제목 (필요시 추가 노출) */}
-              {noticeDetail.campaignTitle && (
-                <div className={styles.campaign_ref}>
-                  대상 캠페인: {noticeDetail.campaignTitle}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* 닫기 버튼 영역 */}
-          <div className={styles.action_wrap}>
-            <button
-              className={styles.close_btn}
-              onClick={() => navigate(`/campaign/notice`)}
-            >
-              닫기
-            </button>
-          </div>
+      <div className={styles.campNoDe_wrap}>
+        <div className={styles.campNoDe_title_wrap}>
+          <h2>캠페인 공지 상세보기</h2>
         </div>
+        <div className={styles.campNoDe_content}>
+          <div>
+            <div></div>
+          </div>
+          <ul>
+            <li>{campaignNoticeNo}</li>
+            {/* //공지사항 시퀀스 번호 */}
+            <li>{noticeDetail.campaignNoticeTitle}</li>
+            {/* //공지사항 제목 */}
+            <li>{noticeDetail.campaignNoticeContent}</li>
+            {/* //공지사항 내용 */}
+            <li>{noticeDetail.campaignNoticeWriter}</li>
+            {/* //공지사항 작성자(현재 접속한 아이디와 동일시 수정,삭제 가능) */}
+            <li>{noticeDetail.campaignNoticeDate}</li>
+            {/* //공지 등록 날짜 */}
+            <li>{noticeDetail.campaignTitle}</li>
+            {/* //캠페인의 제목(어떤 캠페인의 공지 사항인지)*/}
+          </ul>
+        </div>
+        <Button
+          className="btn primary sm"
+          onClick={() => {
+            navigate(`/campaign/notice`);
+          }}
+        >
+          돌아가기
+        </Button>
+        {/* //공지사항 전체로 가는 버튼 */}
       </div>
     )
   );

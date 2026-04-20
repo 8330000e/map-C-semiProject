@@ -156,7 +156,6 @@ const CommunityDetail = ({
             memberThumb: item.memberThumb,
           })),
         );
-        console.log(res.data);
         setComments(
           loaded.map((item) => ({
             ...item,
@@ -603,11 +602,9 @@ const CommunityDetail = ({
       const isOwn = comment.memberId === memberId;
       const isSecret = isSecretComment(comment);
       const displayText =
-        comment.boardCommentStatus === 1
-          ? "운영 정책에 따라 블라인드 처리된 댓글입니다."
-          : isSecret && !canViewSecretComment(comment)
-            ? "비공개 댓글입니다."
-            : comment.content;
+        isSecret && !canViewSecretComment(comment)
+          ? "비공개 댓글입니다."
+          : comment.content;
       // 댓글 작성자 아바타 URL 처리임.
       // 댓글 작성자의 memberThumb가 있으면 적용하고, 없으면 기본 이미지로 보여줌.
       const commentAvatarUrl =
@@ -689,15 +686,7 @@ const CommunityDetail = ({
               </button>
             </div>
           ) : (
-            <p
-              className={
-                comment.boardCommentStatus === 1
-                  ? styles.commentBlinded
-                  : styles.commentText
-              }
-            >
-              {displayText}
-            </p>
+            <p className={styles.commentText}>{displayText}</p>
           )}
           <div className={styles.commentActions}>
             <button
