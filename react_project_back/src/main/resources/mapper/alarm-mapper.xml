@@ -4,4 +4,7 @@
 	<update id="alarmAllCheck">
 		update alarm_tbl set alarm_check = 1 where member_id = #{memberId}
 	</update>
+	<select id="selectAllAlarm" resultType="Alarm">
+		select * from alarm_tbl where member_id = #{memberId}
+	</select>
 </mapper>
