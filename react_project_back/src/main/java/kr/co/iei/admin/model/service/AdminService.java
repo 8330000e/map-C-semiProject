@@ -29,6 +29,7 @@ import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
+import kr.co.iei.campaign.model.vo.Campaign;
 import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.utils.FileUtils;
 
@@ -137,6 +138,19 @@ public class AdminService {
 	}
 
 	// ============================== 회원 관리 ==============================
+
+	// 승인 대기 캠페인 목록 조회
+	public List<Campaign> selectPendingCampaignList() {
+		List<Campaign> campaignList = adminDao.selectPendingCampaignList();
+		return campaignList;
+	}
+
+	// 캠페인 승인 처리
+	@Transactional
+	public int approveCampaign(Integer campaignNo) {
+		int result = adminDao.approveCampaign(campaignNo);
+		return result;
+	}
 
 	// 회원 목록 조회 - 필터 조건은 mapper에서 동적 쿼리로 처리
 	public List<Member> selectMemberList(Integer status, Integer grade, String keyword) {
