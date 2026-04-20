@@ -77,3 +77,5 @@ Thumbs.db
 # pnpm-lock.yaml
 /.metadata/
 
+application-secret.properties
+.env
