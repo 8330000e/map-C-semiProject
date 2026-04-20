@@ -4,7 +4,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 99999;
+  z-index: 1;
 
   display: flex;
   justify-content: center;
@@ -20,7 +20,7 @@
   position: fixed;
   top: 20px;
   left: 30px; /*버튼 위치 잡아주는 녀석*/
-  z-index: 10000;
+  z-index: 2;
 
   padding: 10px 16px;
 
@@ -46,7 +46,7 @@
   position: fixed;
   top: 20px;
   right: 30px; /*버튼 위치 잡아주는 녀석*/
-  z-index: 10000;
+  z-index: 2;
 
   padding: 10px 16px;
 

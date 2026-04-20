@@ -16,6 +16,7 @@ import {
   Tooltip,
   plugins,
 } from "chart.js";
+import Pagination from "../../components/ui/Pagination";
 
 Chart.register(DoughnutController, ArcElement, Title, Tooltip);
 
@@ -34,6 +35,8 @@ const CampaignDetailPage = () => {
   const [deleteBoard, setDeleteBoard] = useState(false);
   const [banMember, setBanMember] = useState(true);
   const [readBan, setReadBan] = useState(false);
+  const [totalPage, setTotalPage] = useState();
+  const [page, setPage] = useState(0);
   const data =
     readComplete &&
     new Date(campaignDetail.campaignExpireDate).getTime() - Date.now() > 0
@@ -49,7 +52,7 @@ const CampaignDetailPage = () => {
                   new Date(campaignDetail.campaignStartDate).getTime() -
                   (new Date(campaignDetail.campaignExpireDate) - Date.now()),
               ],
-              backgroundColor: ["#FA9B3B", "#afafaf"],
+              backgroundColor: ["#FA9B3B", "#6b7280"],
             },
           ],
         }
@@ -113,7 +116,7 @@ const CampaignDetailPage = () => {
                   return "시간 소진";
                 },
                 label: (context) => {
-                  //이게 출력되는 안쪽의 내용을 바꾸는 설정(내용 커스터마이징))option/plugins/tooltip/callbacks/label/:content
+                  //이게 출력되는 안쪽의 내용을 바꾸는 설정(내용 커스터마이징))option/plugins/tooltip/callbacks/label/:context
                   return "0일";
                 },
               },
@@ -178,11 +181,12 @@ const CampaignDetailPage = () => {
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/campaigns/boards?campaignNo=${campaignNo}`,
+        `${import.meta.env.VITE_BACKSERVER}/campaigns/boards?campaignNo=${campaignNo}&page=${page}&size=6`,
       )
       .then((res) => {
         // console.log(res.data);
-        setBoardList([...res.data]);
+        setBoardList([...res.data.campPart]);
+        setTotalPage(res.data.totalPage);
       })
       .catch((err) => {
         console.log(err);
@@ -196,6 +200,14 @@ const CampaignDetailPage = () => {
             <h2>캠페인 상세보기</h2>
           </div>
           <div className={styles.campdetailpage_content_wrap}>
+            <div
+              className={styles.return_btn}
+              onClick={() => {
+                navigate("/campaign/main");
+              }}
+            >
+              {"<" + "돌아가기"}
+            </div>
             <div className={styles.campdetailpage_details_wrap}>
               <div className={styles.campdetailpage_visible_wrap}>
                 <div className={styles.campdetailpage_chart}>
@@ -290,6 +302,9 @@ const CampaignDetailPage = () => {
             </div>
           </div>
           <PostBoard
+            totalPage={totalPage}
+            setPage={setPage}
+            page={page}
             navigate={navigate}
             inCampaign={inCampaign}
             campaignNo={campaignNo}
@@ -358,14 +373,14 @@ const CampaignDetailSideBar = ({
         <h4>{campaignDetail.campaignExplanation}</h4>
       </div>
       <div className={styles.campdetailpage_sidebar_btn_wrap}>
-        <Button
+        {/* <Button
           className="btn primary lg"
           onClick={() => {
             navigate("/campaign/main");
           }}
         >
           돌아가기
-        </Button>
+        </Button> */}
         <Button
           className="btn primary lg"
           onClick={(e) => {
@@ -463,6 +478,9 @@ const PostBoard = ({
   boardList,
   deleteBoard,
   setDeleteBoard,
+  totalPage,
+  page,
+  setPage,
 }) => {
   return (
     boardList && (
@@ -506,7 +524,7 @@ const PostBoard = ({
                       <button
                         onClick={() => {
                           navigate(
-                            `/campaign/update/${list.campaignParticipanceNo}`,
+                            `/campaign/update/${list.campaignParticipanceNo}/${campaignNo}`,
                           );
                         }}
                       >
@@ -565,6 +583,7 @@ const PostBoard = ({
             </div>
           );
         })}
+
         <button
           className={styles.board_btn}
           disabled={isCreator ? !dateOut : !inCampaign || !dateOut} //현재 캠페인 생성자가 못건드림(생성자를 campaign_member_tbl에 추가시켜야 할 것 같음)
@@ -574,6 +593,14 @@ const PostBoard = ({
         >
           메모등록
         </button>
+        <div className={styles.campaign_pagination}>
+          <Pagination
+            page={page}
+            totalPage={totalPage}
+            setPage={setPage}
+            naviSize={6}
+          />
+        </div>
       </div>
     )
   );

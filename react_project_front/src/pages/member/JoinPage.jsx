@@ -33,18 +33,32 @@ const Join = () => {
   //비밀번호 일치여부 상태를 확인 하는 것
   const [checkPw, setCheckPw] = useState(0);
 
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
+
   //아이디 중복 체크
   const ipDupCheck = async () => {
-    if (!member.memberId) return;
+    if (!member.memberId) {
+      setCheckId(0); // 아이디 입력 없으면 초기화
+      return;
+    }
 
     try {
       const res = await axios.get(
         `${import.meta.env.VITE_BACKSERVER}/members/exists?memberId=${member.memberId}`,
       );
-      // res.data가 true(중복)면 1, false(사용가능)면 2
-      setCheckId(res.data ? 1 : 2);
+
+      // res.data가 true면 중복된 아이디가 있음 -> 1 (사용불가)
+      // res.data가 false면 아이디가 없음 -> 2 (사용가능)
+      if (res.data === true) {
+        setCheckId(1); // 중복됨
+      } else {
+        setCheckId(2); // 사용가능
+      }
+
+      console.log("중복 체크 결과:", res.data, "상태값:", res.data ? 1 : 2);
     } catch (err) {
       console.error("아이디 중복 체크 에러:", err);
+      setCheckId(0);
     }
   };
 
@@ -77,9 +91,22 @@ const Join = () => {
   const JoinMember = async (e) => {
     e.preventDefault();
 
+    // 중복 클릭 방지 체크
+    if (isLoading) return;
+
     // 아이디 중복 체크, 비밀번호 일치 여부, 이메일 인증 여부, 필수 입력값 체크 등 모든 검증 통과 여부 확인
-    if (checkId !== 2) {
-      await errorAlert("아이디 중복", "아이디중복체크");
+    if (!member.memberId) {
+      await errorAlert("입력 누락", "아이디를 입력해주세요.");
+      return;
+    }
+
+    if (checkId === 1) {
+      await errorAlert("중복 아이디", "이미 사용 중인 아이디입니다.");
+      return;
+    }
+
+    if (checkId === 0) {
+      await errorAlert("중복 확인", "아이디 중복 검사를 진행해주세요.");
       return;
     }
 
@@ -106,13 +133,14 @@ const Join = () => {
       return;
     }
 
+    setIsLoading(true); // 로딩 시작!
     // 회원가입 요청을 서버로 전달하는 부분
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_BACKSERVER}/members`,
         member,
       );
-      console.log(res.data);
+      console.log("아이디 중복 체크 결과:", res.data);
 
       await successAlert("회원가입 성공", "로그인 페이지로 이동합니다");
       navigate("/members/login");
@@ -121,6 +149,10 @@ const Join = () => {
       const errMsg =
         err.response?.data?.message || "회원가입 중 오류가 발생했습니다.";
       await errorAlert("회원가입 중 오류", errMsg);
+    } finally {
+      // 성공해서 navigate로 떠나면 다행이지만,
+      // 실패했을 경우엔 버튼을 다시 살려줘야 하므로 false 처리
+      setIsLoading(false);
     }
   };
 
@@ -231,7 +263,7 @@ const Join = () => {
             <input
               type="text"
               name="memberNickname"
-              id="memberNickname "
+              id="memberNickname"
               value={member.memberNickname}
               onChange={inputMember}
               className={styles.input_field}
@@ -256,8 +288,9 @@ const Join = () => {
               type="button"
               className={styles.join_btn}
               onClick={JoinMember}
+              disabled={isLoading} // 로딩 중이면 클릭 차단!
             >
-              회원가입
+              {isLoading ? "처리 중..." : "회원가입"}
             </button>
           </div>
         </form>

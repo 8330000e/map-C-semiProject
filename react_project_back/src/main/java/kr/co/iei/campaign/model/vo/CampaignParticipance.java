@@ -18,5 +18,7 @@ public class CampaignParticipance {
 	private String campaignMemoUploadDate;
 	private String campaignExpireDate;
 	private String memberId;
-	
+	private Integer size;
+	private Integer page;
+	private Integer totalPage;
 }

@@ -110,9 +110,13 @@ public class CampaignController {
 		return ResponseEntity.ok(result);
 	}
 	@GetMapping(value="/boards")
-	public ResponseEntity<?> getCampBoardList(@RequestParam Integer campaignNo){
-		List<CampaignParticipance> campPart = campaignService.getCampBoardList(campaignNo);
-		return ResponseEntity.ok(campPart);
+	public ResponseEntity<?> getCampBoardList(@RequestParam Integer campaignNo,@RequestParam Integer size,@RequestParam Integer page){
+		CampaignParticipance camp = new CampaignParticipance();
+		camp.setPage(page);
+		camp.setSize(size);
+		camp.setCampaignNo(campaignNo);
+		Map <String,Object> map = campaignService.getCampBoardList(camp);
+		return ResponseEntity.ok(map);
 	}
 	@GetMapping(value="/board/{campaignParticipanceNo}")
 	public ResponseEntity<?> getCampBoardDetail(@PathVariable Integer campaignParticipanceNo){
@@ -225,6 +229,7 @@ public class CampaignController {
 	public ResponseEntity<?> updateCamp(@PathVariable Integer campaignNo,@RequestBody Campaign camp){
 		camp.setCampaignNo(campaignNo);
 		int result = campaignService.updateCamp(camp);
+//		System.out.println(result);
 		return ResponseEntity.ok(result);
 	}
 	@GetMapping(value="/notice")
@@ -262,6 +267,16 @@ public class CampaignController {
 	public ResponseEntity<?> selectNoticeDetail(@PathVariable Integer campaignNoticeNo){
 		CampaignNotice campNo = campaignService.selectNoticeDetail(campaignNoticeNo);
 		return ResponseEntity.ok(campNo);
+	}
+	@PatchMapping(value="/updateDetailNotice")
+	public ResponseEntity<?> updateDetailNotice(@RequestBody CampaignNotice campNo){
+		int result = campaignService.updateDetailNotice(campNo);
+		return ResponseEntity.ok(result);
+	}
+	@DeleteMapping(value="/{campaignNoticeNo}/deleteDetailNotice")
+	public ResponseEntity<?> deleteNoticeDetail(@PathVariable Integer campaignNoticeNo){
+		int result = campaignService.deleteDetailNotice(campaignNoticeNo);
+		return ResponseEntity.ok(result);
 	}
 	
 }
