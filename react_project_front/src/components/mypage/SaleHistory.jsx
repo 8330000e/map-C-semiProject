@@ -322,11 +322,14 @@ const SaleHistory = () => {
   const deliveryWaitingItems = useMemo(
     () =>
       salesHistory.filter((item) => {
+        // [판매중] 태그가 있는 항목은 판매중으로 처리함
         if (hasSellingTag(item)) return false;
-        // 취소된 거래는 배송대기에서 제외
+        // 주문 취소된 거래는 배송대기에서 제외함
         if (String(item.tradeStatus) === "3") return false;
         const tradeInfo = getTradeInfoForItem(item, tradeInfoMap);
+        // tradeInfo에서도 취소 상태이면 제외함
         if (String(tradeInfo?.tradeStatus) === "3") return false;
+        // 그 외에는 배송대기인지 별도 함수로 판단함
         return isDeliveryPendingTrade(item, tradeInfo);
       }),
     [salesHistory, tradeInfoMap],
@@ -439,6 +442,8 @@ const SaleHistory = () => {
       : "-";
     const displayAmount = Number(item.tradePrice ?? item.amount ?? item.productPrice ?? 0).toLocaleString("ko-KR");
     const saleStatus = isDeliveryPendingTrade(item, tradeInfo) ? "배송대기" : getSaleCardStatus(item);
+    // 이미지 경로를 여러 필드에서 순서대로 찾아서 사용함.
+    // 판매중 / 배송대기 / 판매완료 항목 모두에서 이미지 경로를 최대한 찾도록 함.
     const imageUrl = getImageUrl(
       item.productThumb ||
       item.boardThumb ||
