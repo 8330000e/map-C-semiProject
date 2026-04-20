@@ -90,7 +90,3 @@ react_project_back/C:/Temp/upload/semiproject/board/editor/**
 .DS_Store
 Thumbs.db
 react_project_back/semiproject-carbon-firebase-adminsdk-fbsvc-8a2adcca0b.json
-
-# API Keys and Secrets
-react_project_back/src/main/resources/application-secret.properties
-application-secret.properties

@@ -62,7 +62,6 @@ const MapCommunityPage = () => {
           <ArrowBackIosOutlinedIcon />
           <span>메인으로 돌아가기</span>
         </div>
-        ㅣ
       </div>
       <div className={styles.container}>
         <div className={styles.left}>
@@ -269,7 +268,7 @@ const Map = ({
 
     fetchRegionChart();
   }, [ctpvsgg]);
-  console.log("마커 리스트:", markerList);
+  // console.log("마커 리스트:", markerList);
   mapMarkerList = { ...markerList };
   //console.log("마커 리스트:", markerList);
 

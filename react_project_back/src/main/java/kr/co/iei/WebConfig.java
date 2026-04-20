@@ -1,6 +1,5 @@
 package kr.co.iei;
 
-import kr.co.iei.utils.AdminInterceptor;
 import kr.co.iei.utils.MemberStatusInterceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 	@Autowired
 	private MemberStatusInterceptor memberStatusInterceptor;
-	@Autowired AdminInterceptor adminInterceptor;
     
     
     
