@@ -1,6 +1,7 @@
 // 회원 관리 UI 컴포넌트 - 왼쪽 목록 + 오른쪽 상세 2단 레이아웃
 // 데이터/API 처리는 AdminMemberPage.jsx에서 담당
 
+import { useEffect, useRef } from "react";
 import styles from "./AdminMember.module.css";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 
@@ -39,6 +40,26 @@ const AdminMember = ({
   memberStats,
   excelDownload,
 }) => {
+  // 전체 로그 모달 스크롤 컨테이너 ref - 컨텐츠가 안 넘치면 다음 페이지 자동 로드
+  const logModalRef = useRef(null);
+
+  useEffect(() => {
+    // 모달 닫힘 / 로그 없음 / 20의 배수 아님(마지막 페이지) → 스킵
+    if (!isLogModalOpen) return;
+    if (logList.length === 0) return;
+    if (logList.length % 20 !== 0) return;
+
+    const el = logModalRef.current;
+    if (!el) return;
+
+    // 컨텐츠가 컨테이너보다 작으면 스크롤 안 생김 → onScroll 안 터짐 → 수동으로 다음 페이지 호출
+    if (el.scrollHeight <= el.clientHeight) {
+      const nextPage = logPage + 1;
+      setLogPage(nextPage);
+      selectLogList(selectedMember.memberId, nextPage);
+    }
+  }, [logList, isLogModalOpen]);
+
   return (
     <>
       <div className={styles.member_wrap}>
@@ -388,6 +409,7 @@ const AdminMember = ({
             }}
           >
             <div
+              ref={logModalRef}
               className={styles.modal_content}
               onClick={(e) => {
                 e.stopPropagation(); // 모달 내부 클릭 시 닫힘 방지 (모달 콘텐츠 영역은 클릭해도 닫히지 않음)
