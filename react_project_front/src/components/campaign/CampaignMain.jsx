@@ -68,13 +68,14 @@ const CampaignMain = () => {
   return (
     readComplete && (
       <div className={styles.campaignmain_wrap}>
-        <button
+        <div
+          className={styles.return_btn}
           onClick={() => {
             navigate(`/`);
           }}
         >
-          돌아가기
-        </button>
+          {"<" + "돌아가기"}
+        </div>
         <div className={styles.campaignmain_title_wrap}>
           <h2>캠페인 참여화면</h2>
           <div>

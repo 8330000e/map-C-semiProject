@@ -506,7 +506,7 @@ const PostBoard = ({
                       <button
                         onClick={() => {
                           navigate(
-                            `/campaign/update/${list.campaignParticipanceNo}`,
+                            `/campaign/update/${list.campaignParticipanceNo}/${campaignNo}`,
                           );
                         }}
                       >

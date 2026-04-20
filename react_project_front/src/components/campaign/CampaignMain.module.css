@@ -18,11 +18,16 @@
 .campaignmain_title_wrap > div {
   display: flex;
   width: 500px;
+  gap: 5px;
 }
 .campaignmain_title_wrap > div > label {
   width: 30px;
   display: flex;
   align-items: center;
+}
+.campaignmain_title_wrap select {
+  border-radius: 5px;
+  margin-left: 5px;
 }
 
 .campaignmain_content_wrap {
@@ -89,15 +94,15 @@
   background-color: var(--gray8);
   border-radius: 50px;
 }
-.campaignmain_wrap > button {
+.return_btn {
   position: absolute;
   top: -35px;
   left: 5px;
-  outline: none;
-  border: none;
   padding: 5px;
-  border-radius: 15%;
   cursor: pointer;
-  border: 1px solid var(--gray2);
-  background-color: var(--gray8);
+  font-size: 18px;
+}
+.return_btn:hover {
+  transform: translateX(-5px);
+  transition-duration: 0.3s;
 }

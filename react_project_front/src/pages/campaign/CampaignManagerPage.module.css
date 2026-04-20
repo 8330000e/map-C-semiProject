@@ -8,7 +8,18 @@
   margin-top: 40px;
   display: flex;
   gap: 100px;
+  position: relative;
 }
+.return_btn {
+  cursor: pointer;
+  position: absolute;
+  top: -30px;
+}
+.return_btn:hover {
+  transform: translateX(-5px);
+  transition-duration: 0.2s;
+}
+
 .camp_settings_sidebar {
   display: flex;
   flex-direction: column;

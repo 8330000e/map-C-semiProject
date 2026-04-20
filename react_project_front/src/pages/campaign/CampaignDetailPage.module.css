@@ -37,6 +37,18 @@
   background-color: var(--gray6);
   border-radius: 5px;
 }
+.camp_polygon1::after,
+.camp_polygon2::after,
+.camp_polygon3::after,
+.camp_polygon4::after,
+.camp_polygon5::after,
+.camp_polygon6::after,
+.camp_polygon7::after,
+.camp_polygon8::after,
+.camp_polygon9::after,
+.camp_polygon0::after {
+  opacity: 0;
+}
 .camp_polygon1 {
   position: absolute;
   width: 50px;
@@ -46,7 +58,8 @@
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
-.camp_polygon1::after {
+.camp_polygon1.camp_success::after {
+  content: "10%";
   animation-delay: 0s;
 }
 
@@ -59,7 +72,8 @@
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
-.camp_polygon2::after {
+.camp_polygon2.camp_success::after {
+  content: "20%";
   animation-delay: 0.2s;
 }
 .camp_polygon3 {
@@ -71,7 +85,8 @@
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
-.camp_polygon3::after {
+.camp_polygon3.camp_success::after {
+  content: "30%";
   animation-delay: 0.4s;
 }
 .camp_polygon4 {
@@ -83,7 +98,8 @@
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
-.camp_polygon4::after {
+.camp_polygon4.camp_success::after {
+  content: "40%";
   animation-delay: 0.6s;
 }
 .camp_polygon5 {
@@ -95,7 +111,8 @@
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
-.camp_polygon5::after {
+.camp_polygon5.camp_success::after {
+  content: "50%";
   animation-delay: 0.8s;
 }
 .camp_polygon6 {
@@ -107,7 +124,8 @@
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
-.camp_polygon6::after {
+.camp_polygon6.camp_success::after {
+  content: "60%";
   animation-delay: 1s;
 }
 .camp_polygon7 {
@@ -117,18 +135,10 @@
   bottom: 40px;
   right: 116px;
   background-color: var(--gray8);
-  clip-path: polygon(
-    30% 0%,
-    70% 0%,
-    100% 30%,
-    100% 70%,
-    70% 100%,
-    30% 100%,
-    0% 70%,
-    0% 30%
-  );
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
-.camp_polygon7::after {
+.camp_polygon7.camp_success::after {
+  content: "70%";
   animation-delay: 1.2s;
 }
 .camp_polygon8 {
@@ -140,7 +150,8 @@
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
-.camp_polygon8::after {
+.camp_polygon8.camp_success::after {
+  content: "80%";
   animation-delay: 1.4s;
 }
 .camp_polygon9 {
@@ -152,17 +163,8 @@
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
-.camp_polygon9::after {
-  font-size: 17px;
-  font-weight: 400;
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: red;
-  transform: scale(3) rotate(-15deg);
-  animation: stamp 0.6s ease-out forwards;
+.camp_polygon9.camp_success::after {
+  content: "90%";
   animation-delay: 1.6s;
 }
 .camp_polygon0 {
@@ -174,12 +176,12 @@
   background-color: var(--gray8);
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
-.camp_polygon0::after {
+.camp_polygon0.camp_success::after {
+  content: "성공!";
   animation-delay: 1.8s;
 }
 
 .camp_success::after {
-  content: "성공!";
   font-size: 17px;
   font-weight: 400;
   position: absolute;
@@ -190,7 +192,7 @@
   color: red;
   transform: scale(3) rotate(-15deg);
   animation: stamp 0.6s ease-out forwards;
-  background-color: #b0d261;
+  /* background-color: #b0d261; */
 }
 
 .campdetailpage_info_wrap {
@@ -291,6 +293,7 @@
     filter: blur(0);
   }
   100% {
+    opacity: 1;
     transform: scale(1) rotate(0);
   }
 }
