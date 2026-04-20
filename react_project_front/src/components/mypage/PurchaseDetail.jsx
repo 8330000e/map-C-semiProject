@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore";
-import { normalizeImageUrl } from "../../utils/getImageUrl";
+import { normalizeImageUrl, getSafeImageUrl } from "../../utils/getImageUrl";
 import { compressImageFile } from "../../utils/compressImage";
 import styles from "./PurchaseHistory.module.css";
 import { removeCompletedPurchase, getCompletedPurchaseById } from "./orderHistoryStorage";
@@ -69,6 +69,16 @@ const PurchaseDetail = () => {
     [reviews, loginMemberId],
   );
 
+  // 디버깅용 콘솔 출력
+  useEffect(() => {
+    console.log("[구매상세 디버깅] item 전체:", item);
+    console.log("[구매상세 디버깅] item.status:", item?.status);
+    console.log("[구매상세 디버깅] item.tradeStatus:", item?.tradeStatus);
+    console.log("[구매상세 디버깅] myReview:", myReview);
+    console.log("[구매상세 디버깅] reviews:", reviews);
+    console.log("[구매상세 디버깅] loginMemberId:", loginMemberId);
+  }, [item, myReview, reviews, loginMemberId]);
+
   useEffect(() => {
     const fetchPurchaseDetail = async () => {
       if (!id || !loginMemberId) {
@@ -117,8 +127,10 @@ const PurchaseDetail = () => {
         }
 
         if (response && response.data) {
+          console.log("[구매상세 디버깅] fetchPurchaseDetail response:", response.data);
           setItem(response.data);
         } else {
+          console.log("[구매상세 디버깅] fetchPurchaseDetail no response data", response);
           setItem(null);
         }
       } catch (error) {
@@ -216,7 +228,7 @@ const PurchaseDetail = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      const uploadedUrl = normalizeImageUrl(res.data, "board/editor");
+      const uploadedUrl = getSafeImageUrl(res.data, "board/editor");
       setReviewImageUrl(uploadedUrl || "");
     } catch (error) {
       console.error("후기 이미지 업로드 실패", error);
@@ -401,8 +413,9 @@ const PurchaseDetail = () => {
   const shippingFeeStatus = inferredDeliveryFee > 0 ? "배송비 추가" : "배송비 없음";
   const shippingStatusValue = item.shippingStatus ?? item.orderInfo?.shippingStatus ?? 0;
   const shippingInfoAvailable = displayTradeType === "택배" || item.orderInfo?.receiverName || item.orderInfo?.phone || item.orderInfo?.address || item.invoiceNumber || item.courierCode || shippingStatusValue !== undefined;
-  const showCancelButton = item.status === "구매완료" && shippingStatusValue !== 1;
-  const showRefundButton = item.status === "구매완료" && shippingStatusValue === 1;
+  const isPurchaseComplete = item.status === "구매완료" || item.tradeStatus === 2;
+  const showCancelButton = isPurchaseComplete && shippingStatusValue !== 1;
+  const showRefundButton = isPurchaseComplete && shippingStatusValue === 1;
 
   return (
     <div className={styles.purchase_history_wrap}>
@@ -499,7 +512,7 @@ const PurchaseDetail = () => {
       </div>
 
 
-      {item.status === "구매완료" && !myReview && (
+      {isPurchaseComplete && !myReview && (
         <div className={styles.review_area}>
           <h4>구매후기 작성</h4>
           <div className={styles.review_row}>
@@ -524,6 +537,20 @@ const PurchaseDetail = () => {
             <input type="file" accept="image/*" onChange={onFileChange} />
             {reviewImage && <span>{reviewImage.name}</span>}
           </div>
+          {reviewImageUrl && (
+            <div className={styles.review_image_wrap}>
+              <img
+                src={reviewImageUrl}
+                alt="업로드된 후기 이미지 미리보기"
+                className={styles.review_image}
+                loading="lazy"
+                decoding="async"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            </div>
+          )}
           <div className={styles.review_actions}>
             <button className="btn" onClick={onSubmitReview}>제출하기</button>
             <Link className="btn" to="/mypage/history/purchase">뒤로가기</Link>
@@ -563,24 +590,27 @@ const PurchaseDetail = () => {
               ) : (
                 <>
                   <p>{rev.reviewContent}</p>
-                  {rev.reviewThumb && (
-                    <div className={styles.review_image_wrap}>
-                      {/*
-                        후기 이미지도 lazy loading을 적용함.
-                        화면에 보여질 때만 다운로드하여 데이터 사용량을 줄임.
-                      */}
-                      <img
-                        src={getImageUrl(rev.reviewThumb)}
-                        alt="후기 이미지"
-                        className={styles.review_image}
-                        loading="lazy"
-                        decoding="async"
-                        onError={(e) => {
-                          e.currentTarget.style.display = "none";
-                        }}
-                      />
-                    </div>
-                  )}
+                  {rev.reviewThumb && (() => {
+                    const reviewImageUrl = getSafeImageUrl(rev.reviewThumb);
+                    return reviewImageUrl ? (
+                      <div className={styles.review_image_wrap}>
+                        {/*
+                          후기 이미지도 lazy loading을 적용함.
+                          화면에 보여질 때만 다운로드하여 데이터 사용량을 줄임.
+                        */}
+                        <img
+                          src={reviewImageUrl}
+                          alt="후기 이미지"
+                          className={styles.review_image}
+                          loading="lazy"
+                          decoding="async"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      </div>
+                    ) : null;
+                  })()}
                   <div className={styles.review_actions}>
                     {rev.buyerId === loginMemberId && (
                       <>
@@ -599,5 +629,6 @@ const PurchaseDetail = () => {
     </div>
   );
 };
+
 
 export default PurchaseDetail;
