@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import EmailAuth from "../../components/emailauth/EmailAuth";
 import { useEffect } from "react";
+import { errorAlert, successAlert } from "../../utils/alert";
 //import joinBg from "/images/signup-background-rabbit.png";
 //import joinbg1 from "/images/join2jpg.jpg";
 
@@ -33,16 +34,18 @@ const Join = () => {
   const [checkPw, setCheckPw] = useState(0);
 
   //아이디 중복 체크
-  const ipDupCheck = () => {
+  const ipDupCheck = async () => {
     if (!member.memberId) return;
-    axios
-      .get(
+
+    try {
+      const res = await axios.get(
         `${import.meta.env.VITE_BACKSERVER}/members/exists?memberId=${member.memberId}`,
-      )
-      .then((res) => {
-        setCheckId(res.data ? 2 : 1);
-      })
-      .catch((err) => console.log(err));
+      );
+      // res.data가 true(중복)면 1, false(사용가능)면 2
+      setCheckId(res.data ? 1 : 2);
+    } catch (err) {
+      console.error("아이디 중복 체크 에러:", err);
+    }
   };
 
   // 비밀번호 일치 체크
@@ -70,70 +73,55 @@ const Join = () => {
     console.log(name, value); // 개발용 디버그 로그
   };
 
-  const JoinMember = (e) => {
+  //회원가입
+  const JoinMember = async (e) => {
     e.preventDefault();
 
     // 아이디 중복 체크, 비밀번호 일치 여부, 이메일 인증 여부, 필수 입력값 체크 등 모든 검증 통과 여부 확인
     if (checkId !== 2) {
-      Swal.fire({
-        title: "아이디 중복 검사를 해주세요",
-        icon: "warning",
-      });
+      await errorAlert("아이디 중복", "아이디중복체크");
       return;
     }
 
     // 비밀번호 일치 여부 체크
     if (checkPw !== 1) {
-      Swal.fire({
-        title: "비밀번호가 일치하지 않습니다",
-        icon: "warning",
-      });
+      await errorAlert("비밀번호 일치", "비밀번호 일치 체크");
       return;
     }
 
     //이메일 인증을 하지 않으면 여기서 차단.
     if (!emailVerified) {
-      Swal.fire({
-        title: "이메일 인증이 필요합니다",
-        text: "이메일 인증을 완료해주세요",
-        icon: "warning",
-      });
+      await errorAlert("이메일 인증", "이메일 인증");
       return;
     }
 
     if (!member.memberId || !member.memberPw || !member.memberEmail) {
-      Swal.fire({
-        title: "필수 입력 항목을 모두 채워주세요",
-        text: "아이디, 비밀번호, 이메일은 필수입니다",
-        icon: "warning",
-      });
+      await errorAlert("입력 오류", "아이디, 비밀번호, 이메일를 입력해주세요.");
       return;
     }
 
     const BACKSERVER = import.meta.env.VITE_BACKSERVER;
     if (!BACKSERVER) {
-      console.error("VITE_BACKSERVER 환경변수가 설정되지 않았습니다.");
-      alert("서버 요청 실패: VITE_BACKSERVER를 .env에 설정해주세요.");
+      await errorAlert("연결 오류", "서버 연결 오류");
       return;
     }
 
     // 회원가입 요청을 서버로 전달하는 부분
-    axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/members`, member)
-      .then((res) => {
-        console.log(res.data);
-        Swal.fire({
-          title: "회원가입 성공",
-          text: "로그인 페이지로 이동합니다",
-          icon: "success",
-        }).then(() => {
-          navigate("/members/login");
-        });
-      })
-      .catch((err) => {
-        console.error("회원가입 에러:", err);
-        alert("회원가입 실패: " + (err.response?.data?.message || err.message));
-      });
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKSERVER}/members`,
+        member,
+      );
+      console.log(res.data);
+
+      await successAlert("회원가입 성공", "로그인 페이지로 이동합니다");
+      navigate("/members/login");
+    } catch (err) {
+      console.error("회원가입 에러:", err);
+      const errMsg =
+        err.response?.data?.message || "회원가입 중 오류가 발생했습니다.";
+      await errorAlert("회원가입 중 오류", errMsg);
+    }
   };
 
   return (
@@ -147,6 +135,17 @@ const Join = () => {
       >
         홈으로 가기
       </div>
+
+      {/*로그인으로 가기 버튼 */}
+      <div
+        className={styles.login_btn}
+        onClick={() => {
+          navigate("/members/login");
+        }}
+      >
+        로그인으로 가기
+      </div>
+
       <div className={styles.join_wrap}>
         <h3 className={styles.page_title}>회원가입</h3>
         <form onSubmit={JoinMember}>
@@ -253,7 +252,11 @@ const Join = () => {
           ></EmailAuth>
 
           <div className={styles.member_button_wrap}>
-            <button type="submit" className={styles.join_btn}>
+            <button
+              type="button"
+              className={styles.join_btn}
+              onClick={JoinMember}
+            >
               회원가입
             </button>
           </div>
@@ -264,7 +267,7 @@ const Join = () => {
             
       <img src={joinBg} className={styles.join_img} alt="배경 이미지" />
             */}
-    </div> //페이지 레이아웃
+    </div>
   );
 };
 export default Join;

@@ -9,16 +9,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url("/images/login_bg_final_clean.png"); /* 배경 이미지 경로 */
+  background-image: url("/images/reset_password_bg.png"); /* 배경 이미지 경로 */
   background-size: cover; /* 화면에 꽉 차게 */
   background-position: center; /* 중앙 기준 정렬 */
   background-repeat: no-repeat;
 }
 
+/*헤더의 홈으로 가기 버튼*/
 .home_btn {
   position: fixed;
   top: 20px;
-  left: 30px;
+  left: 30px; /*버튼 위치 잡아주는 녀석*/
   z-index: 10000;
 
   padding: 10px 16px;
@@ -40,12 +41,38 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
+/*헤더의 로그인가기 버튼*/
+.login_btn {
+  position: fixed;
+  top: 20px;
+  right: 30px; /*버튼 위치 잡아주는 녀석*/
+  z-index: 10000;
+
+  padding: 10px 16px;
+
+  background: rgba(45, 90, 39, 0.85);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.login_btn:hover {
+  /*transform: scale(1.1);
+  --> 커서가 버튼에게 향할 떄 버튼이 위로 살짝 움직임
+  */
+  background-color: #3d7a35; /* 마우스 올렸을 때 */
+  transform: translateY(-1px); /* 살짝 위로 뜨는 효과 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
 .find_pw_wrap {
   width: 500px;
-  min-height: 65vh;
+  min-height: 50vh;
   margin: 80px auto;
-  padding: 50px 35px 180px;
-  background-color: #ffffff;
+  padding: 50px 35px 110px;
+  background-color: rgba(255, 255, 255, 0.5);
   border-radius: 25px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -53,7 +80,7 @@
   position: relative;
   overflow: hidden;
 
-  border: 3px solid lightgreen;
+  border: 1px solid rgba(144, 238, 144, 0.5);
 }
 
 .page_title {
@@ -87,12 +114,31 @@
 }
 
 .find_pw_btn {
-  padding: 10px 20px;
+  /* 1. 너비를 글자 크기에 맞게 조절
+  -> 버튼 좌우 너비 길이 조절
+  */
+  width: fit-content;
+  /* 2. 부모(flex-column) 내에서 가운데 정렬 
+  -> 왜냐하면 부모에 의해 세로로 배치가 되기 떄문
+  */
+  margin: 0 auto;
+  padding: 10px 24px;
   font-size: 1rem;
-  background-color: #6c63ff;
+  background-color: #5b7252;
   color: #fff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+
   transition: background 0.3s ease;
+}
+
+/* ★ 비활성화(disabled) 상태 디자인 ★ */
+.find_pw_btn:disabled {
+  background-color: #ccc;
+  color: #888888;
+  cursor: not-allowed; /* 마우스 올리면 금지 표시(🚫)가 뜸 */
+  opacity: 0.6; /* 살짝 투명하게 해서 죽어있는 느낌 강조 */
+  box-shadow: none; /* 혹시 있을지 모를 그림자 제거 */
+  pointer-events: none;
 }

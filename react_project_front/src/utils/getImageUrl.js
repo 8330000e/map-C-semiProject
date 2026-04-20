@@ -113,3 +113,23 @@ export const normalizeImageUrl = (thumb, defaultPrefix = "board/editor") => {
 
   return getDefaultUrl(trimmed, defaultPrefix);
 };
+
+export const getSafeImageUrl = (thumb, defaultPrefix = "board/editor") => {
+  if (!thumb) return null;
+
+  let value = thumb;
+  if (typeof thumb === "object") {
+    value = thumb.url || thumb.path || thumb.reviewThumb || thumb.thumbnail || thumb.downloadUrl || thumb.fileUrl || thumb.filePath || null;
+  }
+  if (typeof value !== "string") return null;
+
+  let trimmed = value.trim();
+  if (!trimmed) return null;
+  if ((trimmed.startsWith('"') && trimmed.endsWith('"')) || (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
+    trimmed = trimmed.substring(1, trimmed.length - 1).trim();
+  }
+  if (!trimmed) return null;
+
+  const normalized = normalizeImageUrl(trimmed, defaultPrefix);
+  return normalized || trimmed;
+};

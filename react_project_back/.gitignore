@@ -39,6 +39,9 @@ build/
 # Compiled class files
 *.class
 
+# Secret application properties
+application-secret.properties
+
 # JAR / WAR / EAR
 *.jar
 *.war
