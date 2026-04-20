@@ -13,6 +13,8 @@ import { REGION_DATA } from "./regionData";
 import calculator from "../../../assets/img/calculator.svg";
 import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
 import NavigateBeforeOutlinedIcon from "@mui/icons-material/NavigateBeforeOutlined";
+import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
+import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "http://localhost:9999";
 
@@ -117,47 +119,6 @@ const Community = ({
   const keys = ['cEle', 'cGas', 'cWater', 'cRoad', 'cWaste'];
   const currentKey = keys[step - 1];
   const value = calco2[currentKey];
-
-  // 드래그 상태 관리
-  const [isDragging, setIsDragging] = useState(false);
-  const [startY, setStartY] = useState(0);
-
-  // 1. 값 업데이트 공통 함수
-  const updateValue = (newValue) => {
-    // 0 미만으로 내려가지 않게 방어
-    const finalValue = newValue < 0 ? 0 : newValue;
-    setCalco2(prev => ({ ...prev, [currentKey]: finalValue }));
-  };
-
-  // 2. 마우스 휠 핸들러
-  const handleWheel = (e) => {
-    // e.deltaY가 양수면 아래로(값 감소), 음수면 위로(값 증가)
-    const direction = e.deltaY > 0 ? -1 : 1;
-    updateValue(value + direction);
-  };
-
-  // 3. 드래그 시작 (MouseDown)
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    setStartY(e.clientY); // 클릭한 지점의 Y좌표 저장
-  };
-
-  // 4. 드래그 중 (MouseMove)
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-
-    const diff = startY - e.clientY; // 얼마나 움직였나 계산
-    // 10픽셀 이동할 때마다 1씩 변하게 조절 (감도 조절 가능)
-    if (Math.abs(diff) > 10) {
-      const direction = diff > 0 ? 1 : -1;
-      updateValue(value + direction);
-      setStartY(e.clientY); // 기준점 초기화
-    }
-  };
-
-  // 5. 드래그 끝 (MouseUp, MouseLeave)
-  const stopDragging = () => setIsDragging(false);
-  
 
   const submit = (e) => {
     e.preventDefault();
@@ -927,43 +888,38 @@ const Community = ({
                           
                         </div>
                         <div>
-                          <div>{step === 3 && "이용시간" || step === 4 && "횟수" || step < 6 && "사용시간"}</div>
-                          <div>{ step === 4 && 
-                          (<div>
+                          <div>
+                            {(step === 3 && "이용시간") ||
+                              (step === 4 && "횟수") ||
+                              (step < 6 && "사용시간")}
+                          </div>
+                          <div>
                             <div>
-                              <p>{wasteCount > 0 && wasteCount -1}</p>
-                              <p>{wasteCount}</p>
-                              <p>{wasteCount +1}</p>
-                            </div>
-                            <div>번</div>
-                          </div>) 
-                          || step < 6 && 
-                          (<div>
-                            <div>
-                             <div
-                                onWheel={handleWheel}
-                                onMouseDown={handleMouseDown}
-                                onMouseMove={handleMouseMove}
-                                onMouseUp={stopDragging}
-                                onMouseLeave={stopDragging}
-                                style={{
-                                  width: '200px',
-                                  height: '200px',
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  cursor: 'ns-resize', // 위아래 화살표 커서
-                                  userSelect: 'none',   // 드래그 시 텍스트 블록 방지
-                                  borderRadius: '20px',
-                                }}
-                              >
-                                <div style={{ fontSize: '14px', marginBottom: '10px' }}>휠이나 드래그로 조절</div>
-                                <div style={{ fontSize: '40px', fontWeight: 'bold' }}>{value}</div>
+                              <div>
+                                {step < 6 && (
+                                  <div>
+                                    <KeyboardArrowUpOutlinedIcon
+                                      onClick={() => {
+                                        setCalco2(value);
+                                      }}
+                                    />
+                                    <p>{value}</p>
+                                    <KeyboardArrowDownOutlinedIcon
+                                      onClick={() => {
+                                        setCalco2((prev) => {
+                                          const count = prev.keys[step - 1];
+                                          return count > 0 ? count - 1 : 0;
+                                        });
+                                      }}
+                                    />
+                                  </div>
+                                )}
                               </div>
-                              <div>분</div>
+                              <div>
+                                {step < 6 ? (step === 4 && "번") || "분" : null}
+                              </div>
                             </div>
-                          </div>)}
+                          </div>
                         </div>
                       </div>
                       <button className={styles.carbonBox_right}>

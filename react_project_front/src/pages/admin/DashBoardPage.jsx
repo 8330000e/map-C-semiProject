@@ -19,7 +19,8 @@ const DashBoardPage = () => {
   const [pendingReport, setPendingReport] = useState(null); // 미처리 신고수
 
   // 전체 신고 건수 - categoryCount 배열 합산
-  const totalReportCount = categoryCount.reduce((a, b) => a + b, 0); // a: 누적값, b: 현재 요소 배열을 순회하면서 누적값을 만들기 0은 초기값
+  // a: 누적값, b: 현재 요소, 배열을 순회하면서 누적값을 만들기 0은 초기값
+  const totalReportCount = categoryCount.reduce((a, b) => a + b, 0);
 
   // 월별 증감률 (이번달 - 저번달) / 저번달 * 100,    0 나누기 방지
   const monthlyGrowthRate =

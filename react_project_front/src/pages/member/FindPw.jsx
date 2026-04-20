@@ -50,38 +50,60 @@ const FindPw = () => {
   };
 
   return (
-    <div className={styles.find_pw_wrap}>
-      <h1 className={styles.page_title}>비밀번호 찾기 페이지</h1>
-      <div className={styles.input_wrap}>
-        <label className={styles.label_id}>아이디</label>
-        <input
-          className={styles.input_id}
-          type="text"
-          value={memberId}
-          id="memberId"
-          onChange={(e) => setMemberId(e.target.value)}
-          placeholder="아이디를 입력해주세요"
-        ></input>
-
-        <EmailAuth
-          memberEmail={memberEmail}
-          setMemberEmail={setMemberEmail}
-          onVerified={setEmailVerified}
-        ></EmailAuth>
+    <div className={`${styles.total_find_pw_container} login_page`}>
+      {/*홈으로 가기 버튼 */}
+      <div
+        className={styles.home_btn}
+        onClick={() => {
+          navigate("/");
+        }}
+      >
+        홈으로 가기
       </div>
-      {/*
+
+      {/*로그인으로 가기 버튼 */}
+      <div
+        className={styles.login_btn}
+        onClick={() => {
+          navigate("/members/login");
+        }}
+      >
+        로그인으로 가기
+      </div>
+
+      <div className={styles.find_pw_wrap}>
+        <h1 className={styles.page_title}>비밀번호 찾기 페이지</h1>
+        <div className={styles.input_wrap}>
+          <label className={styles.label_id}>아이디</label>
+          <input
+            className={styles.input_id}
+            type="text"
+            value={memberId}
+            id="memberId"
+            onChange={(e) => setMemberId(e.target.value)}
+            placeholder="아이디를 입력해주세요"
+          ></input>
+
+          <EmailAuth
+            memberEmail={memberEmail}
+            setMemberEmail={setMemberEmail}
+            onVerified={setEmailVerified}
+          ></EmailAuth>
+        </div>
+        {/*
       
       //verifyUser 함수는 이메일 인증과 아이디, 이메일 입력 여부를 체크하는
     //프런트 검증 함수      
       */}
-      <button
-        type="button"
-        className={styles.find_pw_btn}
-        onClick={verifyUser}
-        disabled={!emailVerified}
-      >
-        비밀번호 찾기
-      </button>
+        <button
+          type="button"
+          className={styles.find_pw_btn}
+          onClick={verifyUser}
+          disabled={!emailVerified}
+        >
+          비밀번호 찾기
+        </button>
+      </div>
     </div>
   );
 };

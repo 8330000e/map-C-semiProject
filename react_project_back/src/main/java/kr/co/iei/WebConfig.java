@@ -33,8 +33,11 @@ public class WebConfig implements WebMvcConfigurer {
 	
 	 @Override                                                                                                         
      public void addInterceptors(InterceptorRegistry registry) {                                                     
-         registry.addInterceptor(memberStatusInterceptor)
+         registry.addInterceptor(memberStatusInterceptor) // memberStatusInterceptor 등록
                  .addPathPatterns("/**")           // 모든 요청에 적용
-                 .excludePathPatterns("/members/login", "/admins/**"); // 로그인만 제외 (로그인 로직에 따로 추가해뒀음)                                               
+                 .excludePathPatterns("/members/login", "/admins/**"); // 로그인만 제외 (로그인 로직에 따로 추가해뒀음) + 관리자도 제외     
+         
+         registry.addInterceptor(adminInterceptor) // adminInterceptor 등록
+         		 .addPathPatterns("/admins/**"); // 모든 /admin/* 요청에 적용  
      }
 }

@@ -147,6 +147,19 @@ const AdminMemberPage = () => {
       });
   };
 
+  // 현황판 집계 - 전체/정지/접속중/미접속
+  const memberStats = useMemo(() => {
+    const total = memberList.length;
+    const suspended = memberList.filter(
+      (m) => m.memberStatus === 1 || m.memberStatus === 3,
+    ).length;
+    const online = memberList.filter((m) => m.isOnline === 1).length;
+    const offline = total - online;
+    const onlineRate = total === 0 ? 0 : (online / total) * 100;
+    const offlineRate = total === 0 ? 0 : (offline / total) * 100;
+    return { total, suspended, online, offline, onlineRate, offlineRate };
+  }, [memberList]);
+
   // 회원 목록 필터 바뀔때마다 회원 목록 api 호출
   useEffect(() => {
     selectMemberList();
