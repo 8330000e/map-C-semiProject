@@ -110,9 +110,13 @@ public class CampaignController {
 		return ResponseEntity.ok(result);
 	}
 	@GetMapping(value="/boards")
-	public ResponseEntity<?> getCampBoardList(@RequestParam Integer campaignNo){
-		List<CampaignParticipance> campPart = campaignService.getCampBoardList(campaignNo);
-		return ResponseEntity.ok(campPart);
+	public ResponseEntity<?> getCampBoardList(@RequestParam Integer campaignNo,@RequestParam Integer size,@RequestParam Integer page){
+		CampaignParticipance camp = new CampaignParticipance();
+		camp.setPage(page);
+		camp.setSize(size);
+		camp.setCampaignNo(campaignNo);
+		Map <String,Object> map = campaignService.getCampBoardList(camp);
+		return ResponseEntity.ok(map);
 	}
 	@GetMapping(value="/board/{campaignParticipanceNo}")
 	public ResponseEntity<?> getCampBoardDetail(@PathVariable Integer campaignParticipanceNo){

@@ -28,7 +28,7 @@ public interface CampaignDao {
 
 	int insertMemo(CampaignParticipance campPart);
 
-	List<CampaignParticipance> getCampBoardList(Integer campaignNo);
+	List<CampaignParticipance> getCampBoardList(CampaignParticipance camp);
 
 	CampaignParticipance getCampBoardDetail(Integer campaignParticipanceNo);
 
@@ -89,6 +89,8 @@ public interface CampaignDao {
 	int updateDetailNotice(CampaignNotice campNo);
 
 	int deleteDetailNotice(Integer campaignNoticeNo);
+
+	Integer countCampBoardList(int campaignNo);
 
 	
 

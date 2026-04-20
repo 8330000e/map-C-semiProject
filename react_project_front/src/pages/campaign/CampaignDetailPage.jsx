@@ -16,6 +16,7 @@ import {
   Tooltip,
   plugins,
 } from "chart.js";
+import Pagination from "../../components/ui/Pagination";
 
 Chart.register(DoughnutController, ArcElement, Title, Tooltip);
 
@@ -34,6 +35,8 @@ const CampaignDetailPage = () => {
   const [deleteBoard, setDeleteBoard] = useState(false);
   const [banMember, setBanMember] = useState(true);
   const [readBan, setReadBan] = useState(false);
+  const [totalPage, setTotalPage] = useState();
+  const [page, setPage] = useState(0);
   const data =
     readComplete &&
     new Date(campaignDetail.campaignExpireDate).getTime() - Date.now() > 0
@@ -178,11 +181,12 @@ const CampaignDetailPage = () => {
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/campaigns/boards?campaignNo=${campaignNo}`,
+        `${import.meta.env.VITE_BACKSERVER}/campaigns/boards?campaignNo=${campaignNo}&page=${page}&size=6`,
       )
       .then((res) => {
         // console.log(res.data);
-        setBoardList([...res.data]);
+        setBoardList([...res.data.campPart]);
+        setTotalPage(res.data.totalPage);
       })
       .catch((err) => {
         console.log(err);
@@ -298,6 +302,9 @@ const CampaignDetailPage = () => {
             </div>
           </div>
           <PostBoard
+            totalPage={totalPage}
+            setPage={setPage}
+            page={page}
             navigate={navigate}
             inCampaign={inCampaign}
             campaignNo={campaignNo}
@@ -471,6 +478,9 @@ const PostBoard = ({
   boardList,
   deleteBoard,
   setDeleteBoard,
+  totalPage,
+  page,
+  setPage,
 }) => {
   return (
     boardList && (
@@ -573,6 +583,7 @@ const PostBoard = ({
             </div>
           );
         })}
+
         <button
           className={styles.board_btn}
           disabled={isCreator ? !dateOut : !inCampaign || !dateOut} //현재 캠페인 생성자가 못건드림(생성자를 campaign_member_tbl에 추가시켜야 할 것 같음)
@@ -582,6 +593,14 @@ const PostBoard = ({
         >
           메모등록
         </button>
+        <div className={styles.campaign_pagination}>
+          <Pagination
+            page={page}
+            totalPage={totalPage}
+            setPage={setPage}
+            naviSize={6}
+          />
+        </div>
       </div>
     )
   );
