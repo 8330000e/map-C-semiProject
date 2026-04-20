@@ -39,6 +39,9 @@ dist/
 .env.test.local
 .env.production.local
 
+# Secret application properties
+application-secret.properties
+
 # Logs
 npm-debug.log*
 yarn-debug.log*
@@ -90,3 +93,7 @@ react_project_back/C:/Temp/upload/semiproject/board/editor/**
 .DS_Store
 Thumbs.db
 react_project_back/semiproject-carbon-firebase-adminsdk-fbsvc-8a2adcca0b.json
+
+# API Keys and Secrets
+react_project_back/src/main/resources/application-secret.properties
+application-secret.properties

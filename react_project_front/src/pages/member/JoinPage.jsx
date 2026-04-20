@@ -147,17 +147,6 @@ const Join = () => {
       >
         홈으로 가기
       </div>
-
-      {/*로그인으로 가기 버튼 */}
-      <div
-        className={styles.login_btn}
-        onClick={() => {
-          navigate("/members/login");
-        }}
-      >
-        로그인으로 가기
-      </div>
-
       <div className={styles.join_wrap}>
         <h3 className={styles.page_title}>회원가입</h3>
         <form onSubmit={JoinMember}>
@@ -275,7 +264,7 @@ const Join = () => {
             
       <img src={joinBg} className={styles.join_img} alt="배경 이미지" />
             */}
-    </div>
+    </div> //페이지 레이아웃
   );
 };
 export default Join;
