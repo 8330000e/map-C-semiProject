@@ -113,7 +113,7 @@ const CampaignDetailPage = () => {
                   return "시간 소진";
                 },
                 label: (context) => {
-                  //이게 출력되는 안쪽의 내용을 바꾸는 설정(내용 커스터마이징))option/plugins/tooltip/callbacks/label/:content
+                  //이게 출력되는 안쪽의 내용을 바꾸는 설정(내용 커스터마이징))option/plugins/tooltip/callbacks/label/:context
                   return "0일";
                 },
               },

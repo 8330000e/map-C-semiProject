@@ -88,7 +88,7 @@
 		select total_point from member_point_tbl where member_id=#{memberId}
 	</select>
 	<insert id="insertPointState">
-		insert into point_tbl values(point_no_seq.nextval,#{memberId},#{pointChange},'campaign',sysdate,sysdate + interval '1' year)
+		insert into point_tbl values(point_no_seq.nextval,#{memberId},#{pointChange},'campaign','캠페인성공보상',sysdate + interval '1' year)
 	</insert>
 	<update id="updatePoint">
 		update member_point_tbl set total_point = total_point + #{pointChange} where member_id=#{memberId}

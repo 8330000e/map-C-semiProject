@@ -34,7 +34,7 @@ const CampaignManagerPage = () => {
             <NavLink
               to={`/campaign/settings/${campaignNo}/${memberId}/updateCamp`}
             >
-              캠페인 업데이트
+              캠페인 수정
             </NavLink>
             <NavLink
               to={`/campaign/settings/${campaignNo}/${memberId}/banMember`}

@@ -117,7 +117,16 @@
   bottom: 40px;
   right: 116px;
   background-color: var(--gray8);
-  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+  clip-path: polygon(
+    30% 0%,
+    70% 0%,
+    100% 30%,
+    100% 70%,
+    70% 100%,
+    30% 100%,
+    0% 70%,
+    0% 30%
+  );
 }
 .camp_polygon7::after {
   animation-delay: 1.2s;
@@ -144,6 +153,16 @@
   clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
 }
 .camp_polygon9::after {
+  font-size: 17px;
+  font-weight: 400;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: red;
+  transform: scale(3) rotate(-15deg);
+  animation: stamp 0.6s ease-out forwards;
   animation-delay: 1.6s;
 }
 .camp_polygon0 {
@@ -160,18 +179,20 @@
 }
 
 .camp_success::after {
-  content: "🆗";
+  content: "성공!";
+  font-size: 17px;
+  font-weight: 400;
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40px;
   color: red;
   transform: scale(3) rotate(-15deg);
   animation: stamp 0.6s ease-out forwards;
   background-color: #b0d261;
 }
+
 .campdetailpage_info_wrap {
   padding: 20px;
   width: 700px;

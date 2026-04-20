@@ -46,6 +46,7 @@ const CampaignNoticeDetailPage = () => {
           <div className={styles.campNoDe_content}>
             {/* 1. 제목 및 시퀀스 번호 (번호는 작게 표시하거나 숨김 처리 가능) */}
             <div className={styles.notice_header}>
+              <small className={styles.notice_no}> #{campaignNoticeNo}</small>
               <Input
                 value={
                   ifUpdate
@@ -62,7 +63,6 @@ const CampaignNoticeDetailPage = () => {
                   });
                 }}
               />
-              <small className={styles.notice_no}> #{campaignNoticeNo}</small>
             </div>
 
             {/* 2. 작성자 */}
@@ -104,44 +104,46 @@ const CampaignNoticeDetailPage = () => {
                   대상 캠페인: {noticeDetail.campaignTitle}
                 </div>
               )}
-              <button
-                disabled={ifUpdate}
-                style={ifUpdate ? { display: "none" } : { display: "block" }}
-                onClick={() => {
-                  axios
-                    .patch(
-                      `${import.meta.env.VITE_BACKSERVER}/campaigns/updateDetailNotice`,
-                      updateNotice,
-                    )
-                    .then((res) => {
-                      console.log(res.data);
-                      if (res.data === 1) {
-                        setUpdateComplete(!updateComplete);
-                        Swal.fire({
-                          title: "수정완료",
-                          text: "공지사항 수정을 완료했습니다.",
-                          icon: "success",
-                        }).then(() => {
-                          setIfUpdate(true);
-                        });
-                      }
-                    })
-                    .catch((err) => {
-                      console.log(err);
-                    });
-                }}
-              >
-                수정확인
-              </button>
-              <button
-                disabled={ifUpdate}
-                style={ifUpdate ? { display: "none" } : { display: "block" }}
-                onClick={() => {
-                  setIfUpdate(true);
-                }}
-              >
-                취소
-              </button>
+              <div className={styles.update_btn_wrap}>
+                <button
+                  disabled={ifUpdate}
+                  style={ifUpdate ? { display: "none" } : { display: "block" }}
+                  onClick={() => {
+                    axios
+                      .patch(
+                        `${import.meta.env.VITE_BACKSERVER}/campaigns/updateDetailNotice`,
+                        updateNotice,
+                      )
+                      .then((res) => {
+                        console.log(res.data);
+                        if (res.data === 1) {
+                          setUpdateComplete(!updateComplete);
+                          Swal.fire({
+                            title: "수정완료",
+                            text: "공지사항 수정을 완료했습니다.",
+                            icon: "success",
+                          }).then(() => {
+                            setIfUpdate(true);
+                          });
+                        }
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
+                  }}
+                >
+                  수정확인
+                </button>
+                <button
+                  disabled={ifUpdate}
+                  style={ifUpdate ? { display: "none" } : { display: "block" }}
+                  onClick={() => {
+                    setIfUpdate(true);
+                  }}
+                >
+                  취소
+                </button>
+              </div>
             </div>
           </div>
 

@@ -44,6 +44,11 @@
   font-weight: bold;
   margin-bottom: 10px;
 }
+.notice_header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
 
 .notice_no {
   font-weight: normal;
@@ -70,6 +75,10 @@
   font-size: 13px;
   color: #666;
   margin-top: 5px;
+}
+.update_btn_wrap {
+  display: flex;
+  gap: 10px;
 }
 
 /* 우측 하단 버튼 배치 */
