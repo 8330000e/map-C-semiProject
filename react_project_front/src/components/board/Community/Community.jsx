@@ -497,19 +497,25 @@ const Community = ({
               "Content-Type": "multipart/form-data",
             },
           });
-
-          await axios
-            .post(
-              `${BACKSERVER}/boards/calco2/${boardNo}&memberId=${memberId}&ctpv=${ctpvsgg.ctpv}&sgg=${ctpvsgg.sgg}`,
-              calco2,
-            )
-            .then((res) => {
-              console.log(res);
-            })
-            .catch((err) => {
-              console.error("탄소계산 데이터 로드 실패", err);
-            });
         }
+        const calco2Data = {
+          ...calco2,
+          boardNo,
+          memberId,
+          ctpv: ctpvsgg.ctpv,
+          sgg: ctpvsgg.sgg,
+        };
+
+        await axios
+          .post(`${BACKSERVER}/boards/calco2`, null, {
+            params: calco2Data,
+          })
+          .then((res) => {
+            console.log("탄소 저장 성공", res);
+          })
+          .catch((err) => {
+            console.error("탄소계산 데이터 저장 실패", err);
+          });
 
         // ⭐ 추가 (핵심)
         const pointAwarded = savedBoard.pointAwarded;
