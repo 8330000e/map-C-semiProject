@@ -96,7 +96,7 @@ const useAuthStore = create(
         const remainingTime = endTime - currentTime;
 
         // [핵심] 55분 시점에 팝업 실행 예약 (만료 5분 전)
-        const aletTime = 10 * 1000; //5 * 60 * 1000
+        const aletTime = 5 * 60 * 1000; //5 * 60 * 1000
 
         // remainingTime가 5분보다 크다면, 5분 전에 팝업 실행
         if (remainingTime > aletTime) {
