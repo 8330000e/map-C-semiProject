@@ -76,5 +76,5 @@ Thumbs.db
 
 
 ### geminai secret key ###
-application-secret
-.properties
+application-secret.properties
+.env
