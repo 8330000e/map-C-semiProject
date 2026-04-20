@@ -89,24 +89,38 @@ const Community = ({
   });
 
   const ele = [
-    "TV 시청",
-    "컴퓨터 사용",
-    "에어컨 사용",
-    "전기히터 사용",
-    "조명 켜기",
-    "세탁기 돌리기",
+    ["TV 시청", 100],
+    ["컴퓨터 사용", 225],
+    ["에어컨 사용", 1700],
+    ["전기히터 사용", 1500],
+    ["조명 켜기", 10],
+    ["세탁기 돌리기", 450],
   ];
-  const gas = ["요리하기", "보일러 난방", "온수 사용"];
-  const waster = ["샤워하기", "설거지", "세수/양치", "욕조 채우기"];
+  const gas = [
+    ["요리하기", 0.067],
+    ["보일러 난방", 0.375],
+    ["온수 사용", 0.25],
+  ];
+  const water = [
+    ["샤워하기", 11.5],
+    ["설거지", 5],
+    ["세수/양치", 6],
+    ["욕조 채우기", 17.5],
+  ];
   const road = [
-    "걷기",
-    "자전거 타기",
-    "버스 타기",
-    "지하철 타기",
-    "자가용 운전",
-    "고속도로 운전",
+    ["걷기", 4.5],
+    ["자전거 타기", 15],
+    ["버스 타기", 25],
+    ["지하철 타기", 35],
+    ["자가용 운전", 40],
+    ["고속도로 운전", 100],
   ];
-  const waste = ["집밥 끼니", "배달음식", "택배 수령", "장보기"];
+  const waste = [
+    ["집밥 한끼", 0.3],
+    ["배달음식", 0.2],
+    ["택배 수령", 0.5],
+    ["장보기", 0.3],
+  ];
 
   const [step, setStep] = useState(1);
 
@@ -132,6 +146,47 @@ const Community = ({
   const keys = ["cEle", "cGas", "cWater", "cRoad", "cWaste"];
   const currentKey = keys[step - 1];
   const value = calco2[currentKey];
+
+  const total = () => {
+    setCalco2((prev) => {
+      if (!prev) return prev;
+
+      let newTotal = 0;
+
+      prev.cEleA?.forEach((e) => {
+        newTotal +=
+          (((ele[e - 1][1] / 1000) * (prev[keys[0]] || 0)) / 60) * 0.4593;
+      });
+
+      prev.cGasA?.forEach((g) => {
+        newTotal += gas[g - 1][1] * (prev[keys[1]] || 0) * 2.176;
+      });
+
+      prev.cWaterA?.forEach((w) => {
+        newTotal += ((water[w - 1][1] * (prev[keys[2]] || 0)) / 1000) * 0.376;
+      });
+
+      prev.cRoadA?.forEach((r) => {
+        const multiplier =
+          (r == 3 && 0.089) ||
+          (r == 4 && 0.041) ||
+          (r == 6 && 0.192) ||
+          (r == 5 ? 1 : 0);
+        newTotal += ((road[r - 1][1] * (prev[keys[3]] || 0)) / 60) * multiplier;
+      });
+
+      prev.cWasteA?.forEach((w) => {
+        if (w == 1) {
+          newTotal += waste[0][1] * (prev[keys[4]] || 0) * 1.9;
+        }
+        newTotal += waste[w - 1][1] * 0.5 * (prev[keys[4]] || 0);
+      });
+      return {
+        ...prev,
+        cTotal: newTotal,
+      };
+    });
+  };
 
   const submit = (e) => {
     e.preventDefault();
@@ -876,7 +931,7 @@ const Community = ({
                                           : "var(--gray5)",
                                       }}
                                     >
-                                      {item}
+                                      {item[0]}
                                     </button>
                                   </li>
                                 );
@@ -885,35 +940,99 @@ const Community = ({
                           )}
                           {step == 2 && (
                             <ul>
-                              <li>요리하기</li>
-                              <li>보일러 난방</li>
-                              <li>온수 사용</li>
+                              {gas?.map((item, i) => {
+                                return (
+                                  <li key={i + 1}>
+                                    <button
+                                      type="button"
+                                      value={i + 1}
+                                      onClick={() => selectCo2("cGasA", i + 1)}
+                                      style={{
+                                        backgroundColor: calco2.cGasA?.includes(
+                                          i + 1,
+                                        )
+                                          ? "var(--color1)"
+                                          : "var(--gray5)",
+                                      }}
+                                    >
+                                      {item[0]}
+                                    </button>
+                                  </li>
+                                );
+                              })}
                             </ul>
                           )}
                           {step == 3 && (
                             <ul>
-                              <li>샤워하기</li>
-                              <li>설거지</li>
-                              <li>세수/양치</li>
-                              <li>욕조 채우기</li>
+                              {water?.map((item, i) => {
+                                return (
+                                  <li key={i + 1}>
+                                    <button
+                                      type="button"
+                                      value={i + 1}
+                                      onClick={() =>
+                                        selectCo2("cWaterA", i + 1)
+                                      }
+                                      style={{
+                                        backgroundColor:
+                                          calco2.cWaterA?.includes(i + 1)
+                                            ? "var(--color1)"
+                                            : "var(--gray5)",
+                                      }}
+                                    >
+                                      {item[0]}
+                                    </button>
+                                  </li>
+                                );
+                              })}
                             </ul>
                           )}
                           {step == 4 && (
                             <ul>
-                              <li>걷기</li>
-                              <li>자전거 타기</li>
-                              <li>버스 타기</li>
-                              <li>지하철 타기</li>
-                              <li>자가용 운전</li>
-                              <li>고속도로 운전</li>
+                              {road?.map((item, i) => {
+                                return (
+                                  <li key={i + 1}>
+                                    <button
+                                      type="button"
+                                      value={i + 1}
+                                      onClick={() => selectCo2("cRoadA", i + 1)}
+                                      style={{
+                                        backgroundColor:
+                                          calco2.cRoadA?.includes(i + 1)
+                                            ? "var(--color1)"
+                                            : "var(--gray5)",
+                                      }}
+                                    >
+                                      {item[0]}
+                                    </button>
+                                  </li>
+                                );
+                              })}
                             </ul>
                           )}
                           {step == 5 && (
                             <ul>
-                              <li>집밥 끼니</li>
-                              <li>배달음식</li>
-                              <li>택배 수령</li>
-                              <li>장보기</li>
+                              {waste?.map((item, i) => {
+                                return (
+                                  <li key={i + 1}>
+                                    <button
+                                      type="button"
+                                      value={i + 1}
+                                      onClick={() =>
+                                        selectCo2("cWasteA", i + 1)
+                                      }
+                                      style={{
+                                        backgroundColor:
+                                          calco2.cWasteA?.includes(i + 1)
+                                            ? "var(--color1)"
+                                            : "var(--gray5)",
+                                      }}
+                                    >
+                                      {item[0]}
+                                    </button>
+                                  </li>
+                                );
+                              })}
                             </ul>
                           )}
                           {step == 6 && (
@@ -921,13 +1040,14 @@ const Community = ({
                               <div>{memberNickname}님의 총 탄소배출량</div>
                               <div className={styles.result_count}></div>
                               <div>CO₂</div>
-                              <div>{}</div>
+                              <div>{calco2.cTotal}</div>
                               <div>KG</div>
                               <div className={styles.result_ment}>
                                 <p>대단해요 {memberNickname}님!</p>
                                 <p>2024년 기준</p>
                                 <p>
-                                  {} 탄소배출량의 {}%를 절감하셨어요!
+                                  {ctpvsgg.ctpv + " " + ctpvsgg.sgg}{" "}
+                                  탄소배출량의 {}%를 절감하셨어요!
                                 </p>
                               </div>
                             </div>
@@ -976,7 +1096,10 @@ const Community = ({
 
                                           return {
                                             ...prev,
-                                            [currentKey]: currentCount - 1,
+                                            [currentKey]:
+                                              currentCount > 0
+                                                ? currentCount - 1
+                                                : 0,
                                           };
                                         });
                                       }}
@@ -999,6 +1122,7 @@ const Community = ({
                               cursor: "pointer",
                             }}
                             onClick={() => {
+                              step == 6 && total();
                               if (step > 0 && step < 6) {
                                 setStep(step + 1);
                               } else {
