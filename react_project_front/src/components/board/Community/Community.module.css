@@ -925,6 +925,20 @@
   font-size: 18px;
   font-weight: 600;
 }
+.carbon_question > div:first-child > ul {
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+.carbon_question > div:first-child > ul > li > button {
+  padding: 5px;
+  border: none;
+  border-radius: 10px;
+  background-color: #7e8974;
+  font-weight: 600;
+}
 .boardWriteNotice {
   padding: 10px 8px;
   background-color: #fff;

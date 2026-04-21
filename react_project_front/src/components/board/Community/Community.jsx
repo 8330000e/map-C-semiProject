@@ -1091,16 +1091,19 @@ const Community = ({
                           )}
                         </div>
                         <div>
-                          {(step === 4 && (
-                            <div className={styles.caltiemtext}>이용시간</div>
-                          )) ||
-                            (step === 5 && (
-                              <div className={styles.caltiemtext}>횟수</div>
+                          <div>
+                            {(step === 4 && (
+                              <div className={styles.caltiemtext}>이용시간</div>
                             )) ||
-                            (step < 6 && (
-                              <div className={styles.caltiemtext}>사용시간</div>
-                            ))}
-
+                              (step === 5 && (
+                                <div className={styles.caltiemtext}>횟수</div>
+                              )) ||
+                              (step < 6 && (
+                                <div className={styles.caltiemtext}>
+                                  사용시간
+                                </div>
+                              ))}
+                          </div>
                           <div>
                             <div>
                               <div>
