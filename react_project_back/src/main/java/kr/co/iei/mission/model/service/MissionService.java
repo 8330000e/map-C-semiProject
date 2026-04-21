@@ -34,33 +34,27 @@ public class MissionService {
 	}
 
 	@Transactional
-	public Mission selectTodayRandomMission(String memberId) {
+public Mission selectTodayRandomMission(String memberId) {
 
-		// 1. 오늘 이미 배정된 랜덤 미션 조회
-		Mission todayMission = missionDao.selectTodayAssignedRandomMission(memberId);
+    Mission todayMission = missionDao.selectTodayAssignedRandomMission(memberId);
+    if (todayMission != null) {
+        return todayMission;
+    }
 
-		if (todayMission != null) {
-			return todayMission;
-		}
+    Mission randomMission = missionDao.selectRandomMission();
+    if (randomMission == null) {
+        return null;
+    }
 
-		// 2. 오늘 배정된 게 없으면 랜덤 미션 하나 뽑기
-		Mission randomMission = missionDao.selectRandomMission();
+    MemberMission memberMission = new MemberMission();
+    memberMission.setMissionNo(randomMission.getMissionNo());
+    memberMission.setMemberId(memberId);
+    memberMission.setCertImageUrl(null);
 
-		if (randomMission == null) {
-			return null;
-		}
+    missionDao.insertMemberMission(memberMission);
 
-		// 3. 회원 미션 배정 테이블에 insert
-		MemberMission memberMission = new MemberMission();
-		memberMission.setMissionNo(randomMission.getMissionNo());
-		memberMission.setMemberId(memberId);
-		memberMission.setCertImageUrl(null);
-
-		missionDao.insertMemberMission(memberMission);
-
-		// 4. 뽑은 랜덤 미션 반환
-		return randomMission;
-	}
+    return missionDao.selectTodayAssignedRandomMission(memberId);
+}
 
 	// 출석체크 포인트 지급
 	@Transactional
