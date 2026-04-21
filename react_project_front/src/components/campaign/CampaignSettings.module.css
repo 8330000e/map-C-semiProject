@@ -79,3 +79,6 @@
   width: 200px;
   margin: 120px auto;
 }
+.camp_settings_content_main_wrap > textarea {
+  resize: none;
+}
