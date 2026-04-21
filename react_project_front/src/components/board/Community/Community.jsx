@@ -514,6 +514,7 @@ const Community = ({
             console.log("탄소 저장 성공", res);
           })
           .catch((err) => {
+            console.log(calco2Data);
             console.error("탄소계산 데이터 저장 실패", err);
           });
 

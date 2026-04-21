@@ -111,6 +111,7 @@ public class BoardController {
 	public ResponseEntity<?> insertCalco2Data(@ModelAttribute Calco2 calco2) {
 		System.out.println("칼카본투:"+calco2);
 		int result = boardService.insertCalco2Data(calco2);
+		System.out.println(result);
 		return ResponseEntity.ok(result);
 	}
 
