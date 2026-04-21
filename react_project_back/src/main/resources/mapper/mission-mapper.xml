@@ -69,21 +69,28 @@
 
     <!-- 회원에게 오늘 랜덤 미션 배정 -->
 	<insert id="insertMemberMission" parameterType="memberMission">
-	    INSERT INTO MEMBER_MISSION_TBL (
-	        USER_MISSION_NO,
-	        MISSION_NO,
-	        MEMBER_ID,
-	        ASSIGNED_YMD,
-	        COMPLETED_YMD,
-	        CERT_IMAGE_URL
-	    ) VALUES (
-	        USER_MISSION_SEQ.NEXTVAL,
-	        #{missionNo},
-	        #{memberId},
-	        TRUNC(SYSDATE),
-	        NULL,
-	        NULL
-	    )
+    INSERT INTO MEMBER_MISSION_TBL (
+        USER_MISSION_NO,
+        MISSION_NO,
+        MEMBER_ID,
+        ASSIGNED_YMD,
+        COMPLETED_YMD,
+        CERT_IMAGE_URL
+    )
+    SELECT
+        USER_MISSION_SEQ.NEXTVAL,
+        #{missionNo},
+        #{memberId},
+        TRUNC(SYSDATE),
+        NULL,
+        NULL
+    FROM DUAL
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM MEMBER_MISSION_TBL
+        WHERE MEMBER_ID = #{memberId}
+          AND ASSIGNED_YMD = TRUNC(SYSDATE)
+    )
 	</insert>
 	<!-- 랜덤 미션 이미지 저장 -->
 	<select id="selectTodayRandomMissionCertImageUrl" resultType="string">

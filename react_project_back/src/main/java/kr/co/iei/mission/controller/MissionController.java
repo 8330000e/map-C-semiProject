@@ -32,10 +32,11 @@ public class MissionController {
 	    return missionService.selectMissionList();
 	}
 	// 오늘의 랜덤 미션 조회
-    @GetMapping("/random")
-    public Mission selectTodayRandomMission(@RequestParam String memberId) {
-        return missionService.selectTodayRandomMission(memberId);
-    }
+	@GetMapping("/random")
+	public ResponseEntity<?> selectTodayRandomMission(@RequestParam String memberId) {
+	    Mission mission = missionService.selectTodayRandomMission(memberId);
+	    return ResponseEntity.ok(mission);
+	}
     
     @PostMapping("/attendance/check")
     public ResponseEntity<Map<String, Object>> checkAttendance(@RequestBody Map<String, String> param) {

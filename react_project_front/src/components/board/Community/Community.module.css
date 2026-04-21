@@ -911,9 +911,19 @@
 }
 .carbon_question > div:first-child {
   flex: 2;
+  padding: 10px;
 }
-.carbon_question > div:last-child {
+.carbon_question > div:first-child > div:first-child {
+  font-size: 18px;
+  font-weight: 600;
+}
+.carbon_question > :nth-child(2) {
   flex: 2;
+  padding: 10px;
+}
+.caltiemtext {
+  font-size: 18px;
+  font-weight: 600;
 }
 .boardWriteNotice {
   padding: 10px 8px;
