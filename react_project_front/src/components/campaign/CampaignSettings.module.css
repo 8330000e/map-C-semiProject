@@ -81,4 +81,12 @@
 }
 .camp_settings_content_main_wrap > textarea {
   resize: none;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid var(--gray4);
+}
+.camp_settings_content_main_wrap > input {
+  padding: 3px;
+  border-radius: 5px;
+  border: 1px solid var(--gray4);
 }
