@@ -207,7 +207,8 @@ const Header = () => {
                         cursor: "pointer",
                       }}
                       onClick={() => {
-                        setAlarmMode(!alarmMode);
+                        setDrawer(false);
+                        setNewAlarm(false);
                         setAlarmMode((prev) => !prev);
                       }}
                     />
