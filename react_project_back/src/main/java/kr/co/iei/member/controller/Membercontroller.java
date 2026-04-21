@@ -167,6 +167,7 @@ public class Membercontroller {
 	    }
 	}
 	
+	
 	//재토큰 발행 로직 (김경건)
 	@PostMapping(value = "/refresh")
 	// Authentication authentication=> “현재 로그인한 사용자 정보”를 담고 있는 객체
