@@ -100,6 +100,18 @@
         )
     </insert>
 
+    <select id="selectstpvsgg" resultType="String">
+        select ctpvsgg_id from ctpvsgg_tbl where ctpv_nm = #{ctpv} and sgg_nm = #{sgg}
+    </select>
+
+    <select id="addBoardNo" resultType="Board">
+        select board_seq.nextval from dual
+    </select>
+
+    <insert id="insertCalco2Data">
+        insert into co2_tbl values (co2_seq.nextval,#{boardNo},#{memberId},#{ctpvsggId},#{cEleA},#{cEle},#{cGasA},#{cGas},#{cWaterA},#{cWater},#{cRoadA},#{cRoad},#{cWasteA},#{cWaste},#{cTotal})
+    </insert>
+
     <!-- 게시글 수정 -->
     <!-- 게시글을 수정할 때 BOARD_TBL의 UPDATED_AT 컬럼에 현재 시간을 함께 저장함. -->
     <!-- 이렇게 해야 프론트에서 해당 게시글이 수정된 글인지 판단할 수 있음. -->
