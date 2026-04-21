@@ -88,11 +88,10 @@
     WHERE NOT EXISTS (
         SELECT 1
         FROM MEMBER_MISSION_TBL
-        WHERE MISSION_NO = #{missionNo}
-          AND MEMBER_ID = #{memberId}
+        WHERE MEMBER_ID = #{memberId}
           AND ASSIGNED_YMD = TRUNC(SYSDATE)
     )
-</insert>
+	</insert>
 	<!-- 랜덤 미션 이미지 저장 -->
 	<select id="selectTodayRandomMissionCertImageUrl" resultType="string">
 	    SELECT CERT_IMAGE_URL

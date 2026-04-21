@@ -44,8 +44,9 @@
   position: relative;
   width: 450px;
   height: 324px;
-  background-color: #6b7280;
+  background-color: #f5f5dc;
   border-radius: 5px;
+  border: 1px solid var(--gray5);
 }
 .camp_polygon_wrap > h4 {
   padding: 5px;
@@ -75,6 +76,7 @@
 .camp_polygon1.camp_success::after {
   content: "10%";
   animation-delay: 0s;
+  background-color: #f3cf98;
 }
 
 .camp_polygon2 {
@@ -89,6 +91,7 @@
 .camp_polygon2.camp_success::after {
   content: "20%";
   animation-delay: 0.1s;
+  background-color: #f3cf98;
 }
 .camp_polygon3 {
   position: absolute;
@@ -102,6 +105,7 @@
 .camp_polygon3.camp_success::after {
   content: "30%";
   animation-delay: 0.2s;
+  background-color: #f3cf98;
 }
 .camp_polygon4 {
   position: absolute;
@@ -115,6 +119,7 @@
 .camp_polygon4.camp_success::after {
   content: "40%";
   animation-delay: 0.3s;
+  background-color: #f3cf98;
 }
 .camp_polygon5 {
   position: absolute;
@@ -128,6 +133,7 @@
 .camp_polygon5.camp_success::after {
   content: "50%";
   animation-delay: 0.4s;
+  background-color: #f3cf98;
 }
 .camp_polygon6 {
   position: absolute;
@@ -141,6 +147,7 @@
 .camp_polygon6.camp_success::after {
   content: "60%";
   animation-delay: 0.5s;
+  background-color: #f3cf98;
 }
 .camp_polygon7 {
   position: absolute;
@@ -154,6 +161,7 @@
 .camp_polygon7.camp_success::after {
   content: "70%";
   animation-delay: 0.6s;
+  background-color: #f3cf98;
 }
 .camp_polygon8 {
   position: absolute;
@@ -167,6 +175,7 @@
 .camp_polygon8.camp_success::after {
   content: "80%";
   animation-delay: 0.7s;
+  background-color: #f3cf98;
 }
 .camp_polygon9 {
   position: absolute;
@@ -180,6 +189,7 @@
 .camp_polygon9.camp_success::after {
   content: "90%";
   animation-delay: 0.8s;
+  background-color: #f3cf98;
 }
 .camp_polygon0 {
   position: absolute;
@@ -193,6 +203,7 @@
 .camp_polygon0.camp_success::after {
   content: "성공!";
   animation-delay: 1.4s;
+  background-color: #f3cf98;
 }
 
 .camp_success::after {
@@ -285,15 +296,16 @@
   border: none;
 }
 .camp_board_img {
-  width: 220px;
+  width: 250px;
   height: 150px;
   display: flex;
 }
 .camp_board_img > img {
   flex-grow: 1;
   padding: 4px;
-  max-width: 100%;
-  max-height: 100%;
+  /* max-width: 100%;
+  max-height: 100%; */
+  object-fit: contain;
 }
 
 .camp_board_content_wrap {

@@ -82,7 +82,8 @@
 		select count(*) from campaign_participance_tbl where campaign_no = #{campaignNo}
 	</select>
 	<select id="getCampBoardList" resultType="campPart">
-		select * from campaign_participance_tbl where campaign_no =#{campaignNo} order by 1 asc
+		select * from campaign_participance_tbl where campaign_no =#{campaignNo} 
+		offset #{page} * #{size} rows fetch next #{size} rows only
 	</select>
 	<select id="getCampBoardDetail" resultType="campPart">
 		select * from campaign_participance_tbl where campaign_participance_no = #{campaignParticipanceNo}

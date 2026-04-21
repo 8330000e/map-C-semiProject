@@ -4,8 +4,9 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 99999;
+  z-index: 1;
 
+  flex-direction: column; /* 위에서 아래로 수직 배치 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,6 +16,16 @@
   background-repeat: no-repeat;
 }
 
+.btn_group {
+  /*버튼은 움직임에 따라 유동적으로 자기 자리를 유지 
+  -> 이게 요즘 사이트들이 추구하는 화면 형식 
+  */
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 20px;
+}
 /*헤더의 홈으로 가기 버튼*/
 .home_btn {
   position: fixed;
@@ -69,9 +80,9 @@
 
 .reset_pw_wrap {
   width: 500px;
-  min-height: 65vh;
+  min-height: 50vh;
   margin: 80px auto;
-  padding: 50px 35px 180px;
+  padding: 45px 30px 100px;
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 25px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
@@ -89,7 +100,7 @@
 
 .input_wrap {
   width: 100%;
-  padding: 16px 18px;
+  padding: 8px 10px;
   margin-bottom: 16px;
   font-size: 15px;
 }
@@ -142,6 +153,7 @@
 
 .reset_pw_btn {
   padding: 10px 20px;
+
   font-size: 1rem;
   background-color: #5b7252;
   color: #fff;
