@@ -918,10 +918,10 @@
   font-weight: 600;
 }
 .carbon_question > :nth-child(2) {
-  flex: 2;
+  flex: 1;
   padding: 10px;
 }
-.caltiemtext {
+.carbon_question .caltiemtext {
   font-size: 18px;
   font-weight: 600;
 }

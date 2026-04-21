@@ -58,7 +58,13 @@ public interface BoardDao {
 
 	Integer addBoardNo();
 
+	double selectCo2Tot(String ctpvsggId);
+
+	int selectMemberCo2(Calco2 calco2);
+
 	int insertCalco2Data(Calco2 calco2);
+
+	int updateCo2(double membercalco2, String memberId);
 
 	List<BoardComment> selectBoardComments(@Param("boardNo") int boardNo);
 
@@ -95,6 +101,14 @@ public interface BoardDao {
 	List<Board> selectBoardCount();
 
 	List<Report> getGroupList(Integer targetNo, String targetType, Integer reportNo);
+
+	
+
+	
+
+	
+
+	
 
 	
 
