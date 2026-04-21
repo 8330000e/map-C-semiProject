@@ -86,7 +86,7 @@ const CampaignMain = () => {
                 setCampaignSearch("");
               }}
             >
-              <SearchIcon />
+              <SearchIcon style={{ cursor: "pointer" }} />
             </label>
             <Input
               id="campaignSearch"
@@ -147,6 +147,7 @@ const CampaignMain = () => {
                 return (
                   <SwiperSlide key={notice.campaignNoticeTitle + index}>
                     <div
+                      style={{ cursor: "pointer" }}
                       onClick={() => {
                         navigate(
                           `/campaign/noticeDetail/${notice.campaignNoticeNo}`,

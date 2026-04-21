@@ -29,4 +29,6 @@ public class Calco2 {
 
     private String ctpv;
     private String sgg;
+
+    private String co2percent;
 }

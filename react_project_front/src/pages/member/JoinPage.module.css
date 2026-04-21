@@ -263,7 +263,8 @@
 }
 
 /* 화면 너비가 768px 이하가 되면 실행함 */
-@media screen and (max-width: 768px) {
+/*900이상일 떄만 헤더의 버튼들이 드러나게 하기  */
+@media screen and (max-width: 900px) {
   .btn_group {
     display: none;
   }

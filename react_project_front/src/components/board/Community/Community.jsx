@@ -188,23 +188,23 @@ const Community = ({
     });
   };
 
-  const submit = (e) => {
-    e.preventDefault();
-    if (calco2.cTotal === 0) {
-      return;
+  const [co2Data, setCo2Data] = useState(0);
+
+  useEffect(() => {
+    const { ctpv, sgg } = ctpvsgg;
+    if (ctpv && sgg) {
+      axios
+        .get(`${BACKSERVER}/boards/ctpvsggtot/${ctpv},${sgg}`)
+        .then((res) => {
+          console.log("데이터 로드 성공:", res.data);
+          // 3. 서버에서 받은 값을 상태에 저장 (이때 화면이 다시 그려짐)
+          setCo2Data(res.data);
+        })
+        .catch((err) => {
+          console.error("실패:", err);
+        });
     }
-    // axios
-    //   .post(`${import.meta.env.VITE_BACKSERVER}/boards/co2cal}`, calco2)
-    //   .then((res) => {
-    //     console.log(res);
-    //     if (res.data === 1) {
-    //       console.log("탄소계싼기 성공");
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-  };
+  }, [ctpvsgg.ctpv, ctpvsgg.sgg]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -1078,24 +1078,32 @@ const Community = ({
                                 <p>대단해요 {memberNickname}님!</p>
                                 <p>2024년 기준</p>
                                 <p>
-                                  {ctpvsgg.ctpv + " " + ctpvsgg.sgg}{" "}
-                                  탄소배출량의 {}%를 절감하셨어요!
+                                  {ctpvsgg.ctpv + " " + ctpvsgg.sgg} 일일
+                                  탄소배출량의 약{" "}
+                                  {(
+                                    ((calco2.cTotal * 100) / co2Data) *
+                                    100
+                                  ).toFixed(5)}
+                                  ppm을 절감하셨어요!
                                 </p>
                               </div>
                             </div>
                           )}
                         </div>
                         <div>
-                          {(step === 4 && (
-                            <div className={styles.caltiemtext}>이용시간</div>
-                          )) ||
-                            (step === 5 && (
-                              <div className={styles.caltiemtext}>횟수</div>
+                          <div>
+                            {(step === 4 && (
+                              <div className={styles.caltiemtext}>이용시간</div>
                             )) ||
-                            (step < 6 && (
-                              <div className={styles.caltiemtext}>사용시간</div>
-                            ))}
-
+                              (step === 5 && (
+                                <div className={styles.caltiemtext}>횟수</div>
+                              )) ||
+                              (step < 6 && (
+                                <div className={styles.caltiemtext}>
+                                  사용시간
+                                </div>
+                              ))}
+                          </div>
                           <div>
                             <div>
                               <div>
