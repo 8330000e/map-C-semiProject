@@ -191,7 +191,7 @@ const CampaignDetailPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [deleteBoard]);
+  }, [deleteBoard, page]);
   if (readBan && banMember && memberId) {
     return (
       readComplete && (

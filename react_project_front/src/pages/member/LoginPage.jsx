@@ -96,6 +96,12 @@ const Login = () => {
 
       const status = err.response?.status; //403.
       if (status === 403) {
+        const serverMessage =
+          typeof err.response?.data === "string"
+            ? err.response.data
+            : "정지된 계정입니다. 고객센터로 문의해주세요.";
+        await errorAlert("로그인 불가", serverMessage);
+      } else if (status === 401) {
         await errorAlert(
           "로그인 실패",
           "아이디 또는 비밀번호가 올바르지 않습니다.",

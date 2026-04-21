@@ -18,6 +18,7 @@ import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
+import kr.co.iei.campaign.model.vo.Campaign;
 import kr.co.iei.member.model.vo.Member;
 
 @Mapper
@@ -68,6 +69,12 @@ public interface AdminDao {
 	int qnaAnswer(Qna qna);
 
 	// ============================== 회원 관리 ==============================
+
+	// 승인 대기 캠페인 목록 조회
+	List<Campaign> selectPendingCampaignList();
+
+	// 캠페인 승인 처리 - 승인대기(0) -> 승인완료(1)
+	int approveCampaign(Integer campaignNo);
 
 	// 회원 목록 조회 - status/grade/keyword 조건 동적 적용
 	List<Member> selectMemberList(Integer status, Integer grade, String keyword);
