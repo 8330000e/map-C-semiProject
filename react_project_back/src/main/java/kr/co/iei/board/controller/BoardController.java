@@ -115,6 +115,14 @@ public class BoardController {
 		return ResponseEntity.ok(result);
 	}
 
+	@GetMapping(value = "/ctpvsggtot/{ctpv},{sgg}")
+	public ResponseEntity<?> selectCo2Tot(@PathVariable String ctpv, @PathVariable String sgg) {
+		double cc2 = boardService.selectCo2Tot(ctpv, sgg);
+		System.out.println(cc2);
+		return ResponseEntity.ok(cc2);
+	}
+
+
 	// 에디터 이미지 업로드 기능임. 업로드된 파일을 서버에 저장하고 URL 경로를 리턴함.
 	@PostMapping("/editor/upload")
 	public String uploadEditorImage(@RequestParam("upfile") MultipartFile upfile) {

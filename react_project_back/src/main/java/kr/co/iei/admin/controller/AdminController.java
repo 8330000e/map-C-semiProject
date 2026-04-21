@@ -493,7 +493,7 @@ public class AdminController {
 			row.createCell(3).setCellValue(a.getLogResult());
 			row.createCell(4).setCellValue(a.getLogDate());
 			row.createCell(5).setCellValue(a.getLogReason());
-			row.createCell(6).setCellValue(a.getReportNo());
+			row.createCell(6).setCellValue(a.getReportNo() != null ? String.valueOf(a.getReportNo()) : "해당없음");
 		}
 		
 		for (int i = 0; i <= 6; i++) {
