@@ -86,7 +86,7 @@ const AdminSideMenu = ({ memberNickname }) => {
           to="/admin/logs"
         >
           <div className={styles.menu_item}>
-            <span>시스템로그</span>
+            <span>관리자로그</span>
             <HistoryIcon sx={{ fontSize: 30, color: "#0068EF" }} />
           </div>
         </NavLink>

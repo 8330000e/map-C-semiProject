@@ -25,5 +25,4 @@ public class AdminLog {
 	private Integer reportNo;
 	private String logAction;
 	
-	
 }
