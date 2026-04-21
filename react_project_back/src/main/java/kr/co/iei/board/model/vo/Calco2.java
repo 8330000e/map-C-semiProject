@@ -22,9 +22,10 @@ public class Calco2 {
     private Integer cWaterA;
     private Integer cWater;
     private Integer cRoad;
+    private Integer cRoadA;
     private Integer cWasteA;
     private Integer cWaste;
-    private Integer cTotal;
+    private Double cTotal;
 
     private String ctpv;
     private String sgg;
