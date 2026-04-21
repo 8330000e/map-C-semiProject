@@ -28,9 +28,33 @@ public class AlarmController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping(value = "/newalarm/{memberId}")
+    public ResponseEntity<?> isNewAlarm(@PathVariable String memberId) {
+        int result = alarmService.isNewAlarm(memberId);
+        return ResponseEntity.ok(result);
+    }
+
+    @PatchMapping(value = "/newalarm/{memberId}")
+    public ResponseEntity<?> alarmChecked(@PathVariable String memberId) {
+        int result = alarmService.alarmChecked(memberId);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping(value = "/{memberId}")
     public ResponseEntity<?> selectAllAlarm(@PathVariable String memberId) {
         List<Alarm> list = alarmService.selectAllAlarm(memberId);
         return ResponseEntity.ok(list);
+    }
+
+    @PatchMapping(value = "/alarmdel/{memberId}")
+    public ResponseEntity<?> alarmDel(@PathVariable String memberId, @RequestParam Integer alarmNo) {
+        int result = alarmService.alarmDel(memberId, alarmNo);
+        return ResponseEntity.ok(result);
+    }
+
+    @PatchMapping(value = "/alarmalldel/{memberId}")
+    public ResponseEntity<?> alarmalldel(@PathVariable String memberId) {
+        int result = alarmService.alarmalldel(memberId);
+        return ResponseEntity.ok(result);
     }
 }

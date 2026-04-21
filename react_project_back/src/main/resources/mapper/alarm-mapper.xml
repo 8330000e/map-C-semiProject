@@ -5,6 +5,18 @@
 		update alarm_tbl set alarm_check = 1 where member_id = #{memberId}
 	</update>
 	<select id="selectAllAlarm" resultType="Alarm">
-		select * from alarm_tbl where member_id = #{memberId}
+		select * from alarm_tbl where alarm_del = 1 and member_id = #{memberId}
 	</select>
+	<select id="isNewAlarm" resultType="int">
+		select count(alarm_check) from alarm_tbl where alarm_check=0 and member_id = #{memberId}
+	</select>
+	<update id="alarmChecked">
+		update alarm_tbl set alarm_check = 1 where member_id = #{memberId}
+	</update>
+	<update id="alarmDel">
+		update alarm_tbl set alarm_del = 0 where alarm_no = #{alarmNo} and member_id = #{memberId}
+	</update>
+	<update id="alarmalldel">
+		update alarm_tbl set alarm_del = 0 where member_id = #{memberId}
+	</update>
 </mapper>
