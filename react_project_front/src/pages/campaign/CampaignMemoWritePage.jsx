@@ -7,6 +7,8 @@ import { Input } from "../../components/ui/Form";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { compressImageFile } from "../../utils/compressImage";
+// import defaultImg from "../../assets/defaultImg.png";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 
 const CampaignMemoWritePage = () => {
   const { memberId } = useAuthStore();
@@ -14,6 +16,7 @@ const CampaignMemoWritePage = () => {
   const params = useParams();
   const ref = useRef(null);
   const campaignNo = params.campaignNo;
+
   const [fileExist, setFileExist] = useState(false);
   const [writeMemo, setWriteMemo] = useState({
     campaignMemo: "",

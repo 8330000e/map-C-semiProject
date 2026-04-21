@@ -68,10 +68,12 @@
 .campaignmain_campaign_title {
   position: absolute;
   top: 2px;
+  left: 6px;
 }
 .campaignmain_campaign_goal_member {
   position: absolute;
   bottom: 2px;
+  left: 6px;
 }
 .campaignmain_campaign_status {
   position: absolute;
