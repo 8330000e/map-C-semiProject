@@ -35,9 +35,43 @@ const Join = () => {
 
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 
-  //아이디 중복 체크
+  // --- [추가] 유효성 검사 메시지 상태 ---
+  const [idMessage, setIdMessage] = useState(""); // 아이디 유효성 검사 메시지 상태
+  const [pwMessage, setPwMessage] = useState(""); // 비밀번호 유효성 검사 메시지 상태
+
+  // 작업 1: 유효성 검사 함수 (정규식)
+  //아이디 숫자 영문자 특수문자만 되게 하기
+  const validateId = (id) => {
+    const idRegex = /^[a-zA-Z0-9]{1,8}$/; //영문 숫자만 1-8자
+    if (id.length > 8) return "아이디는 영문과 숫자만 가능합니다.";
+    // 여기서 idRegex를 '사용'함으로 써 경고 해결!
+    if (!idRegex.test(id)) {
+      return "아이디는 영문과 숫자만 가능합니다.";
+    }
+
+    return "";
+  };
+
+  const validatePw = (pw) => {
+    // 영문 3개 이상, 숫자 4개 이상, 특수문자 1개 이상 포함 로직
+    const englishCount = (pw.match(/[a-zA-Z]/g) || []).length;
+    const numberCount = (pw.match(/[0-9]/g) || []).length;
+    const specialCount = (pw.match(/[!@#$%^&*()_+~`-]/g) || []).length;
+
+    if (pw.length === 0) return "";
+    if (englishCount < 3 || numberCount < 4 || specialCount < 1) {
+      return "비밀번호는 영문 3개 이상, 숫자 4개 이상, 특수문자 1개 이상 포함 로직입니다.";
+    }
+    return "";
+  };
+
+  //아이디 중복 체크 (기존 로직 유지하되 유효성 검사 통과 시에만 실행 추천)
   const ipDupCheck = async () => {
-    if (!member.memberId) {
+    if (
+      !member.memberId ||
+      idMessage.includes("초과") ||
+      idMessage.includes("만 가능")
+    ) {
       setCheckId(0); // 아이디 입력 없으면 초기화
       return;
     }
@@ -74,6 +108,69 @@ const Join = () => {
   const inputMember = (e) => {
     const { name, value } = e.target;
 
+    // 1. 아이디 처리 (영문+숫자, 최대 8자, 한글/특수문자 불가)
+    if (name === "memberId") {
+      const cleanedValue = value.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, ""); // 한글 즉시 제거
+
+      // 여기서 validateId 함수를 '사용'함으로 써 경고 해결!
+      const errorMessage = validateId(cleanedValue);
+      setIdMessage(errorMessage);
+
+      if (cleanedValue.length === 0) {
+        setIdMessage("");
+        setMember({ ...member, [name]: "" }); //값을 적고나면 비우는 로직
+        return;
+      }
+
+      // 특수문자 입력 방지 (영문, 숫자만 허용)
+      const idRegex = /^[a-zA-Z0-9]*$/;
+      if (!idRegex.test(cleanedValue)) {
+        setIdMessage("아이디는 영문과 숫자만 가능합니다.");
+        return; // 특수문자가 들어오면 업데이트 안함
+      }
+
+      // 글자수 제한
+      if (cleanedValue.length > 8) {
+        setIdMessage("범위를 초과하였습니다. (최대 8자)");
+        return;
+      }
+
+      setIdMessage(""); // 모든 조건 통과 시 메시지 초기화
+      setMember({ ...member, [name]: cleanedValue });
+      return;
+    }
+
+    // 2. 비밀번호 처리 (영문3↑, 숫자4↑, 특수문자1↑, 8자↑, 한글불가)
+    if (name === "memberPw") {
+      const cleanedValue = value.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, ""); // 한글 즉시 제거
+      const errorMessage = validatePw(cleanedValue);
+      setPwMessage(errorMessage);
+      // 복합 조건 검사 로직
+      const englishCount = (cleanedValue.match(/[a-zA-Z]/g) || []).length;
+      const numberCount = (cleanedValue.match(/[0-9]/g) || []).length;
+      const specialCount = (cleanedValue.match(/[!@#$%^&*()_+~`-]/g) || [])
+        .length;
+
+      // 비밀번호 설정 영어, 숫자, 특수문자 제한
+      if (
+        cleanedValue.length > 0 &&
+        (englishCount < 3 ||
+          numberCount < 4 ||
+          specialCount < 1 ||
+          cleanedValue.length < 8)
+      ) {
+        setPwMessage(
+          "영문(3개↑), 숫자(4개↑), 특수문자(1개↑) 조합 8자 이상 필요",
+        );
+      } else if (cleanedValue.length >= 8) {
+        setPwMessage("안전한 비밀번호입니다.");
+      } else {
+        setPwMessage("");
+      }
+
+      setMember({ ...member, [name]: cleanedValue });
+      return;
+    }
     //이메일 입력시 이메일 인증 상태 초기화
     if (name === "memberEmail") {
       //false가 초기화라는 증거
@@ -109,6 +206,15 @@ const Join = () => {
       await errorAlert("중복 확인", "아이디 중복 검사를 진행해주세요.");
       return;
     }
+
+    //아이디 유효성 검사
+    if (idMessage && idMessage !== "") {
+      await errorAlert("아이디 확인", idMessage);
+      return;
+    }
+    //비밀번호 조합이 맞는지 검사
+    if (pwMessage !== "안전한 비밀번호입니다.")
+      return errorAlert("비밀번호 확인", pwMessage);
 
     // 비밀번호 일치 여부 체크
     if (checkPw !== 1) {
@@ -191,19 +297,15 @@ const Join = () => {
               onChange={inputMember}
               className={styles.input_field}
               onBlur={ipDupCheck}
+              placeholder="영문, 숫자 조합 8자 이내"
             ></input>
-            {checkId > 0 && (
-              <p
-                className={
-                  checkId === 2
-                    ? styles.check_msg
-                    : `${styles.check_msg} ${styles.invalid}`
-                }
-              >
-                {checkId === 2
-                  ? "사용 가능한 아이디입니다."
-                  : "이미 사용중인 아이디입니다."}
+            {idMessage && (
+              <p className={`${styles.check_msg} ${styles.invalid}`}>
+                {idMessage}
               </p>
+            )}
+            {checkId === 2 && !idMessage && (
+              <p className={styles.check_msg}>사용 가능한 아이디입니다.</p>
             )}
           </div>
 
@@ -217,7 +319,19 @@ const Join = () => {
               value={member.memberPw}
               onChange={inputMember}
               className={styles.input_field}
+              placeholder="영문3, 숫자4, 특수문자하나 이상"
             />
+            {pwMessage && (
+              <p
+                className={
+                  pwMessage.includes("안전")
+                    ? styles.check_msg
+                    : `${styles.check_msg} ${styles.invalid}`
+                }
+              >
+                {pwMessage}
+              </p>
+            )}
           </div>
 
           {/* 비밀번호 확인 */}
@@ -228,7 +342,12 @@ const Join = () => {
               name="memberPwRe"
               id="memberPwRe"
               value={memberPwRe}
-              onChange={(e) => setMemberPwRe(e.target.value)}
+              onChange={(e) =>
+                setMemberPwRe(
+                  // 비밀번호에서는 한글을 제거
+                  e.target.value.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, ""),
+                )
+              }
               className={styles.input_field}
             />
             {checkPw > 0 && (
