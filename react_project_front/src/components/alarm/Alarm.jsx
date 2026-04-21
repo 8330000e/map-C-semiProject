@@ -79,7 +79,7 @@ const Alarm = () => {
 
   return (
     <div className={styles.alarm_wrap}>
-      <ul>
+      <ul className={styles.ul}>
         {alarmList && alarmList.length > 0 ? (
           alarmList.map((alarm, i) => (
             <li className={styles.alarm_content_wrap} key={`alarm_` + i}>
