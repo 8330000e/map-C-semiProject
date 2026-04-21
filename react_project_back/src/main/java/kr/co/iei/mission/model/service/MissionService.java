@@ -34,27 +34,34 @@ public class MissionService {
 	}
 
 	@Transactional
-public Mission selectTodayRandomMission(String memberId) {
+	public Mission selectTodayRandomMission(String memberId) {
+	    if (memberId == null || memberId.trim().isEmpty()) {
+	        throw new IllegalArgumentException("memberId가 비어 있습니다.");
+	    }
 
-    Mission todayMission = missionDao.selectTodayAssignedRandomMission(memberId);
-    if (todayMission != null) {
-        return todayMission;
-    }
+	    Mission todayMission = missionDao.selectTodayAssignedRandomMission(memberId);
+	    if (todayMission != null) {
+	        return todayMission;
+	    }
 
-    Mission randomMission = missionDao.selectRandomMission();
-    if (randomMission == null) {
-        return null;
-    }
+	    Mission randomMission = missionDao.selectRandomMission();
+	    if (randomMission == null) {
+	        throw new RuntimeException("배정 가능한 랜덤 미션이 없습니다.");
+	    }
 
-    MemberMission memberMission = new MemberMission();
-    memberMission.setMissionNo(randomMission.getMissionNo());
-    memberMission.setMemberId(memberId);
-    memberMission.setCertImageUrl(null);
+	    MemberMission memberMission = new MemberMission();
+	    memberMission.setMissionNo(randomMission.getMissionNo());
+	    memberMission.setMemberId(memberId);
 
-    missionDao.insertMemberMission(memberMission);
+	    missionDao.insertMemberMission(memberMission);
 
-    return missionDao.selectTodayAssignedRandomMission(memberId);
-}
+	    Mission assignedMission = missionDao.selectTodayAssignedRandomMission(memberId);
+	    if (assignedMission == null) {
+	        throw new RuntimeException("랜덤 미션 조회 실패");
+	    }
+
+	    return assignedMission;
+	}
 
 	// 출석체크 포인트 지급
 	@Transactional
