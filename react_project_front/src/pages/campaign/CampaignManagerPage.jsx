@@ -62,7 +62,7 @@ const CampaignManagerPage = () => {
             <NavLink
               to={`/campaign/settings/${campaignNo}/${memberId}/terminate`}
             >
-              조기종료
+              캠페인 조기종료
             </NavLink>
           </div>
           <div className={styles.camp_settings_content_wrap}>
