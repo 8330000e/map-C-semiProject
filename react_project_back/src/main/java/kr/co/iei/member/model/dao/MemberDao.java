@@ -26,7 +26,7 @@ public interface MemberDao {
 	 * 
 	 */
 	//김경건
-	public Integer existsByIdAndEmail(@Param("memberId") String memberId, @Param("memberEmail") String memberEmail);
+	public Integer existsByIdAndEmail( String memberId,  String memberEmail);
 	
 	// 비밀번호 재설정 (김경건)
 	int resetPw( String memberId, @Param("memberPw") String encPw);
@@ -77,6 +77,7 @@ public interface MemberDao {
 	Map<String, Object> getLockInfo(String memberId);
 	
 	void unlockExpiredMembers();
+	
 	
 	
 }
