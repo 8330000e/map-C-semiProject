@@ -219,6 +219,12 @@
     growPop 0.7s ease;
 }
 
+.completeTreeImage {
+  width: 420px;
+  max-width: none;
+  max-height: none;
+}
+
 .treeBounce {
   animation: treeEatBounce 0.5s ease forwards !important;
 }

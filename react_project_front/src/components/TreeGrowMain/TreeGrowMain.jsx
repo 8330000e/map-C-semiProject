@@ -129,7 +129,7 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
     if (stage === 2) return 1.15;
     if (stage === 3) return 1.25;
     if (stage === 4) return 1.35;
-    return 1.45;
+    return 1.7;
   };
 
   const { memberId } = useAuthStore();
@@ -551,7 +551,7 @@ const TreeGrowMain = ({ selectedRegionNo }) => {
                     key={currentStage}
                     src={currentTreeImage}
                     alt={currentStageLabel}
-                    className={styles.treeImage}
+                    className={`${styles.treeImage} ${currentStage === 5 ? styles.completeTreeImage : ""}`}
                   />
 
                   {showAbsorbEffect && (
