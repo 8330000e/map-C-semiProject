@@ -94,9 +94,16 @@ public class CampaignService {
 		return result;
 	}
 
-	public List<CampaignParticipance> getCampBoardList(Integer campaignNo) {
-		List<CampaignParticipance> campPart = campaignDao.getCampBoardList(campaignNo);
-		return campPart;
+	public Map<String, Object> getCampBoardList(CampaignParticipance camp) {
+		int campaignNo=camp.getCampaignNo();
+		int size = camp.getSize();
+		Integer totalCount = campaignDao.countCampBoardList(campaignNo);
+		int totalPage = (int)(Math.ceil((totalCount / (double)size)));
+		List<CampaignParticipance> campPart = campaignDao.getCampBoardList(camp);
+		Map <String,Object> map = new HashMap<String,Object>();
+		map.put("campPart", campPart);
+		map.put("totalPage",totalPage);
+		return map;
 	}
 
 	public CampaignParticipance getCampBoardDetail(Integer campaignParticipanceNo) {
@@ -207,12 +214,14 @@ public class CampaignService {
 	@Transactional
 	public int updateCamp(Campaign camp) {
 		int result=0;
+		System.out.println(camp);
 		result = campaignDao.campaignUpdateTblUpdate(camp);
 		System.out.println(camp.getCampaignTitle());
 		System.out.println(result);
 		if(result==1) {
 			int campaignStatus = campaignDao.getOnlyCampaignStatus(camp);
 			System.out.println(campaignStatus);
+//			System.out.println(result);
 			if(campaignStatus == 1) {
 				return 1;
 			}else {
@@ -290,6 +299,17 @@ public class CampaignService {
 		CampaignNotice campNo = campaignDao.selectNoticeDetail(campaignNoticeNo);
 		
 		return campNo;
+	}
+
+	public int updateDetailNotice(CampaignNotice campNo) {
+		int result = campaignDao.updateDetailNotice(campNo);
+		return result;
+	}
+
+	public int deleteDetailNotice(Integer campaignNoticeNo) {
+		int result = campaignDao.deleteDetailNotice(campaignNoticeNo);
+		
+		return result;
 	}
 	
 

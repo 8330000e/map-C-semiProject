@@ -35,6 +35,7 @@ public class MemberService {
 	@Autowired
 	private EmailSender emailSender;
 
+	// 회원가입로직
 	@Transactional
 	public int insertMember(Member member) {
 		String memberPw = member.getMemberPw();
@@ -62,13 +63,13 @@ public class MemberService {
 		// 따라서 그냥 아이디 하나로 조회하여 해당 비밀번호를 호출
 		Member loginMember = memberDao.selectOneMember(member.getMemberId());
 		if (loginMember != null) {
-            if (bcrypt.matches(member.getMemberPw(), loginMember.getMemberPw())) {
-                if (loginMember.getMemberStatus() != null && loginMember.getMemberStatus() == 2) {
-                    LoginMember login = new LoginMember();
-                    login.setMemberStatus(loginMember.getMemberStatus());
-                    return login;
-                }
-					LoginMember login = jwtUtils.createToken(loginMember.getMemberId(), loginMember.getMemberGrade(),
+			if (bcrypt.matches(member.getMemberPw(), loginMember.getMemberPw())) {
+				if (loginMember.getMemberStatus() != null && loginMember.getMemberStatus() == 2) {
+					LoginMember login = new LoginMember();
+					login.setMemberStatus(loginMember.getMemberStatus());
+					return login;
+				}
+				LoginMember login = jwtUtils.createToken(loginMember.getMemberId(), loginMember.getMemberGrade(),
 						loginMember.getMemberNickname());
 
 				// 암호화된 비밀번호가 프론트로 가는 것을 방지 하기 위한 로직.
@@ -100,6 +101,37 @@ public class MemberService {
 		return member;
 	}
 
+	// 재토큰 발행 로직 (로그인 로직과 통일)
+	//=> 그렇게 하는 이유는 짧은 시간이라도 등급, 상태등이 변할 수 있기 때문
+	public LoginMember refreshToken(String memberId) {
+	    // 1. 최신 정보를 가져옴
+	    Member loginMember = memberDao.selectOneMember(memberId);
+	    
+	    if (loginMember != null) {
+	        // 2. 로그인 때와 동일한 JwtUtils 메서드 사용
+	        // 이 메서드가 내부적으로 새로운 Access Token을 만들어서 LoginMember에 담아줄 것입니다.
+	        LoginMember newLogin = jwtUtils.createToken(
+	            loginMember.getMemberId(), 
+	            loginMember.getMemberGrade(),
+	            loginMember.getMemberNickname()
+	        );
+
+	        // 3. 로그인 로직에서 했던 것처럼 보안 처리 및 추가 정보 세팅
+	        newLogin.setMemberStatus(loginMember.getMemberStatus());
+	        newLogin.setMemberEmail(loginMember.getMemberEmail());
+	        
+	        // 비밀번호는 이미 null이거나 DB에서 가져온 loginMember에만 있으므로 
+	        // login(LoginMember) 객체는 안전합니다.
+
+	        return newLogin; // Map 대신 LoginMember 객체 그대로 반환
+	    }
+	    
+	    return null;
+	}
+		
+
+		
+		
 	// 아이디 찾기 로직 (김경건)
 	public String findIdByEmail(String memberEmail) {
 		String memberId = memberDao.findIdByEmail(memberEmail);
@@ -201,26 +233,25 @@ public class MemberService {
 
 	@Transactional
 	public void insertLog(Map<String, Object> params) {
-	    Member m = memberDao.selectOneMember((String) params.get("memberId"));
-	    if (m == null) return;
-	    
-	    String logAction = (String) params.get("logAction");
-	    if ("로그인".equals(logAction)) {
-	        String lastLocation = memberDao.getLastLocation((String) params.get("memberId"));
-	        if (lastLocation != null && !lastLocation.equals((String) params.get("logLocation"))) {
-	            params.put("logAlert", "위치변경");
-	            // 이메일 발송
-	            String email = m.getMemberEmail();
-	            String location = (String) params.get("logLocation");
-	            emailSender.sendMail("비정상 로그인 감지", email, "새로운 위치에서 로그인이 감지되었습니다: " + location);
-	        }
-	    }
-	    
-	    memberDao.insertLog(params);
+		Member m = memberDao.selectOneMember((String) params.get("memberId"));
+		if (m == null)
+			return;
+
+		String logAction = (String) params.get("logAction");
+		if ("로그인".equals(logAction)) {
+			String lastLocation = memberDao.getLastLocation((String) params.get("memberId"));
+			if (lastLocation != null && !lastLocation.equals((String) params.get("logLocation"))) {
+				params.put("logAlert", "위치변경");
+				// 이메일 발송
+				String email = m.getMemberEmail();
+				String location = (String) params.get("logLocation");
+				emailSender.sendMail("비정상 로그인 감지", email, "새로운 위치에서 로그인이 감지되었습니다: " + location);
+			}
+		}
+
+		memberDao.insertLog(params);
 	}
 
-
-	
 	public Map<String, Object> getLockInfo(String memberId) {
 		return memberDao.getLockInfo(memberId);
 	}
@@ -238,18 +269,18 @@ public class MemberService {
 		List<Member> list = memberDao.selectClist();
 		return list;
 	}
-	
+
 	public List<PointHistory> selectPointHistory(String memberId) {
-	    return memberDao.selectPointHistory(memberId);
+		return memberDao.selectPointHistory(memberId);
 	}
-	
-	
+
 	public int insertPointHistory(String memberId, int pointChange, String pointType, String pointReason) {
-	    Map<String, Object> param = new HashMap<>();
-	    param.put("memberId", memberId);
-	    param.put("pointChange", pointChange);
-	    param.put("pointType", pointType);
-	    param.put("pointReason", pointReason);
-	    return memberDao.insertPointHistory(param);
+		Map<String, Object> param = new HashMap<>();
+		param.put("memberId", memberId);
+		param.put("pointChange", pointChange);
+		param.put("pointType", pointType);
+		param.put("pointReason", pointReason);
+		return memberDao.insertPointHistory(param);
 	}
+
 }

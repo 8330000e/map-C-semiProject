@@ -27,6 +27,14 @@ const CampaignManagerPage = () => {
           <h2>캠페인 설정</h2>
         </div>
         <div className={styles.camp_settings_main_wrap}>
+          <div
+            className={styles.return_btn}
+            onClick={() => {
+              navigate(`/campaign/detail/${campaignNo}`);
+            }}
+          >
+            {"< " + " 돌아가기"}
+          </div>
           <div className={styles.camp_settings_sidebar}>
             <div className={styles.camp_setting_sidebar_title}>
               <h3>설정</h3>
@@ -34,7 +42,7 @@ const CampaignManagerPage = () => {
             <NavLink
               to={`/campaign/settings/${campaignNo}/${memberId}/updateCamp`}
             >
-              캠페인 업데이트
+              캠페인 수정
             </NavLink>
             <NavLink
               to={`/campaign/settings/${campaignNo}/${memberId}/banMember`}
@@ -56,14 +64,6 @@ const CampaignManagerPage = () => {
             >
               조기종료
             </NavLink>
-            <div
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                navigate(`/campaign/detail/${campaignNo}`);
-              }}
-            >
-              돌아가기
-            </div>
           </div>
           <div className={styles.camp_settings_content_wrap}>
             <Routes>

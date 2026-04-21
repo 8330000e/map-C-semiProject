@@ -71,7 +71,7 @@ const Login = () => {
       clearTimeout(timer); //로그인 성공하면 타이머 초기화
       console.log(res.data);
 
-      await successAlert("로그인 성공", "로그인 성공");
+      await successAlert("로그인 성공", "메인 페이지로 이동합니다");
 
       //토큰 설정
       if (res.data.token) {

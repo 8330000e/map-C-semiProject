@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -57,6 +58,7 @@ public class Membercontroller {
 
 	@PostMapping
 	public ResponseEntity<?> joinMember(@RequestBody Member member) {
+		System.out.println("가입 시도 데이터: " + member);
 		int result = memberService.insertMember(member);
 		return ResponseEntity.ok(result);
 	}
@@ -69,7 +71,7 @@ public class Membercontroller {
 		// 프런트에서 setCheckId(res.data ? 2 : 1);
 		// -> 이렇게 설정을 해놨기 때문에 비교문을 통해
 		// ->컨트롤러 m == null → true/false 그대로 반환
-		return ResponseEntity.ok(m == null);
+		return ResponseEntity.ok(m != null);
 	}
 
 	// 이메일 검증 로직 (김경건)
@@ -163,6 +165,30 @@ public class Membercontroller {
 	    	memberService.checkFailCount(member.getMemberId());
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 일치하지 않습니다.");
 	    }
+	}
+	
+	//재토큰 발행 로직 (김경건)
+	@PostMapping(value = "/refresh")
+	// Authentication authentication=> “현재 로그인한 사용자 정보”를 담고 있는 객체
+	//직접적으로 Map<String, String> data 사용해서 받아오기.
+	//일반적인 zustend에 있는 값을 이용해서 가져올 수가 없었음.
+	public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> data){
+		// 1. 현재 인증된 사용자의 ID를 꺼내기
+		String memberId = data.get("memberId"); // 프론트에서 넘겨준 ID 사용
+		
+		// 2. 서비스에게 "이 사용자 정보를 바탕으로 새 토큰 세트 좀 만들어줘"라고 요청
+	    // 기존에 로그인을 처리하던 서비스 메서드나, 새로 만든 리프레시 전용 메서드를 호출하기
+		//Map<String, Object> = 여러 데이터를 한번에 보내기 위한 컨테이너
+		//-> 즉 여기에서는 token,endTime을 보내야 해서 Map을 사용
+		LoginMember newLogin = memberService.refreshToken(memberId);
+		
+		// 3. 다시 프론트엔드(Zustand)로 새 토큰과 endTime을 던져줌
+		if (newLogin != null) {
+	        return ResponseEntity.ok(newLogin);
+	    } else {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+	    }
+		
 	}
 
 	// 아이디 찾기 설정(김경건)

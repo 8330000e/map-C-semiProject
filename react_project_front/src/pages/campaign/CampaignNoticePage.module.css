@@ -1,6 +1,10 @@
 .camp_notice_wrap {
   width: 1200px;
   min-height: 700px;
+  border: 1.5px solid var(--gray4);
+  background-color: #eef3e8;
+  border-radius: 20px;
+  margin-top: 20px;
 }
 .camp_notice_title {
   margin: 30px auto;
