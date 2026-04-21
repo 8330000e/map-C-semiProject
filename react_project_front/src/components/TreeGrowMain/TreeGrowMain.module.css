@@ -219,6 +219,12 @@
     growPop 0.7s ease;
 }
 
+.completeTreeImage {
+  width: 420px;
+  max-width: none;
+  max-height: none;
+}
+
 .treeBounce {
   animation: treeEatBounce 0.5s ease forwards !important;
 }
@@ -338,6 +344,11 @@
   white-space: nowrap;
   font-weight: 600;
   margin-bottom: 6px;
+}
+.unit {
+  font-size: 0.8em; /* 핵심: 작게 */
+  opacity: 0.6; /* 살짝 흐리게 */
+  margin-left: 2px; /* 숫자랑 간격 */
 }
 
 .waterButton {
