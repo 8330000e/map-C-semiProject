@@ -1,5 +1,8 @@
 .side_menu_wrap {
-  padding: 0px 16px;
+  padding: 0px 14px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .admin_profile {
@@ -10,12 +13,12 @@
   );
   border: 1px solid var(--admin-stroke);
   border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 32px;
+  padding: 12px;
+  margin-bottom: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   position: relative;
   overflow: hidden;
 }
@@ -36,8 +39,8 @@
 }
 
 .admin_profile img {
-  width: 120px;
-  height: 120px;
+  width: 108px;
+  height: 108px;
   object-fit: cover;
   border-radius: 50%;
   background-color: var(--admin-bg);
@@ -58,13 +61,19 @@
 .side_menu_wrap a {
   display: flex;
   align-items: center;
-  padding: 12px 14px;
-  margin: 8px 0;
+  padding: 8px 12px;
   border-radius: 10px;
   color: var(--admin-muted);
   transition: all 0.25s ease;
   position: relative;
   overflow: hidden;
+}
+
+.menu_list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
 
 .side_menu_wrap a::before {
@@ -108,10 +117,13 @@
 
 .menu_item > span {
   display: block;
-  width: 150px;
+  width: 136px;
+  font-size: 15px;
 }
 
 .menu_item {
   display: flex;
   align-items: center;
+  width: 100%;
+  justify-content: space-between;
 }

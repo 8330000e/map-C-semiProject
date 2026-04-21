@@ -225,12 +225,15 @@ const Map = ({
     const fetchRegionChart = async () => {
       setChartLoading(true);
       try {
-        const response = await axios.get(`${BACKSERVER}/carbon/region/history`, {
-          params: {
-            ctpv: ctpvsgg.ctpv,
-            sgg: ctpvsgg.sgg,
+        const response = await axios.get(
+          `${BACKSERVER}/carbon/region/history`,
+          {
+            params: {
+              ctpv: ctpvsgg.ctpv,
+              sgg: ctpvsgg.sgg,
+            },
           },
-        });
+        );
         const history = Array.isArray(response.data) ? response.data : [];
         // period 값은 '2024-01' 형태로 넘어옴.
         // 이 값을 '1월', '2월'처럼 사람이 보기 쉬운 텍스트로 변환함.
@@ -697,8 +700,10 @@ const Map = ({
 
   // 현재 선택된 지역과 일치하는 통계 데이터를 ctpvsggList에서 찾음.
   // 이 값은 선택한 구역의 게시글 개수를 기준으로 함.
-  const selectedRegion = ctpvsggList.find((item) =>
-    getRegionKey(item.ctpv, item.sgg) === getRegionKey(ctpvsgg.ctpv, ctpvsgg.sgg),
+  const selectedRegion = ctpvsggList.find(
+    (item) =>
+      getRegionKey(item.ctpv, item.sgg) ===
+      getRegionKey(ctpvsgg.ctpv, ctpvsgg.sgg),
   );
   // 선택된 지역의 게시물 개수를 가져오는 값임.
   // 백엔드에서 지역별 게시물 수를 계산해서 boardCount 필드로 전달함.
@@ -803,8 +808,10 @@ const Map = ({
                   <CelebrationOutlinedIcon sx={{ fontSize: "30px" }} />
                 </p>
                 <p>
-                  <strong>{selectedRegionCount.toLocaleString()}</strong>명의 구민들이 탄소 배출량{" "}
-                  <strong>{estimatedRegionCo2.toLocaleString()}kg</strong>을 절감했습니다!
+                  <strong>{selectedRegionCount.toLocaleString()}</strong>명의
+                  구민들이 탄소 배출량{" "}
+                  <strong>{estimatedRegionCo2.toLocaleString()}kg</strong>을
+                  절감했습니다!
                 </p>
               </div>
             </div>
@@ -856,7 +863,11 @@ const Map = ({
                         <Line
                           options={regionChartOptions}
                           data={regionChartData}
-                          plugins={regionChartData.labels.length <= 6 ? [regionValuePlugin] : []}
+                          plugins={
+                            regionChartData.labels.length <= 6
+                              ? [regionValuePlugin]
+                              : []
+                          }
                         />
                       </div>
                     </div>

@@ -20,6 +20,7 @@ import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
+import kr.co.iei.board.model.vo.Calco2;
 import kr.co.iei.board.model.vo.Marker;
 import kr.co.iei.board.model.vo.Report;
 import kr.co.iei.member.model.service.MemberService;
@@ -85,7 +86,16 @@ public class BoardService {
 
 	    return resultMap;
 	}
-	
+	//탄소계산기
+	@Transactional
+    public int insertCalco2Data(Calco2 calco2) {
+		String ctpvsggId = boardDao.selectstpvsgg(calco2.getCtpv(),calco2.getSgg());
+		calco2.setCtpvsggId(ctpvsggId);
+		System.out.println("service칼카본투: "+calco2);
+        int result = boardDao.insertCalco2Data(calco2);
+		System.out.println("탄소계산기 맵핑됐냐: "+result);
+        return result;
+    }
 
 
 	//게시글 수정
@@ -325,6 +335,8 @@ public class BoardService {
 		List<Report> groupList = boardDao.getGroupList(targetNo, targetType, reportNo);
 		return groupList;
 	}
+
+	
 
 }
 
