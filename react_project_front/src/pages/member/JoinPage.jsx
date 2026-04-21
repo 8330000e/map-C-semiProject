@@ -264,24 +264,26 @@ const Join = () => {
 
   return (
     <div className={`${styles.total_join_container} login_page`}>
-      {/*홈으로 가기 버튼 */}
-      <div
-        className={styles.home_btn}
-        onClick={() => {
-          navigate("/");
-        }}
-      >
-        홈으로 가기
-      </div>
+      <div className={styles.btn_group}>
+        {/*홈으로 가기 버튼 */}
+        <div
+          className={styles.home_btn}
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          홈으로 가기
+        </div>
 
-      {/*로그인으로 가기 버튼 */}
-      <div
-        className={styles.login_btn}
-        onClick={() => {
-          navigate("/members/login");
-        }}
-      >
-        로그인으로 가기
+        {/*로그인으로 가기 버튼 */}
+        <div
+          className={styles.login_btn}
+          onClick={() => {
+            navigate("/members/login");
+          }}
+        >
+          로그인으로 가기
+        </div>
       </div>
 
       <div className={styles.join_wrap}>
