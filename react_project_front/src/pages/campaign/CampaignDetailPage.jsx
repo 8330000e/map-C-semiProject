@@ -207,6 +207,7 @@ const CampaignDetailPage = () => {
               }}
             >
               {"<" + "돌아가기"}
+              {/**arrow부분 수정 */}
             </div>
             <div className={styles.campdetailpage_details_wrap}>
               <div className={styles.campdetailpage_visible_wrap}>
@@ -370,7 +371,7 @@ const CampaignDetailSideBar = ({
         <h3>캠페인 상세내용</h3>
       </div>
       <div className={styles.campdetailpage_sidebar_content}>
-        <h4>{campaignDetail.campaignExplanation}</h4>
+        <div>{campaignDetail.campaignExplanation}</div>
       </div>
       <div className={styles.campdetailpage_sidebar_btn_wrap}>
         {/* <Button
