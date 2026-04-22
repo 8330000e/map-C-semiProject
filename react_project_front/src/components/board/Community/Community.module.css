@@ -941,6 +941,12 @@
   background-color: #c1c9bc;
   font-weight: 600;
 }
+.caltiemtext_wrap_result {
+  flex: 0;
+}
+.result_warp {
+  flex: 1;
+}
 .boardWriteNotice {
   padding: 10px 8px;
   background-color: #fff;

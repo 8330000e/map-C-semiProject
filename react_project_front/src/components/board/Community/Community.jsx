@@ -1108,7 +1108,7 @@ const Community = ({
                             </div>
                           )}
                         </div>
-                        <div className={styles.caltiemtext_wrap}>
+                        <div className={step < 6}>
                           <div>
                             {(step === 4 && (
                               <div className={styles.caltiemtext}>이용시간</div>
