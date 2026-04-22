@@ -413,166 +413,33 @@ const Map = ({
           map.setZoom(15);
           markerName.setIcon({
             content: `
-            <div>
-              <div style="position: relative; width: 100%;">
-                <div
-                style="
-                  position: absolute;
-                  width: 300px;
-                  left: 50%;
-                  bottom: 50%;
-                  transform: translate(-42%, -260%);
-                  height: max-content;
-                  border-radius: 25px;
-                  border: var(--border2);
-                  z-index: ${5000 + 2};
-                  padding: 15px 20px;
-                  font-size: 15px;
-                  font-weight: 600;
-                  text-align: center;
-                  background-color: var(--gray8);
-                "
-                >
-                <div>
-                  <img
-                    loading="lazy"
-                    decoding="async"
-                    src=${borderPin}
-                    style="
-                      position: absolute;
-                      width: 32px;
-                      z-index: ${5000 + 3};
-                      bottom: 80%;
-                      left: 50%;
-                      color: #ff593c;
-                    "
-                  />
-                </div>
-                <p>${marker.addr}</p>
+            <div style="position: relative; width: 300px; height: auto; padding-top: 18px; pointer-events: auto;">
+              <div style="position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%); z-index: ${5000 + 3};">
+                <img loading="lazy" decoding="async" src=${borderPin} style="width: 32px;" />
               </div>
-              <div
-                style="
-                  position: absolute;
-                  left: 50%;
-                  bottom: 50%;
-                  transform: translate(-42%, -10%);
-                  margin-top: 60px;
-                  width: 300px;
-                  height: max-content;
-                  border-radius: 25px;
-                  border: var(--border2);
-                  z-index: ${5000 + 2};
-                  padding: 15px 20px;
-                  font-size: 15px;
-                  font-weight: 600;
-                  text-align: center;
-                  background-color: var(--gray8);
-                  display: flex;
-                  flex-direction: column;
-                  justify-items: center;
-                  align-content: space-between;
-                "
-                >
-                  <div
-                    style="
-                      display: flex;
-                      justify-content: space-between;
-                      width: 100%;
-                    "
-                  >
-                    <div
-                      style=" display: flex; gap: 8px; align-items: center; "
-                    >
-                      <img
-                        loading="lazy"
-                        decoding="async"
-                        src=${defaultImg}
-                        alt=""
-                        style="
-                          width: 35px;
-                          height:35px;
-                          z-index: ${5000 + 3};
-                          border-radius: 50%;
-                          border: var(--border2);
-                        "
-                      />
-                    <p>${marker.memberNickname}</p>
+              <div style="position: relative; width: 100%; border-radius: 25px; border: var(--border2); background-color: var(--gray8); padding: 24px 18px 14px 18px; box-sizing: border-box; color: #fff; min-height: 140px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <div style="display: flex; gap: 8px; align-items: center;">
+                    <img loading="lazy" decoding="async" src=${defaultImg} alt="" style="width: 35px; height: 35px; border-radius: 50%; border: var(--border2);" />
+                    <p style="margin: 0;">${marker.memberNickname}</p>
                   </div>
-                <div
-                  style=" display: flex; gap: 1px; align-items: center; "
-                >
-                  <img
-                    loading="lazy"
-                    decoding="async"
-                    src=${heart}
-                    alt=""
-                    style="
-                      width: 25px;
-                      z-index: ${5000 + 3};
-                      border-radius: 50%;
-                    "
-                  />
-                  <p>${marker.likeCount}</p>
-                </div>
-              </div>
-              <div style=" padding: 8px 4px; line-height: 1; ">
-                <div style=" text-align: left; ">${marker.boardTitle.substring(0, 10)}</div>
-                  <div
-                    style="
-                      width: 100%;
-                      padding: 5px 0;
-                      font-size: 14px;
-                      font-weight: 500;
-                      white-space: nowrap;
-                      overflow: hidden;
-                      text-overflow: ellipsis;
-                      text-align: left;
-                      z-index=${5000 + 3};
-                    "
-                  >
-                    ${marker.boardContent
-                      .replace(/<img[^>]*>/gi, "")
-                      .replace(/<[^>]*>?/g, "")
-                      .substring(0, 30)}
+                  <div style="display: flex; gap: 4px; align-items: center;">
+                    <img loading="lazy" decoding="async" src=${heart} alt="" style="width: 25px;" />
+                    <p style="margin: 0;">${marker.likeCount}</p>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onclick="event.stopPropagation(); window.openRegionChart && window.openRegionChart();"
-                  style="
-                    margin-top: 10px;
-                    padding: 6px 12px;
-                    border-radius: 999px;
-                    border: 1px solid rgba(255,255,255,0.4);
-                    background: rgba(255,255,255,0.12);
-                    color: #fff;
-                    font-size: 13px;
-                    cursor: pointer;
-                    backdrop-filter: blur(4px);
-                  "
-                >
+                <div style="margin-bottom: 10px;">
+                  <div style="font-size: 16px; font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${marker.boardTitle.substring(0, 10)}</div>
+                  <div style="font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${marker.boardContent.replace(/<img[^>]*>/gi, "").replace(/<[^>]*>?/g, "").substring(0, 30)}</div>
+                </div>
+                <button type="button" onclick="event.stopPropagation(); window.openRegionChart && window.openRegionChart();" style="margin-top: 10px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.12); color: #fff; font-size: 13px; cursor: pointer; backdrop-filter: blur(4px);">
                   차트 보기
                 </button>
               </div>
             </div>
-          <div style="position: relative;">
-            <img
-              loading="lazy"
-              decoding="async"
-              src=${marker.memberThumb || defaultImg}
-              style="width: 38px; height: 36px; object-fit: cover; border-radius: 50%;margin: 0px; padding: 0px; z-index:${2 + i}; border: 0px solid transparent; display: block; min-width: 38px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px; transform: translate(15%, 15%);"
-            />
-            <img
-              loading="lazy"
-              decoding="async"
-              src='src/assets/img/defaultthumbmarker.png'
-              style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
-            />
-          </div>
-          </div>
                 `,
-            size: new naver.maps.Size(22, 35),
-            anchor: new naver.maps.Point(11, 35),
+            size: new naver.maps.Size(300, 240),
+            anchor: new naver.maps.Point(150, 240),
             onClick: boardView(
               marker.boardNo,
               marker.addr,
