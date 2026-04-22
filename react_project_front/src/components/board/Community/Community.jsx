@@ -983,12 +983,12 @@ const Community = ({
                                       value={i + 1}
                                       onClick={() => selectCo2("cGasA", i + 1)}
                                       style={{
-                                        backgroundColor: calco2.cEleA?.includes(
+                                        backgroundColor: calco2.cGasA?.includes(
                                           i + 1,
                                         )
                                           ? "var(--color1)"
                                           : "#c1c9bc",
-                                        color: calco2.cEleA?.includes(i + 1)
+                                        color: calco2.cGasA?.includes(i + 1)
                                           ? "var(--gray8)"
                                           : "var(--color1)",
                                       }}
@@ -1012,12 +1012,11 @@ const Community = ({
                                         selectCo2("cWaterA", i + 1)
                                       }
                                       style={{
-                                        backgroundColor: calco2.cEleA?.includes(
-                                          i + 1,
-                                        )
-                                          ? "var(--color1)"
-                                          : "#c1c9bc",
-                                        color: calco2.cEleA?.includes(i + 1)
+                                        backgroundColor:
+                                          calco2.cWaterA?.includes(i + 1)
+                                            ? "var(--color1)"
+                                            : "#c1c9bc",
+                                        color: calco2.cWaterA?.includes(i + 1)
                                           ? "var(--gray8)"
                                           : "var(--color1)",
                                       }}
@@ -1039,12 +1038,11 @@ const Community = ({
                                       value={i + 1}
                                       onClick={() => selectCo2("cRoadA", i + 1)}
                                       style={{
-                                        backgroundColor: calco2.cEleA?.includes(
-                                          i + 1,
-                                        )
-                                          ? "var(--color1)"
-                                          : "#c1c9bc",
-                                        color: calco2.cEleA?.includes(i + 1)
+                                        backgroundColor:
+                                          calco2.cRoadA?.includes(i + 1)
+                                            ? "var(--color1)"
+                                            : "#c1c9bc",
+                                        color: calco2.cRoadA?.includes(i + 1)
                                           ? "var(--gray8)"
                                           : "var(--color1)",
                                       }}
@@ -1068,12 +1066,11 @@ const Community = ({
                                         selectCo2("cWasteA", i + 1)
                                       }
                                       style={{
-                                        backgroundColor: calco2.cEleA?.includes(
-                                          i + 1,
-                                        )
-                                          ? "var(--color1)"
-                                          : "#c1c9bc",
-                                        color: calco2.cEleA?.includes(i + 1)
+                                        backgroundColor:
+                                          calco2.cWasteA?.includes(i + 1)
+                                            ? "var(--color1)"
+                                            : "#c1c9bc",
+                                        color: calco2.cWasteA?.includes(i + 1)
                                           ? "var(--gray8)"
                                           : "var(--color1)",
                                       }}
