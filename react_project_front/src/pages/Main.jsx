@@ -502,12 +502,14 @@ const Main = () => {
                       </div>
                       <div>
                         {"참여달성 : " +
-                          (camp.memberCount / camp.campaignGoalMember) * 100 +
+                          Math.ceil(
+                            (camp.memberCount / camp.campaignGoalMember) * 100,
+                          ) +
                           "%"}
                       </div>
                       <div>{"주최자 : " + camp.memberId}</div>
                       <div>
-                        {"종료일" +
+                        {"종료일 : " +
                           new Date(camp.campaignExpireDate).toLocaleDateString(
                             "kr-KR",
                           )}

@@ -160,7 +160,7 @@ const CampaignDetailPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [inCampaign]);
 
   useEffect(() => {
     axios
@@ -394,7 +394,9 @@ const CampaignDetailSideBar = ({
                   : Swal.fire({
                       title: "캠페인을 참여하시겠습니까?",
                       icon: "question",
-                      showCancelButton: "아니요",
+                      showCancelButton: true,
+                      cancelButtonText: "아니요",
+                      confirmButtonText: "네",
                     }).then((result) => {
                       if (result.isConfirmed) {
                         axios
@@ -424,7 +426,7 @@ const CampaignDetailSideBar = ({
                 : "참여하기"
             : "캠페인 종료"}
         </Button>
-        {inCampaign && (
+        {inCampaign && dateOut && (
           <Button
             className="btn primary lg"
             onClick={() => {
@@ -521,7 +523,7 @@ const PostBoard = ({
                   <p>{list.campaignMemo}</p>
                   {list.memberId === memberId && (
                     <div className={styles.board_btn_wrap}>
-                      <button
+                      <div
                         onClick={() => {
                           navigate(
                             `/campaign/update/${list.campaignParticipanceNo}/${campaignNo}`,
@@ -529,8 +531,8 @@ const PostBoard = ({
                         }}
                       >
                         수정
-                      </button>
-                      <button
+                      </div>
+                      <div
                         onClick={() => {
                           const campaignParticipanceNo =
                             list.campaignParticipanceNo;
@@ -575,7 +577,7 @@ const PostBoard = ({
                         }}
                       >
                         삭제
-                      </button>
+                      </div>
                     </div>
                   )}
                 </div>
