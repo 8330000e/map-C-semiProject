@@ -138,6 +138,32 @@ const Map = ({
   // 페이지 진입 시에는 차트를 바로 보여주지 않고,
   // 사용자가 지도를 클릭하거나 마커를 선택했을 때 차트를 표시함.
   const [showRegionChart, setShowRegionChart] = useState(false);
+  // 현재 선택된 지역을 기억하기 위한 ref임.
+  // 같은 구를 다시 클릭했을 때도 이전 선택을 유지하려고 사용함.
+  const selectedRegionRef = useRef(ctpvsgg);
+
+  // 지역 선택 상태를 업데이트하는 함수임.
+  // 같은 구를 다시 클릭하면 ctpvsgg 상태를 다시 변경하지 않아서
+  // 차트가 새로 갱신되는 것을 막음.
+  const updateSelectedRegion = ({ ctpv, sgg, addr, lat, lng }) => {
+    const isSameRegion =
+      selectedRegionRef.current?.ctpv === ctpv &&
+      selectedRegionRef.current?.sgg === sgg;
+
+    // 다른 구를 선택했을 때만 상태를 변경함.
+    if (!isSameRegion) {
+      setCtpvsgg({ ctpv, sgg });
+      selectedRegionRef.current = { ctpv, sgg };
+    }
+
+    // 주소와 좌표는 항상 화면에 표시하기 위해 업데이트함.
+    if (addr) setAddr(addr);
+    if (lat && lng) setLnglat({ lat, lng });
+
+    // 차트는 선택된 지역이 있으면 보여주도록 설정함.
+    setShowRegionChart(true);
+  };
+
   let mapMarkerList = [];
   let mapaddr = "서울특별시 중구";
   let maplnglat = {
@@ -360,15 +386,13 @@ const Map = ({
             const selectedCtpv = response.result.items[0].addrdetail.sido;
             const selectedSgg = response.result.items[0].addrdetail.sigugun;
             mapaddr = selectedAddr;
-            setAddr(selectedAddr);
-            setLnglat({
+            updateSelectedRegion({
+              ctpv: selectedCtpv,
+              sgg: selectedSgg,
+              addr: selectedAddr,
               lat: marker.boardLat,
               lng: marker.boardLng,
             });
-            setCtpvsgg({ ctpv: selectedCtpv, sgg: selectedSgg });
-            // 마커를 클릭해서 지역이 확정되면 차트를 보여줌.
-            // 사용자는 선택한 마커의 지역 탄소 배출 변화를 바로 확인할 수 있음.
-            setShowRegionChart(true);
             mapctpvsgg.ctpv = selectedCtpv;
             mapctpvsgg.sgg = selectedSgg;
           },
@@ -632,16 +656,15 @@ const Map = ({
             }
             console.log(response);
 
-            setAddr(response.result.items[0].address);
-            setLnglat({ lat: e.coord.lat(), lng: e.coord.lng() });
-
-            setCtpvsgg({
+            updateSelectedRegion({
               ctpv: response.result.items[0].addrdetail.sido,
               sgg: response.result.items[0].addrdetail.sigugun,
+              addr: response.result.items[0].address,
+              lat: e.coord.lat(),
+              lng: e.coord.lng(),
             });
             setSido(response.result.items[0].addrdetail.sido);
             setSigungu(response.result.items[0].addrdetail.sigugun);
-            setShowRegionChart(true);
           },
         );
         const feature = e.feature;
