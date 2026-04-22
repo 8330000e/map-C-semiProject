@@ -11,6 +11,7 @@
   display: flex;
   margin: 10px 10px;
   padding: 20px;
+  flex-wrap: wrap;
 }
 .campaignmain_title_wrap > h2 {
   width: 200px;
@@ -31,7 +32,7 @@
 }
 
 .campaignmain_content_wrap {
-  margin-top: 30px;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -68,6 +69,7 @@
 
 .campaignmain_campaign_title {
   position: absolute;
+  color: var(--text1);
   top: 2px;
   left: 6px;
 }
@@ -94,15 +96,17 @@
   right: 2px;
 }
 .campaignmain_btn_wrap {
-  width: 800px;
-  margin: 30px auto;
+  flex-basis: 100%;
+  margin: 10px 0px;
   display: flex;
-  justify-content: space-between;
+  gap: 12px;
+  justify-content: flex-end;
 }
 .campaignmain_btn_wrap > button {
   border: 1.5px solid var(--gray3);
   background-color: var(--gray8);
   border-radius: 50px;
+  margin-right: 20px;
 }
 .return_btn {
   position: absolute;
@@ -111,7 +115,10 @@
   padding: 5px;
   cursor: pointer;
   font-size: 18px;
+  display: inline-flex;
+  align-items: center;
 }
+
 .return_btn:hover {
   transform: translateX(-5px);
   transition-duration: 0.3s;
