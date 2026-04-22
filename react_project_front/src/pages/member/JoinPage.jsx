@@ -84,9 +84,9 @@ const Join = () => {
       // res.data가 true면 중복된 아이디가 있음 -> 1 (사용불가)
       // res.data가 false면 아이디가 없음 -> 2 (사용가능)
       if (res.data === true) {
-        setCheckId(2); // 중복됨
+        setCheckId(1); // 중복됨
       } else {
-        setCheckId(1); // 사용가능
+        setCheckId(2); // 사용가능
       }
 
       console.log("중복 체크 결과:", res.data, "상태값:", res.data ? 1 : 2);
@@ -186,6 +186,7 @@ const Join = () => {
 
   //회원가입
   const JoinMember = async (e) => {
+    console.log("회원가입 버튼 클릭됨");
     e.preventDefault();
 
     // 중복 클릭 방지 체크

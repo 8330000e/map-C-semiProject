@@ -104,7 +104,8 @@ const useAuthStore = create(
 
           // ★ 포인트: alertTimer라는 변수에 담아주기. (번호표 보관)
           alertTimer = setTimeout(() => {
-            // 아직 로그인 상태일 때만 팝업 노출
+            // 사용자의 편의를 위해 알람 설정 및 예약
+            //->get().token-> 토큰이 아직 현재 사용 중인지 확인-> 존재한다면 5분 남기고 알림창 뜨게 하기
             if (get().token) {
               Swal.fire({
                 title: "로그인 연장",
