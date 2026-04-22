@@ -57,12 +57,6 @@ const MapCommunityPage = () => {
 
   return (
     <div className={styles.mapCommunityPage}>
-      <div className={styles.to_main}>
-        <div onClick={() => (window.location.href = "/")}>
-          <ArrowBackIosOutlinedIcon />
-          <span>메인으로 돌아가기</span>
-        </div>
-      </div>
       <div className={styles.container}>
         <div className={styles.left}>
           <div className={styles.mapBox}>

@@ -29,7 +29,11 @@ const RankList = () => {
                 <p>{i + 1}</p>
                 <p>
                   <img
-                    src={rank.memberThumb ? normalizeImageUrl(rank.memberThumb, "member/thumb") : defaultImg}
+                    src={
+                      rank.memberThumb
+                        ? normalizeImageUrl(rank.memberThumb, "member/thumb")
+                        : defaultImg
+                    }
                     className={styles.list_thumb}
                     loading="lazy"
                     decoding="async"
@@ -37,7 +41,7 @@ const RankList = () => {
                 </p>
                 <p>{rank.memberNickname}</p>
               </div>
-              <p>{rank.memberCo2} Kg</p>
+              <p>{rank.memberCo2.toFixed(0)} Kg</p>
             </li>
           ))}
         </ul>
