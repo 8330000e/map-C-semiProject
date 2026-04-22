@@ -18,6 +18,8 @@ const ResetPw = () => {
   //변하는 값을 저장하고 변화를 주는 상태변화를 하게 하는 함수 지정
   const [memberPwRe, setMemberPwRe] = useState("");
   const [checkPw, setCheckPw] = useState(0); //비밀번호 일치 여부 상태
+  const [pwMessage, setPwMessage] = useState("");
+
   //0: 초기 상태 (아무것도 입력되지 않음), 1: 비밀번호 일치, 2: 비밀번호 불일치
 
   //비밀번호 재설정 요청 함수
@@ -28,8 +30,13 @@ const ResetPw = () => {
       await errorAlert("비밀번호 불일치", "비밀번호가 일치하지 않습니다");
       return;
     }
-
     console.log("보내는 데이터:", member);
+
+    // 2. 규칙 준수 여부 확인 (추가)
+    if (pwMessage !== "안전한 비밀번호입니다.") {
+      await errorAlert("보안 취약", "비밀번호 설정 규칙을 확인해주세요.");
+      return;
+    }
 
     try {
       const res = await axios.post(
@@ -57,6 +64,31 @@ const ResetPw = () => {
 
   const handleNewPwChange = (e) => {
     const { name, value } = e.target;
+
+    // 한글 즉시 제거
+    const cleanedValue = value.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, "");
+
+    // 복합 조건 검사 로직
+    const englishCount = (cleanedValue.match(/[a-zA-Z]/g) || []).length;
+    const numberCount = (cleanedValue.match(/[0-9]/g) || []).length;
+    const specialCount = (cleanedValue.match(/[!@#$%^&*()_+~`-]/g) || [])
+      .length;
+
+    if (
+      cleanedValue.length > 0 &&
+      (englishCount < 3 ||
+        numberCount < 4 ||
+        specialCount < 1 ||
+        cleanedValue.length < 8)
+    ) {
+      setPwMessage("영문(3개↑), 숫자(4개↑), 특수문자(1개↑) 조합 8자 이상 필요");
+    } else if (cleanedValue.length >= 8) {
+      setPwMessage("안전한 비밀번호입니다.");
+    } else {
+      setPwMessage("");
+    }
+
+    //상태 업데이트
     setMember({ ...member, [name]: value });
     setCheckPw(!memberPwRe ? 0 : e.target.value === memberPwRe ? 1 : 2);
   };
@@ -125,6 +157,16 @@ const ResetPw = () => {
               onChange={handleNewPwChange}
               placeholder="새 비밀번호를 입력하세요"
             />
+            {/* 비밀번호 강도 메시지 출력 */}
+            <p
+              style={{
+                color: pwMessage === "안전한 비밀번호입니다." ? "green" : "red",
+                fontSize: "0.8rem",
+                marginTop: "5px",
+              }}
+            >
+              {pwMessage}
+            </p>
           </div>
           {/* 비밀번호 재입력 
           데이터베이스로부터 입력에 따라 값이 변하는 구조라면 
