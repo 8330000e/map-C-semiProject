@@ -303,7 +303,7 @@ public class AdminService {
         // 시스템 프롬프트 - 챗봇 성격 지정
         Map<String, Object> systemInstruction = Map.of(
             "parts", List.of(Map.of(
-                "text", "너는 map-C 관리자 도우미다. 회원/게시글/신고 관련 질문에 한국어로 간결히 답해라."
+                "text", "너는 탄소커넥트 관리자 도우미다. 회원/게시글/신고 관련 질문에 한국어로 간결히 답해라."
             ))
         );
 
@@ -365,7 +365,7 @@ public class AdminService {
 	// 공지사항 제목/본문 초안 생성
 	// 응답에서 첫 "제목:" 줄은 title, 그 뒤 본문은 content로 분리
 	public Map<String, String> draftNotice(String topic) {
-		String systemPrompt = "너는 map-C 서비스의 관리자다. 회원 공지사항을 작성한다. 반드시 아래 형식만 지켜 출력하라.\n"
+		String systemPrompt = "너는 탄소커넥트 서비스의 관리자다. 회원 공지사항을 작성한다. 반드시 아래 형식만 지켜 출력하라.\n"
 			+ "제목: [공지 제목 한 줄]\n"
 			+ "[본문을 2~4문단, 공손하고 명료한 어투로 작성. 마크다운/이모지 금지]\n"
 			+ "불필요한 머리말, 설명, 안내 문구는 절대 넣지 말 것.";
@@ -390,7 +390,7 @@ public class AdminService {
 
 	// 신고 게시글 위반 여부 판단
 	public Map<String, String> analyzeReport(String boardContent, String category, String reason) {
-		String systemPrompt = "너는 map-C 서비스의 관리자 운영 도우미다. 신고된 게시글의 이용약관/커뮤니티 가이드라인 위반 여부를 판단한다.\n"
+		String systemPrompt = "너는 탄소커넥트 서비스의 관리자 운영 도우미다. 신고된 게시글의 이용약관/커뮤니티 가이드라인 위반 여부를 판단한다.\n"
 			+ "스팸/광고, 욕설/비방, 허위정보, 부적절한 컨텐츠 관점에서 간결히 분석하라.\n"
 			+ "반드시 아래 형식으로 한국어 답변:\n"
 			+ "판단: [위반 / 경계 / 정상 중 택1]\n"
@@ -409,7 +409,7 @@ public class AdminService {
 
 	// 회원에게 보낼 경고/정지 메시지 초안 생성
 	public Map<String, String> draftWarning(String category, String action, String extra) {
-		String systemPrompt = "너는 map-C 서비스의 관리자다. 제재 받는 회원에게 보낼 안내 메시지를 작성한다.\n"
+		String systemPrompt = "너는 탄소커넥트 서비스의 관리자다. 제재 받는 회원에게 보낼 안내 메시지를 작성한다.\n"
 			+ "공손하지만 단호한 톤, 4~6줄 이내, 한국어로만 작성.\n"
 			+ "위반 행위 → 조치 내용 → 재발 방지 당부 순서로 구성.\n"
 			+ "머리말/서명/마크다운 없이 본문만 출력.";
