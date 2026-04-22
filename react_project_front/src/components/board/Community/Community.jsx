@@ -1144,7 +1144,7 @@ const Community = ({
                                       });
                                     }}
                                   />
-                                  <p>{calco2[keys[step - 1]] || 0}</p>
+                                  <div>{calco2[keys[step - 1]] || 0}</div>
                                   <KeyboardArrowDownOutlinedIcon
                                     sx={{ cursor: "pointer", fontSize: "50px" }}
                                     onClick={() => {
