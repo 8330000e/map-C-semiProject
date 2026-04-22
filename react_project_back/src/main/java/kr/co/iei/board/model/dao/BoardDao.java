@@ -10,6 +10,7 @@ import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
+import kr.co.iei.board.model.vo.Calco2;
 import kr.co.iei.board.model.vo.Marker;
 import kr.co.iei.board.model.vo.Report;
 import kr.co.iei.member.model.vo.Member;
@@ -53,6 +54,18 @@ public interface BoardDao {
 
 	int insertBoardFile(BoardFile boardFile);
 
+	String selectstpvsgg(String ctpv, String sgg);
+
+	Integer addBoardNo();
+
+	double selectCo2Tot(String ctpvsggId);
+
+	int selectMemberCo2(Calco2 calco2);
+
+	int insertCalco2Data(Calco2 calco2);
+
+	int updateCo2(double membercalco2, String memberId);
+
 	List<BoardComment> selectBoardComments(@Param("boardNo") int boardNo);
 
 	BoardComment selectBoardCommentByNo(@Param("commentNo") Long commentNo);
@@ -88,6 +101,24 @@ public interface BoardDao {
 	List<Board> selectBoardCount();
 
 	List<Report> getGroupList(Integer targetNo, String targetType, Integer reportNo);
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+    
+
+    
 
     
 

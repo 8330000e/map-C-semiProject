@@ -15,6 +15,7 @@ import AdminReport from "../../components/admin/AdminReport.jsx";
 import AdminReportPage from "./AdminReportPage.jsx";
 import AdminChatBot from "../../components/admin/AdminChatBot.jsx";
 import AdminLogPage from "./AdminLogPage.jsx";
+import AdminCampaignPage from "./AdminCampaignPage.jsx";
 
 const AdminPage = () => {
   useEffect(() => {
@@ -51,6 +52,7 @@ const AdminPage = () => {
               <Route path="" element={<Navigate to="/admin/dashboard" />} />
               <Route path="dashboard" element={<DashBoardPage />} />
               <Route path="members" element={<AdminMemberPage />} />
+              <Route path="campaigns" element={<AdminCampaignPage />} />
               <Route path="support/*" element={<AdminSupport />} />
               <Route path="boards" element={<AdminBoardPage />} />
               <Route path="reports" element={<AdminReportPage />} />

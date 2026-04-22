@@ -43,6 +43,7 @@ import kr.co.iei.admin.model.vo.ProcessReport;
 import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.board.model.vo.Board;
 import kr.co.iei.board.model.vo.BoardComment;
+import kr.co.iei.campaign.model.vo.Campaign;
 import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.utils.FileUtils;
 
@@ -178,6 +179,20 @@ public class AdminController {
 	}
 
 	// ============================== 회원 관리 ==============================
+
+	// 승인 대기 캠페인 목록 조회
+	@GetMapping(value="campaign")
+	public ResponseEntity<?> selectPendingCampaignList() {
+		List<Campaign> campaignList = adminService.selectPendingCampaignList();
+		return ResponseEntity.ok(campaignList);
+	}
+
+	// 캠페인 승인 처리 - 승인대기(0) 캠페인을 승인완료(1)로 변경
+	@PatchMapping(value="campaign/{campaignNo}/approve")
+	public ResponseEntity<?> approveCampaign(@PathVariable Integer campaignNo) {
+		int result = adminService.approveCampaign(campaignNo);
+		return ResponseEntity.ok(result);
+	}
 
 	// 회원 목록 조회 - status/grade/keyword 필터 선택 적용 (null이면 전체)
 	@GetMapping(value="member")
@@ -425,10 +440,11 @@ public class AdminController {
 		}
 		
 		for (int i = 0; i <= 6; i++) {
-            sheet.autoSizeColumn(i); // 컬럼 너비 자동세팅
-            int currentWidth = sheet.getColumnWidth(i);
-            sheet.setColumnWidth(i, currentWidth + 1024); // 딱 맞는 상태에서 여유 조금 
-        }
+		    sheet.autoSizeColumn(i);
+		    int currentWidth = sheet.getColumnWidth(i);
+		    int maxWidth = 255 * 256;							// 본문 길어서 너비 터지는거 방지 
+		    sheet.setColumnWidth(i, Math.min(currentWidth + 1024, maxWidth));
+		}
 		
 		// 5. 엑셀 내용을 메모리에 저장할 통로(스트림) 준비
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -477,7 +493,7 @@ public class AdminController {
 			row.createCell(3).setCellValue(a.getLogResult());
 			row.createCell(4).setCellValue(a.getLogDate());
 			row.createCell(5).setCellValue(a.getLogReason());
-			row.createCell(6).setCellValue(a.getReportNo());
+			row.createCell(6).setCellValue(a.getReportNo() != null ? String.valueOf(a.getReportNo()) : "해당없음");
 		}
 		
 		for (int i = 0; i <= 6; i++) {

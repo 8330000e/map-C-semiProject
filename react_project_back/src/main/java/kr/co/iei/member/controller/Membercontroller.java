@@ -167,10 +167,12 @@ public class Membercontroller {
 	    }
 	}
 	
+	
 	//재토큰 발행 로직 (김경건)
 	@PostMapping(value = "/refresh")
 	// Authentication authentication=> “현재 로그인한 사용자 정보”를 담고 있는 객체
 	//직접적으로 Map<String, String> data 사용해서 받아오기.
+	//일반적인 zustend에 있는 값을 이용해서 가져올 수가 없었음.
 	public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> data){
 		// 1. 현재 인증된 사용자의 ID를 꺼내기
 		String memberId = data.get("memberId"); // 프론트에서 넘겨준 ID 사용

@@ -100,6 +100,35 @@
         )
     </insert>
 
+    <select id="selectstpvsgg" resultType="String">
+        select ctpvsgg_id from ctpvsgg_tbl where ctpv_nm = #{ctpv} and sgg_nm = #{sgg}
+    </select>
+
+    <select id="addBoardNo" resultType="Board">
+        select board_seq.nextval from dual
+    </select>
+
+    <select id="selectMemberCo2" resultType="int">
+        select member_co2 from member_tbl1 where member_id = #{memberId}
+    </select>
+
+    <select id="selectCo2Tot" resultType="double">
+        select sum(a.carbon_road_tco2+b.carbon_ele_tot+c.carbon_gas_tot+d.carbon_heat_tot)/4/30.5 from carbon_tbl a
+        left join carbon_ele_tbl b on (a.ctpvsgg_id = b.ctpvsgg_id) 
+        left join carbon_gas_tbl c on (b.ctpvsgg_id = c.ctpvsgg_id) 
+        left join carbon_heat_tbl d on (c.ctpvsgg_id = d.ctpvsgg_id)
+        where a.ctpvsgg_id = #{ctpvsggId} and b.ctpvsgg_id = #{ctpvsggId} and c.ctpvsgg_id = #{ctpvsggId} and d.ctpvsgg_id = #{ctpvsggId}
+        group by a.carbon_road_tco2, b.carbon_ele_tot, c.carbon_gas_tot, d.carbon_heat_tot
+    </select>
+
+    <insert id="insertCalco2Data">
+        insert into co2_tbl values (co2_seq.nextval,#{boardNo},#{memberId},#{ctpvsggId},#{cEleA},#{cEle},#{cGasA},#{cGas},#{cWaterA},#{cWater},#{cRoadA},#{cRoad},#{cWasteA},#{cWaste},#{cTotal})
+    </insert>
+
+    <update id="updateCo2">
+        update member_tbl1 set member_co2 = #{membercalco2} where member_id = #{memberId}
+    </update>
+
     <!-- 게시글 수정 -->
     <!-- 게시글을 수정할 때 BOARD_TBL의 UPDATED_AT 컬럼에 현재 시간을 함께 저장함. -->
     <!-- 이렇게 해야 프론트에서 해당 게시글이 수정된 글인지 판단할 수 있음. -->

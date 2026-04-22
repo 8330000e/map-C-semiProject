@@ -17,7 +17,7 @@ public interface MissionDao {
 
 	Mission selectRandomMission();
 
-	void insertMemberMission(MemberMission memberMission);
+	int insertMemberMission(MemberMission memberMission);
 
 	int existsTodayAttendance(String memberId);
 

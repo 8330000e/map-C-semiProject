@@ -86,14 +86,14 @@ const CampaignNotice = () => {
               naviSize={5}
             />
           )}
-          <Button
-            className="btn primary sm"
+          <button
+            className={styles.camp_notice_return_btn}
             onClick={() => {
               navigate("/campaign/main");
             }}
           >
             돌아가기
-          </Button>
+          </button>
         </div>
       </div>
     )

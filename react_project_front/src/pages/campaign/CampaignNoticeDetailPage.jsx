@@ -55,7 +55,7 @@ const CampaignNoticeDetailPage = () => {
                 }
                 name="campaignNoticeTitle"
                 disabled={ifUpdate}
-                placeholder={ifUpdate ? "" : "수정할 내용"}
+                placeholder={ifUpdate ? "" : "수정할 제목"}
                 onChange={(e) => {
                   setUpdateNotice({
                     ...updateNotice,

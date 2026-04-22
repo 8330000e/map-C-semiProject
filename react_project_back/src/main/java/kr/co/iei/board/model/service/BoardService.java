@@ -20,6 +20,7 @@ import kr.co.iei.board.model.vo.BoardComment;
 import kr.co.iei.board.model.vo.BoardFile;
 import kr.co.iei.board.model.vo.BoardLike;
 import kr.co.iei.board.model.vo.BoardReport;
+import kr.co.iei.board.model.vo.Calco2;
 import kr.co.iei.board.model.vo.Marker;
 import kr.co.iei.board.model.vo.Report;
 import kr.co.iei.member.model.service.MemberService;
@@ -85,7 +86,32 @@ public class BoardService {
 
 	    return resultMap;
 	}
-	
+	//탄소계산기
+	@Transactional
+    public int insertCalco2Data(Calco2 calco2) {
+		String ctpvsggId = boardDao.selectstpvsgg(calco2.getCtpv(),calco2.getSgg());
+		calco2.setCtpvsggId(ctpvsggId);
+        int result = boardDao.insertCalco2Data(calco2);
+		double cc2 = boardDao.selectCo2Tot(ctpvsggId);
+		double co2 = cc2 - calco2.getCTotal();
+		double memberCo2 = boardDao.selectMemberCo2(calco2);
+		double saveco2 = co2 + memberCo2;
+		String textco2 = String.format("%.8f", saveco2);
+		double membercalco2 = Double.parseDouble(textco2);
+		int resultMember = boardDao.updateCo2(membercalco2, calco2.getMemberId());
+		if (resultMember<=0 && result<=0) {
+			result = -1;
+		}
+		return result;
+    }
+
+	public double selectCo2Tot(String ctpv, String sgg) {
+		String ctpvsggId = boardDao.selectstpvsgg(ctpv, sgg);
+		double co2 = boardDao.selectCo2Tot(ctpvsggId);
+		String textco2 = String.format("%.8f", co2);
+		double cc2 = Double.parseDouble(textco2);
+		return cc2;
+	}
 
 
 	//게시글 수정
@@ -325,6 +351,9 @@ public class BoardService {
 		List<Report> groupList = boardDao.getGroupList(targetNo, targetType, reportNo);
 		return groupList;
 	}
+	
+
+	
 
 }
 

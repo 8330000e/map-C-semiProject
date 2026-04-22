@@ -8,6 +8,7 @@
   top: 0;
   left: 0;
   z-index: 1;
+  flex-direction: column;
 
   display: flex;
   justify-content: center;
@@ -16,6 +17,16 @@
   background-size: cover; /* 화면에 꽉 차게 */
   background-position: center; /* 중앙 기준 정렬 */
   background-repeat: no-repeat;
+}
+
+.btn_group {
+  display: flex;
+  justify-content: center; /* 중앙 정렬(center) 대신 양 끝 정렬로 변경 */
+  width: 100%;
+  max-width: 600px; /* ★ 중요: 아래 .join_wrap의 너비와 똑같이 맞춤 */
+  margin-top: 40px; /* 천장에서의 여백 */
+  margin-bottom: 20px; /* 아래 폼과의 여백 */
+  z-index: 10;
 }
 
 .home_btn {
@@ -68,28 +79,6 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.left_section {
-  flex: 1;
-  min-height: 100vh;
-  position: relative;
-}
-
-.left_section::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(
-    255,
-    255,
-    255,
-    0.2
-  ); /* 반투명 흰색 (0이면 완전 투명, 1이면 불투명) */
-  pointer-events: none; /* 클릭을 방해하지 않도록 */
-}
-
 .join_wrap {
   width: 600px;
   margin: 0 auto;
@@ -101,8 +90,8 @@
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   position: relative;
-  margin-top: 120px;
-  margin-bottom: 60px;
+  margin-top: 110px;
+  margin-bottom: 80px;
 
   /*------------토끼 이미지 설정
   
@@ -271,4 +260,16 @@
 .timer {
   font-weight: bold;
   color: #6c63ff;
+}
+
+/* 화면 너비가 768px 이하가 되면 실행함 */
+/*900이상일 떄만 헤더의 버튼들이 드러나게 하기  */
+@media screen and (max-width: 900px) {
+  .btn_group {
+    display: none;
+  }
+  /* 덤으로: 버튼이 사라진 만큼 폼 박스의 위쪽 여백을 조절하고 싶다면 */
+  .join_wrap {
+    margin-top: 40;
+  }
 }

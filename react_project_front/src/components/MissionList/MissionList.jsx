@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import styles from "./MissionList.module.css";
 import useAuthStore from "../../store/useAuthStore";
 import Swal from "sweetalert2";
@@ -449,7 +449,7 @@ const MissionList = () => {
     <>
       <div className={styles.hero}>
         <button className={styles.backButton} onClick={() => navigate("/")}>
-          <ArrowBackIcon fontSize="small" />
+          <ArrowBackIosOutlinedIcon fontSize="small" />
           <span>홈으로</span>
         </button>
 

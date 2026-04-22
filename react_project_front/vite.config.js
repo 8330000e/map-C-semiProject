@@ -9,4 +9,7 @@ export default defineConfig({
     strictPort: true, // 5173이 이미 사용 중이면 실패(다른 포트로 자동 변경 안 함)
     host: true,
   },
+  optimizeDeps: {
+    include: ["@mui/icons-material"],
+  },
 });

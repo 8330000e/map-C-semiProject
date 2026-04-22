@@ -32,6 +32,7 @@ const Header = () => {
   const { memberId, memberNickname, memberThumb, logout, memberGrade } =
     useAuthStore();
   const [alarmMode, setAlarmMode] = useState(false);
+  const [newAlarm, setNewAlarm] = useState(false);
 
   // avatarError는 Header 이미지 로딩 실패 시 기본 아이콘으로 폴백하기 위한 상태임.
   // memberThumb가 있어도 이미지가 깨지면 아이콘으로 바꿔줌.
@@ -79,11 +80,32 @@ const Header = () => {
     // 페이지 이동이 일어나면 드로어를 자동으로 닫음.
     // 다른 페이지로 이동했을 때 드로어가 그대로 열려 있지 않도록 함.
     setDrawer(false);
+    setAlarmMode(false);
   }, [location.pathname]);
 
   useEffect(() => {
     setAvatarError(false);
   }, [memberThumb]);
+
+  useEffect(() => {
+    axios
+      .get(`${BACKSERVER}/alarms/newalarm/${memberId}`)
+      .then((res) => {
+        console.log(res);
+        if (res.data > 0) {
+          setNewAlarm(true);
+          axios
+            .patch(`${BACKSERVER}/alarms/newalarm/${memberId}`)
+            .then((res) => {})
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <>
@@ -137,6 +159,7 @@ const Header = () => {
                 <div
                   className={`${styles.profile_item} ${drawer ? styles.drawer_open : styles.drawer_close}`}
                   onClick={() => {
+                    setAlarmMode(false);
                     setDrawer((prev) => !prev);
                   }}
                 >
@@ -161,18 +184,37 @@ const Header = () => {
 
               {/*로그인만 됐을 떄에만 아이콘이 뜨도록 설정 */}
               {memberId && (
-                <div style={{ position: "relative" }}>
-                  <NotificationsIcon
-                    sx={{
-                      fontSize: 30,
-                      color: "#464d3e",
-                      marginTop: 0.5,
-                      cursor: "pointer",
-                    }}
-                    onClick={() => setAlarmMode(!alarmMode)}
-                  />
-                  {alarmMode ? <Alarm /> : null}
-                </div>
+                <>
+                  <div style={{ position: "relative" }}>
+                    {newAlarm && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          width: "10px",
+                          height: "10px",
+                          left: "62%",
+                          top: "15%",
+                          backgroundColor: "red",
+                          borderRadius: "50%",
+                        }}
+                      ></div>
+                    )}
+                    <NotificationsIcon
+                      sx={{
+                        fontSize: 30,
+                        color: "#464d3e",
+                        marginTop: 0.5,
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        setDrawer(false);
+                        setNewAlarm(false);
+                        setAlarmMode((prev) => !prev);
+                      }}
+                    />
+                    {alarmMode ? <Alarm /> : null}
+                  </div>
+                </>
               )}
 
               {/*memberId가 있을 경우에는 즉 로그인이 되어 있을 경우에는 로그아웃 버튼 활성화x */}
