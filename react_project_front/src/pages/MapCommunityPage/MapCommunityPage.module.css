@@ -179,6 +179,25 @@
   align-items: center;
   gap: 10px;
 }
+.regionChartToggleButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 15px 0 15px;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.regionChartToggleButton:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
 .regionChartYAxisLabel {
   display: flex;
   flex-direction: column;
