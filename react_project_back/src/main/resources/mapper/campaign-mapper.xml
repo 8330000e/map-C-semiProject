@@ -23,10 +23,10 @@
 			   		and campaign_status in(3,4)
 			   </if>
 			   <if test="orderFilter == 1">
-			   		order by campaign_expire_date desc
+			   		order by campaign_start_date desc
 			   </if>
 			   <if test="orderFilter == 2">
-			   		order by campaign_expire_date asc
+			   		order by campaign_start_date asc
 			   </if>
 			   offset #{page} * #{size} rows fetch next #{size} rows only
 	</select>

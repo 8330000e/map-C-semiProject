@@ -7,6 +7,7 @@ import { Input } from "../../components/ui/Form";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { compressImageFile } from "../../utils/compressImage";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 
 const CampaignMemoWritePage = () => {
   const { memberId } = useAuthStore();
@@ -14,6 +15,7 @@ const CampaignMemoWritePage = () => {
   const params = useParams();
   const ref = useRef(null);
   const campaignNo = params.campaignNo;
+
   const [fileExist, setFileExist] = useState(false);
   const [writeMemo, setWriteMemo] = useState({
     campaignMemo: "",
@@ -82,11 +84,11 @@ const CampaignMemoWritePage = () => {
           </div>
           <div className={styles.campMemoWrite_img_wrap}>
             <img
-              style={pickImg ? { opacity: "1" } : { opacity: "0" }}
+              style={pickImg ? { opacity: "1" } : { opacity: "1" }}
               loading="lazy"
               decoding="async"
               alt="캠페인 이미지"
-              src={pickImg ? imageUrl : null}
+              src={pickImg ? imageUrl : "/images/defaultImage.png"}
             />
           </div>
           <div className={styles.btn_wrap1}>

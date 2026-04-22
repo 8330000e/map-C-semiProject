@@ -960,7 +960,10 @@ const Community = ({
                                           i + 1,
                                         )
                                           ? "var(--color1)"
-                                          : "var(--gray5)",
+                                          : "#c1c9bc",
+                                        color: calco2.cEleA?.includes(i + 1)
+                                          ? "var(--gray8)"
+                                          : "var(--color1)",
                                       }}
                                     >
                                       {item[0]}
@@ -984,7 +987,10 @@ const Community = ({
                                           i + 1,
                                         )
                                           ? "var(--color1)"
-                                          : "var(--gray5)",
+                                          : "#c1c9bc",
+                                        color: calco2.cGasA?.includes(i + 1)
+                                          ? "var(--gray8)"
+                                          : "var(--color1)",
                                       }}
                                     >
                                       {item[0]}
@@ -1009,7 +1015,10 @@ const Community = ({
                                         backgroundColor:
                                           calco2.cWaterA?.includes(i + 1)
                                             ? "var(--color1)"
-                                            : "var(--gray5)",
+                                            : "#c1c9bc",
+                                        color: calco2.cWaterA?.includes(i + 1)
+                                          ? "var(--gray8)"
+                                          : "var(--color1)",
                                       }}
                                     >
                                       {item[0]}
@@ -1032,7 +1041,10 @@ const Community = ({
                                         backgroundColor:
                                           calco2.cRoadA?.includes(i + 1)
                                             ? "var(--color1)"
-                                            : "var(--gray5)",
+                                            : "#c1c9bc",
+                                        color: calco2.cRoadA?.includes(i + 1)
+                                          ? "var(--gray8)"
+                                          : "var(--color1)",
                                       }}
                                     >
                                       {item[0]}
@@ -1057,7 +1069,10 @@ const Community = ({
                                         backgroundColor:
                                           calco2.cWasteA?.includes(i + 1)
                                             ? "var(--color1)"
-                                            : "var(--gray5)",
+                                            : "#c1c9bc",
+                                        color: calco2.cWasteA?.includes(i + 1)
+                                          ? "var(--gray8)"
+                                          : "var(--color1)",
                                       }}
                                     >
                                       {item[0]}
@@ -1071,9 +1086,11 @@ const Community = ({
                             <div className={styles.result_warp}>
                               <div>{memberNickname}님의 총 탄소배출량</div>
                               <div className={styles.result_count}></div>
-                              <div>CO₂</div>
-                              <div>{calco2.cTotal}</div>
-                              <div>KG</div>
+                              <div>
+                                <div>CO₂</div>
+                                <div>{calco2.cTotal.toFixed(8)}</div>
+                                <div>KG</div>
+                              </div>
                               <div className={styles.result_ment}>
                                 <p>대단해요 {memberNickname}님!</p>
                                 <p>2024년 기준</p>
@@ -1084,13 +1101,15 @@ const Community = ({
                                     ((calco2.cTotal * 100) / co2Data) *
                                     100
                                   ).toFixed(5)}
-                                  ppm을 절감하셨어요!
+                                  %을 절감하셨어요!
                                 </p>
                               </div>
                             </div>
                           )}
                         </div>
-                        <div>
+                        <div
+                          className={`${styles.caltiemtext_wrap} ${step === 6 && styles.caltiemtext_wrap_result}`}
+                        >
                           <div>
                             {(step === 4 && (
                               <div className={styles.caltiemtext}>이용시간</div>
@@ -1104,57 +1123,55 @@ const Community = ({
                                 </div>
                               ))}
                           </div>
-                          <div>
+                          <div className={styles.carbon_time}>
                             <div>
-                              <div>
-                                {step < 6 && (
-                                  <div>
-                                    <KeyboardArrowUpOutlinedIcon
-                                      sx={{ cursor: "pointer" }}
-                                      onClick={() => {
-                                        const currentKey = keys?.[step - 1];
+                              {step < 6 && (
+                                <div>
+                                  <KeyboardArrowUpOutlinedIcon
+                                    sx={{ cursor: "pointer", fontSize: "50px" }}
+                                    onClick={() => {
+                                      const currentKey = keys?.[step - 1];
 
-                                        if (!currentKey) return;
+                                      if (!currentKey) return;
 
-                                        setCalco2((prev) => {
-                                          const currentCount =
-                                            prev[currentKey] || 0;
+                                      setCalco2((prev) => {
+                                        const currentCount =
+                                          prev[currentKey] || 0;
 
-                                          return {
-                                            ...prev,
-                                            [currentKey]: currentCount + 1,
-                                          };
-                                        });
-                                      }}
-                                    />
-                                    <p>{calco2[keys[step - 1]] || 0}</p>
-                                    <KeyboardArrowDownOutlinedIcon
-                                      sx={{ cursor: "pointer" }}
-                                      onClick={() => {
-                                        const currentKey = keys?.[step - 1];
+                                        return {
+                                          ...prev,
+                                          [currentKey]: currentCount + 1,
+                                        };
+                                      });
+                                    }}
+                                  />
+                                  <div>{calco2[keys[step - 1]] || 0}</div>
+                                  <KeyboardArrowDownOutlinedIcon
+                                    sx={{ cursor: "pointer", fontSize: "50px" }}
+                                    onClick={() => {
+                                      const currentKey = keys?.[step - 1];
 
-                                        if (!currentKey) return;
+                                      if (!currentKey) return;
 
-                                        setCalco2((prev) => {
-                                          const currentCount =
-                                            prev[currentKey] || 0;
+                                      setCalco2((prev) => {
+                                        const currentCount =
+                                          prev[currentKey] || 0;
 
-                                          return {
-                                            ...prev,
-                                            [currentKey]:
-                                              currentCount > 0
-                                                ? currentCount - 1
-                                                : 0,
-                                          };
-                                        });
-                                      }}
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                              <div>
-                                {step < 6 ? (step === 5 && "번") || "분" : null}
-                              </div>
+                                        return {
+                                          ...prev,
+                                          [currentKey]:
+                                            currentCount > 0
+                                              ? currentCount - 1
+                                              : 0,
+                                        };
+                                      });
+                                    }}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                              {step < 6 ? (step === 5 && "번") || "분" : null}
                             </div>
                           </div>
                         </div>

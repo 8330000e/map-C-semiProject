@@ -121,8 +121,9 @@ function App() {
           error.response.data === "AdminOnly"
         ) {
           Swal.fire({
-            title: "권한이 없습니다.",
             icon: "error",
+            title: "백엔드 AdminInterceptor에서 차단되었습니다.",
+            text: "관리자 권한이 없는 계정은 관리자 API에 접근할 수 없습니다.",
           }).then(() => {
             window.location.href = "/";
           });
