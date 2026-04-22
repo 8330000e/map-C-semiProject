@@ -1088,7 +1088,7 @@ const Community = ({
                               <div className={styles.result_count}></div>
                               <div>
                                 <div>CO₂</div>
-                                <div>{calco2.cTotal}</div>
+                                <div>{calco2.cTotal.toFixed(8)}</div>
                                 <div>KG</div>
                               </div>
                               <div className={styles.result_ment}>
