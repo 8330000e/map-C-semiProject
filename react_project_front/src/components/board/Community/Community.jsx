@@ -960,7 +960,10 @@ const Community = ({
                                           i + 1,
                                         )
                                           ? "var(--color1)"
-                                          : "var(--gray5)",
+                                          : "#c1c9bc",
+                                        color: calco2.cEleA?.includes(i + 1)
+                                          ? "var(--gray8)"
+                                          : "var(--color1)",
                                       }}
                                     >
                                       {item[0]}
@@ -980,11 +983,14 @@ const Community = ({
                                       value={i + 1}
                                       onClick={() => selectCo2("cGasA", i + 1)}
                                       style={{
-                                        backgroundColor: calco2.cGasA?.includes(
+                                        backgroundColor: calco2.cEleA?.includes(
                                           i + 1,
                                         )
                                           ? "var(--color1)"
-                                          : "var(--gray5)",
+                                          : "#c1c9bc",
+                                        color: calco2.cEleA?.includes(i + 1)
+                                          ? "var(--gray8)"
+                                          : "var(--color1)",
                                       }}
                                     >
                                       {item[0]}
@@ -1006,10 +1012,14 @@ const Community = ({
                                         selectCo2("cWaterA", i + 1)
                                       }
                                       style={{
-                                        backgroundColor:
-                                          calco2.cWaterA?.includes(i + 1)
-                                            ? "var(--color1)"
-                                            : "var(--gray5)",
+                                        backgroundColor: calco2.cEleA?.includes(
+                                          i + 1,
+                                        )
+                                          ? "var(--color1)"
+                                          : "#c1c9bc",
+                                        color: calco2.cEleA?.includes(i + 1)
+                                          ? "var(--gray8)"
+                                          : "var(--color1)",
                                       }}
                                     >
                                       {item[0]}
@@ -1029,10 +1039,14 @@ const Community = ({
                                       value={i + 1}
                                       onClick={() => selectCo2("cRoadA", i + 1)}
                                       style={{
-                                        backgroundColor:
-                                          calco2.cRoadA?.includes(i + 1)
-                                            ? "var(--color1)"
-                                            : "var(--gray5)",
+                                        backgroundColor: calco2.cEleA?.includes(
+                                          i + 1,
+                                        )
+                                          ? "var(--color1)"
+                                          : "#c1c9bc",
+                                        color: calco2.cEleA?.includes(i + 1)
+                                          ? "var(--gray8)"
+                                          : "var(--color1)",
                                       }}
                                     >
                                       {item[0]}
@@ -1054,10 +1068,14 @@ const Community = ({
                                         selectCo2("cWasteA", i + 1)
                                       }
                                       style={{
-                                        backgroundColor:
-                                          calco2.cWasteA?.includes(i + 1)
-                                            ? "var(--color1)"
-                                            : "var(--gray5)",
+                                        backgroundColor: calco2.cEleA?.includes(
+                                          i + 1,
+                                        )
+                                          ? "var(--color1)"
+                                          : "#c1c9bc",
+                                        color: calco2.cEleA?.includes(i + 1)
+                                          ? "var(--gray8)"
+                                          : "var(--color1)",
                                       }}
                                     >
                                       {item[0]}
@@ -1090,7 +1108,7 @@ const Community = ({
                             </div>
                           )}
                         </div>
-                        <div>
+                        <div className={styles.caltiemtext_wrap}>
                           <div>
                             {(step === 4 && (
                               <div className={styles.caltiemtext}>이용시간</div>
@@ -1104,57 +1122,55 @@ const Community = ({
                                 </div>
                               ))}
                           </div>
-                          <div>
+                          <div className={styles.carbon_time}>
                             <div>
-                              <div>
-                                {step < 6 && (
-                                  <div>
-                                    <KeyboardArrowUpOutlinedIcon
-                                      sx={{ cursor: "pointer" }}
-                                      onClick={() => {
-                                        const currentKey = keys?.[step - 1];
+                              {step < 6 && (
+                                <div>
+                                  <KeyboardArrowUpOutlinedIcon
+                                    sx={{ cursor: "pointer", fontSize: "50px" }}
+                                    onClick={() => {
+                                      const currentKey = keys?.[step - 1];
 
-                                        if (!currentKey) return;
+                                      if (!currentKey) return;
 
-                                        setCalco2((prev) => {
-                                          const currentCount =
-                                            prev[currentKey] || 0;
+                                      setCalco2((prev) => {
+                                        const currentCount =
+                                          prev[currentKey] || 0;
 
-                                          return {
-                                            ...prev,
-                                            [currentKey]: currentCount + 1,
-                                          };
-                                        });
-                                      }}
-                                    />
-                                    <p>{calco2[keys[step - 1]] || 0}</p>
-                                    <KeyboardArrowDownOutlinedIcon
-                                      sx={{ cursor: "pointer" }}
-                                      onClick={() => {
-                                        const currentKey = keys?.[step - 1];
+                                        return {
+                                          ...prev,
+                                          [currentKey]: currentCount + 1,
+                                        };
+                                      });
+                                    }}
+                                  />
+                                  <p>{calco2[keys[step - 1]] || 0}</p>
+                                  <KeyboardArrowDownOutlinedIcon
+                                    sx={{ cursor: "pointer", fontSize: "50px" }}
+                                    onClick={() => {
+                                      const currentKey = keys?.[step - 1];
 
-                                        if (!currentKey) return;
+                                      if (!currentKey) return;
 
-                                        setCalco2((prev) => {
-                                          const currentCount =
-                                            prev[currentKey] || 0;
+                                      setCalco2((prev) => {
+                                        const currentCount =
+                                          prev[currentKey] || 0;
 
-                                          return {
-                                            ...prev,
-                                            [currentKey]:
-                                              currentCount > 0
-                                                ? currentCount - 1
-                                                : 0,
-                                          };
-                                        });
-                                      }}
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                              <div>
-                                {step < 6 ? (step === 5 && "번") || "분" : null}
-                              </div>
+                                        return {
+                                          ...prev,
+                                          [currentKey]:
+                                            currentCount > 0
+                                              ? currentCount - 1
+                                              : 0,
+                                        };
+                                      });
+                                    }}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                              {step < 6 ? (step === 5 && "번") || "분" : null}
                             </div>
                           </div>
                         </div>
