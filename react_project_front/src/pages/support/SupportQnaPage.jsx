@@ -23,7 +23,7 @@ const SupportQnaPage = () => {
     setQna({ ...qna, [name]: value });
   };
   const selectQnaList = () => {
-    axios
+    return axios
       .get(
         `${import.meta.env.VITE_BACKSERVER}/supports/qna?memberId=${memberId}`,
       )
@@ -65,10 +65,17 @@ const SupportQnaPage = () => {
           .post(`${import.meta.env.VITE_BACKSERVER}/supports/qna`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
           })
-          .then((res) => {
+          .then(async (res) => {
             console.log(res);
             if (res.data === 1) {
-              selectQnaList();
+              setQna({
+                qnaTitle: "",
+                qnaContent: "",
+                qnaCategory: "회원·계정",
+              });
+              setImageFile(null);
+              await selectQnaList();
+              setActiveTab("list");
               Swal.fire({
                 title: "문의등록",
                 text: "등록되었습니다.",
