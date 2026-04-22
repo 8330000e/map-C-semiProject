@@ -413,31 +413,64 @@ const Map = ({
           map.setZoom(15);
           markerName.setIcon({
             content: `
-            <div style="position: relative; width: 300px; height: auto; padding-top: 18px; pointer-events: auto; margin: 0 auto;">
-              <div style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: ${5000 + 3};">
-                <img
-                  loading="lazy"
-                  decoding="async"
-                  src=${borderPin}
-                  style="width: 32px;"
-                />
-              </div>
-              <div
+            <div>
+              <div style="position: relative; width: 100%;">
+                <div
                 style="
-                  position: relative;
-                  width: 100%;
-                  margin-top: 16px;
+                  position: absolute;
+                  width: 300px;
+                  left: 50%;
+                  bottom: 50%;
+                  transform: translate(-42%, -260%);
+                  height: max-content;
                   border-radius: 25px;
                   border: var(--border2);
                   z-index: ${5000 + 2};
-                  padding: 24px 18px 14px 18px;
+                  padding: 15px 20px;
                   font-size: 15px;
                   font-weight: 600;
-                  text-align: left;
+                  text-align: center;
+                  background-color: var(--gray8);
+                "
+                >
+                <div>
+                  <img
+                    loading="lazy"
+                    decoding="async"
+                    src=${borderPin}
+                    style="
+                      position: absolute;
+                      width: 32px;
+                      z-index: ${5000 + 3};
+                      bottom: 80%;
+                      left: 50%;
+                      color: #ff593c;
+                    "
+                  />
+                </div>
+                <p>${marker.addr}</p>
+              </div>
+              <div
+                style="
+                  position: absolute;
+                  left: 50%;
+                  bottom: 50%;
+                  transform: translate(-42%, -10%);
+                  margin-top: 60px;
+                  width: 300px;
+                  height: max-content;
+                  border-radius: 25px;
+                  border: var(--border2);
+                  z-index: ${5000 + 2};
+                  padding: 15px 20px;
+                  font-size: 15px;
+                  font-weight: 600;
+                  text-align: center;
                   background-color: var(--gray8);
                   display: flex;
                   flex-direction: column;
-                  gap: 10px;
+                  justify-items: center;
+                  align-content: space-between;
                 "
                 >
                   <div
@@ -453,7 +486,7 @@ const Map = ({
                       <img
                         loading="lazy"
                         decoding="async"
-                        src=${defaultImg}
+                        src=${marker.memberThumb || defaultImg}
                         alt=""
                         style="
                           width: 35px;
@@ -539,8 +572,8 @@ const Map = ({
                 </button>
           </div>
                 `,
-            size: new naver.maps.Size(300, 240),
-            anchor: new naver.maps.Point(150, 240),
+            size: new naver.maps.Size(22, 35),
+            anchor: new naver.maps.Point(11, 35),
             onClick: boardView(
               marker.boardNo,
               marker.addr,
