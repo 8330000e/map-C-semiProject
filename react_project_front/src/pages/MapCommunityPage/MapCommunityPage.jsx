@@ -536,23 +536,7 @@ const Map = ({
                       .substring(0, 30)}
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onclick="event.stopPropagation(); window.openRegionChart && window.openRegionChart();"
-                  style="
-                    margin-top: 10px;
-                    padding: 6px 12px;
-                    border-radius: 999px;
-                    border: 1px solid rgba(255,255,255,0.4);
-                    background: rgba(255,255,255,0.12);
-                    color: #fff;
-                    font-size: 13px;
-                    cursor: pointer;
-                    backdrop-filter: blur(4px);
-                  "
-                >
-                  차트 보기
-                </button>
+                
               </div>
             </div>
           <div style="position: relative;">
@@ -569,6 +553,23 @@ const Map = ({
               style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
             />
           </div>
+          <button
+                  type="button"
+                  onclick="event.stopPropagation(); window.openRegionChart && window.openRegionChart();"
+                  style="
+                    border-radius: 999px;
+                    border: 1px solid rgba(255,255,255,0.4);
+                    background: rgba(255,255,255,0.12);
+                    color: #fff;
+                    margin-top: 10px;
+                    padding: 6px 12px;
+                    font-size: 13px;
+                    cursor: pointer;
+                    backdrop-filter: blur(4px);
+                  "
+                >
+                  차트 보기
+                </button>
           </div>
                 `,
             size: new naver.maps.Size(22, 35),
