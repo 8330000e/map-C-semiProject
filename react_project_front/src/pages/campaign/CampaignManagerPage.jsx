@@ -34,6 +34,7 @@ const CampaignManagerPage = () => {
             }}
           >
             {"< " + " 돌아가기"}
+            {/*화살표 수정*/}
           </div>
           <div className={styles.camp_settings_sidebar}>
             <div className={styles.camp_setting_sidebar_title}>

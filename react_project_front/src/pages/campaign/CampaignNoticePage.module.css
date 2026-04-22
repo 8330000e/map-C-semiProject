@@ -4,7 +4,8 @@
   border: 1.5px solid var(--gray4);
   background-color: #eef3e8;
   border-radius: 20px;
-  margin-top: 20px;
+  margin-top: 50px;
+  position: relative;
 }
 .camp_notice_title {
   margin: 30px auto;
@@ -16,7 +17,7 @@
   margin: 10px auto;
 }
 .camp_notice_content_title > ul {
-  background-color: #b0d261;
+  background-color: var(--color1);
   height: 50px;
   display: flex;
   text-align: center;
@@ -24,6 +25,9 @@
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom: none;
+}
+.camp_notice_content_title li {
+  color: var(--gray8);
 }
 .camp_notice_content_title li {
   display: flex;
@@ -44,6 +48,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  font-style: var(--sans);
+  color: var(--text1);
 }
 .camp_notice_list1 {
   width: 100px;
@@ -82,14 +88,24 @@
   width: 100px;
   height: 40px;
 }
-.camp_notice_btn_wrap > Pagination {
-  align-self: center;
+.camp_notice_btn_wrap {
+  display: flex;
+  justify-content: center;
 }
 .camp_notice_return_btn {
   border-radius: 12px;
   outline: none;
   cursor: pointer;
+  position: absolute;
+  top: -25px;
+  display: flex;
+  align-items: center;
 }
+.camp_notice_return_btn:hover {
+  transform: translateX(-5px);
+  transition-duration: 0.3s;
+}
+
 /* .camp_notice_return_btn:hover {
   box-shadow: 0px 0.2px 8px var(--gray2);
 } */

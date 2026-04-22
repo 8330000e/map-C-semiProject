@@ -113,18 +113,24 @@ const SupportQna = ({
                   <div className={styles.qna_top_left}>
                     <span
                       className={`${styles.status_badge} ${
-                        item.qnaStatus === 1 ? styles.badge_done : styles.badge_wait
+                        item.qnaStatus === 1
+                          ? styles.badge_done
+                          : styles.badge_wait
                       }`}
                     >
                       {item.qnaStatus === 1 ? "답변 완료" : "답변 대기"}
                     </span>
-                    <span className={styles.qna_category}>{item.qnaCategory}</span>
+                    <span className={styles.qna_category}>
+                      {item.qnaCategory}
+                    </span>
                   </div>
                   <span className={styles.qna_date}>{item.qnaDate}</span>
                 </div>
 
                 <div className={styles.qna_title}>{item.qnaTitle}</div>
-                <div className={styles.qna_content_preview}>{item.qnaContent}</div>
+                <div className={styles.qna_content_preview}>
+                  {item.qnaContent}
+                </div>
 
                 {item.qnaStatus === 1 && (
                   <div className={styles.qna_answer_row}>

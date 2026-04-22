@@ -5,6 +5,7 @@ import styles from "./CampaignNoticePage.module.css";
 import Button from "../../components/ui/Button";
 import axios from "axios";
 import Pagination from "../../components/ui/Pagination";
+import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 
 const CampaignNotice = () => {
   const { memberId } = useAuthStore();
@@ -31,6 +32,15 @@ const CampaignNotice = () => {
   return (
     readList && (
       <div className={styles.camp_notice_wrap}>
+        <div
+          className={styles.camp_notice_return_btn}
+          onClick={() => {
+            navigate("/campaign/main");
+          }}
+        >
+          <ArrowBackIosOutlinedIcon fontSize="small" />
+          <span>캠페인창으로</span>
+        </div>
         <div className={styles.camp_notice_title}>
           <h2>캠페인 공지사항</h2>
         </div>
@@ -86,14 +96,6 @@ const CampaignNotice = () => {
               naviSize={5}
             />
           )}
-          <button
-            className={styles.camp_notice_return_btn}
-            onClick={() => {
-              navigate("/campaign/main");
-            }}
-          >
-            돌아가기
-          </button>
         </div>
       </div>
     )

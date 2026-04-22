@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import { Input } from "../ui/Form";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
-
+import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css/autoplay";
@@ -74,7 +74,8 @@ const CampaignMain = () => {
             navigate(`/`);
           }}
         >
-          {"<" + "메인으로 돌아가기"}
+          <ArrowBackIosOutlinedIcon fontSize="small" />
+          <span>홈으로</span>
         </div>
         <div className={styles.campaignmain_title_wrap}>
           <h2>캠페인 참여화면</h2>
@@ -167,6 +168,22 @@ const CampaignMain = () => {
               })}
             </Swiper>
           </div>
+          <div className={styles.campaignmain_btn_wrap}>
+            <Button
+              onClick={() => {
+                navigate(`/campaign/notice`);
+              }}
+            >
+              공지사항
+            </Button>
+            <Button
+              onClick={() => {
+                navigate("/campaign/create");
+              }}
+            >
+              챌린지 생성하기
+            </Button>
+          </div>
           {campaignList.map((camp, index) => {
             return (
               <div
@@ -209,22 +226,6 @@ const CampaignMain = () => {
               naviSize={6}
             />
           )}
-          <div className={styles.campaignmain_btn_wrap}>
-            <Button
-              onClick={() => {
-                navigate(`/campaign/notice`);
-              }}
-            >
-              공지사항
-            </Button>
-            <Button
-              onClick={() => {
-                navigate("/campaign/create");
-              }}
-            >
-              챌린지 생성하기
-            </Button>
-          </div>
         </div>
       </div>
     )

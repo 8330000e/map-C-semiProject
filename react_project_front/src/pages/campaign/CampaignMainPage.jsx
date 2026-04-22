@@ -10,7 +10,7 @@ const CampaignMainPage = () => {
   const navigate = useNavigate();
   if (memberId == null || memberId == undefined) {
     return (
-      <div>
+      <div className={styles.campaign_main}>
         <h1>회원가입후에 이용해주세요</h1>
         <Button
           className="btn primary sm"
