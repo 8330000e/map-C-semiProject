@@ -128,10 +128,16 @@ const Map = ({
   // labels와 datasets를 포함한 Chart.js 데이터 구조를 저장함.
   const [regionChartData, setRegionChartData] = useState(null);
   const [chartLoading, setChartLoading] = useState(false);
-  // 지역 탄소 배출 변화 차트 노출 여부를 관리함.
-  // 페이지 진입 시에는 차트를 바로 보여주지 않고,
-  // 사용자가 지도를 클릭하거나 마커를 선택했을 때 차트를 표시함.
+  // 지역 탄소 배출 변화 차트 표시 여부를 관리함.
+  // 사용자가 지도를 클릭하면 지역만 선택되고, 차트는 마커 내부 버튼을 눌러서 표시함.
   const [showRegionChart, setShowRegionChart] = useState(false);
+  // 전역에서 차트 열기 함수를 호출할 수 있게 등록함.
+  useEffect(() => {
+    window.openRegionChart = () => setShowRegionChart(true);
+    return () => {
+      if (window.openRegionChart) delete window.openRegionChart;
+    };
+  }, []);
   // 현재 선택된 지역을 기억하기 위한 ref임.
   // 같은 구를 다시 클릭했을 때도 이전 선택을 유지하려고 사용함.
   const selectedRegionRef = useRef(ctpvsgg);
@@ -154,8 +160,8 @@ const Map = ({
     if (addr) setAddr(addr);
     if (lat && lng) setLnglat({ lat, lng });
 
-    // 차트는 선택된 지역이 있으면 보여주도록 설정함.
-    setShowRegionChart(true);
+    // 지역을 선택하면 차트는 기본으로 숨김 상태로 유지.
+    setShowRegionChart(false);
   };
 
   let mapMarkerList = [];
@@ -530,6 +536,7 @@ const Map = ({
                       .substring(0, 30)}
                   </div>
                 </div>
+                
               </div>
             </div>
           <div style="position: relative;">
@@ -546,6 +553,23 @@ const Map = ({
               style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
             />
           </div>
+          <button
+                  type="button"
+                  onclick="event.stopPropagation(); window.openRegionChart && window.openRegionChart();"
+                  style="
+                    border-radius: 999px;
+                    border: 1px solid rgba(255,255,255,0.4);
+                    background: rgba(255,255,255,0.12);
+                    color: #fff;
+                    margin-top: 10px;
+                    padding: 6px 12px;
+                    font-size: 13px;
+                    cursor: pointer;
+                    backdrop-filter: blur(4px);
+                  "
+                >
+                  차트 보기
+                </button>
           </div>
                 `,
             size: new naver.maps.Size(22, 35),
@@ -842,6 +866,15 @@ const Map = ({
                 {/* 실제 DB 기반 지역 탄소 배출량을 보여줌. */}
                 탄소 배출량 {actualCo2.toLocaleString()}kg
               </p>
+              {!showRegionChart && (
+                <button
+                  type="button"
+                  className={styles.regionChartToggleButton}
+                  onClick={() => setShowRegionChart(true)}
+                >
+                  차트 보기
+                </button>
+              )}
             </div>
             {showRegionChart && (
               <div className={styles.regionChartBox}>
