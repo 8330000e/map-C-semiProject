@@ -84,9 +84,9 @@ const Join = () => {
       // res.data가 true면 중복된 아이디가 있음 -> 1 (사용불가)
       // res.data가 false면 아이디가 없음 -> 2 (사용가능)
       if (res.data === true) {
-        setCheckId(2); // 중복됨
+        setCheckId(1); // 중복됨
       } else {
-        setCheckId(1); // 사용가능
+        setCheckId(2); // 사용가능
       }
 
       console.log("중복 체크 결과:", res.data, "상태값:", res.data ? 1 : 2);
@@ -304,6 +304,11 @@ const Join = () => {
             {idMessage && (
               <p className={`${styles.check_msg} ${styles.invalid}`}>
                 {idMessage}
+              </p>
+            )}
+            {!idMessage && checkId === 1 && (
+              <p className={`${styles.check_msg} ${styles.invalid}`}>
+                이미 사용 중인 아이디입니다.
               </p>
             )}
             {checkId === 2 && !idMessage && (
