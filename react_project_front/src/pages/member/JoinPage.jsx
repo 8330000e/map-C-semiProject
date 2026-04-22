@@ -307,6 +307,11 @@ const Join = () => {
                 {idMessage}
               </p>
             )}
+            {!idMessage && checkId === 1 && (
+              <p className={`${styles.check_msg} ${styles.invalid}`}>
+                이미 사용 중인 아이디입니다.
+              </p>
+            )}
             {checkId === 2 && !idMessage && (
               <p className={styles.check_msg}>사용 가능한 아이디입니다.</p>
             )}
