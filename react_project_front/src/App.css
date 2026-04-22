@@ -223,20 +223,33 @@ header {
   gap: 8px;
 }
 .campaign_zone {
+  /* 인기 캠페인 영역 전체 박스의 크기를 정함.
+     높이를 170px로 늘려서 내부 하얀 박스와 아래 공간이
+     너무 붙지 않도록 여유를 준 상태임. */
   width: 320px;
-  height: 150px;
+  height: 170px;
   background-color: #eef3e8;
   padding: 10px;
   padding-left: 10px;
 }
 
+.campaign_zone > h4 {
+  /* 인기 캠페인 제목의 글자 크기와 색상을 다른 카드와 맞춤.
+     기본 h4 스타일보다 조금 더 작고 눈에 덜 튀게 조정함. */
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2f3a2b;
+}
+
 .camp_swiper_wrap {
+  /* 하얀 카드 영역의 최소 높이를 지정하고 내부 여백을 줘서
+     카드가 아래쪽과 자연스럽게 떨어지도록 함. */
   width: 280px;
-  height: 105px;
+  min-height: 100px;
   background-color: #fff;
-  margin: 2.5px auto;
-  padding: 5px;
-  padding-left: 15px;
+  margin: 6px auto;
+  padding: 12px 15px 14px;
   border-radius: 18px;
   /*
   background-image: url("/images/login-background.png");  배경 이미지 경로
@@ -244,6 +257,19 @@ header {
   background-position: bottom;  중앙 기준 정렬 
   background-repeat: no-repeat; */
   background-color: var(--gray8);
+}
+
+.camp_swiper_wrap .camp_swiper_title h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #464d3e;
+}
+
+.camp_swiper_wrap > div {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.5;
 }
 
 .realtime_comment {
