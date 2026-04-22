@@ -1089,9 +1089,11 @@ const Community = ({
                             <div className={styles.result_warp}>
                               <div>{memberNickname}님의 총 탄소배출량</div>
                               <div className={styles.result_count}></div>
-                              <div>CO₂</div>
-                              <div>{calco2.cTotal}</div>
-                              <div>KG</div>
+                              <div>
+                                <div>CO₂</div>
+                                <div>{calco2.cTotal}</div>
+                                <div>KG</div>
+                              </div>
                               <div className={styles.result_ment}>
                                 <p>대단해요 {memberNickname}님!</p>
                                 <p>2024년 기준</p>
@@ -1102,13 +1104,15 @@ const Community = ({
                                     ((calco2.cTotal * 100) / co2Data) *
                                     100
                                   ).toFixed(5)}
-                                  ppm을 절감하셨어요!
+                                  %을 절감하셨어요!
                                 </p>
                               </div>
                             </div>
                           )}
                         </div>
-                        <div className={step < 6}>
+                        <div
+                          className={`${styles.caltiemtext_wrap} ${step === 6 && styles.caltiemtext_wrap_result}`}
+                        >
                           <div>
                             {(step === 4 && (
                               <div className={styles.caltiemtext}>이용시간</div>
