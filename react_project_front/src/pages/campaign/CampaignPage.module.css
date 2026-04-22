@@ -1,7 +1,10 @@
 .campaign_content_wrap {
-  width: 1200px;
+  width: 1250px;
   min-height: 900px;
   margin-top: 50px;
+}
+.campaign_main {
+  width: 100%;
 }
 .campaign_content_wrap > button {
   margin-left: 150px;

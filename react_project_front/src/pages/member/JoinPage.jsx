@@ -186,6 +186,7 @@ const Join = () => {
 
   //회원가입
   const JoinMember = async (e) => {
+    console.log("회원가입 버튼 클릭됨");
     e.preventDefault();
 
     // 중복 클릭 방지 체크

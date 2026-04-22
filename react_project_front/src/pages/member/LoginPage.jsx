@@ -81,6 +81,21 @@ const Login = () => {
 
       //상태저장
       useAuthStore.getState().login(res.data);
+
+      // 로그인 응답에 프로필 이미지가 없으면 바로 추가로 조회해서 저장
+      if (!res.data.memberThumb && res.data.memberId) {
+        try {
+          const profileRes = await axios.get(
+            `${BACKSERVER}/members/${res.data.memberId}`,
+          );
+          if (profileRes.data?.memberThumb) {
+            useAuthStore.getState().setThumb(profileRes.data.memberThumb);
+          }
+        } catch (profileErr) {
+          console.error("프로필 정보 추가 로드 실패", profileErr);
+        }
+      }
+
       //성공했을 떄 초기값으로 되돌아가기
       setMember({
         memberId: "",

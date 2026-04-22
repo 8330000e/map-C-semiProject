@@ -229,6 +229,11 @@
   border-radius: 10px;
   gap: 80px;
 }
+.campdetailpage_info_wrap p {
+  font-style: var(--sans);
+  color: var(--text1);
+  font-weight: 400;
+}
 .campdetailpage_info_wrap > div {
   padding: 15px;
   display: flex;
@@ -249,6 +254,12 @@
 .campdetailpage_sidebar_content {
   margin-top: 20px;
   height: 200px;
+}
+.campdetailpage_sidebar_content > div {
+  font-style: var(--sans);
+  font-weight: 400;
+  font-size: medium;
+  color: var(--text1);
 }
 .campdetailpage_sidebar_btn_wrap {
   display: flex;
@@ -320,6 +331,7 @@
   /* max-width: 100%;
   max-height: 100%; */
   object-fit: contain;
+  overflow: hidden;
 }
 
 .camp_board_content_wrap {

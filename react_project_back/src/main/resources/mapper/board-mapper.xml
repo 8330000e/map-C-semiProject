@@ -157,6 +157,32 @@
         WHERE BOARD_NO = #{boardNo}
     </delete>
 
+    <delete id="deleteBoardCommentsByBoardNo" parameterType="int">
+        DELETE FROM BOARD_COMMENT_TBL
+        WHERE BOARD_NO = #{boardNo}
+    </delete>
+
+    <delete id="deleteBoardLikesByBoardNo" parameterType="int">
+        DELETE FROM BOARD_LIKE_TBL
+        WHERE BOARD_NO = #{boardNo}
+    </delete>
+
+    <delete id="deleteBoardTipsByBoardNo" parameterType="int">
+        DELETE FROM BOARD_TIP_TBL
+        WHERE BOARD_NO = #{boardNo}
+    </delete>
+
+    <delete id="deleteBoardFilesByBoardNo" parameterType="int">
+        DELETE FROM BOARD_FILE_TBL
+        WHERE BOARD_NO = #{boardNo}
+    </delete>
+
+    <delete id="deleteBoardReportsByBoardNo" parameterType="int">
+        DELETE FROM REPORT_TBL
+        WHERE TARGET_TYPE = 'board'
+        AND TARGET_NO = #{boardNo}
+    </delete>
+
     <!-- 조회수 증가 -->
     <update id="incrementReadCount" parameterType="int">
         UPDATE BOARD_TBL

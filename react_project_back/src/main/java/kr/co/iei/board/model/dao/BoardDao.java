@@ -42,7 +42,17 @@ public interface BoardDao {
 
 	int insertBoardTip(@Param("boardNo") int boardNo, @Param("memberId") String memberId);
 
+	int deleteBoardLikesByBoardNo(@Param("boardNo") int boardNo);
+
+	int deleteBoardCommentsByBoardNo(@Param("boardNo") int boardNo);
+
 	int deleteBoardTip(@Param("boardNo") int boardNo, @Param("memberId") String memberId);
+
+	int deleteBoardTipsByBoardNo(@Param("boardNo") int boardNo);
+
+	int deleteBoardFilesByBoardNo(@Param("boardNo") int boardNo);
+
+	int deleteBoardReportsByBoardNo(@Param("boardNo") int boardNo);
 
 	int selectBoardTipByMember(@Param("boardNo") int boardNo, @Param("memberId") String memberId);
 

@@ -122,10 +122,19 @@ public class BoardService {
 	}
 
 	// 게시글 삭제
+	@Transactional
 	public int deleteBoard(int boardNo) {
 	    try {
-	        int result = boardDao.deleteBoard(boardNo);
-	        return result;
+            // 게시글 삭제 전에 종속된 관련 데이터를 먼저 정리함.
+            // foreign key 제약이나 데이터를 참조하는 자식 레코드가 있으면 삭제가 실패할 수 있음.
+            boardDao.deleteBoardFilesByBoardNo(boardNo);
+            boardDao.deleteBoardCommentsByBoardNo(boardNo);
+            boardDao.deleteBoardLikesByBoardNo(boardNo);
+            boardDao.deleteBoardTipsByBoardNo(boardNo);
+            boardDao.deleteBoardReportsByBoardNo(boardNo);
+
+            return boardDao.deleteBoard(boardNo);
+
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        throw e;

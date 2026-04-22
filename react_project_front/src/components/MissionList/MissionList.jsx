@@ -30,6 +30,8 @@ const MissionList = () => {
 
   const [randomMissionCertImage, setRandomMissionCertImage] = useState("");
 
+  const [certLoading, setCertLoading] = useState(false);
+
   useEffect(() => {
     if (!memberId) {
       Swal.fire({
@@ -321,17 +323,20 @@ const MissionList = () => {
   };
 
   const handleSubmitCertification = async () => {
+    if (certLoading) return; // 🔥 중복 방지
+
     if (!certFile) {
       await Swal.fire({
         icon: "warning",
         title: "사진을 선택해주세요",
         text: "인증할 이미지를 먼저 업로드해주세요.",
-        confirmButtonColor: "#89a93f",
       });
       return;
     }
 
     try {
+      setCertLoading(true); // 🔥 시작
+
       const formData = new FormData();
       formData.append("memberId", memberId);
       formData.append("missionNo", randomMission.missionNo);
@@ -341,12 +346,11 @@ const MissionList = () => {
         `${import.meta.env.VITE_BACKSERVER}/missions/random/certify`,
         formData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         },
       );
 
+      // 🔥 성공 시에만 상태 변경
       setRandomMissionCompleted(true);
       setRandomMissionCertImage(res.data.certImageUrl || "");
 
@@ -354,21 +358,21 @@ const MissionList = () => {
         icon: "success",
         title: "인증 완료!",
         text: "랜덤 미션 완료! 20포인트 지급 🎉",
-        confirmButtonColor: "#89a93f",
       });
 
       handleCloseCertModal();
       await loadMissions();
       await loadBonusMissionStatus();
     } catch (err) {
-      console.error(err);
+      console.error("랜덤 미션 인증 실패:", err);
 
       await Swal.fire({
         icon: "error",
         title: "인증 실패",
-        text: err.response?.data || "서버 오류가 발생했습니다.",
-        confirmButtonColor: "#d33",
+        text: err.response?.data || "서버 오류",
       });
+    } finally {
+      setCertLoading(false); // 🔥 끝
     }
   };
   const updateBonusMissionState = (
