@@ -1,3 +1,8 @@
+/* eslint-disable no-constant-binary-expression */
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/react-in-jsx-scope */
 import { useEffect, useRef, useState } from "react";
 import Community from "../../components/board/Community/Community";
 import styles from "./MapCommunityPage.module.css";
@@ -6,7 +11,6 @@ import borderPin from "../../assets/img/borderPin.svg";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import CelebrationOutlinedIcon from "@mui/icons-material/CelebrationOutlined";
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
-import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import heart from "../../assets/img/heart.svg";
 import axios from "axios";
@@ -23,7 +27,7 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { REGION_DATA } from "../../components/board/Community/regionData";
+// import { REGION_DATA } from "../../components/board/Community/regionData";
 
 // 백엔드 API 서버 주소를 환경 변수에서 읽어오고, 없으면 로컬 주소를 기본값으로 사용함.
 // 프론트엔드와 백엔드가 분리되어 있어도 환경별로 주소를 쉽게 바꾸기 위함임.
@@ -421,7 +425,7 @@ const Map = ({
                   width: 300px;
                   left: 50%;
                   bottom: 50%;
-                  transform: translate(-42%, -260%);
+                  transform: translate(-53.5%, -260%);
                   height: max-content;
                   border-radius: 25px;
                   border: var(--border2);
@@ -455,7 +459,7 @@ const Map = ({
                   position: absolute;
                   left: 50%;
                   bottom: 50%;
-                  transform: translate(-42%, -10%);
+                  transform: translate(-53.5%, -10%);
                   margin-top: 60px;
                   width: 300px;
                   height: max-content;
