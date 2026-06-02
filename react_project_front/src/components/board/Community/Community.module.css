@@ -739,6 +739,22 @@
   color: #505d4e;
 }
 
+.replyCancelBtn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #bcc6b2;
+  background: #fff;
+  color: #464d3e;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.replyCancelBtn:hover {
+  background: #f4f7ee;
+  border-color: #a3b093;
+}
+
 .commentFormRow {
   display: flex;
   gap: 10px;

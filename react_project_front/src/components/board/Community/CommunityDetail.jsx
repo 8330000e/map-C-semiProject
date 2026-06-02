@@ -883,7 +883,11 @@ const CommunityDetail = ({
           {replyTarget && (
             <div className={styles.replyNote}>
               답글 대상: {getDisplayName(replyTarget)}
-              <button type="button" onClick={handleCancelReply}>
+              <button
+                type="button"
+                className={styles.replyCancelBtn}
+                onClick={handleCancelReply}
+              >
                 취소
               </button>
             </div>
