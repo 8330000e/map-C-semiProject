@@ -5,7 +5,7 @@
 		update alarm_tbl set alarm_check = 1 where member_id = #{memberId}
 	</update>
 	<select id="selectAllAlarm" resultType="alarm">
-		select * from alarm_tbl where alarm_del = 1 and member_id = #{memberId}
+		select * from alarm_tbl where alarm_del = 1 and member_id = #{memberId} order by alarm_time desc
 	</select>
 	<select id="isNewAlarm" resultType="int">
 		select count(alarm_check) from alarm_tbl where alarm_check=0 and member_id = #{memberId}
