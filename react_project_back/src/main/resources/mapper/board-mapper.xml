@@ -4,7 +4,6 @@
 
 <mapper namespace="kr.co.iei.board.model.dao.BoardDao">
 
-    <!-- 게시글 리스트 -->
     <select id="selectBoardList" parameterType="map" resultType="kr.co.iei.board.model.vo.Board">
         SELECT
             b.BOARD_NO AS boardNo,
@@ -12,7 +11,7 @@
             b.BOARD_TITLE AS boardTitle,
             b.BOARD_CONTENT AS boardContent,
             b.BOARD_THUMB AS boardThumb,
-            TO_CHAR(b.BOARD_DATE, 'YYYY-MM-DD') AS boardDate,
+            DATE_FORMAT(b.BOARD_DATE, '%Y-%m-%d') AS boardDate,
             b.MEMBER_NICKNAME AS memberNickname,
             m.MEMBER_THUMB AS memberThumb,
             b.BOARD_STATUS AS boardStatus,
@@ -20,12 +19,11 @@
             b.BOARD_LNG AS boardLng,
             b.READ_COUNT AS readCount,
             b.ADDR AS addr,
-            NVL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0) AS likeCount,
+            IFNULL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0) AS likeCount,
 
             b.MEMBER_NICKNAME AS writerNickname,
-            TO_CHAR(b.BOARD_DATE, 'YYYY-MM-DD') AS createDate,
-            <!-- 게시글 수정일을 프론트로 내려줌. 수정된 글이면 updatedAt 값이 채워짐. -->
-            TO_CHAR(b.UPDATED_AT, 'YYYY-MM-DD') AS updatedAt,
+            DATE_FORMAT(b.BOARD_DATE, '%Y-%m-%d') AS createDate,
+            DATE_FORMAT(b.UPDATED_AT, '%Y-%m-%d') AS updatedAt,
             b.BOARD_THUMB AS thumbnailUrl,
             0 AS commentCount
         FROM BOARD_TBL b
@@ -45,34 +43,26 @@
         <if test="searchKeyword != null and searchKeyword != ''">
             <choose>
                 <when test="searchType == 1">
-                    AND BOARD_TITLE LIKE '%' || #{searchKeyword} || '%'
+                    AND BOARD_TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
                 </when>
                 <when test="searchType == 2">
-                    AND MEMBER_NICKNAME LIKE '%' || #{searchKeyword} || '%'
+                    AND MEMBER_NICKNAME LIKE CONCAT('%', #{searchKeyword}, '%')
                 </when>
             </choose>
         </if>
 
-		<choose>
-		    <when test="sortType == 'popular'">
-		        ORDER BY (b.READ_COUNT + NVL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0)) DESC
-		    </when>
-		    <otherwise>
-		        ORDER BY b.BOARD_DATE DESC, b.BOARD_NO DESC
-		    </otherwise>
-		</choose>
+        <choose>
+            <when test="sortType == 'popular'">
+                ORDER BY (b.READ_COUNT + IFNULL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0)) DESC
+            </when>
+            <otherwise>
+                ORDER BY b.BOARD_DATE DESC, b.BOARD_NO DESC
+            </otherwise>
+        </choose>
     </select>
 
-    <!-- 게시글 등록 -->
-    <insert id="insertBoard" parameterType="board">
-        <selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
-            SELECT BOARD_SEQ.NEXTVAL FROM DUAL
-        </selectKey>
-
-        <!-- Community 게시글 등록 시 프론트에서 ctpv/sgg 값이 전달되므로
-             DB INSERT에도 해당 컬럼을 함께 추가함 -->
+    <insert id="insertBoard" parameterType="board" useGeneratedKeys="true" keyProperty="boardNo">
         INSERT INTO BOARD_TBL (
-            BOARD_NO,
             WRITER_ID,
             BOARD_TITLE,
             BOARD_CONTENT,
@@ -85,7 +75,6 @@
             SGG,
             ADDR
         ) VALUES (
-            #{boardNo},
             #{writerId},
             #{boardTitle},
             #{boardContent},
@@ -105,7 +94,9 @@
     </select>
 
     <select id="addBoardNo" resultType="Board">
-        select board_seq.nextval from dual
+        SELECT AUTO_INCREMENT as boardNo
+        FROM information_schema.TABLES
+        WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'BOARD_TBL'
     </select>
 
     <select id="selectMemberCo2" resultType="int">
@@ -122,36 +113,35 @@
     </select>
 
     <insert id="insertCalco2Data">
-        insert into co2_tbl values (co2_seq.nextval,#{boardNo},#{memberId},#{ctpvsggId},#{cEleA},#{cEle},#{cGasA},#{cGas},#{cWaterA},#{cWater},#{cRoadA},#{cRoad},#{cWasteA},#{cWaste},#{cTotal})
+        insert into co2_tbl (
+            board_no, member_id, ctpvsgg_id, c_ele_a, c_ele, c_gas_a, c_gas, c_water_a, c_water, c_road_a, c_road, c_waste_a, c_waste, c_total
+        ) values (
+            #{boardNo},#{memberId},#{ctpvsggId},#{cEleA},#{cEle},#{cGasA},#{cGas},#{cWaterA},#{cWater},#{cRoadA},#{cRoad},#{cWasteA},#{cWaste},#{cTotal}
+        )
     </insert>
 
     <update id="updateCo2">
         update member_tbl1 set member_co2 = #{membercalco2} where member_id = #{memberId}
     </update>
 
-    <!-- 게시글 수정 -->
-    <!-- 게시글을 수정할 때 BOARD_TBL의 UPDATED_AT 컬럼에 현재 시간을 함께 저장함. -->
-    <!-- 이렇게 해야 프론트에서 해당 게시글이 수정된 글인지 판단할 수 있음. -->
     <update id="updateBoard" parameterType="board">
         UPDATE BOARD_TBL
         SET
             BOARD_TITLE = #{boardTitle},
             BOARD_CONTENT = #{boardContent},
             BOARD_THUMB = #{boardThumb},
-            UPDATED_AT = SYSDATE,
+            UPDATED_AT = NOW(),
             ADDR = #{addr}
         WHERE BOARD_NO = #{boardNo}
     </update>
 
-    <!-- 작성자 확인 -->
     <select id="selectBoardAuthor" parameterType="map" resultType="int">
         SELECT COUNT(*)
         FROM BOARD_TBL
         WHERE BOARD_NO = #{boardNo}
-        AND WRITER_ID = #{writerId}
+          AND WRITER_ID = #{writerId}
     </select>
 
-    <!-- 게시글 삭제 -->
     <delete id="deleteBoard" parameterType="int">
         DELETE FROM BOARD_TBL
         WHERE BOARD_NO = #{boardNo}
@@ -180,51 +170,40 @@
     <delete id="deleteBoardReportsByBoardNo" parameterType="int">
         DELETE FROM REPORT_TBL
         WHERE TARGET_TYPE = 'board'
-        AND TARGET_NO = #{boardNo}
+          AND TARGET_NO = #{boardNo}
     </delete>
 
-    <!-- 조회수 증가 -->
     <update id="incrementReadCount" parameterType="int">
         UPDATE BOARD_TBL
-        SET READ_COUNT = NVL(READ_COUNT, 0) + 1
+        SET READ_COUNT = IFNULL(READ_COUNT, 0) + 1
         WHERE BOARD_NO = #{boardNo}
     </update>
 
-    <!-- 좋아요 추가 -->
     <insert id="insertBoardLike" parameterType="map">
         INSERT INTO BOARD_LIKE_TBL (BOARD_NO, MEMBER_ID)
         VALUES (#{boardNo}, #{memberId})
     </insert>
 
-    <!-- 좋아요 삭제 -->
     <delete id="deleteBoardLike" parameterType="map">
         DELETE FROM BOARD_LIKE_TBL
         WHERE BOARD_NO = #{boardNo}
-        AND MEMBER_ID = #{memberId}
+          AND MEMBER_ID = #{memberId}
     </delete>
 
-    <!-- 좋아요 여부 -->
     <select id="selectBoardLikeByMember" parameterType="map" resultType="int">
         SELECT COUNT(*)
         FROM BOARD_LIKE_TBL
         WHERE BOARD_NO = #{boardNo}
-        AND MEMBER_ID = #{memberId}
+          AND MEMBER_ID = #{memberId}
     </select>
 
-    <!-- 파일 업로드 기능임. 첨부파일 정보를 DB에 저장함. -->
-    <insert id="insertBoardFile" parameterType="boardFile">
-        <selectKey keyProperty="fileNo" resultType="int" order="BEFORE">
-            SELECT BOARD_FILE_SEQ.NEXTVAL FROM DUAL
-        </selectKey>
-
+    <insert id="insertBoardFile" parameterType="boardFile" useGeneratedKeys="true" keyProperty="fileNo">
         INSERT INTO BOARD_FILE_TBL (
-            FILE_NO,
             BOARD_NO,
             MEMBER_ID,
             BOARD_FILE_NAME,
             BOARD_FILE_PATH
         ) VALUES (
-            #{fileNo},
             #{boardNo},
             #{memberId},
             #{boardFileName},
@@ -232,11 +211,6 @@
         )
     </insert>
 
-    <!-- 댓글 조회 기능임. 해당 게시글에 달린 모든 댓글을 가져옴. -->
-    <!--
-      비공개 댓글은 DB에서 'Y'/'N'로 저장됩니다.
-      프론트엔드에서는 1/0 형태로 사용하므로 조회 시 변환합니다.
-    -->
     <select id="selectBoardComments" resultType="kr.co.iei.board.model.vo.BoardComment">
         SELECT
             C.BOARD_COMMENT_NO AS commentNo,
@@ -245,8 +219,8 @@
             C.MEMBER_NICKNAME AS memberNickname,
             M.MEMBER_THUMB AS memberThumb,
             C.BOARD_COMMENT_CONTENT AS content,
-            TO_CHAR(C.BOARD_COMMENT_DATE, 'YYYY-MM-DD"T"HH24:MI:SS') AS createdAt,
-            TO_CHAR(C.UPDATED_AT, 'YYYY-MM-DD"T"HH24:MI:SS') AS updatedAt,
+            DATE_FORMAT(C.BOARD_COMMENT_DATE, '%Y-%m-%dT%H:%i:%s') AS createdAt,
+            DATE_FORMAT(C.UPDATED_AT, '%Y-%m-%dT%H:%i:%s') AS updatedAt,
             C.PARENT_COMMENT_NO AS parentCommentNo,
             C.COMMENT_GROUP AS commentGroup,
             C.COMMENT_DEPTH AS commentDepth,
@@ -273,17 +247,8 @@
         WHERE BOARD_COMMENT_NO = #{commentNo}
     </select>
 
-    <insert id="insertBoardComment" parameterType="boardComment">
-        <!--
-          댓글 PK는 LONG 타입으로 처리합니다.
-          MyBatis에서 selectKey 결과를 Long으로 매핑해야 올바르게 commentNo가 설정됩니다.
-        -->
-        <selectKey keyProperty="commentNo" resultType="java.lang.Long" order="BEFORE">
-            SELECT SEQ_BOARD_COMMENT_NO.NEXTVAL FROM DUAL
-        </selectKey>
-
+    <insert id="insertBoardComment" parameterType="boardComment" useGeneratedKeys="true" keyProperty="commentNo">
         INSERT INTO BOARD_COMMENT_TBL (
-            BOARD_COMMENT_NO,
             BOARD_COMMENT_WRITER,
             BOARD_NO,
             BOARD_COMMENT_CONTENT,
@@ -295,28 +260,23 @@
             COMMENT_DEPTH,
             IS_SECRET
         ) VALUES (
-            #{commentNo},
             #{memberId},
             #{boardNo},
             #{content},
-            SYSDATE,
-            SYSDATE,
+            NOW(),
+            NOW(),
             #{memberNickname},
             #{parentCommentNo},
-            NVL((SELECT COMMENT_GROUP FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), #{commentNo}),
-            NVL((SELECT COMMENT_DEPTH + 1 FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), 1),
+            IFNULL((SELECT c.COMMENT_GROUP FROM BOARD_COMMENT_TBL c WHERE c.BOARD_COMMENT_NO = #{parentCommentNo}), 0),
+            IFNULL((SELECT c.COMMENT_DEPTH + 1 FROM BOARD_COMMENT_TBL c WHERE c.BOARD_COMMENT_NO = #{parentCommentNo}), 1),
             CASE WHEN #{isSecret} = 1 THEN 'Y' ELSE 'N' END
         )
     </insert>
 
     <update id="updateBoardComment" parameterType="boardComment">
-        <!--
-          비공개 여부는 프론트에서 1/0으로 전달됩니다.
-          DB 저장은 'Y'/'N'로 처리해야 제약 조건에 맞습니다.
-        -->
         UPDATE BOARD_COMMENT_TBL
         SET BOARD_COMMENT_CONTENT = #{content},
-            UPDATED_AT = SYSDATE,
+            UPDATED_AT = NOW(),
             IS_SECRET = CASE WHEN #{isSecret} = 1 THEN 'Y' ELSE 'N' END
         WHERE BOARD_COMMENT_NO = #{commentNo}
           AND BOARD_COMMENT_WRITER = #{memberId}
@@ -328,10 +288,6 @@
           AND BOARD_COMMENT_WRITER = #{memberId}
     </delete>
 
-    <!-- 인기 게시글 -->
-    <!-- 공개 게시물만 조회해야 해서 board_status를 0으로 고정함 -->
-    <!-- 매장용 게시물은 제외하기 위해 store_board_tbl 존재 여부를 확인함 -->
-    <!-- 좋아요가 없는 게시물도 인기 목록에 보이게 LEFT JOIN으로 변경함 -->
     <select id="bestBoardList" parameterType="map" resultType="kr.co.iei.board.model.vo.BoardLike">
         SELECT 
             b.board_no AS boardNo, 
@@ -347,10 +303,9 @@
         )
         GROUP BY b.board_no, b.board_title, b.ctpv, b.sgg
         ORDER BY count DESC
-        offset 0 rows fetch next 10 rows only
+        LIMIT 10 OFFSET 0
     </select>
 
-    <!-- 마이페이지용 -->
     <select id="selectMemberIdBoard" resultType="kr.co.iei.board.model.vo.Board">
         SELECT 
             board_no,
@@ -361,30 +316,27 @@
             board_date,
             read_count 
         FROM board_tbl 
-   
         
-   		<where>
-   			<if test="checker == 1">
-        		writer_id = #{memberId}
-   			</if>
-   			<if test="checker == 2 and boardNoList != null and boardNoList.size() > 0">
-   				<!-- 좋아요한 게시글 ID가 있을 때만 조건값을 넣음 -->
-   				board_no in
-   				<foreach collection="boardNoList" item="boardNo" open="(" close=")" separator=",">
-   					#{boardNo}
-   				</foreach>
-   			</if>
-   			<if test="checker == 3 and tipList != null and tipList.size() > 0">
-   				<!-- 스크랩한 게시글 ID가 있을 때만 조건값을 넣음 -->
-   				board_no in
-   				<foreach collection="tipList" item="boardNo" open="(" close=")" separator=",">
-   					#{boardNo}
-   				</foreach>
-   			</if>
-   			<if test="searchBoard != null and searchBoard != ''">
-            	and board_title LIKE '%' || #{searchBoard} || '%'
-        	</if>
-   		</where>
+        <where>
+            <if test="checker == 1">
+                writer_id = #{memberId}
+            </if>
+            <if test="checker == 2 and boardNoList != null and boardNoList.size() > 0">
+                board_no in
+                <foreach collection="boardNoList" item="boardNo" open="(" close=")" separator=",">
+                    #{boardNo}
+                </foreach>
+            </if>
+            <if test="checker == 3 and tipList != null and tipList.size() > 0">
+                board_no in
+                <foreach collection="tipList" item="boardNo" open="(" close=")" separator=",">
+                    #{boardNo}
+                </foreach>
+            </if>
+            <if test="searchBoard != null and searchBoard != ''">
+                and board_title LIKE CONCAT('%', #{searchBoard}, '%')
+            </if>
+        </where>
         
         <if test="filter == 1 or filter == '1'">
             ORDER BY board_no DESC
@@ -399,15 +351,16 @@
             ORDER BY read_count DESC
         </if>
     </select>
+
     <select id="selectLikeBoard" resultType="Integer">
-    select board_no from board_like_tbl where member_id = #{memberId}
+        select board_no from board_like_tbl where member_id = #{memberId}
     </select>
+
     <select id="selectTipBoard" resultType="Integer">
-    	-- 이 회원이 스크랩한 게시글 번호 목록을 가져오는 기능임
-    	select board_no from tip_tbl where member_id=#{memberId}
+        select board_no from tip_tbl where member_id = #{memberId}
     </select>
+
     <select id="selectTipBoardList" resultType="kr.co.iei.board.model.vo.Board">
-        <!-- 공개된 스크랩 게시글만 가져오기 위해 board_status=0 조건 추가함 -->
         SELECT
             b.board_no AS boardNo,
             b.writer_id AS writerId,
@@ -427,71 +380,62 @@
         ) DESC,
         b.board_date DESC
     </select>
+
     <select id="selectBoardTipByMember" resultType="int">
-    	-- 이 회원이 이 게시글을 스크랩했는지 확인하는 기능임
-    	select count(*) from tip_tbl where board_no = #{boardNo} and member_id = #{memberId}
+        select count(*) from tip_tbl where board_no = #{boardNo} and member_id = #{memberId}
     </select>
+
     <insert id="insertBoardTip" parameterType="map">
-    	-- 스크랩 추가 기능임. 이미 스크랩한 기록이 있으면 또 추가 안 함
-        insert into tip_tbl (board_no, member_id)
-        select #{boardNo}, #{memberId}
-        from dual
-        where not exists (
-            select 1 from tip_tbl where board_no = #{boardNo} and member_id = #{memberId}
+        INSERT INTO tip_tbl (board_no, member_id)
+        SELECT #{boardNo}, #{memberId}
+        WHERE NOT EXISTS (
+            SELECT 1 FROM tip_tbl WHERE board_no = #{boardNo} AND member_id = #{memberId}
         )
     </insert>
+
     <delete id="deleteBoardTip" parameterType="map">
-    	-- 스크랩 삭제 기능임. 이 회원의 스크랩 기록을 지움
         delete from tip_tbl where board_no = #{boardNo} and member_id = #{memberId}
     </delete>
     
     <select id="existsTodayBasicMission" resultType="int">
-    SELECT COUNT(*)
-    FROM MEMBER_MISSION_TBL
-    WHERE MEMBER_ID = #{memberId}
-      AND MISSION_NO = (
-          SELECT MISSION_NO
-          FROM MISSION_TBL
-          WHERE MISSION_TYPE = 'BASIC'
-      )
-      AND TRUNC(CREATED_AT) = TRUNC(SYSDATE)
-	</select>
-	
-	<insert id="insertBasicMission" parameterType="string">
-	    INSERT INTO MEMBER_MISSION_TBL (
-	        MEMBER_MISSION_NO,
-	        MEMBER_ID,
-	        MISSION_NO,
-	        CREATED_AT
-	    )
-	    VALUES (
-	        MEMBER_MISSION_SEQ.NEXTVAL,
-	        #{memberId},
-	        (SELECT MISSION_NO FROM MISSION_TBL WHERE MISSION_TYPE = 'BASIC'),
-	        SYSDATE
-	    )
-	</insert>
-	
-	<update id="addBasicMissionPoint" parameterType="string">
-	    UPDATE MEMBER_POINT_TBL
-	    SET TOTAL_POINT = TOTAL_POINT + 5
-	    WHERE MEMBER_ID = #{memberId}
-	</update>
-	<select id="selectMarkers" resultType="Marker">
-		select b.board_no, b.board_title, b.board_content, m.member_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg, b.addr, c.ctpvsgg_id, c.sgg_nm, COUNT(b.board_no) AS board_count, count(l.board_no) as like_count 
+        SELECT COUNT(*)
+        FROM MEMBER_MISSION_TBL
+        WHERE MEMBER_ID = #{memberId}
+          AND MISSION_NO = (
+              SELECT MISSION_NO
+              FROM MISSION_TBL
+              WHERE MISSION_TYPE = 'BASIC'
+          )
+          AND DATE(CREATED_AT) = CURDATE()
+    </select>
+    
+    <insert id="insertBasicMission" parameterType="string">
+        INSERT INTO MEMBER_MISSION_TBL (
+            MEMBER_ID,
+            MISSION_NO,
+            CREATED_AT
+        )
+        VALUES (
+            #{memberId},
+            (SELECT MISSION_NO FROM MISSION_TBL WHERE MISSION_TYPE = 'BASIC'),
+            NOW()
+        )
+    </insert>
+    
+    <update id="addBasicMissionPoint" parameterType="string">
+        UPDATE MEMBER_POINT_TBL
+        SET TOTAL_POINT = TOTAL_POINT + 5
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
+    <select id="selectMarkers" resultType="Marker">
+        select b.board_no, b.board_title, b.board_content, m.member_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg, b.addr, c.ctpvsgg_id, c.sgg_nm, COUNT(b.board_no) AS board_count, count(l.board_no) as like_count 
         from board_tbl b left join member_tbl1 m on (b.member_nickname = m.member_nickname) left join ctpvsgg_tbl c on (b.ctpv = c.ctpv_nm AND c.sgg_nm = b.sgg) left join board_tbl b2 on (b.ctpv = b2.ctpv and b.sgg = b2.sgg) left join board_like_tbl l on (b.board_no = l.board_no)
         where b.board_status = 0 and b.addr is not null or b.board_no = b2.board_no or l.board_no = l.board_no
-        group by b.board_no, b.board_title, b.board_content, m.member_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg, b.addr, b.addr, c.ctpvsgg_id, c.sgg_nm, l.board_no
+        group by b.board_no, b.board_title, b.board_content, m.member_thumb, b.member_nickname, b.board_status, b.board_lat, b.board_lng, b.ctpv, b.sgg, b.addr, c.ctpvsgg_id, c.sgg_nm, l.board_no
         order by b.board_lat desc
-	</select>
+    </select>
 
-    <!--
-      지역별 게시글 수를 조회하는 SQL 쿼리임.
-      - board_tbl에서 작성된 게시글 개수를 시도/시군구별로 세고,
-      - store_board_tbl에 있는 상점 게시글 수도 같은 지역별로 합산함.
-      - 두 결과를 UNION ALL로 합친 뒤 최종적으로 지역별 게시물 총합을 계산함.
-      이 결과는 프론트에서 지도 통계와 절감량 추정에 사용됨.
-    -->
     <select id="selectBoardCount" resultType="Board">
         SELECT
             ctpv,
@@ -514,141 +458,126 @@
               ON s.ctpvsgg_id = r.ctpvsgg_id
             WHERE s.is_deleted = 0
             GROUP BY r.ctpv_nm, r.sgg_nm
-        )
+        ) AS total_summary
         GROUP BY ctpv, sgg
     </select>
-	
-	<insert id="insertBoardReport">
-		insert into report_tbl values (
-			report_seq.nextval,
-			#{targetNo},
-			#{targetType},
-			#{memberId},
-			#{reportCategory},
-			#{reportContent},
-			sysdate,
-			0
-		)
-	</insert>
-	
-	<select id="checkReport">
-		select count(*) from report_tbl
-		where report_no = #{reportNo} and member_id = #{memberId}
-	</select>
-	
-	<select id="getBoardDetail" resultType="board">
-	    SELECT
-	        b.BOARD_NO AS boardNo,
-	        b.WRITER_ID AS writerId,
-	        b.BOARD_TITLE AS boardTitle,
-	        b.BOARD_CONTENT AS boardContent,
-	        b.BOARD_THUMB AS boardThumb,
-	        TO_CHAR(b.BOARD_DATE, 'YYYY-MM-DD') AS boardDate,
-	        b.MEMBER_NICKNAME AS memberNickname,
-	        b.BOARD_STATUS AS boardStatus,
-	        b.BOARD_LAT AS boardLat,
-	        b.BOARD_LNG AS boardLng,
-	        b.READ_COUNT AS readCount,
-	        NVL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0) AS likeCount,
-	        b.MEMBER_NICKNAME AS writerNickname,
-	        TO_CHAR(b.BOARD_DATE, 'YYYY-MM-DD') AS createDate,
-	        TO_CHAR(b.UPDATED_AT, 'YYYY-MM-DD') AS updatedAt,
-	        b.BOARD_THUMB AS thumbnailUrl,
-	        (select count(*) from board_comment_tbl c where c.board_no = b.board_no) as commentCount
-	    FROM BOARD_TBL b
-	    WHERE b.board_no = #{boardNo}
-	      AND b.board_status = 0
-	</select>
-	
-	<select id="getReportList" resultType="report">
-		select
-			r.report_no,
-			r.target_no,
-			r.target_type,
-			r.member_id,
-			r.report_category,
-			r.report_content,
-			r.report_date,
-			r.report_status,
-			<!-- report 테이블에서 target_type이 board면 board 테이블에서 제목 보여주고 target_type이 comment면 댓글 보여줌  -->
-			case
-				when r.target_type = 'board' then b.board_title
-				when r.target_type = 'comment' then c.board_comment_content
-			end as targetTitle,
-			<!-- target_type이 board면 게시글 작성자 보여주고 comment면 댓글 작성자 보여줌 -->
-			case 
-				when r.target_type = 'board' then b.writer_id
-				when r.target_type = 'comment' then c.board_comment_writer
-			end as targetId,
-			<!-- 게시글이면 해당 게시글 번호, 댓글이면 해당 댓글의 게시글 번호 -->	
-			case            
-      			when r.target_type = 'board' then r.target_no                                                                                                     
-      			when r.target_type = 'comment' then c.board_no
-  			end as boardNo,
-			
-			<!-- 바깥 쿼리의 현재 행(r)을 기준으로 report_tbl 원본 전체를 뒤져서 -->
-  			<!-- target_no와 target_type이 현재행과 일치하는 신고 수를 세어 reportCount 컬럼으로 붙임 -->     	
-			(select count(*) from report_tbl where target_no = r.target_no and target_type = r.target_type) as reportCount
-			
-			
-		from report_tbl r inner join (
-		<!-- target_no랑 target_type이 같으면 한 그룹으로 묶음 -> 각 그룹에서 첫 신고만 뽑아냄 -->                                                                                                          
-      	select target_no, target_type, min(report_no) as first_report_no                                                  
-     	from report_tbl                                                                                                   
-      	group by target_no, target_type
- 	  ) g on r.report_no = g.first_report_no  
- 	    <!-- 둘 중 조건에 맞는것만 위 테이블과 합쳐짐 --> 
-		left join board_tbl b on r.target_no = b.board_no and r.target_type = 'board'
-		left join board_comment_tbl c on r.target_no = c.board_comment_no and r.target_type = 'comment'
-		<where>
-			<if test="type != null">
-				and r.target_type = #{type}
-			</if>
-			<if test="category != null">
-				and r.report_category = #{category}
-			</if>
-			<if test="status != null">
-				and r.report_status = #{status}
-			</if>
-		</where>
-		<choose>
-			<when test="sortBy == 'reportCount'">
-				order by reportCount ${sortOrder}, r.report_status asc
-			</when>
-			<otherwise>
-				order by r.report_status asc, r.report_date ${sortOrder}
-			</otherwise>
-		</choose>
-	</select>
-	
-	<select id="getGroupList" resultType="report">
-		select
-			r.report_no,
-			r.target_no,
-			r.target_type,
-			r.report_category,
-			r.report_content,
-			r.report_date,
-			r.report_status,
-			(select count(*) from report_tbl where target_no = r.target_no and target_type = r.target_type) as reportCount,
-		case
-			when r.target_type = 'board' then b.writer_id
-			when r.target_type = 'comment' then c.board_comment_writer
-		end as targetId,
-		<!-- 게시글이면 해당 게시글 번호, 댓글이면 해당 댓글의 게시글 번호 -->	
-		case            
-      		when r.target_type = 'board' then r.target_no                                                                                                     
-      		when r.target_type = 'comment' then c.board_no
-  		end as boardNo
-		from report_tbl r
-		left join board_tbl b on r.target_no = b.board_no and r.target_type = 'board'
-		left join board_comment_tbl c on r.target_no = c.board_comment_no and r.target_type = 'comment'
-		where target_no = #{targetNo} and target_type = #{targetType} and report_no != #{reportNo}
-	</select>
-	
-	
-	
-	
-	
-	
+    
+    <insert id="insertBoardReport">
+        insert into report_tbl (
+            target_no, target_type, member_id, report_category, report_content, report_date, report_status
+        ) values (
+            #{targetNo},
+            #{targetType},
+            #{memberId},
+            #{reportCategory},
+            #{reportContent},
+            NOW(),
+            0
+        )
+    </insert>
+    
+    <select id="checkReport">
+        select count(*) from report_tbl
+        where report_no = #{reportNo} and member_id = #{memberId}
+    </select>
+    
+    <select id="getBoardDetail" resultType="board">
+        SELECT
+            b.BOARD_NO AS boardNo,
+            b.WRITER_ID AS writerId,
+            b.BOARD_TITLE AS boardTitle,
+            b.BOARD_CONTENT AS boardContent,
+            b.BOARD_THUMB AS boardThumb,
+            DATE_FORMAT(b.BOARD_DATE, '%Y-%m-%d') AS boardDate,
+            b.MEMBER_NICKNAME AS memberNickname,
+            b.BOARD_STATUS AS boardStatus,
+            b.BOARD_LAT AS boardLat,
+            b.BOARD_LNG AS boardLng,
+            b.READ_COUNT AS readCount,
+            IFNULL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0) AS likeCount,
+            b.MEMBER_NICKNAME AS writerNickname,
+            DATE_FORMAT(b.BOARD_DATE, '%Y-%m-%d') AS createDate,
+            DATE_FORMAT(b.UPDATED_AT, '%Y-%m-%d') AS updatedAt,
+            b.BOARD_THUMB AS thumbnailUrl,
+            (select count(*) from board_comment_tbl c where c.board_no = b.board_no) as commentCount
+        FROM BOARD_TBL b
+        WHERE b.board_no = #{boardNo}
+          AND b.board_status = 0
+    </select>
+    
+    <select id="getReportList" resultType="report">
+        select
+            r.report_no,
+            r.target_no,
+            r.target_type,
+            r.member_id,
+            r.report_category,
+            r.report_content,
+            r.report_date,
+            r.report_status,
+            case
+                when r.target_type = 'board' then b.board_title
+                when r.target_type = 'comment' then c.board_comment_content
+            end as targetTitle,
+            case 
+                when r.target_type = 'board' then b.writer_id
+                when r.target_type = 'comment' then c.board_comment_writer
+            end as targetId,
+            case            
+                when r.target_type = 'board' then r.target_no                                                                                                                                                                                
+                when r.target_type = 'comment' then c.board_no
+            end as boardNo,
+            (select count(*) from report_tbl where target_no = r.target_no and target_type = r.target_type) as reportCount
+        from report_tbl r inner join (
+        select target_no, target_type, min(report_no) as first_report_no                                                                                                   
+        from report_tbl                                                                                                                                                    
+        group by target_no, target_type
+      ) g on r.report_no = g.first_report_no  
+        left join board_tbl b on r.target_no = b.board_no and r.target_type = 'board'
+        left join board_comment_tbl c on r.target_no = c.board_comment_no and r.target_type = 'comment'
+        <where>
+            <if test="type != null">
+                and r.target_type = #{type}
+            </if>
+            <if test="category != null">
+                and r.report_category = #{category}
+            </if>
+            <if test="status != null">
+                and r.report_status = #{status}
+            </if>
+        </where>
+        <choose>
+            <when test="sortBy == 'reportCount'">
+                order by reportCount ${sortOrder}, r.report_status asc
+            </when>
+            <otherwise>
+                order by r.report_status asc, r.report_date ${sortOrder}
+            </otherwise>
+        </choose>
+    </select>
+    
+    <select id="getGroupList" resultType="report">
+        select
+            r.report_no,
+            r.target_no,
+            r.target_type,
+            r.report_category,
+            r.report_content,
+            r.report_date,
+            r.report_status,
+            (select count(*) from report_tbl where target_no = r.target_no and target_type = r.target_type) as reportCount,
+        case
+            when r.target_type = 'board' then b.writer_id
+            when r.target_type = 'comment' then c.board_comment_writer
+        end as targetId,
+        case            
+            when r.target_type = 'board' then r.target_no                                                                                                                                                                                
+            when r.target_type = 'comment' then c.board_no
+        end as boardNo
+        from report_tbl r
+        left join board_tbl b on r.target_no = b.board_no and r.target_type = 'board'
+        left join board_comment_tbl c on r.target_no = c.board_comment_no and r.target_type = 'comment'
+        where target_no = #{targetNo} and target_type = #{targetType} and report_no != #{reportNo}
+    </select>
+    
 </mapper>

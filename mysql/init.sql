@@ -3,299 +3,43 @@
 --------------------------------------------------------
 
 --------------------------------------------------------
---  DDL for Sequence ADMIN_LOG_SEQ
+--  DDL for Sequence
 --------------------------------------------------------
-CREATE SEQUENCE ADMIN_LOG_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence ALARM_SEQ
---------------------------------------------------------
-CREATE SEQUENCE ALARM_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence ATTENDANCE_SEQ
---------------------------------------------------------
-CREATE SEQUENCE ATTENDANCE_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence BOARDTEST_SEQ
---------------------------------------------------------
-CREATE SEQUENCE BOARDTEST_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence BOARD_FILE_SEQ
---------------------------------------------------------
-CREATE SEQUENCE BOARD_FILE_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence BOARD_SEQ
---------------------------------------------------------
-CREATE SEQUENCE BOARD_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence CAMPAIGN_NOTICE_SEQ
---------------------------------------------------------
-CREATE SEQUENCE CAMPAIGN_NOTICE_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence CAMPAIGN_NO_SEQ
---------------------------------------------------------
-CREATE SEQUENCE CAMPAIGN_NO_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence CAMPAIGN_PARTICIPANCE_SEQ
---------------------------------------------------------
-CREATE SEQUENCE CAMPAIGN_PARTICIPANCE_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence CAMPAIGN_UPDATE_SEQ
---------------------------------------------------------
-CREATE SEQUENCE CAMPAIGN_UPDATE_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence CART_SEQ
---------------------------------------------------------
-CREATE SEQUENCE CART_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence CO2_SEQ
---------------------------------------------------------
-CREATE SEQUENCE CO2_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence CONTRIBUTION_SEQ
---------------------------------------------------------
-CREATE SEQUENCE CONTRIBUTION_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence DONATION_SEQ
---------------------------------------------------------
-CREATE SEQUENCE DONATION_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence FAQ_SEQ
---------------------------------------------------------
-CREATE SEQUENCE FAQ_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence KEYWORD_SEQ
---------------------------------------------------------
-CREATE SEQUENCE KEYWORD_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence LOG_SEQ
---------------------------------------------------------
-CREATE SEQUENCE LOG_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence MEMBER_LOG_SEQ
---------------------------------------------------------
-CREATE SEQUENCE MEMBER_LOG_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence MISSION_SEQ
---------------------------------------------------------
-CREATE SEQUENCE MISSION_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence NOTICE_SEQ
---------------------------------------------------------
-CREATE SEQUENCE NOTICE_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence POINT_DONATION_SEQ
---------------------------------------------------------
-CREATE SEQUENCE POINT_DONATION_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence POINT_NO_SEQ
---------------------------------------------------------
-CREATE SEQUENCE POINT_NO_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence POINT_SEQ
---------------------------------------------------------
-CREATE SEQUENCE POINT_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence QNA_SEQ
---------------------------------------------------------
-CREATE SEQUENCE QNA_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence REGION_SEQ
---------------------------------------------------------
-CREATE SEQUENCE REGION_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence REPORT_SEQ
---------------------------------------------------------
-CREATE SEQUENCE REPORT_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence SEQ_BOARD_COMMENT_NO
---------------------------------------------------------
-CREATE SEQUENCE SEQ_BOARD_COMMENT_NO
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence SEQ_DONATION_NO
---------------------------------------------------------
-CREATE SEQUENCE SEQ_DONATION_NO
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
-
---------------------------------------------------------
---  DDL for Sequence USER_MISSION_SEQ
---------------------------------------------------------
-CREATE SEQUENCE USER_MISSION_SEQ
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 1
-  MAXVALUE 999999999999999999
-  NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.ADMIN_LOG_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 221 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.ALARM_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 161 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.ATTENDANCE_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 74 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.BOARDTEST_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 21 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.BOARD_FILE_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 32 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.BOARD_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 21 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.CAMPAIGN_NOTICE_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 181 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.CAMPAIGN_NO_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 281 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.CAMPAIGN_PARTICIPANCE_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 181 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.CAMPAIGN_UPDATE_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 101 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.CART_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 181 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.CO2_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 101 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.CONTRIBUTION_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 272 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.DONATION_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.FAQ_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 81 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.KEYWORD_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 21 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.LOG_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1661 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.MEMBER_LOG_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.MISSION_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 6 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.NOTICE_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 181 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.POINT_DONATION_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 141 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.POINT_NO_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 91 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.POINT_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 323 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.QNA_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 221 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.REGION_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 10 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.REPORT_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 221 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.SEQ_BOARD_COMMENT_NO MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 143 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.SEQ_DONATION_NO MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1 NOCACHE NOCYCLE;
+CREATE SEQUENCE TEAM1_DB.USER_MISSION_SEQ MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 516 NOCACHE NOCYCLE;
 
 --------------------------------------------------------
 --  DDL for Table ADMIN_LOG_TBL
 --------------------------------------------------------
-CREATE TABLE ADMIN_LOG_TBL (
+CREATE TABLE TEAM1_DB.ADMIN_LOG_TBL 
+(
     LOG_NO INT, 
     ADMIN_ID VARCHAR(20), 
     LOG_TARGET_ID VARCHAR(20), 
@@ -309,7 +53,8 @@ CREATE TABLE ADMIN_LOG_TBL (
 --------------------------------------------------------
 --  DDL for Table ALARM_TBL
 --------------------------------------------------------
-CREATE TABLE ALARM_TBL (
+CREATE TABLE TEAM1_DB.ALARM_TBL 
+(
     ALARM_NO INT, 
     MEMBER_ID VARCHAR(20), 
     ALARM_KIND INT, 
@@ -324,7 +69,8 @@ CREATE TABLE ALARM_TBL (
 --------------------------------------------------------
 --  DDL for Table ATTENDANCE_TBL
 --------------------------------------------------------
-CREATE TABLE ATTENDANCE_TBL (
+CREATE TABLE TEAM1_DB.ATTENDANCE_TBL 
+(
     ATTENDANCE_NO INT, 
     MEMBER_ID VARCHAR(20), 
     ATTEND_YMD DATETIME, 
@@ -334,7 +80,8 @@ CREATE TABLE ATTENDANCE_TBL (
 --------------------------------------------------------
 --  DDL for Table BOARD_COMMENT_TBL
 --------------------------------------------------------
-CREATE TABLE BOARD_COMMENT_TBL (
+CREATE TABLE TEAM1_DB.BOARD_COMMENT_TBL 
+(
     BOARD_COMMENT_NO INT, 
     BOARD_COMMENT_WRITER VARCHAR(20), 
     BOARD_NO INT, 
@@ -352,7 +99,8 @@ CREATE TABLE BOARD_COMMENT_TBL (
 --------------------------------------------------------
 --  DDL for Table BOARD_FILE_TBL
 --------------------------------------------------------
-CREATE TABLE BOARD_FILE_TBL (
+CREATE TABLE TEAM1_DB.BOARD_FILE_TBL 
+(
     FILE_NO INT, 
     BOARD_NO INT, 
     MEMBER_ID VARCHAR(20), 
@@ -363,16 +111,17 @@ CREATE TABLE BOARD_FILE_TBL (
 --------------------------------------------------------
 --  DDL for Table BOARD_LIKE_TBL
 --------------------------------------------------------
-CREATE TABLE BOARD_LIKE_TBL (
+CREATE TABLE TEAM1_DB.BOARD_LIKE_TBL 
+(
     BOARD_NO INT, 
     MEMBER_ID VARCHAR(20)
 );
 
 --------------------------------------------------------
 --  DDL for Table BOARD_TBL
---  * 오라클 고유의 IDENTITY 구문을 MySQL의 AUTO_INCREMENT 스타일이나 기본 정의에 맞춰 정리했습니다.
 --------------------------------------------------------
-CREATE TABLE BOARD_TBL (
+CREATE TABLE TEAM1_DB.BOARD_TBL 
+(
     BOARD_NO INT NOT NULL AUTO_INCREMENT, 
     WRITER_ID VARCHAR(20), 
     BOARD_TITLE VARCHAR(1000), 
@@ -380,9 +129,9 @@ CREATE TABLE BOARD_TBL (
     BOARD_THUMB VARCHAR(300), 
     BOARD_DATE DATETIME DEFAULT CURRENT_TIMESTAMP, 
     MEMBER_NICKNAME VARCHAR(30), 
-    BOARD_STATUS DECIMAL(1,0) DEFAULT 0, 
-    BOARD_LAT DOUBLE, -- 위도는 소수점 표현을 위해 DOUBLE로 변경
-    BOARD_LNG DOUBLE, -- 경도는 소수점 표현을 위해 DOUBLE로 변경
+    BOARD_STATUS INT DEFAULT 0, 
+    BOARD_LAT DOUBLE, 
+    BOARD_LNG DOUBLE, 
     READ_COUNT INT DEFAULT 0, 
     CTPV VARCHAR(50), 
     SGG VARCHAR(50), 
@@ -394,7 +143,8 @@ CREATE TABLE BOARD_TBL (
 --------------------------------------------------------
 --  DDL for Table CAMPAIGN_EXILE_TBL
 --------------------------------------------------------
-CREATE TABLE CAMPAIGN_EXILE_TBL (
+CREATE TABLE TEAM1_DB.CAMPAIGN_EXILE_TBL 
+(
     MEMBER_ID VARCHAR(30), 
     CAMPAIGN_NO INT, 
     CAMPAIGN_EXILE_REASON VARCHAR(1000)
@@ -403,7 +153,8 @@ CREATE TABLE CAMPAIGN_EXILE_TBL (
 --------------------------------------------------------
 --  DDL for Table CAMPAIGN_MEMBER_TBL
 --------------------------------------------------------
-CREATE TABLE CAMPAIGN_MEMBER_TBL (
+CREATE TABLE TEAM1_DB.CAMPAIGN_MEMBER_TBL 
+(
     MEMBER_ID VARCHAR(30), 
     CAMPAIGN_NO INT
 );
@@ -411,7 +162,8 @@ CREATE TABLE CAMPAIGN_MEMBER_TBL (
 --------------------------------------------------------
 --  DDL for Table CAMPAIGN_NOTICE_TBL
 --------------------------------------------------------
-CREATE TABLE CAMPAIGN_NOTICE_TBL (
+CREATE TABLE TEAM1_DB.CAMPAIGN_NOTICE_TBL 
+(
     CAMPAIGN_NOTICE_NO INT, 
     CAMPAIGN_NOTICE_TITLE VARCHAR(1000), 
     CAMPAIGN_NOTICE_CONTENT VARCHAR(2000), 
@@ -423,7 +175,8 @@ CREATE TABLE CAMPAIGN_NOTICE_TBL (
 --------------------------------------------------------
 --  DDL for Table CAMPAIGN_PARTICIPANCE_TBL
 --------------------------------------------------------
-CREATE TABLE CAMPAIGN_PARTICIPANCE_TBL (
+CREATE TABLE TEAM1_DB.CAMPAIGN_PARTICIPANCE_TBL 
+(
     CAMPAIGN_PARTICIPANCE_NO INT, 
     CAMPAIGN_THUMB VARCHAR(300), 
     CAMPAIGN_MEMO VARCHAR(500), 
@@ -436,7 +189,8 @@ CREATE TABLE CAMPAIGN_PARTICIPANCE_TBL (
 --------------------------------------------------------
 --  DDL for Table CAMPAIGN_UPDATE_TBL
 --------------------------------------------------------
-CREATE TABLE CAMPAIGN_UPDATE_TBL (
+CREATE TABLE TEAM1_DB.CAMPAIGN_UPDATE_TBL 
+(
     CAMPAIGN_UPDATE_NO INT, 
     CAMPAIGN_TITLE VARCHAR(1000), 
     CAMPAIGN_EXPLANATION VARCHAR(2000), 
@@ -447,78 +201,83 @@ CREATE TABLE CAMPAIGN_UPDATE_TBL (
 --------------------------------------------------------
 --  DDL for Table CARBON_ELE_TBL
 --------------------------------------------------------
-CREATE TABLE CARBON_ELE_TBL (
+CREATE TABLE TEAM1_DB.CARBON_ELE_TBL 
+(
     CTPVSGG_ID CHAR(8), 
-    CARBON_ELE_JAN DOUBLE, -- 탄소량 수치는 소수점이 나올 수 있으므로 DOUBLE 추천
-    CARBON_ELE_FEB DOUBLE, 
-    CARBON_ELE_MAR DOUBLE, 
-    CARBON_ELE_APR DOUBLE, 
-    CARBON_ELE_MAY DOUBLE, 
-    CARBON_ELE_JUN DOUBLE, 
-    CARBON_ELE_JUL DOUBLE, 
-    CARBON_ELE_AUG DOUBLE, 
-    CARBON_ELE_SEP DOUBLE, 
-    CARBON_ELE_OCT DOUBLE, 
-    CARBON_ELE_NOV DOUBLE, 
-    CARBON_ELE_DEC DOUBLE, 
-    CARBON_ELE_TOT DOUBLE
+    CARBON_ELE_JAN INT, 
+    CARBON_ELE_FEB INT, 
+    CARBON_ELE_MAR INT, 
+    CARBON_ELE_APR INT, 
+    CARBON_ELE_MAY INT, 
+    CARBON_ELE_JUN INT, 
+    CARBON_ELE_JUL INT, 
+    CARBON_ELE_AUG INT, 
+    CARBON_ELE_SEP INT, 
+    CARBON_ELE_OCT INT, 
+    CARBON_ELE_NOV INT, 
+    CARBON_ELE_DEC INT, 
+    CARBON_ELE_TOT INT
 );
 
 --------------------------------------------------------
 --  DDL for Table CARBON_GAS_TBL
 --------------------------------------------------------
-CREATE TABLE CARBON_GAS_TBL (
+CREATE TABLE TEAM1_DB.CARBON_GAS_TBL 
+(
     CTPVSGG_ID CHAR(8), 
-    CARBON_GAS_JAN DOUBLE, 
-    CARBON_GAS_FEB DOUBLE, 
-    CARBON_GAS_MAR DOUBLE, 
-    CARBON_GAS_APR DOUBLE, 
-    CARBON_GAS_MAY DOUBLE, 
-    CARBON_GAS_JUN DOUBLE, 
-    CARBON_GAS_JUL DOUBLE, 
-    CARBON_GAS_AUG DOUBLE, 
-    CARBON_GAS_SEP DOUBLE, 
-    CARBON_GAS_OCT DOUBLE, 
-    CARBON_GAS_NOV DOUBLE, 
-    CARBON_GAS_DEC DOUBLE, 
-    CARBON_GAS_TOT DOUBLE
+    CARBON_GAS_JAN INT, 
+    CARBON_GAS_FEB INT, 
+    CARBON_GAS_MAR INT, 
+    CARBON_GAS_APR INT, 
+    CARBON_GAS_MAY INT, 
+    CARBON_GAS_JUN INT, 
+    CARBON_GAS_JUL INT, 
+    CARBON_GAS_AUG INT, 
+    CARBON_GAS_SEP INT, 
+    CARBON_GAS_OCT INT, 
+    CARBON_GAS_NOV INT, 
+    CARBON_GAS_DEC INT, 
+    CARBON_GAS_TOT INT
 );
 
 --------------------------------------------------------
 --  DDL for Table CARBON_HEAT_TBL
 --------------------------------------------------------
-CREATE TABLE CARBON_HEAT_TBL (
+CREATE TABLE TEAM1_DB.CARBON_HEAT_TBL 
+(
     CTPVSGG_ID CHAR(8), 
-    CARBON_HEAT_JAN DOUBLE, 
-    CARBON_HEAT_FEB DOUBLE, 
-    CARBON_HEAT_MAR DOUBLE, 
-    CARBON_HEAT_APR DOUBLE, 
-    CARBON_HEAT_MAY DOUBLE, 
-    CARBON_HEAT_JUN DOUBLE, 
-    CARBON_HEAT_JUL DOUBLE, 
-    CARBON_HEAT_AUG DOUBLE, 
-    CARBON_HEAT_SEP DOUBLE, 
-    CARBON_HEAT_OCT DOUBLE, 
-    CARBON_HEAT_NOV DOUBLE, 
-    CARBON_HEAT_DEC DOUBLE, 
-    CARBON_HEAT_TOT DOUBLE
+    CARBON_HEAT_JAN INT, 
+    CARBON_HEAT_FEB INT, 
+    CARBON_HEAT_MAR INT, 
+    CARBON_HEAT_APR INT, 
+    CARBON_HEAT_MAY INT, 
+    CARBON_HEAT_JUN INT, 
+    CARBON_HEAT_JUL INT, 
+    CARBON_HEAT_AUG INT, 
+    CARBON_HEAT_SEP INT, 
+    CARBON_HEAT_OCT INT, 
+    CARBON_HEAT_NOV INT, 
+    CARBON_HEAT_DEC INT, 
+    CARBON_HEAT_TOT INT
 );
 
 --------------------------------------------------------
 --  DDL for Table CARBON_TBL
 --------------------------------------------------------
-CREATE TABLE CARBON_TBL (
+CREATE TABLE TEAM1_DB.CARBON_TBL 
+(
     CTPVSGG_ID CHAR(8), 
     REGION_NO INT, 
-    CARBON_ROAD_TCO2 DOUBLE, 
-    CARBON_TREE_TCO2 DOUBLE, 
+    CARBON_ROAD_TCO2 INT, 
+    CARBON_TREE_TCO2 INT, 
     CARBON_YEAR INT DEFAULT 2024
 );
 
 --------------------------------------------------------
 --  DDL for Table CART_TBL
 --------------------------------------------------------
-CREATE TABLE CART_TBL (
+CREATE TABLE TEAM1_DB.CART_TBL 
+(
     CART_NO INT, 
     MEMBER_ID VARCHAR(20), 
     MARKET_NO INT, 
@@ -529,28 +288,30 @@ CREATE TABLE CART_TBL (
 --------------------------------------------------------
 --  DDL for Table CO2_TBL
 --------------------------------------------------------
-CREATE TABLE CO2_TBL (
+CREATE TABLE TEAM1_DB.CO2_TBL 
+(
     C_NO INT, 
     BOARD_NO INT, 
     MEMBER_ID VARCHAR(20), 
     CTPVSGG_ID CHAR(8), 
-    C_ELE_A DOUBLE DEFAULT 0, 
-    C_ELE DOUBLE DEFAULT 0, 
-    C_GAS_A DOUBLE DEFAULT 0, 
-    C_GAS DOUBLE DEFAULT 0, 
-    C_WATER_A DOUBLE DEFAULT 0, 
-    C_WATER DOUBLE DEFAULT 0, 
-    C_ROAD_A DOUBLE DEFAULT 0, 
-    C_ROAD DOUBLE DEFAULT 0, 
-    C_WASTE_A DOUBLE DEFAULT 0, 
-    C_WASTE DOUBLE DEFAULT 0, 
-    C_TOTAL DOUBLE DEFAULT 0
+    C_ELE_A INT DEFAULT 0, 
+    C_ELE INT DEFAULT 0, 
+    C_GAS_A INT DEFAULT 0, 
+    C_GAS INT DEFAULT 0, 
+    C_WATER_A INT DEFAULT 0, 
+    C_WATER INT DEFAULT 0, 
+    C_ROAD_A INT DEFAULT 0, 
+    C_ROAD INT DEFAULT 0, 
+    C_WASTE_A INT DEFAULT 0, 
+    C_WASTE INT DEFAULT 0, 
+    C_TOTAL INT DEFAULT 0
 );
 
 --------------------------------------------------------
 --  DDL for Table CREATE_CAMPAIGN_TBL
 --------------------------------------------------------
-CREATE TABLE CREATE_CAMPAIGN_TBL (
+CREATE TABLE TEAM1_DB.CREATE_CAMPAIGN_TBL 
+(
     CAMPAIGN_NO INT, 
     CAMPAIGN_TITLE VARCHAR(1000), 
     CAMPAIGN_EXPLANATION VARCHAR(2000), 
@@ -564,7 +325,8 @@ CREATE TABLE CREATE_CAMPAIGN_TBL (
 --------------------------------------------------------
 --  DDL for Table CTPVSGG_TBL
 --------------------------------------------------------
-CREATE TABLE CTPVSGG_TBL (
+CREATE TABLE TEAM1_DB.CTPVSGG_TBL 
+(
     CTPVSGG_ID CHAR(8), 
     CTPV_CD INT, 
     SGG_CD INT, 
@@ -575,7 +337,8 @@ CREATE TABLE CTPVSGG_TBL (
 --------------------------------------------------------
 --  DDL for Table DONATION_GROUP
 --------------------------------------------------------
-CREATE TABLE DONATION_GROUP (
+CREATE TABLE TEAM1_DB.DONATION_GROUP 
+(
     GROUP_ID VARCHAR(50), 
     GROUP_NAME VARCHAR(100), 
     GROUP_DESC VARCHAR(500), 
@@ -588,7 +351,8 @@ CREATE TABLE DONATION_GROUP (
 --------------------------------------------------------
 --  DDL for Table FAQ_TBL
 --------------------------------------------------------
-CREATE TABLE FAQ_TBL (
+CREATE TABLE TEAM1_DB.FAQ_TBL 
+(
     FAQ_NO INT, 
     FAQ_TITLE VARCHAR(200), 
     FAQ_CONTENT VARCHAR(600), 
@@ -598,7 +362,8 @@ CREATE TABLE FAQ_TBL (
 --------------------------------------------------------
 --  DDL for Table KEYWORD_TBL
 --------------------------------------------------------
-CREATE TABLE KEYWORD_TBL (
+CREATE TABLE TEAM1_DB.KEYWORD_TBL 
+(
     KEYWORD_NO INT, 
     KEYWORD VARCHAR(100), 
     KEYWORD_CATEGORY VARCHAR(50)
@@ -607,7 +372,8 @@ CREATE TABLE KEYWORD_TBL (
 --------------------------------------------------------
 --  DDL for Table MEMBER_LOG_TBL
 --------------------------------------------------------
-CREATE TABLE MEMBER_LOG_TBL (
+CREATE TABLE TEAM1_DB.MEMBER_LOG_TBL 
+(
     MEMBER_LOG_NO INT, 
     MEMBER_ID VARCHAR(20), 
     LOG_IP VARCHAR(30), 
@@ -623,11 +389,12 @@ CREATE TABLE MEMBER_LOG_TBL (
 --------------------------------------------------------
 --  DDL for Table MEMBER_MISSION_TBL
 --------------------------------------------------------
-CREATE TABLE MEMBER_MISSION_TBL (
+CREATE TABLE TEAM1_DB.MEMBER_MISSION_TBL 
+(
     USER_MISSION_NO INT, 
     MISSION_NO INT, 
     MEMBER_ID VARCHAR(20), 
-    COMPLETED_YMD DATE DEFAULT (CURRENT_DATE), -- TRUNC(SYSDATE)를 날짜형 기본값으로 처리
+    COMPLETED_YMD DATE DEFAULT (CURRENT_DATE), 
     CERT_IMAGE_URL VARCHAR(255), 
     ASSIGNED_YMD DATE DEFAULT (CURRENT_DATE)
 );
@@ -635,7 +402,8 @@ CREATE TABLE MEMBER_MISSION_TBL (
 --------------------------------------------------------
 --  DDL for Table MEMBER_POINT_TBL
 --------------------------------------------------------
-CREATE TABLE MEMBER_POINT_TBL (
+CREATE TABLE TEAM1_DB.MEMBER_POINT_TBL 
+(
     MEMBER_ID VARCHAR(20), 
     TOTAL_POINT INT DEFAULT 0
 );
@@ -643,7 +411,8 @@ CREATE TABLE MEMBER_POINT_TBL (
 --------------------------------------------------------
 --  DDL for Table MEMBER_TBL
 --------------------------------------------------------
-CREATE TABLE MEMBER_TBL (
+CREATE TABLE TEAM1_DB.MEMBER_TBL 
+(
     MEMBER_ID VARCHAR(20), 
     MEMBER_PW CHAR(60), 
     MEMBER_NAME VARCHAR(30), 
@@ -660,7 +429,8 @@ CREATE TABLE MEMBER_TBL (
 --------------------------------------------------------
 --  DDL for Table MEMBER_TBL1
 --------------------------------------------------------
-CREATE TABLE MEMBER_TBL1 (
+CREATE TABLE TEAM1_DB.MEMBER_TBL1 
+(
     MEMBER_ID VARCHAR(20), 
     MEMBER_PW CHAR(60), 
     MEMBER_NAME VARCHAR(30), 
@@ -674,14 +444,15 @@ CREATE TABLE MEMBER_TBL1 (
     TRADE_COUNT INT, 
     MEMBER_TOTAL_POINT INT, 
     LOCK_UNTIL DATETIME, 
-    MEMBER_CO2 DOUBLE DEFAULT 0, 
+    MEMBER_CO2 INT DEFAULT 0, 
     LOCK_REASON VARCHAR(600)
 );
 
 --------------------------------------------------------
 --  DDL for Table MEMBER_TBL2
 --------------------------------------------------------
-CREATE TABLE MEMBER_TBL2 (
+CREATE TABLE TEAM1_DB.MEMBER_TBL2 
+(
     MEMBER_ID VARCHAR(20), 
     MEMBER_PW CHAR(60), 
     MEMBER_NAME VARCHAR(30), 
@@ -696,9 +467,10 @@ CREATE TABLE MEMBER_TBL2 (
 );
 
 --------------------------------------------------------
---  DDL for Table MISSION_TBL (마지막 잘린 부분 마감 처리)
+--  DDL for Table MISSION_TBL
 --------------------------------------------------------
-CREATE TABLE MISSION_TBL (
+CREATE TABLE TEAM1_DB.MISSION_TBL 
+(
     MISSION_NO INT, 
     MISSION_TITLE VARCHAR(300), 
     REWARD_POINT INT, 

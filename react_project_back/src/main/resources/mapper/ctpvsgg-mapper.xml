@@ -5,12 +5,12 @@
   <select id="selectAllRegions" resultType="kr.co.iei.region.model.vo.Ctpvsgg">
     SELECT
       CTPVSGG_ID AS ctpvsggId,
-      CTPV_CD AS ctpvCd,
-      SGG_CD AS sggCd,
-      CTPV_NM AS ctpvNm,
-      SGG_NM AS sggNm
+      CTPV_CD   AS ctpvCd,
+      SGG_CD    AS sggCd,
+      CTPV_NM   AS ctpvNm,
+      SGG_NM    AS sggNm
     FROM CTPVSGG_TBL
-    ORDER BY CTPV_CD, SGG_CD
+    ORDER BY CTPV_CD ASC, SGG_CD ASC
   </select>
 
 </mapper>

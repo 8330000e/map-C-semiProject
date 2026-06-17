@@ -1,66 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.iei.point.dao.PointDao">
-	
-	<select id="selectTotalPoint" resultType="Integer">
-		select total_point 
-		from member_point_tbl
-		where member_id = #{memberId}
-	</select>
-	
-	<!-- 나무 키우기 포인트 사용 내역 조회, 기부 포인트 조회 -->
-		<select id="selectPointHistory" parameterType="string" resultType="pointHistory">
-		    SELECT
-		        pointNo,
-		        memberId,
-		        pointChange,
-		        pointType,
-		        pointReason,
-		        createdDate
-		    FROM (
-		        <!-- 적립/사용 포인트 이력 -->
-		        SELECT
-		            POINT_NO AS pointNo,
-		            MEMBER_ID AS memberId,
-		            POINT_CHANGE AS pointChange,
-		            POINT_TYPE AS pointType,
-		            POINT_REASON AS pointReason,
-		            TO_CHAR(CREATED_DATE, 'YYYY-MM-DD') AS createdDate,
-		            CREATED_DATE AS orderDate
-		        FROM POINT_TBL
-		        WHERE MEMBER_ID = #{memberId}
-		
-		        UNION ALL
-		
-		        <!-- 나무 물주기 사용 내역 -->
-		        SELECT
-		            CONTRIBUTION_NO AS pointNo,
-		            MEMBER_ID AS memberId,
-		            -CONTRIBUTED_POINT AS pointChange,
-		            'USE' AS pointType,
-		            '나무 물주기' AS pointReason,
-		            TO_CHAR(CONTRIBUTED_AT, 'YYYY-MM-DD') AS createdDate,
-		            CONTRIBUTED_AT AS orderDate
-		        FROM REGION_CONTRIBUTION_TBL
-		        WHERE MEMBER_ID = #{memberId}
-		
-		        UNION ALL
-		
-		        <!-- 기부 사용 내역 -->
-		        SELECT
-		            D.DONATION_NO AS pointNo,
-		            D.MEMBER_ID AS memberId,
-		            -D.DONATION_POINT AS pointChange,
-		            'DONATION' AS pointType,
-		            G.GROUP_NAME || '에 ' || D.DONATION_POINT || 'P 기부' AS pointReason,
-		            TO_CHAR(D.DONATION_DATE, 'YYYY-MM-DD') AS createdDate,
-		            D.DONATION_DATE AS orderDate
-		        FROM POINT_DONATION D
-		        JOIN DONATION_GROUP G
-		          ON D.GROUP_ID = G.GROUP_ID
-		        WHERE D.MEMBER_ID = #{memberId}
-		          AND D.DONATION_POINT > 0
-		    )
-		    ORDER BY orderDate DESC, pointNo DESC
-		</select>
+    
+    <select id="selectTotalPoint" resultType="Integer">
+        SELECT total_point 
+        FROM member_point_tbl
+        WHERE member_id = #{memberId}
+    </select>
+    
+    <select id="selectPointHistory" parameterType="string" resultType="pointHistory">
+        SELECT
+            pointNo,
+            memberId,
+            pointChange,
+            pointType,
+            pointReason,
+            createdDate
+        FROM (
+            SELECT
+                POINT_NO AS pointNo,
+                MEMBER_ID AS memberId,
+                POINT_CHANGE AS pointChange,
+                POINT_TYPE AS pointType,
+                POINT_REASON AS pointReason,
+                DATE_FORMAT(CREATED_DATE, '%Y-%m-%d') AS createdDate,
+                CREATED_DATE AS orderDate
+            FROM POINT_TBL
+            WHERE MEMBER_ID = #{memberId}
+    
+            UNION ALL
+    
+            SELECT
+                CONTRIBUTION_NO AS pointNo,
+                MEMBER_ID AS memberId,
+                -CONTRIBUTED_POINT AS pointChange,
+                'USE' AS pointType,
+                '나무 물주기' AS pointReason,
+                DATE_FORMAT(CONTRIBUTED_AT, '%Y-%m-%d') AS createdDate,
+                CONTRIBUTED_AT AS orderDate
+            FROM REGION_CONTRIBUTION_TBL
+            WHERE MEMBER_ID = #{memberId}
+    
+            UNION ALL
+    
+            SELECT
+                D.DONATION_NO AS pointNo,
+                D.MEMBER_ID AS memberId,
+                -D.DONATION_POINT AS pointChange,
+                'DONATION' AS pointType,
+                CONCAT(G.GROUP_NAME, '에 ', D.DONATION_POINT, 'P 기부') AS pointReason,
+                DATE_FORMAT(D.DONATION_DATE, '%Y-%m-%d') AS createdDate,
+                D.DONATION_DATE AS orderDate
+            FROM POINT_DONATION D
+            JOIN DONATION_GROUP G
+              ON D.GROUP_ID = G.GROUP_ID
+            WHERE D.MEMBER_ID = #{memberId}
+              AND D.DONATION_POINT > 0
+        ) AS history ORDER BY orderDate DESC, pointNo DESC
+    </select>
+    
 </mapper>

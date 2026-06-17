@@ -2,76 +2,86 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.co.iei.support.model.dao.SupportDao">
 
-	<select id="selectFaqList" resultType="faq">
-		select
-			faq_no,
-			faq_title,
-			faq_content,
-			faq_category
-		from faq_tbl
-		<if test="category != null">
-			where faq_category = #{category}
-		</if>
-		order by faq_no desc
-	</select> 
-	
-	<select id="selectNoticeList" resultType="notice">
-		select * from notice_tbl 
-		<where>
-			notice_public = 1
-			<if test="category != null">
-				and notice_category = #{category}
-			</if>
-		</where>
-		order by notice_fixed desc, notice_date desc
-	</select>
-	
-	<select id="selectNoticeDetail" resultType="notice">
-		select 
-			notice_no,
-			notice_title,
-			notice_content,
-			notice_date,
-			notice_view,
-			notice_category,
-			notice_image_path
-		from notice_tbl
-		where notice_no = #{noticeNo}
-	</select>
-	
-	<select id="selectQnaList" resultType="qna">
-		select 
-			member_id,
-			qna_no,
-			qna_title,
-			qna_content,
-			qna_answer,
-			qna_status,
-			qna_date,
-			qna_answer_image,
-			qna_question_image,
-			qna_category
-		from qna_tbl
-		where member_id = #{memberId}
-		order by qna_status desc, qna_date desc
-	</select>
-	
-	<insert id="insertQna">
-		insert into qna_tbl values(
-			qna_seq.nextval,
-			#{memberId},
-			#{qnaTitle},
-			#{qnaContent},
-        	null,
-        	0,
-          	sysdate,
-        	null,
-         	#{qnaQuestionImage},
-          	#{qnaCategory}
-		)
-	</insert>
-	
-	<select id="selectQnaDetail" resultType="qna">
-		select * from qna_tbl where qna_no = #{qnaNo}
-	</select>
+    <select id="selectFaqList" resultType="faq">
+        SELECT
+            faq_no,
+            faq_title,
+            faq_content,
+            faq_category
+        FROM faq_tbl
+        <if test="category != null">
+            WHERE faq_category = #{category}
+        </if>
+        ORDER BY faq_no DESC
+    </select> 
+    
+    <select id="selectNoticeList" resultType="notice">
+        SELECT * FROM notice_tbl 
+        <where>
+            notice_public = 1
+            <if test="category != null">
+                AND notice_category = #{category}
+            </if>
+        </where>
+        ORDER BY notice_fixed DESC, notice_date DESC
+    </select>
+    
+    <select id="selectNoticeDetail" resultType="notice">
+        SELECT 
+            notice_no,
+            notice_title,
+            notice_content,
+            notice_date,
+            notice_view,
+            notice_category,
+            notice_image_path
+        FROM notice_tbl
+        WHERE notice_no = #{noticeNo}
+    </select>
+    
+    <select id="selectQnaList" resultType="qna">
+        SELECT 
+            member_id,
+            qna_no,
+            qna_title,
+            qna_content,
+            qna_answer,
+            qna_status,
+            qna_date,
+            qna_answer_image,
+            qna_question_image,
+            qna_category
+        FROM qna_tbl
+        WHERE member_id = #{memberId}
+        ORDER BY qna_status DESC, qna_date DESC
+    </select>
+    
+    <insert id="insertQna" useGeneratedKeys="true" keyProperty="qnaNo">
+        INSERT INTO qna_tbl (
+            member_id,
+            qna_title,
+            qna_content,
+            qna_answer,
+            qna_status,
+            qna_date,
+            qna_answer_image,
+            qna_question_image,
+            qna_category
+        ) VALUES (
+            #{memberId},
+            #{qnaTitle},
+            #{qnaContent},
+            NULL,
+            0,
+            NOW(),
+            NULL,
+            #{qnaQuestionImage},
+            #{qnaCategory}
+        )
+    </insert>
+    
+    <select id="selectQnaDetail" resultType="qna">
+        SELECT * FROM qna_tbl WHERE qna_no = #{qnaNo}
+    </select>
+    
 </mapper>

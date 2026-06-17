@@ -14,13 +14,11 @@
   </resultMap>
 
   <insert id="insertBoardForStore"
-          parameterType="kr.co.iei.store.model.vo.StoreBoard">
-    <selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
-      SELECT BOARD_SEQ.NEXTVAL FROM DUAL
-    </selectKey>
+          parameterType="kr.co.iei.store.model.vo.StoreBoard"
+          useGeneratedKeys="true"
+          keyProperty="boardNo">
     INSERT INTO BOARD_TBL
     (
-      BOARD_NO,
       WRITER_ID,
       BOARD_TITLE,
       BOARD_CONTENT,
@@ -31,7 +29,6 @@
     )
     VALUES
     (
-      #{boardNo},
       #{memberId},
       #{marketTitle},
       #{marketContent},
@@ -60,7 +57,7 @@
       READ_COUNT,
       IS_DELETED,
       CREATED_AT,
-       UPDATED_AT,
+      UPDATED_AT,
       TRADE_TYPE
     )
     VALUES
@@ -75,8 +72,8 @@
       #{productStatus, jdbcType=NUMERIC},
       0,
       0,
-      SYSDATE,
-       NULL,
+      NOW(),
+      NULL,
       #{tradeType, jdbcType=VARCHAR}
     )
   </insert>
@@ -94,7 +91,7 @@
       R.SGG_NM AS sggNm,
       CASE
         WHEN S.CTPVSGG_ID IS NULL THEN NULL
-        ELSE R.CTPV_NM || ' ' || R.SGG_NM
+        ELSE CONCAT(R.CTPV_NM, ' ', R.SGG_NM)
       END AS regionName,
       S.MARKET_TITLE AS marketTitle,
       S.MARKET_CONTENT AS marketContent,
@@ -102,8 +99,8 @@
       S.PRODUCT_THUMB AS productThumb,
       S.PRODUCT_STATUS AS productStatus,
       S.READ_COUNT AS readCount,
-      NVL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = S.BOARD_NO), 0) AS likeCount,
-      NVL((SELECT COUNT(*) FROM BOARD_COMMENT_TBL c WHERE c.BOARD_NO = S.BOARD_NO), 0) AS commentCount,
+      IFNULL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = S.BOARD_NO), 0) AS likeCount,
+      IFNULL((SELECT COUNT(*) FROM BOARD_COMMENT_TBL c WHERE c.BOARD_NO = S.BOARD_NO), 0) AS commentCount,
       S.IS_DELETED AS isDeleted,
       S.CREATED_AT AS createdAt,
       S.TRADE_TYPE AS tradeType
@@ -129,7 +126,7 @@
       R.SGG_NM AS sggNm,
       CASE
         WHEN S.CTPVSGG_ID IS NULL THEN NULL
-        ELSE R.CTPV_NM || ' ' || R.SGG_NM
+        ELSE CONCAT(R.CTPV_NM, ' ', R.SGG_NM)
       END AS regionName,
       S.MARKET_TITLE AS marketTitle,
       S.MARKET_CONTENT AS marketContent,
@@ -149,11 +146,10 @@
       AND S.IS_DELETED = 0
   </select>
 
-
   <update id="updateProductStatus">
     UPDATE STORE_BOARD_TBL
     SET PRODUCT_STATUS = #{status},
-        UPDATED_AT     = SYSDATE
+        UPDATED_AT     = NOW()
     WHERE MARKET_NO = #{marketNo}
   </update>
 
@@ -168,7 +164,7 @@
   <update id="deleteStoreBoard" parameterType="long">
     UPDATE STORE_BOARD_TBL
     SET IS_DELETED = 1,
-        UPDATED_AT = SYSDATE
+        UPDATED_AT = NOW()
     WHERE MARKET_NO = #{marketNo}
   </update>
 
@@ -188,7 +184,7 @@
         PRODUCT_THUMB  = #{productThumb},
         TRADE_TYPE     = #{tradeType, jdbcType=VARCHAR},
         CTPVSGG_ID     = #{ctpvsggId},
-        UPDATED_AT     = SYSDATE
+        UPDATED_AT     = NOW()
     WHERE MARKET_NO = #{marketNo}
   </update>
 
@@ -224,13 +220,9 @@
     ORDER BY C.ADDED_AT DESC
   </select>
 
-  <insert id="insertCartItem" parameterType="kr.co.iei.store.model.vo.StoreCart">
-    <selectKey keyProperty="cartNo" resultType="long" order="BEFORE">
-      SELECT CART_SEQ.NEXTVAL FROM DUAL
-    </selectKey>
+  <insert id="insertCartItem" parameterType="kr.co.iei.store.model.vo.StoreCart" useGeneratedKeys="true" keyProperty="cartNo">
     INSERT INTO CART_TBL
     (
-      CART_NO,
       MEMBER_ID,
       MARKET_NO,
       QUANTITY,
@@ -238,11 +230,10 @@
     )
     VALUES
     (
-      #{cartNo},
       #{memberId},
       #{marketNo},
       #{quantity},
-      SYSDATE
+      NOW()
     )
   </insert>
 
@@ -264,7 +255,6 @@
     WHERE MARKET_NO = #{marketNo}
   </update>
 
-  <!-- 댓글 목록 (최신순) -->
   <select id="selectReviewList" resultType="kr.co.iei.store.model.vo.StoreReview">
     SELECT
       C.BOARD_COMMENT_NO      AS REVIEW_NO,
@@ -289,7 +279,6 @@
     ORDER BY C.COMMENT_GROUP ASC, C.COMMENT_DEPTH ASC, C.BOARD_COMMENT_NO ASC
   </select>
 
-  <!-- 댓글 수 -->
   <select id="countReviews" resultType="int">
     SELECT COUNT(*)
     FROM BOARD_COMMENT_TBL C
@@ -298,15 +287,12 @@
     WHERE S.MARKET_NO = #{marketNo}
   </select>
 
-  <!-- 댓글 등록 -->
   <insert id="insertReview"
-          parameterType="kr.co.iei.store.model.vo.StoreReview">
-    <selectKey keyProperty="reviewNo" resultType="long" order="BEFORE">
-      SELECT SEQ_BOARD_COMMENT_NO.NEXTVAL FROM DUAL
-    </selectKey>
+          parameterType="kr.co.iei.store.model.vo.StoreReview"
+          useGeneratedKeys="true"
+          keyProperty="reviewNo">
     INSERT INTO BOARD_COMMENT_TBL
     (
-      BOARD_COMMENT_NO,
       BOARD_COMMENT_WRITER,
       BOARD_NO,
       BOARD_COMMENT_CONTENT,
@@ -320,65 +306,60 @@
     )
     VALUES
     (
-      #{reviewNo},
       #{memberId},
       (SELECT BOARD_NO FROM STORE_BOARD_TBL WHERE MARKET_NO = #{marketNo}),
       #{reviewContent},
-      SYSDATE,
-      SYSDATE,
+      NOW(),
+      NOW(),
       #{memberNickname},
       #{parentCommentNo},
-      NVL((SELECT COMMENT_GROUP FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), #{reviewNo}),
+      IFNULL((SELECT COMMENT_GROUP FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), LAST_INSERT_ID() + 1),
       CASE
         WHEN #{parentCommentNo} IS NULL THEN 0
-        ELSE NVL((SELECT COMMENT_DEPTH + 1 FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), 1)
+        ELSE IFNULL((SELECT COMMENT_DEPTH + 1 FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), 1)
       END,
       CASE WHEN #{isPrivate} = 1 THEN 'Y' ELSE 'N' END
     )
   </insert>
 
-  <!-- 댓글 수정 -->
   <update id="updateReview" parameterType="kr.co.iei.store.model.vo.StoreReview">
     UPDATE BOARD_COMMENT_TBL
     SET BOARD_COMMENT_CONTENT = #{reviewContent},
       IS_SECRET = CASE WHEN #{isPrivate} = 1 THEN 'Y' ELSE 'N' END,
-      UPDATED_AT = SYSDATE
+      UPDATED_AT = NOW()
     WHERE BOARD_COMMENT_NO = #{reviewNo}
       AND BOARD_COMMENT_WRITER = #{memberId}
   </update>
 
-  <!-- 댓글 삭제 (소프트) -->
-  <update id="deleteReview">
+  <delete id="deleteReview">
     DELETE FROM BOARD_COMMENT_TBL
     WHERE BOARD_COMMENT_NO = #{reviewNo}
       AND BOARD_COMMENT_WRITER = #{memberId}
-  </update>
-  <!-- 전체 최신 댓글 N개 -->
+  </delete>
+
   <select id="selectLatestReviews" resultType="kr.co.iei.store.model.vo.StoreReview">
-    SELECT * FROM (
-      SELECT
-        C.BOARD_COMMENT_NO      AS REVIEW_NO,
-        S.MARKET_NO             AS MARKET_NO,
-        C.BOARD_COMMENT_WRITER  AS MEMBER_ID,
-        M.MEMBER_THUMB           AS MEMBER_THUMB,
-        C.MEMBER_NICKNAME       AS MEMBER_NICKNAME,
-        C.BOARD_COMMENT_CONTENT AS REVIEW_CONTENT,
-        C.PARENT_COMMENT_NO     AS PARENT_COMMENT_NO,
-        C.COMMENT_GROUP         AS COMMENT_GROUP,
-        C.COMMENT_DEPTH         AS COMMENT_DEPTH,
-        CASE WHEN C.IS_SECRET = 'Y' THEN 1 ELSE 0 END AS IS_PRIVATE,
-        C.BOARD_COMMENT_DATE    AS CREATED_AT,
-        C.UPDATED_AT            AS UPDATED_AT,
-        0                       AS IS_DELETED
-      FROM BOARD_COMMENT_TBL C
-      JOIN STORE_BOARD_TBL S
-        ON C.BOARD_NO = S.BOARD_NO
-      LEFT JOIN MEMBER_TBL M
-        ON C.BOARD_COMMENT_WRITER = M.MEMBER_ID
-      WHERE C.IS_SECRET = 'N'
-      ORDER BY C.BOARD_COMMENT_NO DESC
-    )
-    WHERE ROWNUM &lt;= #{limit}
+    SELECT
+      C.BOARD_COMMENT_NO      AS REVIEW_NO,
+      S.MARKET_NO             AS MARKET_NO,
+      C.BOARD_COMMENT_WRITER  AS MEMBER_ID,
+      M.MEMBER_THUMB           AS MEMBER_THUMB,
+      C.MEMBER_NICKNAME       AS MEMBER_NICKNAME,
+      C.BOARD_COMMENT_CONTENT AS REVIEW_CONTENT,
+      C.PARENT_COMMENT_NO     AS PARENT_COMMENT_NO,
+      C.COMMENT_GROUP         AS COMMENT_GROUP,
+      C.COMMENT_DEPTH         AS COMMENT_DEPTH,
+      CASE WHEN C.IS_SECRET = 'Y' THEN 1 ELSE 0 END AS IS_PRIVATE,
+      C.BOARD_COMMENT_DATE    AS CREATED_AT,
+      C.UPDATED_AT            AS UPDATED_AT,
+      0                       AS IS_DELETED
+    FROM BOARD_COMMENT_TBL C
+    JOIN STORE_BOARD_TBL S
+      ON C.BOARD_NO = S.BOARD_NO
+    LEFT JOIN MEMBER_TBL M
+      ON C.BOARD_COMMENT_WRITER = M.MEMBER_ID
+    WHERE C.IS_SECRET = 'N'
+    ORDER BY C.BOARD_COMMENT_NO DESC
+    LIMIT #{limit}
   </select>
 
   <select id="selectRatingsByTrade" resultType="kr.co.iei.store.model.vo.StoreRating">
@@ -392,7 +373,7 @@
       RATING,
       REVIEW_CONT AS REVIEW_CONTENT,
       REVIEW_THUMB,
-      NVL(CREATED_AT, CAST(REVIEW_DATE AS TIMESTAMP)) AS CREATED_AT,
+      IFNULL(CREATED_AT, REVIEW_DATE) AS CREATED_AT,
       IS_DELETED,
       IS_PRIVATE
     FROM STORE_REVIEW_TBL
@@ -412,7 +393,7 @@
       RATING,
       REVIEW_CONT AS REVIEW_CONTENT,
       REVIEW_THUMB,
-      NVL(CREATED_AT, CAST(REVIEW_DATE AS TIMESTAMP)) AS CREATED_AT,
+      IFNULL(CREATED_AT, REVIEW_DATE) AS CREATED_AT,
       IS_DELETED,
       IS_PRIVATE
     FROM STORE_REVIEW_TBL
@@ -432,7 +413,7 @@
       RATING,
       REVIEW_CONT AS REVIEW_CONTENT,
       REVIEW_THUMB,
-      NVL(CREATED_AT, CAST(REVIEW_DATE AS TIMESTAMP)) AS CREATED_AT,
+      IFNULL(CREATED_AT, REVIEW_DATE) AS CREATED_AT,
       IS_DELETED,
       IS_PRIVATE
     FROM STORE_REVIEW_TBL
@@ -452,14 +433,15 @@
       RATING,
       REVIEW_CONT AS REVIEW_CONTENT,
       REVIEW_THUMB,
-      NVL(CREATED_AT, CAST(REVIEW_DATE AS TIMESTAMP)) AS CREATED_AT,
+      IFNULL(CREATED_AT, REVIEW_DATE) AS CREATED_AT,
       IS_DELETED,
       IS_PRIVATE
     FROM STORE_REVIEW_TBL
     WHERE TRADE_NO = #{tradeNo}
       AND BUYER_ID = #{buyerId}
       AND IS_DELETED = 0
-      AND ROWNUM = 1
+    ORDER BY REVIEW_NO DESC
+    LIMIT 1
   </select>
 
   <select id="selectRatingByMarketAndBuyer" resultType="kr.co.iei.store.model.vo.StoreRating">
@@ -473,14 +455,15 @@
       RATING,
       REVIEW_CONT AS REVIEW_CONTENT,
       REVIEW_THUMB,
-      NVL(CREATED_AT, CAST(REVIEW_DATE AS TIMESTAMP)) AS CREATED_AT,
+      IFNULL(CREATED_AT, REVIEW_DATE) AS CREATED_AT,
       IS_DELETED,
       IS_PRIVATE
     FROM STORE_REVIEW_TBL
     WHERE MARKET_NO = #{marketNo}
       AND BUYER_ID = #{buyerId}
       AND IS_DELETED = 0
-      AND ROWNUM = 1
+    ORDER BY REVIEW_NO DESC
+    LIMIT 1
   </select>
 
   <insert id="insertRating"
@@ -514,10 +497,10 @@
       #{rating},
       #{reviewContent},
       #{reviewThumb},
-      SYSDATE,
+      NOW(),
       0,
       0,
-      SYSTIMESTAMP,
+      NOW(),
       #{buyerId},
       #{buyerNickname},
       #{reviewContent}
@@ -543,76 +526,72 @@
   </update>
 
   <select id="selectTradeInfoByMarketNo" resultType="kr.co.iei.store.model.vo.StoreTradeInfo">
-    SELECT * FROM (
-      SELECT
-        T.TRADE_NO AS tradeNo,
-        T.MARKET_NO AS marketNo,
-        T.SELLER_ID AS sellerId,
-        SELLER.MEMBER_NICKNAME AS sellerNickname,
-        T.BUYER_ID AS buyerId,
-        BUYER.MEMBER_NICKNAME AS buyerNickname,
-        T.CTPVSGG_ID AS ctpvsggId,
-        T.TRADE_PRICE AS tradePrice,
-        T.TRADE_STATUS AS tradeStatus,
-        T.TRADE_TYPE AS tradeType,
-        T.CREATED_AT AS createdAt,
-        T.COMPLETED_AT AS completedAt,
-        T.REVIEW_YN AS reviewYn,
-        T.CANCLE_REASON AS cancleReason,
-        T.RECEIVER_NAME AS receiverName,
-        T.BUYER_NAME AS buyerName,
-        T.BUYER_PHONE AS buyerPhone,
-        T.ZIP_CODE AS zipCode,
-        T.ADDRESS AS address,
-        T.ADDRESS_DETAIL AS addressDetail,
-        T.DELIVERY_MEMO AS deliveryMemo,
-        T.INVOICE_NUMBER AS invoiceNumber,
-        T.COURIER_CODE AS courierCode,
-        T.SHIPPING_STATUS AS shippingStatus
-      FROM STORE_BOARD_TRADEINFO_TBL T
-      LEFT JOIN MEMBER_TBL SELLER ON T.SELLER_ID = SELLER.MEMBER_ID
-      LEFT JOIN MEMBER_TBL BUYER ON T.BUYER_ID = BUYER.MEMBER_ID
-      WHERE T.MARKET_NO = #{marketNo}
-      ORDER BY T.CREATED_AT DESC, T.TRADE_NO DESC
-    )
-    WHERE ROWNUM = 1
+    SELECT
+      T.TRADE_NO AS tradeNo,
+      T.MARKET_NO AS marketNo,
+      T.SELLER_ID AS sellerId,
+      SELLER.MEMBER_NICKNAME AS sellerNickname,
+      T.BUYER_ID AS buyerId,
+      BUYER.MEMBER_NICKNAME AS buyerNickname,
+      T.CTPVSGG_ID AS ctpvsggId,
+      T.TRADE_PRICE AS tradePrice,
+      T.TRADE_STATUS AS tradeStatus,
+      T.TRADE_TYPE AS tradeType,
+      T.CREATED_AT AS createdAt,
+      T.COMPLETED_AT AS completedAt,
+      T.REVIEW_YN AS reviewYn,
+      T.CANCLE_REASON AS cancleReason,
+      T.RECEIVER_NAME AS receiverName,
+      T.BUYER_NAME AS buyerName,
+      T.BUYER_PHONE AS buyerPhone,
+      T.ZIP_CODE AS zipCode,
+      T.ADDRESS AS address,
+      T.ADDRESS_DETAIL AS addressDetail,
+      T.DELIVERY_MEMO AS deliveryMemo,
+      T.INVOICE_NUMBER AS invoiceNumber,
+      T.COURIER_CODE AS courierCode,
+      T.SHIPPING_STATUS AS shippingStatus
+    FROM STORE_BOARD_TRADEINFO_TBL T
+    LEFT JOIN MEMBER_TBL SELLER ON T.SELLER_ID = SELLER.MEMBER_ID
+    LEFT JOIN MEMBER_TBL BUYER ON T.BUYER_ID = BUYER.MEMBER_ID
+    WHERE T.MARKET_NO = #{marketNo}
+    ORDER BY T.CREATED_AT DESC, T.TRADE_NO DESC
+    LIMIT 1
   </select>
 
   <select id="selectTradeInfoByMarketNoAndBuyerId" resultType="kr.co.iei.store.model.vo.StoreTradeInfo">
-    SELECT * FROM (
-      SELECT
-        T.TRADE_NO AS tradeNo,
-        T.MARKET_NO AS marketNo,
-        T.SELLER_ID AS sellerId,
-        SELLER.MEMBER_NICKNAME AS sellerNickname,
-        T.BUYER_ID AS buyerId,
-        BUYER.MEMBER_NICKNAME AS buyerNickname,
-        T.CTPVSGG_ID AS ctpvsggId,
-        T.TRADE_PRICE AS tradePrice,
-        T.TRADE_STATUS AS tradeStatus,
-        T.TRADE_TYPE AS tradeType,
-        T.CREATED_AT AS createdAt,
-        T.COMPLETED_AT AS completedAt,
-        T.REVIEW_YN AS reviewYn,
-        T.CANCLE_REASON AS cancleReason,
-        T.RECEIVER_NAME AS receiverName,
-        T.BUYER_NAME AS buyerName,
-        T.BUYER_PHONE AS buyerPhone,
-        T.ZIP_CODE AS zipCode,
-        T.ADDRESS AS address,
-        T.ADDRESS_DETAIL AS addressDetail,
-        T.DELIVERY_MEMO AS deliveryMemo,
-        T.INVOICE_NUMBER AS invoiceNumber,
-        T.COURIER_CODE AS courierCode,
-        T.SHIPPING_STATUS AS shippingStatus
-      FROM STORE_BOARD_TRADEINFO_TBL T
-      LEFT JOIN MEMBER_TBL SELLER ON T.SELLER_ID = SELLER.MEMBER_ID
-      LEFT JOIN MEMBER_TBL BUYER ON T.BUYER_ID = BUYER.MEMBER_ID
-      WHERE T.MARKET_NO = #{marketNo}
-        AND T.BUYER_ID = #{buyerId}
-      ORDER BY T.CREATED_AT DESC, T.TRADE_NO DESC
-    )
-    WHERE ROWNUM = 1
+    SELECT
+      T.TRADE_NO AS tradeNo,
+      T.MARKET_NO AS marketNo,
+      T.SELLER_ID AS sellerId,
+      SELLER.MEMBER_NICKNAME AS sellerNickname,
+      T.BUYER_ID AS buyerId,
+      BUYER.MEMBER_NICKNAME AS buyerNickname,
+      T.CTPVSGG_ID AS ctpvsggId,
+      T.TRADE_PRICE AS tradePrice,
+      T.TRADE_STATUS AS tradeStatus,
+      T.TRADE_TYPE AS tradeType,
+      T.CREATED_AT AS createdAt,
+      T.COMPLETED_AT AS completedAt,
+      T.REVIEW_YN AS reviewYn,
+      T.CANCLE_REASON AS cancleReason,
+      T.RECEIVER_NAME AS receiverName,
+      T.BUYER_NAME AS buyerName,
+      T.BUYER_PHONE AS buyerPhone,
+      T.ZIP_CODE AS zipCode,
+      T.ADDRESS AS address,
+      T.ADDRESS_DETAIL AS addressDetail,
+      T.DELIVERY_MEMO AS deliveryMemo,
+      T.INVOICE_NUMBER AS invoiceNumber,
+      T.COURIER_CODE AS courierCode,
+      T.SHIPPING_STATUS AS shippingStatus
+    FROM STORE_BOARD_TRADEINFO_TBL T
+    LEFT JOIN MEMBER_TBL SELLER ON T.SELLER_ID = SELLER.MEMBER_ID
+    LEFT JOIN MEMBER_TBL BUYER ON T.BUYER_ID = BUYER.MEMBER_ID
+    WHERE T.MARKET_NO = #{marketNo}
+      AND T.BUYER_ID = #{buyerId}
+    ORDER BY T.CREATED_AT DESC, T.TRADE_NO DESC
+    LIMIT 1
   </select>
 
   <select id="selectTradeInfoByTradeNo" resultType="kr.co.iei.store.model.vo.StoreTradeInfo">
@@ -744,8 +723,8 @@
       #{tradePrice},
       #{tradeStatus},
       #{tradeType},
-      SYSDATE,
-      SYSDATE,
+      NOW(),
+      NOW(),
       'N',
       #{receiverName},
       #{buyerName},

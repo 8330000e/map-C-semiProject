@@ -2,243 +2,204 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.iei.member.model.dao.MemberDao">
 
-	
-<!--김경건-->
+  <insert id="insertMember" parameterType="kr.co.iei.member.model.vo.Member">
+    INSERT INTO member_tbl1 (
+      member_id, member_pw, member_name, member_grade, member_nickname,
+      member_email, member_thumb, enroll_date, member_status, manner_score, trade_count
+    ) VALUES (
+      #{memberId}, #{memberPw}, #{memberName}, 2, #{memberNickname},
+      #{memberEmail}, #{memberThumb}, NOW(), 0, 0, 0
+    )
+  </insert>
 
-<insert id="insertMember"
-	parameterType="kr.co.iei.member.model.vo.Member">
-	INSERT INTO member_tbl1
-	(member_id, member_pw, member_name, member_grade, member_nickname,
-	member_email,
-	member_thumb,
-	enroll_date, member_status, manner_score, trade_count)
-	VALUES
-	(#{memberId}, #{memberPw}, #{memberName}, 2, #{memberNickname},
-	#{memberEmail}, #{memberThumb}, SYSDATE, 0,
-	0, 0)
-</insert>
-
-<!--회원가입 시 포인트 테이블 자동 생성 -->
-<insert id="insertMemberPoint" parameterType="string">
+  <insert id="insertMemberPoint" parameterType="string">
     INSERT INTO MEMBER_POINT_TBL (MEMBER_ID, TOTAL_POINT)
     VALUES (#{memberId}, 0)
-</insert>
+  </insert>
 
+  <select id="selectOneMember" resultType="member">
+    SELECT * FROM member_tbl1
+    WHERE member_id = #{memberId}
+  </select>
 
-<!--김경건-->
+  <select id="findIdByEmail" parameterType="string" resultType="string">
+    SELECT member_id
+    FROM member_tbl1
+    WHERE member_email = #{memberEmail}
+    LIMIT 1
+  </select>
 
-<select id="selectOneMember" resultType="member">
-	select * from member_tbl1
-	where member_id =#{memberId}
+  <select id="existsByIdAndEmail" resultType="Integer">
+    SELECT 1
+    FROM member_tbl1
+    WHERE member_id = #{memberId}
+      AND member_email = #{memberEmail}
+  </select>
 
+  <update id="resetPw">
+    UPDATE member_tbl1
+    SET member_pw = #{memberPw}
+    WHERE member_id = #{memberId}
+  </update>
 
-</select>
+  <select id="selectMemberList" resultType="member">
+    SELECT
+      member_id,
+      member_name,
+      member_email,
+      enroll_date,
+      member_grade,
+      member_status
+    FROM member_tbl1
+  </select>
 
+  <select id="selectCarbonStats" resultType="map">
+    SELECT
+      COUNT(*) AS memberCount,
+      SUM(IFNULL(member_co2, 0)) AS totalCo2
+    FROM member_tbl1
+    WHERE member_status &lt;&gt; 2
+      AND IFNULL(member_co2, 0) > 0
+  </select>
 
+  <update id="updateMemberInfo">
+    UPDATE member_tbl1 
+    SET member_name = IFNULL(#{memberName}, member_name),
+        member_nickname = #{memberNickname},
+        member_email = #{memberEmail}
+    WHERE member_id = #{memberId}
+  </update>
 
-<select id="findIdByEmail" parameterType="string" resultType="string">
+  <select id="getOneMemberInfo" resultType="member">
+    SELECT 
+      member_name,
+      member_nickname,
+      member_email,
+      member_thumb,
+      member_co2 AS memberCo2,
+      enroll_date,
+      member_status
+    FROM member_tbl1
+    WHERE member_id = #{memberId}
+  </select>
 
-<!--원래라면  
-김경건
-		select memberId
-		from member_tbl
-		where member_email = ?
-		이 방식이 맞지만 내가 현재 하나의 이메일로 다수의 
-		아이디를 양산한 탓에 리스트를 설정하든가 아니면
-		아래 로직처럼 fetch first 1 row only 설정을 통해 다수의 아이디중
-		하나만 조회하게 했음.
-		
-		-->
-select member_id
-from member_tbl1
-where member_email = #{memberEmail}
-fetch first 1 row only
+  <select id="memberPw" resultType="member">
+    SELECT member_pw FROM member_tbl1 WHERE member_id = #{memberId}
+  </select>
 
+  <update id="updatePw">
+    UPDATE member_tbl1 SET member_pw = #{memberPw} WHERE member_id = #{memberId}
+  </update>
 
-<!--select memberId
-		from member_tbl
-		where member_email = ?
-		팀원들 작업이 다 끝날 때 데이터베이스에 유니크 설정을
-		걸어두고 위에 있는 구문 다시 부활시킬 예정.
-		-->
+  <update id="updateMemberThumb">
+    UPDATE member_tbl1 SET member_thumb = #{memberThumb} WHERE member_id = #{memberId}
+  </update>
 
-</select>
+  <select id="selectMemberPoint" parameterType="string" resultType="Integer">
+    SELECT TOTAL_POINT
+    FROM MEMBER_POINT_TBL
+    WHERE MEMBER_ID = #{memberId}
+  </select>
 
-<!--아이디와 이메일 조회해와서 비밀번호 페이지 열기김경건-->
-<select id="existsByIdAndEmail"  resultType="Integer">
-	SELECT 1
-	FROM member_tbl1
-	WHERE member_id = #{memberId}
-	AND member_email = #{memberEmail}
-</select>
-
- 
-
-	
-	
-<update id="resetPw">
-	update member_tbl1
-	set member_pw =#{memberPw}
-	where member_id = #{memberId}
-</update>
-
-
-
-	<!--..............................................................-->
-
-<select id="selectMemberList" resultType="member">
-		select
-			member_id,
-			member_name,
-			member_email,
-			enroll_date,
-			member_grade,
-			member_status
-		from member_tbl1
-	</select>
-
-	<select id="selectCarbonStats" resultType="map">
-		select
-			count(*) as memberCount,
-			sum(nvl(member_co2, 0)) as totalCo2
-		from member_tbl1
-		where member_status &lt;&gt; 2
-		and nvl(member_co2, 0) > 0
-	</select>
-	<update id="updateMemberInfo">
-		update member_tbl1 set member_name = nvl(#{memberName}, member_name),
-			member_nickname=#{memberNickname},
-			member_email=#{memberEmail}
-		where member_id=#{memberId}
-	</update>
-	<select id="getOneMemberInfo" resultType="member">
-		select member_name,
-			member_nickname,
-			member_email,
-			member_thumb,
-			member_co2 AS memberCo2,
-			enroll_date,
-			member_status
-		from member_tbl1
-		where member_id = #{memberId}
-	</select>
-	<select id="memberPw" resultType="member">
-		select member_pw from member_tbl1 where member_id =#{memberId}
-	</select>
-	<update id="updatePw">
-		update member_tbl1 set member_pw=#{memberPw} where member_id = #{memberId}
-	</update>
-	<update id="updateMemberThumb">
-		update member_tbl1 set member_thumb=#{memberThumb} where member_id = #{memberId}
-	</update>
-
-	<!-- 포인트 조회 -->
-	<select id="selectMemberPoint" parameterType="string" resultType="Integer">
-	SELECT TOTAL_POINT
-	FROM MEMBER_POINT_TBL
-	WHERE MEMBER_ID = #{memberId}
-</select>
-
-<update id="decreasePoint">
+  <update id="decreasePoint">
     UPDATE MEMBER_POINT_TBL
     SET TOTAL_POINT = TOTAL_POINT - #{point}
     WHERE MEMBER_ID = #{memberId}
-</update>
-<update id="leaveMember">
-	update member_tbl1 set member_status = 2 where member_id =#{memberId}
-</update>
+  </update>
 
-<insert id ="insertLog">
-	insert into member_log_tbl (member_log_no, member_id, log_ip, log_time, log_action, log_device, log_result, log_location, log_detail, log_alert)
-	values (
-		log_seq.nextval,
-		#{memberId},
-		#{logIp},
-		sysdate,
-		#{logAction},
-		#{logDevice},
-		#{logResult},
-		#{logLocation},
-		#{logDetail},
-		#{logAlert}
-	)
-</insert>
+  <update id="leaveMember">
+    UPDATE member_tbl1 SET member_status = 2 WHERE member_id = #{memberId}
+  </update>
 
-<select id="getLastLocation" resultType="String">
-	<![CDATA[
-	select * from (
-    	select log_location 
-    	from member_log_tbl 
-    	where member_id = #{memberId} and log_action = '로그인'
-    	order by log_time desc
-) where rownum <= 1
-]]>
-</select>
+  <insert id="insertLog" useGeneratedKeys="true" keyProperty="memberLogNo">
+    INSERT INTO member_log_tbl (
+      member_id, log_ip, log_time, log_action, log_device, log_result, log_location, log_detail, log_alert
+    ) VALUES (
+      #{memberId},
+      #{logIp},
+      NOW(),
+      #{logAction},
+      #{logDevice},
+      #{logResult},
+      #{logLocation},
+      #{logDetail},
+      #{logAlert}
+    )
+  </insert>
 
-<select id="getLockInfo" resultType="map">
-	select lock_until as "lockUntil", lock_reason as "lockReason", member_status as "memberStatus"
-	from member_tbl1 
-	where member_id = #{memberId}
-</select>
+  <select id="getLastLocation" resultType="String">
+    SELECT log_location 
+    FROM member_log_tbl 
+    WHERE member_id = #{memberId} 
+      AND log_action = '로그인'
+    ORDER BY log_time DESC
+    LIMIT 1
+  </select>
 
-<select id="getFailCount">
-	SELECT COUNT(*) FROM member_log_tbl
+  <select id="getLockInfo" resultType="map">
+    SELECT lock_until AS "lockUntil", lock_reason AS "lockReason", member_status AS "memberStatus"
+    FROM member_tbl1 
     WHERE member_id = #{memberId}
-    AND log_action = '로그인실패'
-    AND log_time > SYSDATE - (1/1440)	<!-- 60분 * 24 = 1440 sysdate - (1/1440) = 현재시간 1분전  -->
-</select>
+  </select>
 
-<update id="updateLockUntil">
-	update member_tbl1 set 
-	lock_until = sysdate + (5/1440), <!-- 현재시간 5분후 -->
-	lock_reason = '로그인 3회 실패로 일시정지 되었습니다. 잠시 후 다시 시도해주세요'
-	where member_id = #{memberId}	
-</update>
+  <select id="getFailCount">
+    SELECT COUNT(*) FROM member_log_tbl
+    WHERE member_id = #{memberId}
+      AND log_action = '로그인실패'
+      AND log_time > DATE_SUB(NOW(), INTERVAL 1 MINUTE)
+  </select>
 
-<select id="selectClist" resultType="Member">
-	select member_thumb, member_nickname, member_co2 from member_tbl1 where member_co2 is not null order by member_co2 desc
-	offset 0 rows fetch next 15 rows only
-</select>
+  <update id="updateLockUntil">
+    UPDATE member_tbl1 
+    SET lock_until = DATE_ADD(NOW(), INTERVAL 5 MINUTE),
+        lock_reason = '로그인 3회 실패로 일시정지 되었습니다. 잠시 후 다시 시도해주세요'
+    WHERE member_id = #{memberId}   
+  </update>
 
-	<!-- 포인트 이력 조회 -->
-	<select id="selectPointHistory" parameterType="string" resultType="pointHistory">
-	    SELECT
-	        POINT_NO AS pointNo,
-	        MEMBER_ID AS memberId,
-	        POINT_CHANGE AS pointChange,
-	        POINT_TYPE AS pointType,
-	        POINT_REASON AS pointReason,
-	        TO_CHAR(CREATED_DATE, 'YYYY-MM-DD HH24:MI') AS createdDate
-	    FROM POINT_TBL
-	    WHERE MEMBER_ID = #{memberId}
-	    ORDER BY POINT_NO DESC
-	</select>
+  <select id="selectClist" resultType="Member">
+    SELECT member_thumb, member_nickname, member_co2 
+    FROM member_tbl1 
+    WHERE member_co2 IS NOT NULL 
+    ORDER BY member_co2 DESC
+    LIMIT 15 OFFSET 0
+  </select>
 
-		<insert id="insertPointHistory" parameterType="map">
-		    INSERT INTO POINT_TBL (
-		        POINT_NO,
-		        MEMBER_ID,
-		        POINT_CHANGE,
-		        POINT_TYPE,
-		        POINT_REASON,
-		        CREATED_DATE
-		    ) VALUES (
-		        POINT_SEQ.NEXTVAL,
-		        #{memberId},
-		        #{pointChange},
-		        #{pointType},
-		        #{pointReason},
-		        SYSDATE
-		    )
-		</insert>
+  <select id="selectPointHistory" parameterType="string" resultType="pointHistory">
+    SELECT
+      POINT_NO AS pointNo,
+      MEMBER_ID AS memberId,
+      POINT_CHANGE AS pointChange,
+      POINT_TYPE AS pointType,
+      POINT_REASON AS pointReason,
+      DATE_FORMAT(CREATED_DATE, '%Y-%m-%d %H:%i') AS createdDate
+    FROM POINT_TBL
+    WHERE MEMBER_ID = #{memberId}
+    ORDER BY POINT_NO DESC
+  </select>
 
-	<update id="unlockExpiredMembers">
-	<![CDATA[
-		update member_tbl1 set
-			member_status = 0
-		where member_status = 3
-		and lock_until <= sysdate
-		]]>
-	</update>
-	
+  <insert id="insertPointHistory" parameterType="map" useGeneratedKeys="true" keyProperty="pointNo">
+    INSERT INTO POINT_TBL (
+      MEMBER_ID,
+      POINT_CHANGE,
+      POINT_TYPE,
+      POINT_REASON,
+      CREATED_DATE
+    ) VALUES (
+      #{memberId},
+      #{pointChange},
+      #{pointType},
+      #{pointReason},
+      NOW()
+    )
+  </insert>
+
+  <update id="unlockExpiredMembers">
+    <![CDATA[
+    UPDATE member_tbl1 
+    SET member_status = 0
+    WHERE member_status = 3
+      AND lock_until <= NOW()
+    ]]>
+  </update>
+    
 </mapper>
