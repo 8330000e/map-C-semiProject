@@ -12,4 +12,8 @@ export default defineConfig({
   optimizeDeps: {
     include: ["@mui/icons-material"],
   },
+  build: {
+    outDir: finalOutDir,
+    emptyOutDir: true,
+  },
 });

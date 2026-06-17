@@ -4,7 +4,7 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm install
 
 COPY . .
 
@@ -16,6 +16,8 @@ ARG VITE_FIREBASE_BUCKET
 ENV VITE_BACKSERVER=$VITE_BACKSERVER
 ENV VITE_NAVER_MAP_KEY=$VITE_NAVER_MAP_KEY
 ENV VITE_FIREBASE_BUCKET=$VITE_FIREBASE_BUCKET
+
+ENV IS_DOCKER=true
 
 RUN npm run build
 
