@@ -49,7 +49,7 @@ import kr.co.iei.utils.FileUtils;
 
 // 관리자 전용 REST 컨트롤러 - 기본 URL: /admins
 // 대시보드 / 공지 / FAQ / QnA / 회원 / 게시글 / 신고 / 로그 담당
-@RequestMapping(value="admins")
+@RequestMapping(value="/api/admins")
 @CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
 @RestController
 public class AdminController {

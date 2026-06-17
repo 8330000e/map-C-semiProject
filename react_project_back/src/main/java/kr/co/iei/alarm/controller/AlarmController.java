@@ -17,7 +17,7 @@ import kr.co.iei.alarm.model.vo.Alarm;
 
 @CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
 @RestController
-@RequestMapping(value="/alarms")
+@RequestMapping(value="/api/alarms")
 public class AlarmController {
     @Autowired
     private AlarmService alarmService;

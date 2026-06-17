@@ -15,7 +15,7 @@ import kr.co.iei.point.vo.PointHistory;
 
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 @RestController
-//@RequestMapping(value = "/points")
+//@RequestMapping(value = "/api/points")
 public class PointController {
 	@Autowired
 	public PointService pointService;

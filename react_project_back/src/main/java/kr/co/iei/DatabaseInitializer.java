@@ -7,15 +7,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-/**
- * 애플리케이션 시작 시 DB 테이블 컬럼 누락 여부를 체크하고 자동으로 보완합니다.
- */
 @Component
 @Order(1)
 public class DatabaseInitializer implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DatabaseInitializer.class);
-
     private final JdbcTemplate jdbcTemplate;
 
     public DatabaseInitializer(JdbcTemplate jdbcTemplate) {
@@ -24,46 +20,53 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // STORE_REVIEW_TBL 누락 컬럼 자동 추가 - 모든 nullable 컬럼들 with defaults
-        addColumnIfNotExists("STORE_REVIEW_TBL", "TRADE_NO",         "NUMBER");  // Nullable - no FK check
-        addColumnIfNotExists("STORE_REVIEW_TBL", "RATING",           "NUMBER DEFAULT 5");
-        addColumnIfNotExists("STORE_REVIEW_TBL", "SELLER_ID",        "VARCHAR2(100)");  // Nullable - no FK check
-        addColumnIfNotExists("STORE_REVIEW_TBL", "BUYER_ID",         "VARCHAR2(100)");  // Nullable - no FK check
-        addColumnIfNotExists("STORE_REVIEW_TBL", "MEMBER_ID",        "VARCHAR2(100)");
-        addColumnIfNotExists("STORE_REVIEW_TBL", "MEMBER_NICKNAME",  "VARCHAR2(100)");
-        addColumnIfNotExists("STORE_REVIEW_TBL", "REVIEW_CONTENT",   "VARCHAR2(2000)");
-        addColumnIfNotExists("STORE_REVIEW_TBL", "REVIEW_CONT",      "VARCHAR2(2000)");
-        addColumnIfNotExists("STORE_REVIEW_TBL", "IS_PRIVATE",       "NUMBER(1) DEFAULT 0 NOT NULL");
-        addColumnIfNotExists("STORE_REVIEW_TBL", "CREATED_AT",       "TIMESTAMP DEFAULT SYSTIMESTAMP");
-        addColumnIfNotExists("STORE_REVIEW_TBL", "IS_DELETED",       "NUMBER(1) DEFAULT 0 NOT NULL");
-        addColumnIfNotExists("STORE_BOARD_TRADEINFO_TBL", "INVOICE_NUMBER", "VARCHAR2(100)");
-        addColumnIfNotExists("STORE_BOARD_TRADEINFO_TBL", "COURIER_CODE", "NUMBER");
-        addColumnIfNotExists("STORE_BOARD_TRADEINFO_TBL", "SHIPPING_STATUS", "NUMBER DEFAULT 0");
+        // MySQL 데이터 타입으로 변경 (NUMBER -> INT, VARCHAR2 -> VARCHAR, SYSTIMESTAMP -> NOW())
+        // 주의: 대소문자 구분을 위해 테이블명을 이전 세팅에 맞춰 소문자/대문자 통일 필요 (여기선 소문자 기준 예시)
+        addColumnIfNotExists("store_review_tbl", "TRADE_NO",         "INT");
+        addColumnIfNotExists("store_review_tbl", "RATING",           "INT DEFAULT 5");
+        addColumnIfNotExists("store_review_tbl", "SELLER_ID",        "VARCHAR(100)");
+        addColumnIfNotExists("store_review_tbl", "BUYER_ID",         "VARCHAR(100)");
+        addColumnIfNotExists("store_review_tbl", "MEMBER_ID",        "VARCHAR(100)");
+        addColumnIfNotExists("store_review_tbl", "MEMBER_NICKNAME",  "VARCHAR(100)");
+        addColumnIfNotExists("store_review_tbl", "REVIEW_CONTENT",   "VARCHAR(2000)");
+        addColumnIfNotExists("store_review_tbl", "REVIEW_CONT",      "VARCHAR(2000)");
+        addColumnIfNotExists("store_review_tbl", "IS_PRIVATE",       "TINYINT DEFAULT 0 NOT NULL");
+        addColumnIfNotExists("store_review_tbl", "CREATED_AT",       "DATETIME DEFAULT NOW()");
+        addColumnIfNotExists("store_review_tbl", "IS_DELETED",       "TINYINT DEFAULT 0 NOT NULL");
+        addColumnIfNotExists("store_board_tradeinfo_tbl", "INVOICE_NUMBER", "VARCHAR(100)");
+        addColumnIfNotExists("store_board_tradeinfo_tbl", "COURIER_CODE", "INT");
+        addColumnIfNotExists("store_board_tradeinfo_tbl", "SHIPPING_STATUS", "INT DEFAULT 0");
     }
 
     private void addColumnIfNotExists(String table, String column, String definition) {
         try {
+            // MySQL INFORMATION_SCHEMA 조회 방식으로 교체
             Integer count = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM USER_TAB_COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?",
+                "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'semiproject' AND TABLE_NAME = ? AND COLUMN_NAME = ?",
                 Integer.class, table, column
             );
+            
             if (count == null || count == 0) {
+                // MySQL은 ALTER TABLE ADD 시 괄호()를 붙이지 않는 것이 표준 문법입니다.
                 jdbcTemplate.execute(
-                    "ALTER TABLE " + table + " ADD (" + column + " " + definition + ")"
+                    "ALTER TABLE " + table + " ADD " + column + " " + definition
                 );
                 log.info("[DB Init] {}에 {} 컬럼 추가 완료", table, column);
             } else {
                 log.debug("[DB Init] {}의 {} 컬럼 이미 존재", table, column);
-                // 기존 NOT NULL 컬럼을 NULL로 변경 (TRADE_NO, SELLER_ID, BUYER_ID, RATING 등)
+                
                 if (column.equals("TRADE_NO") || column.equals("SELLER_ID") || column.equals("BUYER_ID") || column.equals("RATING")) {
                     try {
-                        String nullable = jdbcTemplate.queryForObject(
-                            "SELECT NULLABLE FROM USER_TAB_COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?",
+                        // MySQL IS_NULLABLE 결과값('YES' 또는 'NO') 검사
+                        String isNullable = jdbcTemplate.queryForObject(
+                            "SELECT IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'semiproject' AND TABLE_NAME = ? AND COLUMN_NAME = ?",
                             String.class, table, column
                         );
-                        if ("N".equals(nullable)) {
+                        if ("NO".equals(isNullable)) {
+                            // MySQL은 MODIFY 대신 MODIFY COLUMN을 사용하며 데이터 타입을 다시 명시해 주어야 합니다.
+                            String typeDef = column.equals("RATING") ? "INT" : "VARCHAR(100)";
                             jdbcTemplate.execute(
-                                "ALTER TABLE " + table + " MODIFY " + column + " NULL"
+                                "ALTER TABLE " + table + " MODIFY COLUMN " + column + " " + typeDef + " NULL"
                             );
                             log.info("[DB Init] {}의 {} 컬럼을 NULL로 수정", table, column);
                         }

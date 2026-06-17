@@ -36,7 +36,7 @@ import kr.co.iei.utils.FileUtils;
 
 @CrossOrigin("http://localhost:5173")
 @RestController
-@RequestMapping(value="/campaigns")
+@RequestMapping(value="/api/campaigns")
 public class CampaignController {
 	@Autowired
 	private CampaignService campaignService;

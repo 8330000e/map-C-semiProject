@@ -12,7 +12,7 @@ import kr.co.iei.carbon.model.service.CarbonService;
 import kr.co.iei.carbon.model.vo.CarbonHistory;
 
 @RestController
-@RequestMapping("/carbon")
+@RequestMapping("/api/carbon")
 public class CarbonController {
 
     private final CarbonService carbonService;

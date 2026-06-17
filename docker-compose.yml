@@ -9,10 +9,10 @@ services:
     ports:
       - "9999:9999"
     environment:
-      # Oracle DB
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@${DB_HOST}:1521/${DB_SERVICE}
-      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_DATASOURCE_URL: jdbc:mysql://database-1.czgo6eoe4bdj.ap-northeast-2.rds.amazonaws.com:3306/semiproject?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root1111
 
       # JWT
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
@@ -25,7 +25,7 @@ services:
       # Gemini API
       GEMINI_API_KEY: ${GEMINI_API_KEY}
 
-      # 파일 업로드 경로 (Linux 컨테이너용)
+      # 파일 업로드 경로
       FILE_ROOT: /app/uploads/semiproject/
 
     volumes:

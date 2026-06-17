@@ -15,7 +15,7 @@ import kr.co.iei.donation.model.vo.PointDonation;
 
 @CrossOrigin("origins = \\\"http://localhost:5173\\\", allowCredentials = \\\"true\\\"")
 @RestController
-@RequestMapping(value = "/donations")
+@RequestMapping(value = "/api/donations")
 public class DonationController {
 	@Autowired
 	private DonationService donationService;
