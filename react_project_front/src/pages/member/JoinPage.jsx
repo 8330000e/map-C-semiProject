@@ -78,7 +78,7 @@ const Join = () => {
 
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_BACKSERVER}/members/exists?memberId=${member.memberId}`,
+        `VITE_BACKSERVER/members/exists?memberId=${member.memberId}`,
       );
 
       // res.data가 true면 중복된 아이디가 있음 -> 1 (사용불가)
@@ -234,7 +234,7 @@ const Join = () => {
       return;
     }
 
-    const BACKSERVER = import.meta.env.VITE_BACKSERVER;
+     const BACKSERVER = `VITE_BACKSERVER`; `VITE_BACKSERVER`;
     if (!BACKSERVER) {
       await errorAlert("연결 오류", "서버 연결 오류");
       return;
@@ -244,7 +244,7 @@ const Join = () => {
     // 회원가입 요청을 서버로 전달하는 부분
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKSERVER}/members`,
+        `VITE_BACKSERVER`/members`,
         member,
       );
       console.log("아이디 중복 체크 결과:", res.data);

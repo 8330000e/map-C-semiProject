@@ -29,7 +29,7 @@ const CampaignSuccession = () => {
                 if (result.isConfirmed) {
                   axios
                     .patch(
-                      `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNo}/inherit`,
+                      `VITE_BACKSERVER/campaigns/${campaignNo}/inherit`,
                     )
                     .then((res) => {
                       console.log(res.data);

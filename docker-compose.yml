@@ -34,25 +34,24 @@ services:
     networks:
       - semi-net
 
-  # ── Frontend (React + Nginx) ─────────────────────────────────────────────
-  frontend:
-    build:
-      context: ./react_project_front
-      dockerfile: Dockerfile
-      args:
-        VITE_BACKSERVER: ${VITE_BACKSERVER}
-        VITE_NAVER_MAP_KEY: ${VITE_NAVER_MAP_KEY}
-    container_name: semi-frontend
+# ── Nginx (Reverse Proxy) ──────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: semi-nginx
     restart: unless-stopped
     ports:
       - "80:80"
-    depends_on:
-      - backend
+    volumes:
+      - ./react_project_front/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./src/main/resources/static:/usr/share/nginx/html
     networks:
       - semi-net
+    depends_on:
+      - backend
 
 volumes:
   semi-uploads:
+    driver: local
 
 networks:
   semi-net:

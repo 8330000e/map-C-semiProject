@@ -6,9 +6,8 @@ import styles from "./TreeGrowMainPage.module.css";
 import RegionMap from "../../components/mainpage/RegionMap";
 import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 
-const BACKSERVER =
-  import.meta.env.VITE_BACKSERVER ||
-  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999/api";
+ const BACKSERVER = `VITE_BACKSERVER`;
+  
 
 const BASE_NOTICE =
   "📢 8개 지역중 거주한 지역에 물을 주세요. 📢 나무는 일주일마다 초기화 됩니다.";

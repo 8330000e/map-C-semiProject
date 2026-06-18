@@ -44,7 +44,7 @@ const CampaignBanMember = () => {
                 const campaignNo = banMember.campaignNo;
                 axios
                   .get(
-                    `${import.meta.env.VITE_BACKSERVER}/campaigns/${memberId}/part?campaignNo=${campaignNo}`,
+                    `VITE_BACKSERVER/campaigns/${memberId}/part?campaignNo=${campaignNo}`,
                   )
                   .then((res) => {
                     console.log(res.data);
@@ -101,7 +101,7 @@ const CampaignBanMember = () => {
                 console.log(banMember.campaignExileReason);
                 axios
                   .post(
-                    `${import.meta.env.VITE_BACKSERVER}/campaigns/ban`,
+                    `VITE_BACKSERVER/campaigns/ban`,
                     banMember,
                   )
                   .then((res) => {

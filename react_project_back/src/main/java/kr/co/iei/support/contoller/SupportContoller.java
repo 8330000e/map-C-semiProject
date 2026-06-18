@@ -22,7 +22,7 @@ import kr.co.iei.admin.model.vo.Qna;
 import kr.co.iei.support.model.service.SupportService;
 import kr.co.iei.utils.FileUtils;
 
-@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
+@CrossOrigin(origins = {"https://d2g15isq25ks7i.cloudfront.net","http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
 @RequestMapping(value="/api/supports")
 @RestController
 

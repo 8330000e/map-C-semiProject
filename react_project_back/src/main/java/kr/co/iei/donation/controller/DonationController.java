@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import kr.co.iei.donation.model.service.DonationService;
 import kr.co.iei.donation.model.vo.PointDonation;
 
-@CrossOrigin("origins = \\\"http://localhost:5173\\\", allowCredentials = \\\"true\\\"")
+@CrossOrigin(origins = {"https://d2g15isq25ks7i.cloudfront.net","http://localhost:5173"}, allowCredentials = "true")
 @RestController
 @RequestMapping(value = "/api/donations")
 public class DonationController {

@@ -56,7 +56,7 @@ const AdminNoticePage = () => {
   // 공지사항 목록 조회
   const selectNoticeList = () => {
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/admins`)
+      .get(`VITE_BACKSERVER/admins`)
       .then((res) => {
         setNoticeList(res.data);
       })
@@ -78,7 +78,7 @@ const AdminNoticePage = () => {
       if (!result.isConfirmed) return;
 
       axios
-        .delete(`${import.meta.env.VITE_BACKSERVER}/admins/notice/${noticeNo}`)
+        .delete(`VITE_BACKSERVER/admins/notice/${noticeNo}`)
         .then((res) => {
           if (res.data === 1) {
             selectNoticeList(); // 삭제 후 목록 갱신
@@ -126,7 +126,7 @@ const AdminNoticePage = () => {
         }
 
         axios
-          .patch(`${import.meta.env.VITE_BACKSERVER}/admins/notice`, formData, {
+          .patch(`VITE_BACKSERVER/admins/notice`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
           })
           .then((res) => {
@@ -170,7 +170,7 @@ const AdminNoticePage = () => {
       }
 
       axios
-        .post(`${import.meta.env.VITE_BACKSERVER}/admins/notice`, formData, {
+        .post(`VITE_BACKSERVER/admins/notice`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         })
         .then((res) => {

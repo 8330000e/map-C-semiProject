@@ -56,7 +56,7 @@ const CampaignTerminate = () => {
                 if (result.isConfirmed) {
                   axios
                     .patch(
-                      `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNo}/terminate`,
+                      `VITE_BACKSERVER/campaigns/${campaignNo}/terminate`,
                     )
                     .then((res) => {
                       console.log(res.data);

@@ -9,7 +9,7 @@ const AdminLogPage = () => {
 
   const excelDownload = () => {
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/admins/admins-excel`, {
+      .get(`VITE_BACKSERVER/admins/admins-excel`, {
         responseType: "blob",
       })
       .then((res) => {
@@ -57,7 +57,7 @@ const AdminLogPage = () => {
     if (logFilter.action !== "ALL") params.action = logFilter.action;
     params.sort = logFilter.sort; // sort는 무조건 보냄 asc/desc
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/admins/admin-log`, { params })
+      .get(`VITE_BACKSERVER/admins/admin-log`, { params })
       .then((res) => {
         setAdminLogList(res.data);
       })

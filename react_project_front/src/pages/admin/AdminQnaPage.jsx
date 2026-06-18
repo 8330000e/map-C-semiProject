@@ -44,7 +44,7 @@ const AdminQnaPage = () => {
           formData.append("upfile", compressedImage, compressedImage.name);
         }
         axios
-          .patch(`${import.meta.env.VITE_BACKSERVER}/admins/qna`, formData, {
+          .patch(`VITE_BACKSERVER/admins/qna`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
           })
           .then((res) => {
@@ -74,7 +74,7 @@ const AdminQnaPage = () => {
   const selectQnaList = () => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/admins/qna?page=${page}&size=${size}`,
+        `VITE_BACKSERVER/admins/qna?page=${page}&size=${size}`,
       )
       .then((res) => {
         console.log(res);

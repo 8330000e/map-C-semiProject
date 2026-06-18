@@ -23,7 +23,7 @@ const CampaignNoticeDetailPage = () => {
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNoticeNo}/noticeDetail`,
+        `VITE_BACKSERVER/campaigns/${campaignNoticeNo}/noticeDetail`,
       )
       .then((res) => {
         console.log(res.data);
@@ -114,7 +114,7 @@ const CampaignNoticeDetailPage = () => {
                     onClick={() => {
                       axios
                         .patch(
-                          `${import.meta.env.VITE_BACKSERVER}/campaigns/updateDetailNotice`,
+                          `VITE_BACKSERVER/campaigns/updateDetailNotice`,
                           updateNotice,
                         )
                         .then((res) => {
@@ -183,7 +183,7 @@ const CampaignNoticeDetailPage = () => {
                       if (result.isConfirmed) {
                         axios
                           .delete(
-                            `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNoticeNo}/deleteDetailNotice`,
+                            `VITE_BACKSERVER/campaigns/${campaignNoticeNo}/deleteDetailNotice`,
                           )
                           .then((res) => {
                             console.log(res.data);

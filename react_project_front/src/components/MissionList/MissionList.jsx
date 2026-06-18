@@ -71,7 +71,7 @@ const MissionList = () => {
   const loadMissions = async () => {
     try {
       const missionRes = await axios.get(
-        `${import.meta.env.VITE_BACKSERVER}/missions`,
+        `VITE_BACKSERVER/missions`,
       );
       const list = missionRes.data || [];
 
@@ -79,7 +79,7 @@ const MissionList = () => {
       const bonus = list.find((mission) => mission.missionType === "BONUS");
 
       const randomRes = await axios.get(
-        `${import.meta.env.VITE_BACKSERVER}/missions/random`,
+        `VITE_BACKSERVER/missions/random`,
         {
           params: { memberId },
         },
@@ -120,7 +120,7 @@ const MissionList = () => {
       setAttendanceLoading(true);
 
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKSERVER}/missions/attendance/check`,
+        `VITE_BACKSERVER/missions/attendance/check`,
         {
           memberId,
         },
@@ -157,7 +157,7 @@ const MissionList = () => {
 
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_BACKSERVER}/missions/attendance/today`,
+        `VITE_BACKSERVER/missions/attendance/today`,
         {
           params: { memberId },
         },
@@ -173,7 +173,7 @@ const MissionList = () => {
 
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_BACKSERVER}/missions/basic/today`,
+        `VITE_BACKSERVER/missions/basic/today`,
         {
           params: { memberId },
         },
@@ -189,7 +189,7 @@ const MissionList = () => {
 
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_BACKSERVER}/missions/random/today/completed`,
+        `VITE_BACKSERVER/missions/random/today/completed`,
         {
           params: { memberId, missionNo },
         },
@@ -234,15 +234,15 @@ const MissionList = () => {
 
     // 이미 /uploads/... 처럼 경로가 들어있으면 서버 주소만 붙임
     if (value.startsWith("/")) {
-      return `${import.meta.env.VITE_BACKSERVER}${value}`;
+      return `VITE_BACKSERVER${value}`;
     }
 
     // 파일명만 저장된 경우
     if (type === "cert") {
-      return `${import.meta.env.VITE_BACKSERVER}/uploads/mission/random/${value}`;
+      return `VITE_BACKSERVER/uploads/mission/random/${value}`;
     }
 
-    return `${import.meta.env.VITE_BACKSERVER}/uploads/mission/${value}`;
+    return `VITE_BACKSERVER/uploads/mission/${value}`;
   };
 
   const renderMissionCard = (
@@ -343,7 +343,7 @@ const MissionList = () => {
       formData.append("certImage", certFile);
 
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKSERVER}/missions/random/certify`,
+        `VITE_BACKSERVER/missions/random/certify`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -390,7 +390,7 @@ const MissionList = () => {
 
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_BACKSERVER}/missions/bonus/today`,
+        `VITE_BACKSERVER/missions/bonus/today`,
         {
           params: { memberId },
         },
@@ -421,7 +421,7 @@ const MissionList = () => {
 
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKSERVER}/missions/bonus/claim`,
+        `VITE_BACKSERVER/missions/bonus/claim`,
         {
           memberId,
           missionNo: bonusMission?.missionNo,

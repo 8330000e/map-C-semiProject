@@ -6,8 +6,8 @@ import userImg from "../../assets/admin.png";
 import useAuthStore from "../../store/useAuthStore.js";
 import { normalizeImageUrl } from "../../utils/getImageUrl";
 import { compressImageFile } from "../../utils/compressImage";
-const BACKSERVER =
-  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999";
+ const BACKSERVER = `VITE_BACKSERVER`;
+  ;
 
 // 서버에 저장된 썸네일 경로를 실제 이미지 URL로 변환함.
 // - 절대 URL이면 그대로 사용함.
@@ -33,7 +33,7 @@ const MyInformation = () => {
   // 컴포넌트가 처음 렌더될 때 서버에서 회원 정보와 조회수를 가져옴.
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/members/${memberId}`)
+      .get(`VITE_BACKSERVER/members/${memberId}`)
       .then((res) => {
         // 서버에서 받아온 회원 정보 저장함.
         setMember(res.data);
@@ -49,7 +49,7 @@ const MyInformation = () => {
 
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/boards/${memberId}?searchBoard=&filter=2&checker=1`,
+        `VITE_BACKSERVER/boards/${memberId}?searchBoard=&filter=2&checker=1`,
       )
       .then((res) => {
         const boards = Array.isArray(res.data) ? res.data : [];
@@ -81,7 +81,7 @@ const MyInformation = () => {
     data.append("file", compressedThumbFile, compressedThumbFile.name);
     axios
       .patch(
-        `${import.meta.env.VITE_BACKSERVER}/members/${memberId}/thumb`,
+        `VITE_BACKSERVER/members/${memberId}/thumb`,
         data,
         {
           headers: {

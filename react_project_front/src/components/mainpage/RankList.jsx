@@ -8,7 +8,7 @@ const RankList = () => {
   const [rankList, setRankList] = useState([]);
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/members/rank`)
+      .get(`VITE_BACKSERVER/members/rank`)
       .then((res) => {
         console.log(res);
         setRankList(res.data);

@@ -1,5 +1,8 @@
 package kr.co.iei.region.model.vo;
 
+import lombok.Data;
+
+@Data
 public class Ctpvsgg {
     private String ctpvsggId;
     private Integer ctpvCd;

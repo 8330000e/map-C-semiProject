@@ -40,7 +40,7 @@ const CampaignMemoWritePage = () => {
     data.append("campaignNo", campaignNo);
     axios
       .post(
-        `${import.meta.env.VITE_BACKSERVER}/campaigns/${memberId}/memothumb`,
+        `VITE_BACKSERVER/campaigns/${memberId}/memothumb`,
         data,
         {
           headers: {

@@ -38,7 +38,7 @@ const AdminChatBot = () => {
     setIsLoading(true);
 
     axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/admins/ai/notice-draft`, {
+      .post(`VITE_BACKSERVER/admins/ai/notice-draft`, {
         topic: topic,
       })
       .then((res) => {
@@ -95,7 +95,7 @@ const AdminChatBot = () => {
     setIsLoading(true);
 
     axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/admins/chat-bot`, {
+      .post(`VITE_BACKSERVER/admins/chat-bot`, {
         messages: newMessage,
       })
       .then((res) => {

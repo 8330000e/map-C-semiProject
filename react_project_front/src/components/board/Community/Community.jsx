@@ -16,9 +16,8 @@ import NavigateBeforeOutlinedIcon from "@mui/icons-material/NavigateBeforeOutlin
 import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 
-const BACKSERVER =
-  import.meta.env.VITE_BACKSERVER ||
-  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999/api";
+ const BACKSERVER = `VITE_BACKSERVER`;
+  
 
 const getBoardNo = (board) =>
   board?.boardNo ?? board?.boardId ?? board?.id ?? null;

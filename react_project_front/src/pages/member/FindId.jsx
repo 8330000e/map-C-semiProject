@@ -18,7 +18,7 @@ const FindId = () => {
   //이떄 서로 겹쳐서 문제가 생기지 않도록 공통 함수인 fetchFindId를 만들어서 이메일 인증이 완료되었을 때 자동으로 아이디 찾기 요청이 수행되도록 하고
   // 아이디 찾기 버튼을 눌렀을 때도 같은 fetchFindId 함수를 호출하도록 함
   const fetchFindId = () => {
-    return axios.post(`${import.meta.env.VITE_BACKSERVER}/members/find-id`, {
+    return axios.post(`VITE_BACKSERVER/members/find-id`, {
       memberEmail,
     });
   };

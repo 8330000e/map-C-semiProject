@@ -63,10 +63,10 @@ const EmailAuth = ({ memberEmail, setMemberEmail, onVerified, readOnlyEmail = fa
     const payload = { memberEmail };
     //전송 전 데이터 로그 확인
     console.log("이메일 인증 요청 데이터:", payload);
-    console.log("서버 주소:", import.meta.env.VITE_BACKSERVER);
+    console.log("서버 주소:", `VITE_BACKSERVER`);
 
     axios
-      .post(`${import.meta.env.VITE_BACKSERVER}/members/email-verification`, {
+      .post(`VITE_BACKSERVER/members/email-verification`, {
         //HTTP POST 요청에서 서버는 일반적으로 JSON 형태로 데이터를 받음
         //--> 그래서 { memberEmail: memberEmail }-> 이 객체 형태로 보내야하는데
         //-> 축약이 가능함 그게 바로  memberEmail, 형식.

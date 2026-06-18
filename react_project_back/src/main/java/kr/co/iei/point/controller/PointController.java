@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import kr.co.iei.point.service.PointService;
 import kr.co.iei.point.vo.PointHistory;
 
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@CrossOrigin(origins = {"https://d2g15isq25ks7i.cloudfront.net","http://localhost:5173"}, allowCredentials = "true")
 @RestController
 //@RequestMapping(value = "/api/points")
 public class PointController {

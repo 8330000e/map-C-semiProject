@@ -34,7 +34,7 @@ const AdminFaqPage = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${import.meta.env.VITE_BACKSERVER}/admins/faq/${faqNo}`)
+          .delete(`VITE_BACKSERVER/admins/faq/${faqNo}`)
           .then((res) => {
             if (res.data === 1) {
               selectFaqList(); // 삭제 후 목록 갱신
@@ -66,7 +66,7 @@ const AdminFaqPage = () => {
       }).then((result) => {
         if (result.isConfirmed) {
           axios
-            .patch(`${import.meta.env.VITE_BACKSERVER}/admins/faq`, faq)
+            .patch(`VITE_BACKSERVER/admins/faq`, faq)
             .then((res) => {
               console.log(res);
               if (res.data === 1) {
@@ -94,7 +94,7 @@ const AdminFaqPage = () => {
       }).then((result) => {
         if (result.isConfirmed) {
           axios
-            .post(`${import.meta.env.VITE_BACKSERVER}/admins/faq`, faq)
+            .post(`VITE_BACKSERVER/admins/faq`, faq)
             .then((res) => {
               console.log(res);
               if (res.data === 1) {
@@ -116,7 +116,7 @@ const AdminFaqPage = () => {
   // FAQ 목록 조회
   const selectFaqList = () => {
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/admins/faq`)
+      .get(`VITE_BACKSERVER/admins/faq`)
       .then((res) => {
         console.log(res);
         setFaqList(res.data);

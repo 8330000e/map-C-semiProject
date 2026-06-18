@@ -85,7 +85,7 @@ const AdminMemberPage = () => {
       filename = `${selectedMember.memberId}_로그.xlsx`;
     }
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}${url}`, {
+      .get(`VITE_BACKSERVER${url}`, {
         responseType: "blob",
       })
       .then((res) => {
@@ -119,7 +119,7 @@ const AdminMemberPage = () => {
     if (filter.grade !== "ALL") params.grade = filter.grade; // 동일
     if (filter.keyword.trim()) params.keyword = filter.keyword; // trim으로 공백만 있는 경우 제거, 공백만 있거나 빈문자열 일때 false 처리 params에 안담김
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/admins/member`, { params })
+      .get(`VITE_BACKSERVER/admins/member`, { params })
       .then((res) => {
         setMemberList(res.data);
       })
@@ -131,7 +131,7 @@ const AdminMemberPage = () => {
   // 회원이 작성한 댓글 목록 조회 - 댓글 모달용
   const selectCommentList = (memberId) => {
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/admins/comment/${memberId}`)
+      .get(`VITE_BACKSERVER/admins/comment/${memberId}`)
       .then((res) => {
         setCommentList(res.data);
       })
@@ -143,7 +143,7 @@ const AdminMemberPage = () => {
   // 회원 클릭 시 최근 로그 4개 불러옴 - 상세 패널 미리보기용
   const selectRecentLogList = (memberId) => {
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/admins/recentLog/${memberId}`)
+      .get(`VITE_BACKSERVER/admins/recentLog/${memberId}`)
       .then((res) => {
         setRecentLogList(res.data);
       })
@@ -160,7 +160,7 @@ const AdminMemberPage = () => {
     params.sort = logFilter.sort; // sort는 무조건 보냄 asc/desc
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/admins/log/${memberId}/${page}`,
+        `VITE_BACKSERVER/admins/log/${memberId}/${page}`,
         { params },
       )
       .then((res) => {
@@ -178,7 +178,7 @@ const AdminMemberPage = () => {
   // 이상징후 카운트 - 최근 24시간 로그인실패/위치변경
   const selectAnomalyCount = (memberId) => {
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/admins/anomalyLog/${memberId}`)
+      .get(`VITE_BACKSERVER/admins/anomalyLog/${memberId}`)
       .then((res) => {
         setAnomalyData(res.data);
       })

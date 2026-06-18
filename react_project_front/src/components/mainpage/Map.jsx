@@ -23,7 +23,7 @@ const Map = () => {
     // 이 목록에는 지역별 boardCount가 들어오므로, 모든 지역을 더해서 전체 게시물 수를 계산함.
     const fetchBoardCount = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKSERVER}/boards/boardCount`);
+        const response = await axios.get(`VITE_BACKSERVER/boards/boardCount`);
         const list = response.data;
         if (Array.isArray(list)) {
           const total = list.reduce((sum, item) => {
@@ -42,7 +42,7 @@ const Map = () => {
     // 이 값은 전체 국가 배출량을 보여주기 위해 사용함.
     const fetchCountryEmission = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKSERVER}/carbon/total`);
+        const response = await axios.get(`VITE_BACKSERVER/carbon/total`);
         setCountryCo2(response.data ?? 0);
       } catch (error) {
         console.error("Failed to load country carbon emission:", error);

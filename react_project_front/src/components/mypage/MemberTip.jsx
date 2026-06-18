@@ -28,7 +28,7 @@ const MemberTip = () => {
 
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/boards/${memberId}?searchBoard=${searchBoard}&filter=${filter}&checker=${checker}`,
+        `VITE_BACKSERVER/boards/${memberId}?searchBoard=${searchBoard}&filter=${filter}&checker=${checker}`,
       )
       .then((res) => {
         setTipBoardList(res.data || []);

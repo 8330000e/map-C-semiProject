@@ -9,9 +9,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatIcon from "@mui/icons-material/Chat";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-const BACKSERVER =
-  import.meta.env.VITE_BACKSERVER ||
-  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999/api";
+  const BACKSERVER = `VITE_BACKSERVER`;
 
 const getDisplayName = (user) => {
   const name = user?.writerNickname || user?.memberNickname;

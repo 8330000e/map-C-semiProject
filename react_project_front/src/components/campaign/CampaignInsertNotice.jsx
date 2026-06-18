@@ -23,7 +23,7 @@ const CampaignInsertNotice = () => {
       console.log(writeNotice);
       axios
         .post(
-          `${import.meta.env.VITE_BACKSERVER}/campaigns/insertNotice`,
+          `VITE_BACKSERVER/campaigns/insertNotice`,
           writeNotice,
         )
         .then((res) => {

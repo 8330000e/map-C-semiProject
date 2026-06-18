@@ -6,9 +6,8 @@ import styles from "./PurchaseHistory.module.css";
 import { getCompletedPurchases } from "./orderHistoryStorage";
 import { normalizeImageUrl } from "../../utils/getImageUrl";
 
-const BACKSERVER =
-  import.meta.env.VITE_BACKSERVER ||
-  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999/api";
+ const BACKSERVER = `VITE_BACKSERVER`;
+  
 const PAGE_SIZE = 6;
 const getStatusPrefix = (status) => (status ? `[${status}] ` : "");
 
@@ -145,8 +144,8 @@ const PurchaseHistory = () => {
 
   useEffect(() => {
     const backendUrl =
-      import.meta.env.VITE_BACKSERVER ||
-      "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999";
+      `VITE_BACKSERVER` ||
+      ;
     const currentItems = purchaseHistory.slice(
       (currentPage - 1) * PAGE_SIZE,
       (currentPage - 1) * PAGE_SIZE + PAGE_SIZE,

@@ -294,7 +294,7 @@ const PointForGoodPage = () => {
     if (!loginId) return;
 
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/point-give/${loginId}`)
+      .get(`VITE_BACKSERVER/point-give/${loginId}`)
 
       .then((res) => {
         //서버 응답 결과(res.data)를 상태에 저장
@@ -323,7 +323,7 @@ const PointForGoodPage = () => {
   const handleDonateSubmit = async (amount, groupId) => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKSERVER}/donations/donate`,
+        `VITE_BACKSERVER/donations/donate`,
         {
           memberId: loginId, //즉 사용자 아이디, 로그인한 아이디는 loginId에 저장 되어있음
           donationPoint: amount,

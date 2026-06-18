@@ -34,7 +34,7 @@ import kr.co.iei.campaign.model.vo.CampaignNotice;
 import kr.co.iei.campaign.model.vo.CampaignParticipance;
 import kr.co.iei.utils.FileUtils;
 
-@CrossOrigin("http://localhost:5173")
+@CrossOrigin(origins = {"https://d2g15isq25ks7i.cloudfront.net", "http://localhost:5173"}, allowCredentials = "true")
 @RestController
 @RequestMapping(value="/api/campaigns")
 public class CampaignController {

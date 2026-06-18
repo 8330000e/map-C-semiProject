@@ -8,9 +8,8 @@ import userImg from "../../../assets/user.png";
 import styles from "./storeDetail.module.css";
 import storeStyles from "./store.module.css";
 
-const BACKSERVER =
-  import.meta.env.VITE_BACKSERVER ||
-  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999/api";
+ const BACKSERVER = `VITE_BACKSERVER`;
+  
 const DELIVERY_FEE = 5000;
 
 const formatPrice = (value) =>

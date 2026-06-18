@@ -265,8 +265,8 @@ const SaleHistory = () => {
 
       try {
         const backendUrl =
-          import.meta.env.VITE_BACKSERVER ||
-          "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999";
+          `VITE_BACKSERVER` ||
+          ;
         const res = await axios.get(`${backendUrl}/api/store/trades`, {
           params: { sellerId: memberId },
         });
@@ -287,8 +287,8 @@ const SaleHistory = () => {
 
   useEffect(() => {
     const backendUrl =
-      import.meta.env.VITE_BACKSERVER ||
-      "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999";
+      `VITE_BACKSERVER` ||
+      ;
 
     const loadSellerBoards = async () => {
       if (!memberId) return;

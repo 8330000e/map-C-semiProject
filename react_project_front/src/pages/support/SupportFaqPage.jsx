@@ -12,7 +12,7 @@ const SupportFaqPage = () => {
       params.category = category; // 빈 객체 params에 {category: value} key:value 형태
     }
     axios
-      .get(`${import.meta.env.VITE_BACKSERVER}/supports/faq`, { params })
+      .get(`VITE_BACKSERVER/supports/faq`, { params })
       .then((res) => {
         console.log(res);
         setFaqList(res.data);

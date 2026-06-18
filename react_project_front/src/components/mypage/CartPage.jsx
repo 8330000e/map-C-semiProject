@@ -5,9 +5,8 @@ import useAuthStore from "../../store/useAuthStore";
 import styles from "./CartPage.module.css";
 import { normalizeImageUrl } from "../../utils/getImageUrl";
 
-const BACKSERVER =
-  import.meta.env.VITE_BACKSERVER ||
-  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999/api";
+ const BACKSERVER = `VITE_BACKSERVER`;
+  
 
 const getImageUrl = normalizeImageUrl;
 

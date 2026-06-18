@@ -17,7 +17,7 @@ const CampaignNotice = () => {
   useEffect(() => {
     axios
       .get(
-        `${import.meta.env.VITE_BACKSERVER}/campaigns/notice?page=${page}&size=10`,
+        `VITE_BACKSERVER/campaigns/notice?page=${page}&size=10`,
       )
       .then((res) => {
         console.log(res.data);
