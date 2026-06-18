@@ -26,7 +26,7 @@ const MyBoard = () => {
     if (!memberId) return;
     axios
       .get(
-        `VITE_BACKSERVER/boards/${memberId}?searchBoard=${searchBoard}&filter=${filter}&checker=${checker}`,
+        `${import.meta.env.VITE_BACKSERVER}/boards/${memberId}?searchBoard=${searchBoard}&filter=${filter}&checker=${checker}`,
       )
       .then((res) => {
         setBoardList(res.data || []);

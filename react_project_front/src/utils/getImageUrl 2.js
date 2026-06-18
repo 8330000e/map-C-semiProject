@@ -1,7 +1,7 @@
 // 이미지 경로를 통일해서 처리하는 공용 유틸 파일임.
 // 로컬 정적 경로는 더 이상 백엔드로 직접 요청하지 않고,
 // 가능하면 Firebase URL로 변환해서 쓰도록 설계함.
- const BACKSERVER = `VITE_BACKSERVER`;
+ const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
   
 const FIREBASE_BUCKET =
   import.meta.env.VITE_FIREBASE_BUCKET ||

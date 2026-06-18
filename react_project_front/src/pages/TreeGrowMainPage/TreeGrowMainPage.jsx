@@ -6,7 +6,7 @@ import styles from "./TreeGrowMainPage.module.css";
 import RegionMap from "../../components/mainpage/RegionMap";
 import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 
- const BACKSERVER = `VITE_BACKSERVER`;
+ const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
   
 
 const BASE_NOTICE =

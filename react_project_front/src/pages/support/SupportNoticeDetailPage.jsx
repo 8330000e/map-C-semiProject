@@ -10,7 +10,7 @@ const SupportNoticeDetailPage = () => {
 
   const selectNoticeDetail = () => {
     axios
-      .get(`VITE_BACKSERVER/supports/notice/${noticeNo}`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/supports/notice/${noticeNo}`)
       .then((res) => {
         console.log(res);
         setNotice(res.data);
@@ -20,7 +20,7 @@ const SupportNoticeDetailPage = () => {
       });
 
     axios
-      .get(`VITE_BACKSERVER/supports/notice`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/supports/notice`)
       .then((res) => {
         setNoticeList(
           res.data.filter((item) => item.noticeNo !== Number(noticeNo)),

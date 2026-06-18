@@ -133,7 +133,7 @@ const AdminReportPage = () => {
     if (reportFilter.status !== "all") params.status = reportFilter.status;
 
     axios
-      .get(`VITE_BACKSERVER/boards/report`, { params })
+      .get(`${import.meta.env.VITE_BACKSERVER}/boards/report`, { params })
       .then((res) => {
         setReportList(res.data);
       })
@@ -146,7 +146,7 @@ const AdminReportPage = () => {
   const selectReportGroup = (targetNo, targetType, reportNo) => {
     axios
       .get(
-        `VITE_BACKSERVER/boards/reportGroup/${targetNo}/${targetType}/${reportNo}`,
+        `${import.meta.env.VITE_BACKSERVER}/boards/reportGroup/${targetNo}/${targetType}/${reportNo}`,
       )
       .then((res) => {
         setGroupList(res.data);
@@ -159,7 +159,7 @@ const AdminReportPage = () => {
   // 게시글 상세 조회 - 원본 보기 + 모달 열기
   const selectDetail = (boardNo) => {
     axios
-      .get(`VITE_BACKSERVER/boards/detail/${boardNo}`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/boards/detail/${boardNo}`)
       .then((res) => {
         setBoardDetail(res.data);
         setIsModalOpen(true); // 모달 열기
@@ -172,7 +172,7 @@ const AdminReportPage = () => {
   // 처리완료 신고의 admin_log 조회
   const selectAdminLog = (reportNo) => {
     axios
-      .get(`VITE_BACKSERVER/admins/adminLog/${reportNo}`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/admins/adminLog/${reportNo}`)
       .then((res) => {
         setAdminLog(res.data);
       })
@@ -193,7 +193,7 @@ const AdminReportPage = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .post(`VITE_BACKSERVER/admins/processReport`, {
+          .post(`${import.meta.env.VITE_BACKSERVER}/admins/processReport`, {
             ...reportAction,
             reportNo: selectedReport.reportNo,
             targetNo: selectedReport.targetNo,
@@ -232,7 +232,7 @@ const AdminReportPage = () => {
       didOpen: () => Swal.showLoading(),
     });
     axios
-      .post(`VITE_BACKSERVER/admins/ai/analyze-report`, {
+      .post(`${import.meta.env.VITE_BACKSERVER}/admins/ai/analyze-report`, {
         content,
         category: selectedReport.reportCategory || "",
         reason: selectedReport.reportContent || "",
@@ -270,7 +270,7 @@ const AdminReportPage = () => {
       didOpen: () => Swal.showLoading(),
     });
     axios
-      .post(`VITE_BACKSERVER/admins/ai/warning-draft`, {
+      .post(`${import.meta.env.VITE_BACKSERVER}/admins/ai/warning-draft`, {
         category: selectedReport.reportCategory || "",
         action: actionText,
         extra: reportAction.reason || selectedReport.reportContent || "",
@@ -299,7 +299,7 @@ const AdminReportPage = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .post(`VITE_BACKSERVER/admins/releaseMember`, {
+          .post(`${import.meta.env.VITE_BACKSERVER}/admins/releaseMember`, {
             targetId: targetId,
             memberId: memberId,
             reason: logReason,

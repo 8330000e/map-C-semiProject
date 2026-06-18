@@ -9,7 +9,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatIcon from "@mui/icons-material/Chat";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-  const BACKSERVER = `VITE_BACKSERVER`;
+  const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
 
 const getDisplayName = (user) => {
   const name = user?.writerNickname || user?.memberNickname;

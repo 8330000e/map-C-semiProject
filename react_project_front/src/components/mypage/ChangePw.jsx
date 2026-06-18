@@ -29,7 +29,7 @@ const ChangePw = () => {
   // 인증이 성공하면 isAuth 상태가 true가 됨.
   const checkPw = () => {
     axios
-      .post(`VITE_BACKSERVER/members/checkauth`, checkAuth)
+      .post(`${import.meta.env.VITE_BACKSERVER}/members/checkauth`, checkAuth)
       .then((res) => {
         setIsAuth(res.data);
       })
@@ -47,7 +47,7 @@ const ChangePw = () => {
     };
 
     axios
-      .patch(`VITE_BACKSERVER/members/newpw`, newCheckAuth)
+      .patch(`${import.meta.env.VITE_BACKSERVER}/members/newpw`, newCheckAuth)
       .then((res) => {
         if (res.data === 1) {
           setNewPw("");

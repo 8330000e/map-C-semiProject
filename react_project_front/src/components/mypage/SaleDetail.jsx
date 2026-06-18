@@ -8,7 +8,7 @@ import {
   removeCompletedPurchaseByMarketNo,
 } from "./orderHistoryStorage";
 import styles from "./SaleHistory.module.css";
- const BACKSERVER = `VITE_BACKSERVER`;
+ const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
   
 
 const tradeTypeLabel = (type, text, deliveryMethod, address) => {

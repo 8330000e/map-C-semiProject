@@ -27,7 +27,7 @@ const FindPw = () => {
 
     try {
       const res = await axios.post(
-        `VITE_BACKSERVER/members/find-pw`,
+        `${import.meta.env.VITE_BACKSERVER}/members/find-pw`,
         {
           memberId,
           memberEmail,

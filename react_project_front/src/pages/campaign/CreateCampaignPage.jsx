@@ -31,7 +31,7 @@ const CreateCampaignPage = () => {
     ) {
       axios
         .post(
-          `VITE_BACKSERVER/campaigns/${memberId}`,
+          `${import.meta.env.VITE_BACKSERVER}/campaigns/${memberId}`,
           writeInfo,
         )
         .then((res) => {

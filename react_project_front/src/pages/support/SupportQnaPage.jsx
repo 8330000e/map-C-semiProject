@@ -25,7 +25,7 @@ const SupportQnaPage = () => {
   const selectQnaList = () => {
     return axios
       .get(
-        `VITE_BACKSERVER/supports/qna?memberId=${memberId}`,
+        `${import.meta.env.VITE_BACKSERVER}/supports/qna?memberId=${memberId}`,
       )
       .then((res) => {
         console.log(res);
@@ -62,7 +62,7 @@ const SupportQnaPage = () => {
           formData.append("upfile", compressedImage, compressedImage.name);
         }
         axios
-          .post(`VITE_BACKSERVER/supports/qna`, formData, {
+          .post(`${import.meta.env.VITE_BACKSERVER}/supports/qna`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
           })
           .then(async (res) => {

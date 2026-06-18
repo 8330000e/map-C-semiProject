@@ -32,7 +32,7 @@ const UpdateMyInfo = () => {
     if (!memberId) return;
 
     axios
-      .get(`VITE_BACKSERVER/members/${memberId}`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/members/${memberId}`)
       .then((res) => {
         const member = res.data || {};
 
@@ -72,7 +72,7 @@ const UpdateMyInfo = () => {
     };
 
     axios
-      .patch(`VITE_BACKSERVER/members/${memberId}`, payload)
+      .patch(`${import.meta.env.VITE_BACKSERVER}/members/${memberId}`, payload)
       .then((res) => {
         if (res.data === 1) {
           // 업데이트 성공 시 전역 상태의 닉네임도 갱신함.

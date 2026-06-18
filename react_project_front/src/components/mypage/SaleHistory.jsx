@@ -265,7 +265,7 @@ const SaleHistory = () => {
 
       try {
         const backendUrl =
-          `VITE_BACKSERVER` ||
+          `${import.meta.env.VITE_BACKSERVER}` ||
           ;
         const res = await axios.get(`${backendUrl}/api/store/trades`, {
           params: { sellerId: memberId },
@@ -287,7 +287,7 @@ const SaleHistory = () => {
 
   useEffect(() => {
     const backendUrl =
-      `VITE_BACKSERVER` ||
+      `${import.meta.env.VITE_BACKSERVER}` ||
       ;
 
     const loadSellerBoards = async () => {

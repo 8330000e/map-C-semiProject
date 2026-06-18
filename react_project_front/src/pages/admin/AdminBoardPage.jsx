@@ -26,7 +26,7 @@ const AdminBoardPage = () => {
 
   const excelDownload = () => {
     axios
-      .get(`VITE_BACKSERVER/admins/boards-excel`, {
+      .get(`${import.meta.env.VITE_BACKSERVER}/admins/boards-excel`, {
         responseType: "blob",
       })
       .then((res) => {
@@ -71,7 +71,7 @@ const AdminBoardPage = () => {
 
     params.sort = boardFilter.sort; // sort는 무조건 보냄 asc/desc
     axios
-      .get(`VITE_BACKSERVER/admins/board`, { params })
+      .get(`${import.meta.env.VITE_BACKSERVER}/admins/board`, { params })
       .then((res) => {
         setBoardList(res.data);
       })
@@ -83,7 +83,7 @@ const AdminBoardPage = () => {
   // 게시글 상세 조회 - 아이콘 클릭 시 모달 열고 데이터 세팅
   const getBoardDetail = (boardNo) => {
     axios
-      .get(`VITE_BACKSERVER/boards/detail/${boardNo}`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/boards/detail/${boardNo}`)
       .then((res) => {
         setSelectedBoard(res.data);
         setIsModalOpen(true);

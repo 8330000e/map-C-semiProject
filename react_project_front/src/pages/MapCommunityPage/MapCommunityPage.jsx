@@ -27,7 +27,7 @@ import { REGION_DATA } from "../../components/board/Community/regionData";
 
 // 백엔드 API 서버 주소를 환경 변수에서 읽어오고, 없으면 로컬 주소를 기본값으로 사용함.
 // 프론트엔드와 백엔드가 분리되어 있어도 환경별로 주소를 쉽게 바꾸기 위함임.
- const BACKSERVER = `VITE_BACKSERVER`;
+ const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
   
 
 // 이미지 URL 정규화 도구를 가져와서 마커 이미지나 사용자 썸네일을 올바른 경로로 변환함.
@@ -194,7 +194,7 @@ const Map = ({
     // 지도에 표시할 게시물 마커를 백엔드에서 가져오는 API 호출임.
     // 마커 위치는 게시글의 위도/경도로 표시하기 위해 필요함.
     axios
-      .get(`VITE_BACKSERVER/boards/markers`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/boards/markers`)
       .then((res) => {
         setMarkerList(res.data);
       })

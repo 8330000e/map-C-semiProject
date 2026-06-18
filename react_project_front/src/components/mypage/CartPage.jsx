@@ -5,7 +5,7 @@ import useAuthStore from "../../store/useAuthStore";
 import styles from "./CartPage.module.css";
 import { normalizeImageUrl } from "../../utils/getImageUrl";
 
- const BACKSERVER = `VITE_BACKSERVER`;
+ const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
   
 
 const getImageUrl = normalizeImageUrl;

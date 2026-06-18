@@ -15,7 +15,7 @@ const AdminCampaignPage = () => {
   // 승인 대기 캠페인 목록 조회
   const selectPendingCampaignList = () => {
     axios
-      .get(`VITE_BACKSERVER/admins/campaign`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/admins/campaign`)
       .then((res) => {
         setCampaignList(res.data);
         if (res.data.length === 0) {
@@ -40,7 +40,7 @@ const AdminCampaignPage = () => {
     setLoading(true);
     axios
       .patch(
-        `VITE_BACKSERVER/admins/campaign/${campaignNo}/approve`,
+        `${import.meta.env.VITE_BACKSERVER}/admins/campaign/${campaignNo}/approve`,
       )
       .then((res) => {
         if (res.data === 1) {

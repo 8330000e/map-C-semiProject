@@ -29,7 +29,7 @@ const CampaignMain = () => {
   useEffect(() => {
     axios
       .get(
-        `VITE_BACKSERVER/campaigns?campaignTitle=${campaignSendSearch}&size=6&page=${page}&searchFilter=${searchFilter}&orderFilter=${orderFilter}`,
+        `${import.meta.env.VITE_BACKSERVER}/campaigns?campaignTitle=${campaignSendSearch}&size=6&page=${page}&searchFilter=${searchFilter}&orderFilter=${orderFilter}`,
       )
       .then((res) => {
         console.log(res.data);
@@ -42,7 +42,7 @@ const CampaignMain = () => {
   }, [campaignSendSearch, page, searchFilter, orderFilter]);
   useEffect(() => {
     axios
-      .get(`VITE_BACKSERVER/campaigns/onlyFiveNotice`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/campaigns/onlyFiveNotice`)
       .then((res) => {
         console.log(res);
         setNoticeList([...res.data]);

@@ -12,7 +12,7 @@ const SupportNoticePage = () => {
       params.category = category;
     }
     axios
-      .get(`VITE_BACKSERVER/supports/notice`, { params })
+      .get(`${import.meta.env.VITE_BACKSERVER}/supports/notice`, { params })
       .then((res) => {
         console.log(res);
         setNoticeList(res.data);

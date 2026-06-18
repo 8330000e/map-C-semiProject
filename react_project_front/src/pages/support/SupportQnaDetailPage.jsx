@@ -9,7 +9,7 @@ const SupportQnaDetailPage = () => {
 
   const selectQnaDetail = () => {
     axios
-      .get(`VITE_BACKSERVER/supports/qna/${qnaNo}`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/supports/qna/${qnaNo}`)
       .then((res) => {
         console.log(res);
         setQna(res.data);

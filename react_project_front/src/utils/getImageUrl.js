@@ -1,4 +1,4 @@
- const BACKSERVER = `VITE_BACKSERVER`;
+ const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
   
 
 export const isAbsoluteUrl = (url) => {

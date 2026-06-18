@@ -11,7 +11,7 @@ const Bestpostlist = () => {
   const [bestPostList, setBestPostList] = useState([]);
   useEffect(() => {
     axios
-      .get(`VITE_BACKSERVER/boards/best`, {
+      .get(`${import.meta.env.VITE_BACKSERVER}/boards/best`, {
         params: {
           status: 0,
         },

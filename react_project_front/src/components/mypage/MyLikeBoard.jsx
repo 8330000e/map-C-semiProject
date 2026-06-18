@@ -28,7 +28,7 @@ const MyLikeBoard = () => {
 
     axios
       .get(
-        `VITE_BACKSERVER/boards/${memberId}?searchBoard=${searchBoard}&filter=${filter}&checker=${checker}`,
+        `${import.meta.env.VITE_BACKSERVER}/boards/${memberId}?searchBoard=${searchBoard}&filter=${filter}&checker=${checker}`,
       )
       .then((res) => {
         setLikeBoardList(res.data || []);

@@ -9,7 +9,7 @@ const Alarm = () => {
   const [alarmList, setAlarmList] = useState([]);
   useEffect(() => {
     axios
-      .get(`VITE_BACKSERVER/alarms/${memberId}`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/alarms/${memberId}`)
       .then((res) => {
         console.log(res);
         setAlarmList(res.data);
@@ -22,7 +22,7 @@ const Alarm = () => {
   const alarmDel = (alarmNo) => {
     axios
       .patch(
-        `VITE_BACKSERVER/alarms/alarmdel/${memberId}?alarmNo=${alarmNo}`,
+        `${import.meta.env.VITE_BACKSERVER}/alarms/alarmdel/${memberId}?alarmNo=${alarmNo}`,
       )
       .then((res) => {
         console.log(res);
@@ -41,7 +41,7 @@ const Alarm = () => {
   const alarmAllDel = () => {
     axios
       .patch(
-        `VITE_BACKSERVER/alarms/alarmalldel/${memberId}`,
+        `${import.meta.env.VITE_BACKSERVER}/alarms/alarmalldel/${memberId}`,
         {},
       )
       .then((res) => {

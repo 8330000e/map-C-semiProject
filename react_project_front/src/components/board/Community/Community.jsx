@@ -16,7 +16,7 @@ import NavigateBeforeOutlinedIcon from "@mui/icons-material/NavigateBeforeOutlin
 import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 
- const BACKSERVER = `VITE_BACKSERVER`;
+ const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
   
 
 const getBoardNo = (board) =>

@@ -191,7 +191,7 @@ const TextEditor = ({ data, setData, attachedFiles, setAttachedFiles }) => {
 
       // 백엔드 업로드 API로 이미지 파일을 전송함.
       const res = await axios.post(
-        `VITE_BACKSERVER/boards/editor/upload`,
+        `${import.meta.env.VITE_BACKSERVER}/boards/editor/upload`,
         formData,
         {
           headers: {

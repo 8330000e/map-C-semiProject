@@ -20,7 +20,7 @@ import { Autoplay, EffectFade } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/effect-fade";
- const BACKSERVER = `VITE_BACKSERVER`;
+ const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
   
 
 const getSaleStatusLabel = (productStatus) => {
@@ -341,7 +341,7 @@ const Main = () => {
   const [campList, setCampList] = useState([]);
   useEffect(() => {
     axios
-      .get(`VITE_BACKSERVER/campaigns/selectFrontCamp`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/campaigns/selectFrontCamp`)
       .then((res) => {
         console.log(res);
         setCampList([...res.data]);

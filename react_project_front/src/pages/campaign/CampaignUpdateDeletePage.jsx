@@ -23,7 +23,7 @@ const CampaignUpdateDeletePage = () => {
   useEffect(() => {
     axios
       .get(
-        `VITE_BACKSERVER/campaigns/board/${campaignParticipanceNo}`,
+        `${import.meta.env.VITE_BACKSERVER}/campaigns/board/${campaignParticipanceNo}`,
       )
       .then((res) => {
         console.log(res.data);
@@ -43,7 +43,7 @@ const CampaignUpdateDeletePage = () => {
     form.append("deletePath", deletePath);
     axios
       .patch(
-        `VITE_BACKSERVER/campaigns/${campBoardList.campaignParticipanceNo}`,
+        `${import.meta.env.VITE_BACKSERVER}/campaigns/${campBoardList.campaignParticipanceNo}`,
         form,
         {
           headers: {

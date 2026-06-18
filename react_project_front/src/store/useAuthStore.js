@@ -66,7 +66,7 @@ const useAuthStore = create(
         if (currentId) {
           axios
             .post(
-              `VITE_BACKSERVER/members/logout/${currentId}`,
+              `${import.meta.env.VITE_BACKSERVER}/members/logout/${currentId}`,
             )
             .catch(() => {}); // 토큰 만료 등 실패해도 무시 (로그용)
         }
@@ -122,7 +122,7 @@ const useAuthStore = create(
                     //members/refresh는 페이지가 아니라 백그라운드에서 조용히 데이터만 주고받는 **'API 엔드포인트(기능)
                     //-> 쉽게 말하자면 어떤 보이는게 아닌 axios가 몰래 서버에게 토큰과 만료시간을 연장해줄 것을 요청하는 통로
                     .post(
-                      `VITE_BACKSERVER/members/refresh`,
+                      `${import.meta.env.VITE_BACKSERVER}/members/refresh`,
                       {
                         memberId: get().memberId, // 여기에 데이터를 넣고 괄호를 닫아야 함
                       },

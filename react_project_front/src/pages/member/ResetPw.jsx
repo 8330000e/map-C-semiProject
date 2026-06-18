@@ -40,7 +40,7 @@ const ResetPw = () => {
 
     try {
       const res = await axios.post(
-        `VITE_BACKSERVER/members/reset-pw`,
+        `${import.meta.env.VITE_BACKSERVER}/members/reset-pw`,
         {
           memberId: member.memberId,
           memberPw: member.memberPw,

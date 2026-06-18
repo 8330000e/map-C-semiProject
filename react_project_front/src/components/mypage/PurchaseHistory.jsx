@@ -6,7 +6,7 @@ import styles from "./PurchaseHistory.module.css";
 import { getCompletedPurchases } from "./orderHistoryStorage";
 import { normalizeImageUrl } from "../../utils/getImageUrl";
 
- const BACKSERVER = `VITE_BACKSERVER`;
+ const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
   
 const PAGE_SIZE = 6;
 const getStatusPrefix = (status) => (status ? `[${status}] ` : "");
@@ -144,7 +144,7 @@ const PurchaseHistory = () => {
 
   useEffect(() => {
     const backendUrl =
-      `VITE_BACKSERVER` ||
+      `${import.meta.env.VITE_BACKSERVER}` ||
       ;
     const currentItems = purchaseHistory.slice(
       (currentPage - 1) * PAGE_SIZE,

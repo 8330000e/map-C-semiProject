@@ -127,7 +127,7 @@ const CampaignDetailPage = () => {
   useEffect(() => {
     axios
       .get(
-        `VITE_BACKSERVER/campaigns/${campaignNo}/noBanMember?memberId=${memberId}`,
+        `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNo}/noBanMember?memberId=${memberId}`,
       )
       .then((res) => {
         console.log(res.data);
@@ -143,7 +143,7 @@ const CampaignDetailPage = () => {
 
   useEffect(() => {
     axios
-      .get(`VITE_BACKSERVER/campaigns/${campaignNo}`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNo}`)
       .then((res) => {
         // const expire = new Date(res.data.campaignExpireDate);
         // const deadline = expire.getTime();
@@ -165,7 +165,7 @@ const CampaignDetailPage = () => {
   useEffect(() => {
     axios
       .get(
-        `VITE_BACKSERVER/campaigns/${memberId}/part?campaignNo=${campaignNo}`,
+        `${import.meta.env.VITE_BACKSERVER}/campaigns/${memberId}/part?campaignNo=${campaignNo}`,
       )
       .then((res) => {
         if (res.data === 1) {
@@ -181,7 +181,7 @@ const CampaignDetailPage = () => {
   useEffect(() => {
     axios
       .get(
-        `VITE_BACKSERVER/campaigns/boards?campaignNo=${campaignNo}&page=${page}&size=6`,
+        `${import.meta.env.VITE_BACKSERVER}/campaigns/boards?campaignNo=${campaignNo}&page=${page}&size=6`,
       )
       .then((res) => {
         // console.log(res.data);
@@ -402,7 +402,7 @@ const CampaignDetailSideBar = ({
                       if (result.isConfirmed) {
                         axios
                           .post(
-                            `VITE_BACKSERVER/campaigns/${campaignNo}/join`,
+                            `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNo}/join`,
                             { memberId: memberId },
                           )
                           .then((res) => {
@@ -442,7 +442,7 @@ const CampaignDetailSideBar = ({
                 if (result.isConfirmed) {
                   axios
                     .patch(
-                      `VITE_BACKSERVER/campaigns/${memberId}/leaveMember?campaignNo=${campaignNo}`,
+                      `${import.meta.env.VITE_BACKSERVER}/campaigns/${memberId}/leaveMember?campaignNo=${campaignNo}`,
                     )
                     .then((res) => {
                       console.log(res);
@@ -549,7 +549,7 @@ const PostBoard = ({
                             if (res.isConfirmed) {
                               axios
                                 .delete(
-                                  `VITE_BACKSERVER/campaigns/${campaignParticipanceNo}/board`,
+                                  `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignParticipanceNo}/board`,
                                 )
                                 .then((res) => {
                                   console.log(res.data);

@@ -60,7 +60,7 @@ const DashBoardPage = () => {
   // 페이지 진입 시 대시보드 통계 한 번에 불러오기
   useEffect(() => {
     axios
-      .get(`VITE_BACKSERVER/admins/dashdata`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/admins/dashdata`)
       .then((res) => {
         setTotalMember(res.data.totalMember);
         setTodayMember(res.data.todayMember);

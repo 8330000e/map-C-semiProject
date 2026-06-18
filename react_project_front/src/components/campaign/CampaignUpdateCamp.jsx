@@ -17,7 +17,7 @@ const CampaignUpdateCamp = () => {
   useEffect(() => {
     axios
       .get(
-        `VITE_BACKSERVER/campaigns/${campaignNo}/forUpdate`,
+        `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNo}/forUpdate`,
       )
       .then((res) => {
         console.log(res.data);
@@ -75,7 +75,7 @@ const CampaignUpdateCamp = () => {
                 ) {
                   axios
                     .patch(
-                      `VITE_BACKSERVER/campaigns/${campaignNo}/updateCamp`,
+                      `${import.meta.env.VITE_BACKSERVER}/campaigns/${campaignNo}/updateCamp`,
                       campList,
                     )
                     .then((res) => {

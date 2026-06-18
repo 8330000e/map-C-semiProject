@@ -10,7 +10,7 @@ import {
   getCompletedPurchaseById,
 } from "./orderHistoryStorage";
 
- const BACKSERVER = `VITE_BACKSERVER`;
+ const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
   
 
 const tradeTypeLabel = (type, text, deliveryMethod, address) => {

@@ -24,7 +24,7 @@ const LeaveMember = () => {
     }
 
     try {
-      const authRes = await axios.post(`VITE_BACKSERVER/members/checkauth`, {
+      const authRes = await axios.post(`${import.meta.env.VITE_BACKSERVER}/members/checkauth`, {
         memberId: memberId,
         memberPw: lastInput,
       });
@@ -51,7 +51,7 @@ const LeaveMember = () => {
         return;
       }
 
-      const leaveRes = await axios.patch(`VITE_BACKSERVER/members/${memberId}/leave`);
+      const leaveRes = await axios.patch(`${import.meta.env.VITE_BACKSERVER}/members/${memberId}/leave`);
 
       if (leaveRes.data === 1) {
         await Swal.fire({

@@ -12,7 +12,7 @@ import styles from "./Community.module.css";
 import userImg from "../../../assets/user.png";
 import Swal from "sweetalert2";
 
- const BACKSERVER = `VITE_BACKSERVER`;
+ const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
   
 
 const formatTime = (rawDate) => {
@@ -109,7 +109,7 @@ const CommunityDetail = ({
     if (memberId && board?.boardNo) {
       axios
         .get(
-          `VITE_BACKSERVER/boards/${board.boardNo}/likes/${memberId}`,
+          `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes/${memberId}`,
         )
         .then((res) => {
           const likedStatus = res.data === true;
@@ -120,7 +120,7 @@ const CommunityDetail = ({
 
       axios
         .get(
-          `VITE_BACKSERVER/boards/${board.boardNo}/tips/${memberId}`,
+          `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/tips/${memberId}`,
         )
         .then((res) => {
           // 서버에서 이 사용자가 현재 게시글을 스크랩했는지 여부를 받아옵니다.
@@ -256,7 +256,7 @@ const CommunityDetail = ({
     try {
       if (!liked) {
         await axios.post(
-          `VITE_BACKSERVER/boards/${board.boardNo}/likes`,
+          `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes`,
           null,
           { params: { memberId } },
         );
@@ -267,7 +267,7 @@ const CommunityDetail = ({
         onLikeChange?.(board.boardNo, nextCount, true);
       } else {
         await axios.delete(
-          `VITE_BACKSERVER/boards/${board.boardNo}/likes`,
+          `${import.meta.env.VITE_BACKSERVER}/boards/${board.boardNo}/likes`,
           { params: { memberId } },
         );
         const nextCount = (likeCount ?? 0) - 1;
@@ -362,7 +362,7 @@ const CommunityDetail = ({
 
       if (content) {
         axios
-          .post(`VITE_BACKSERVER/boards/board-report`, {
+          .post(`${import.meta.env.VITE_BACKSERVER}/boards/board-report`, {
             targetNo: board.boardNo,
             targetType: "board",
             memberId: memberId,
@@ -423,7 +423,7 @@ const CommunityDetail = ({
 
       if (content) {
         axios
-          .post(`VITE_BACKSERVER/boards/comment-report`, {
+          .post(`${import.meta.env.VITE_BACKSERVER}/boards/comment-report`, {
             targetNo: commentId,
             targetType: "comment",
             memberId: memberId,
