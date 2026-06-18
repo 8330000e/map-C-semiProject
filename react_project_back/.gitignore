@@ -106,6 +106,10 @@ application-secret.yml
 application-local.yml
 application-prod.yml
 secrets.yml
+application-secret.properties
+application-local.properties
+application-prod.properties
+secrets.properties
 
 # ===========================
 # 에디터 / IDE
