@@ -11,7 +11,7 @@ import kr.co.iei.region.model.service.CtpvsggService;
 import kr.co.iei.region.model.vo.Ctpvsgg;
 
 @RestController
-@RequestMapping("/api/regions")
+@RequestMapping("regions")
 public class CtpvsggController {
     private final CtpvsggService ctpvsggService;
 

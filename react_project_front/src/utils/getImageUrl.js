@@ -1,6 +1,6 @@
 const BACKSERVER =
   import.meta.env.VITE_BACKSERVER ||
-  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999";
+  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999/api";
 
 export const isAbsoluteUrl = (url) => {
   return typeof url === "string" && /^(https?:)?\/\//i.test(url.trim());

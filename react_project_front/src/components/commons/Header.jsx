@@ -12,7 +12,7 @@ import { useState, useEffect, useRef } from "react";
 
 const BACKSERVER =
   import.meta.env.VITE_BACKSERVER ||
-  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999";
+  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999/api";
 
 // memberThumb의 경로를 실제 이미지 URL로 변환하는 함수임.
 // - 백엔드에서 내려오는 값이 절대 URL일 수도 있고,

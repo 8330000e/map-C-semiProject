@@ -3,7 +3,7 @@
 // 가능하면 Firebase URL로 변환해서 쓰도록 설계함.
 const BACKSERVER =
   import.meta.env.VITE_BACKSERVER ||
-  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999";
+  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999/api";
 const FIREBASE_BUCKET =
   import.meta.env.VITE_FIREBASE_BUCKET ||
   "semiproject-carbon.firebasestorage.app";

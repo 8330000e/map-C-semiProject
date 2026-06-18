@@ -11,7 +11,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const BACKSERVER =
   import.meta.env.VITE_BACKSERVER ||
-  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999";
+  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999/api";
 
 const getDisplayName = (user) => {
   const name = user?.writerNickname || user?.memberNickname;

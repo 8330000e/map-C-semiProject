@@ -13,7 +13,7 @@ import Swal from "sweetalert2";
 
 const BACKSERVER =
   import.meta.env.VITE_BACKSERVER ||
-  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999";
+  "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999/api";
 
 // 중고거래 목록 페이지임.
 //  - 서버에서 판매중인 상품 목록을 받아와서 화면에 보여줌.
