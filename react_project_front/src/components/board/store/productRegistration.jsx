@@ -113,7 +113,7 @@ const ProductRegistration = () => {
   useEffect(() => {
     const fetchRegions = async () => {
       try {
-        const response = await axios.get(`${BACKSERVER}/api/regions`);
+        const response = await axios.get(`${BACKSERVER}/regions`);
         setRegions(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error("지역 목록 조회 실패", error);
@@ -235,7 +235,7 @@ const ProductRegistration = () => {
 
     try {
       if (editItem) {
-        await axios.put(`${BACKSERVER}/api/store/boards/${editItem.marketNo}`, {
+        await axios.put(`${BACKSERVER}/store/boards/${editItem.marketNo}`, {
           ...payload,
           marketNo: editItem.marketNo,
           boardNo: editItem.boardNo,
@@ -243,7 +243,7 @@ const ProductRegistration = () => {
         alert("수정이 완료되었습니다.");
         navigate(`/store/${editItem.marketNo}`);
       } else {
-        await axios.post(`${BACKSERVER}/api/store/boards`, payload);
+        await axios.post(`${BACKSERVER}/store/boards`, payload);
         alert("등록이 완료되었습니다.");
         navigate("/store");
       }

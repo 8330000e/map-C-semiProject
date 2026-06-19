@@ -91,7 +91,7 @@ const Main = () => {
 
   useEffect(() => {
     axios
-      .get(`${BACKSERVER}/api/store/boards`)
+      .get(`${BACKSERVER}/store/boards`)
       .then((res) => {
         const items = Array.isArray(res.data)
           ? res.data
@@ -124,7 +124,7 @@ const Main = () => {
 
   useEffect(() => {
     axios
-      .get(`${BACKSERVER}/api/store/reviews/latest?limit=30`)
+      .get(`${BACKSERVER}/store/reviews/latest?limit=30`)
       .then((res) =>
         setRealtimeComments(Array.isArray(res.data) ? res.data : []),
       )

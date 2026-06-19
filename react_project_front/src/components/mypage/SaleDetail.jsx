@@ -117,7 +117,7 @@ const SaleDetail = () => {
     setIsProcessingOrderAction(true);
     try {
       await axios.patch(
-        `${BACKSERVER}/api/store/boards/${item.marketNo}/status`,
+        `${BACKSERVER}/store/boards/${item.marketNo}/status`,
         null,
         {
           params: { status: 0, memberId: saleOrder.sellerId },
@@ -147,12 +147,12 @@ const SaleDetail = () => {
 
       if (saleOrder.tradeNo) {
         await axios.patch(
-          `${BACKSERVER}/api/store/trades/${saleOrder.tradeNo}`,
+          `${BACKSERVER}/store/trades/${saleOrder.tradeNo}`,
           payload,
         );
       } else {
         await axios.patch(
-          `${BACKSERVER}/api/store/markets/${item.marketNo}/trade-info`,
+          `${BACKSERVER}/store/markets/${item.marketNo}/trade-info`,
           payload,
         );
       }
@@ -170,7 +170,7 @@ const SaleDetail = () => {
 
   useEffect(() => {
     axios
-      .get(`${BACKSERVER}/api/store/boards/${id}`)
+      .get(`${BACKSERVER}/store/boards/${id}`)
       .then((res) => setItem(res.data))
       .catch((error) => {
         console.error("판매상세 조회 실패", error);
@@ -180,7 +180,7 @@ const SaleDetail = () => {
     const fetchTradeInfo = async () => {
       try {
         const res = await axios.get(
-          `${BACKSERVER}/api/store/markets/${id}/trade-info`,
+          `${BACKSERVER}/store/markets/${id}/trade-info`,
         );
         if (res.data) {
           setSaleOrder((prev) => ({
@@ -214,7 +214,7 @@ const SaleDetail = () => {
   useEffect(() => {
     if (!id) return;
     axios
-      .get(`${BACKSERVER}/api/store/markets/${id}/ratings`)
+      .get(`${BACKSERVER}/store/markets/${id}/ratings`)
       .then((res) => setReviews(Array.isArray(res.data) ? res.data : []))
       .catch((error) => {
         console.error("판매후기 조회 실패", error);
@@ -380,8 +380,8 @@ const SaleDetail = () => {
                       setIsSubmittingInvoice(true);
                       try {
                         const path = saleOrder.tradeNo
-                          ? `${BACKSERVER}/api/store/trades/${saleOrder.tradeNo}`
-                          : `${BACKSERVER}/api/store/markets/${id}/trade-info`;
+                          ? `${BACKSERVER}/store/trades/${saleOrder.tradeNo}`
+                          : `${BACKSERVER}/store/markets/${id}/trade-info`;
                         const normalizedTradeType = normalizeTradeType(
                           saleOrder.tradeType ||
                             item.tradeType ||
@@ -432,7 +432,7 @@ const SaleDetail = () => {
                         });
                         if (saleOrder.sellerId) {
                           await axios.patch(
-                            `${BACKSERVER}/api/store/boards/${id}/status`,
+                            `${BACKSERVER}/store/boards/${id}/status`,
                             null,
                             {
                               params: {
@@ -443,7 +443,7 @@ const SaleDetail = () => {
                           );
                         }
                         const res = await axios.get(
-                          `${BACKSERVER}/api/store/markets/${id}/trade-info`,
+                          `${BACKSERVER}/store/markets/${id}/trade-info`,
                         );
                         setSaleOrder(res.data);
                         setInvoiceNumber(res.data.invoiceNumber || "");

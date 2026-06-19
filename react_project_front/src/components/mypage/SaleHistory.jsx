@@ -267,7 +267,7 @@ const SaleHistory = () => {
         const backendUrl =
           `${import.meta.env.VITE_BACKSERVER}` ||
           ;
-        const res = await axios.get(`${backendUrl}/api/store/trades`, {
+        const res = await axios.get(`${backendUrl}/store/trades`, {
           params: { sellerId: memberId },
         });
         const items = Array.isArray(res.data)
@@ -293,7 +293,7 @@ const SaleHistory = () => {
     const loadSellerBoards = async () => {
       if (!memberId) return;
       try {
-        const res = await axios.get(`${backendUrl}/api/store/boards`);
+        const res = await axios.get(`${backendUrl}/store/boards`);
         const items = Array.isArray(res.data)
           ? res.data
           : Array.isArray(res.data?.items)
@@ -323,7 +323,7 @@ const SaleHistory = () => {
       const results = await Promise.all(
         marketNos.map(async (marketNo) => {
           try {
-            const url = `${backendUrl}/api/store/markets/${marketNo}/trade-info`;
+            const url = `${backendUrl}/store/markets/${marketNo}/trade-info`;
             const res = await fetch(url);
             if (!res.ok) return null;
             return await res.json();

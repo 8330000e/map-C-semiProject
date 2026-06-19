@@ -103,7 +103,7 @@ const PurchaseHistory = () => {
       }
 
       try {
-        const res = await axios.get(`${BACKSERVER}/api/store/trades`, {
+        const res = await axios.get(`${BACKSERVER}/store/trades`, {
           params: { buyerId: memberId },
         });
         const serverItems = Array.isArray(res.data)
@@ -152,7 +152,7 @@ const PurchaseHistory = () => {
     );
 
     const fetchTradeInfo = async (marketNo) => {
-      const url = `${backendUrl}/api/store/markets/${marketNo}/trade-info`;
+      const url = `${backendUrl}/store/markets/${marketNo}/trade-info`;
       const urlWithBuyer = memberId ? `${url}?buyerId=${memberId}` : url;
       try {
         let res = await fetch(urlWithBuyer);
@@ -170,7 +170,7 @@ const PurchaseHistory = () => {
     const fetchBoardInfo = async (marketNo) => {
       try {
         const res = await axios.get(
-          `${backendUrl}/api/store/boards/${marketNo}`,
+          `${backendUrl}/store/boards/${marketNo}`,
         );
         return res.data;
       } catch {

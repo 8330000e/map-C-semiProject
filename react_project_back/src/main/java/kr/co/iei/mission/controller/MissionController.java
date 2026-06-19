@@ -20,7 +20,7 @@ import kr.co.iei.mission.model.vo.Mission;
 
 @CrossOrigin(origins = {"https://d2g15isq25ks7i.cloudfront.net","http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"})
 @RestController
-@RequestMapping(value="/api/missions")
+@RequestMapping(value="/missions")
 public class MissionController {
 	@Autowired
 	MissionService missionService;

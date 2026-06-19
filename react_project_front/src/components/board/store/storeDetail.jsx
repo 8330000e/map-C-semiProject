@@ -150,7 +150,7 @@ const StoreDetail = () => {
 
     try {
       setIsCartLoading(true);
-      await axios.post(`${BACKSERVER}/api/store/cart`, {
+      await axios.post(`${BACKSERVER}/store/cart`, {
         memberId,
         marketNo: item.marketNo,
         quantity: 1,
@@ -176,12 +176,12 @@ const StoreDetail = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        await axios.get(`${BACKSERVER}/api/store/boards/${itemId}/read`);
+        await axios.get(`${BACKSERVER}/store/boards/${itemId}/read`);
         const [detailResponse, listResponse, commentsResponse] =
           await Promise.all([
-            axios.get(`${BACKSERVER}/api/store/boards/${itemId}`),
-            axios.get(`${BACKSERVER}/api/store/boards`),
-            axios.get(`${BACKSERVER}/api/store/boards/${itemId}/reviews`),
+            axios.get(`${BACKSERVER}/store/boards/${itemId}`),
+            axios.get(`${BACKSERVER}/store/boards`),
+            axios.get(`${BACKSERVER}/store/boards/${itemId}/reviews`),
           ]);
         setItem(detailResponse.data);
         setStoreList(Array.isArray(listResponse.data) ? listResponse.data : []);
@@ -209,7 +209,7 @@ const StoreDetail = () => {
   useEffect(() => {
     if (!itemId) return;
     axios
-      .get(`${BACKSERVER}/api/store/markets/${itemId}/ratings`)
+      .get(`${BACKSERVER}/store/markets/${itemId}/ratings`)
       .then((res) =>
         setTransactionReviews(Array.isArray(res.data) ? res.data : []),
       )
@@ -230,7 +230,7 @@ const StoreDetail = () => {
     if (!item.memberId) return;
 
     axios
-      .get(`${BACKSERVER}/api/members/${item.memberId}`)
+      .get(`${BACKSERVER}/members/${item.memberId}`)
       .then((res) => {
         if (res.data?.memberThumb) {
           setItem((prev) =>
@@ -248,7 +248,7 @@ const StoreDetail = () => {
     if (!sellerId) return;
 
     axios
-      .get(`${BACKSERVER}/api/store/sellers/${sellerId}/ratings`)
+      .get(`${BACKSERVER}/store/sellers/${sellerId}/ratings`)
       .then((res) => setSellerRatings(Array.isArray(res.data) ? res.data : []))
       .catch((error) => {
         console.error("판매자 평점 조회 실패", error);
@@ -328,7 +328,7 @@ const StoreDetail = () => {
   const refreshComments = async () => {
     try {
       const response = await axios.get(
-        `${BACKSERVER}/api/store/boards/${itemId}/reviews`,
+        `${BACKSERVER}/store/boards/${itemId}/reviews`,
       );
       // 댓글 목록을 새로고침할 때에도 비공개 플래그를 일관되게 유지합니다.
       setComments(normalizeComments(response.data));
@@ -357,7 +357,7 @@ const StoreDetail = () => {
     if (!text) return;
 
     try {
-      await axios.post(`${BACKSERVER}/api/store/boards/${itemId}/reviews`, {
+      await axios.post(`${BACKSERVER}/store/boards/${itemId}/reviews`, {
         reviewContent: text,
         memberId,
         memberNickname,
@@ -399,7 +399,7 @@ const StoreDetail = () => {
 
     try {
       await axios.delete(
-        `${BACKSERVER}/api/store/boards/${itemId}/reviews/${comment.reviewNo}`,
+        `${BACKSERVER}/store/boards/${itemId}/reviews/${comment.reviewNo}`,
         {
           params: { memberId },
         },
@@ -462,7 +462,7 @@ const StoreDetail = () => {
 
     try {
       await axios.put(
-        `${BACKSERVER}/api/store/boards/${itemId}/reviews/${editingTarget.reviewNo}`,
+        `${BACKSERVER}/store/boards/${itemId}/reviews/${editingTarget.reviewNo}`,
         {
           reviewContent: text,
           memberId,
@@ -518,7 +518,7 @@ const StoreDetail = () => {
   const updateProductStatus = async (statusCode) => {
     try {
       await axios.patch(
-        `${BACKSERVER}/api/store/boards/${itemId}/status`,
+        `${BACKSERVER}/store/boards/${itemId}/status`,
         null,
         {
           params: { status: statusCode, memberId },
@@ -684,7 +684,7 @@ const StoreDetail = () => {
     if (!result.isConfirmed) return;
 
     try {
-      await axios.delete(`${BACKSERVER}/api/store/boards/${itemId}`, {
+      await axios.delete(`${BACKSERVER}/store/boards/${itemId}`, {
         params: { memberId },
       });
       await Swal.fire({

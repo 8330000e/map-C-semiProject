@@ -119,7 +119,7 @@ const PurchaseDetail = () => {
         const numericId = !Number.isNaN(Number(id));
         if (numericId) {
           try {
-            response = await axios.get(`${BACKSERVER}/api/store/trades/${id}`);
+            response = await axios.get(`${BACKSERVER}/store/trades/${id}`);
           } catch (err) {
             response = null;
           }
@@ -128,14 +128,14 @@ const PurchaseDetail = () => {
         if ((!response || !response.data) && numericId) {
           try {
             response = await axios.get(
-              `${BACKSERVER}/api/store/markets/${id}/trade-info`,
+              `${BACKSERVER}/store/markets/${id}/trade-info`,
               {
                 params: { buyerId: loginMemberId },
               },
             );
             if (!response.data) {
               response = await axios.get(
-                `${BACKSERVER}/api/store/markets/${id}/trade-info`,
+                `${BACKSERVER}/store/markets/${id}/trade-info`,
               );
             }
           } catch (err) {
@@ -147,7 +147,7 @@ const PurchaseDetail = () => {
           if (numericId) {
             try {
               response = await axios.get(
-                `${BACKSERVER}/api/store/boards/${id}`,
+                `${BACKSERVER}/store/boards/${id}`,
               );
             } catch (err) {
               response = null;
@@ -181,7 +181,7 @@ const PurchaseDetail = () => {
     if (!item?.marketNo) return;
 
     const fetchTradeInfo = async () => {
-      const url = `${BACKSERVER}/api/store/markets/${item.marketNo}/trade-info`;
+      const url = `${BACKSERVER}/store/markets/${item.marketNo}/trade-info`;
       let response = null;
 
       try {
@@ -235,7 +235,7 @@ const PurchaseDetail = () => {
     if (!item?.marketNo) return;
     setIsLoading(true);
     axios
-      .get(`${BACKSERVER}/api/store/markets/${item.marketNo}/ratings`)
+      .get(`${BACKSERVER}/store/markets/${item.marketNo}/ratings`)
       .then((res) => setReviews(Array.isArray(res.data) ? res.data : []))
       .catch((error) => {
         console.error("구매평가 조회 실패", error);
@@ -336,7 +336,7 @@ const PurchaseDetail = () => {
     setIsProcessingOrderAction(true);
     try {
       await axios.patch(
-        `${BACKSERVER}/api/store/boards/${item.marketNo}/status`,
+        `${BACKSERVER}/store/boards/${item.marketNo}/status`,
         null,
         {
           params: { status: 0, memberId: item.sellerId },
@@ -369,12 +369,12 @@ const PurchaseDetail = () => {
       try {
         if (item.tradeNo) {
           await axios.patch(
-            `${BACKSERVER}/api/store/trades/${item.tradeNo}`,
+            `${BACKSERVER}/store/trades/${item.tradeNo}`,
             tradePayload,
           );
         } else if (item.marketNo) {
           await axios.patch(
-            `${BACKSERVER}/api/store/markets/${item.marketNo}/trade-info`,
+            `${BACKSERVER}/store/markets/${item.marketNo}/trade-info`,
             tradePayload,
           );
         }
@@ -404,7 +404,7 @@ const PurchaseDetail = () => {
     }
     try {
       const res = await axios.post(
-        `${BACKSERVER}/api/store/markets/${item.marketNo}/ratings`,
+        `${BACKSERVER}/store/markets/${item.marketNo}/ratings`,
         {
           tradeNo: item.tradeNo ?? null,
           marketNo: item.marketNo,
@@ -455,7 +455,7 @@ const PurchaseDetail = () => {
     }
     try {
       await axios.put(
-        `${BACKSERVER}/api/store/markets/${item.marketNo}/ratings/${editReviewId}`,
+        `${BACKSERVER}/store/markets/${item.marketNo}/ratings/${editReviewId}`,
         {
           buyerId: loginMemberId,
           buyerNickname: item.buyerNickname || loginMemberId,
@@ -487,7 +487,7 @@ const PurchaseDetail = () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
     try {
       await axios.delete(
-        `${BACKSERVER}/api/store/markets/${item.marketNo}/ratings/${reviewId}`,
+        `${BACKSERVER}/store/markets/${item.marketNo}/ratings/${reviewId}`,
         {
           params: { buyerId: loginMemberId },
         },

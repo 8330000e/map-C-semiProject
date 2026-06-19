@@ -93,7 +93,7 @@ const Store = () => {
     const fetchStoreBoards = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`${BACKSERVER}/api/store/boards`);
+        const response = await axios.get(`${BACKSERVER}/store/boards`);
         const items = Array.isArray(response.data)
           ? response.data
           : Array.isArray(response.data?.items)

@@ -32,7 +32,7 @@ const CartPage = () => {
       }
       try {
         setIsLoading(true);
-        const res = await axios.get(`${BACKSERVER}/api/store/cart`, {
+        const res = await axios.get(`${BACKSERVER}/store/cart`, {
           params: { memberId },
         });
         setCartItems(Array.isArray(res.data) ? res.data : []);
@@ -65,7 +65,7 @@ const CartPage = () => {
       return;
     }
     try {
-      await axios.delete(`${BACKSERVER}/api/store/cart/${cartNo}`, {
+      await axios.delete(`${BACKSERVER}/store/cart/${cartNo}`, {
         params: { memberId },
       });
       setCartItems((prev) => prev.filter((item) => item.cartNo !== cartNo));

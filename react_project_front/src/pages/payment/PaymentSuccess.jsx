@@ -32,7 +32,7 @@ const updateProductStatus = async (
   }
 
   try {
-    await axios.patch(`${BACKSERVER}/api/store/boards/${itemId}/status`, null, {
+    await axios.patch(`${BACKSERVER}/store/boards/${itemId}/status`, null, {
       params: { status: 2, memberId: sellerId },
     });
   } catch (error) {
@@ -67,7 +67,7 @@ const saveTradeInfo = async (order) => {
   const shippingStatus = isDelivery ? 0 : 1;
 
   try {
-    await axios.post(`${BACKSERVER}/api/store/trades`, {
+    await axios.post(`${BACKSERVER}/store/trades`, {
       marketNo: order.marketNo,
       sellerId: order.sellerId,
       buyerId: order.buyerId,

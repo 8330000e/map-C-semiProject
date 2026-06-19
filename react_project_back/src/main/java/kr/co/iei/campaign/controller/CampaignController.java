@@ -36,7 +36,7 @@ import kr.co.iei.utils.FileUtils;
 
 @CrossOrigin(origins = {"https://d2g15isq25ks7i.cloudfront.net", "http://localhost:5173"}, allowCredentials = "true")
 @RestController
-@RequestMapping(value="/api/campaigns")
+@RequestMapping(value="/campaigns")
 public class CampaignController {
 	@Autowired
 	private CampaignService campaignService;

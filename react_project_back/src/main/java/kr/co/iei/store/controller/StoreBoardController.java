@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/store")
+@RequestMapping("/store")
 public class StoreBoardController {
 
     private static final Logger log = LoggerFactory.getLogger(StoreBoardController.class);
