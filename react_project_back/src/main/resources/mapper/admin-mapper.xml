@@ -296,15 +296,15 @@
                 and writer_id = #{memberId}
             </if>
             <choose>
-                <if test="risk == 'high'">
+                <when test="risk == 'high'">
                     and detectedKeyword is not null and reportCount > 0
-                </if>
-                <if test="risk == 'mid'">
+                </when>
+                <when test="risk == 'mid'">
                     and (detectedKeyword is not null or reportCount > 0)
-                </if>
-                <if test="risk == 'low'">
+                </when>
+                <when test="risk == 'low'">
                     and detectedKeyword is null and reportCount = 0
-                </if>
+                </when>
             </choose>
         </where>
         order by
@@ -346,12 +346,12 @@
     <update id="updateMemberStatus">
         update member_tbl1 set
             <choose>
-                <when test="memberAction == '1'.toString()">lock_until = date_add(now(), interval 1 day), member_status = 3,</when>
-                <when test="memberAction == '3'.toString()">lock_until = date_add(now(), interval 3 day), member_status = 3,</when>
-                <when test="memberAction == '7'.toString()">lock_until = date_add(now(), interval 7 day), member_status = 3,</when>
-                <when test="memberAction == '영구정지'">member_status = 1,</when>
+                <when test="memberAction == '1'.toString()">lock_until = date_add(now(), interval 1 day), member_status = 3</when>
+                <when test="memberAction == '3'.toString()">lock_until = date_add(now(), interval 3 day), member_status = 3</when>
+                <when test="memberAction == '7'.toString()">lock_until = date_add(now(), interval 7 day), member_status = 3</when>
+                <when test="memberAction == '영구정지'">member_status = 1</when>
             </choose>
-            lock_reason = #{lockReason}
+            , lock_reason = #{lockReason}
         where member_id = #{targetId}
     </update>
 
