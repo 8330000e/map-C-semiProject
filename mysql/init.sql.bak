@@ -2,10 +2,10 @@
 USE semiproject;
 
 -- 기존 테이블이 있다면 충돌 방지를 위해 삭제 (추가할 내용)
-DROP TABLE IF EXISTS `tip_tbl`, `store_review_tbl`, `store_cart_tbl`, `store_board_tradeinfo_tbl`, `store_board_tbl`, `report_tbl`, `region_tree_tbl`, `region_tbl`, `region_contribution_tbl`, `qna_tbl`, `point_tbl`, `point_donation`, `notice_tbl`, `mission_tbl`, `member_tbl1`, `member_point_tbl`, `member_mission_tbl`, `member_log_tbl`, `keyword_tbl`, `faq_tbl`, `donation_group`, `ctpvsgg_tbl`, `create_campaign_tbl`, `co2_tbl`, `cart_tbl`, `carbon_tbl`, `carbon_heat_tbl`, `carbon_gas_tbl`, `carbon_ele_tbl`, `campaign_update_tbl`, `campaign_participance_tbl`, `campaign_notice_tbl`, `campaign_member_tbl`, `campaign_exile_tbl`, `board_tbl`, `board_like_tbl`, `board_file_tbl`, `board_comment_tbl`, `attendance_tbl`, `alarm_tbl`, `admin_log_tbl`;
+DROP TABLE IF EXISTS `TIP_TBL`, `STORE_REVIEW_TBL`, `STORE_CART_TBL`, `STORE_BOARD_TRADEINFO_TBL`, `STORE_BOARD_TBL`, `REPORT_TBL`, `REGION_TREE_TBL`, `REGION_TBL`, `REGION_CONTRIBUTION_TBL`, `QNA_TBL`, `POINT_TBL`, `POINT_DONATION`, `NOTICE_TBL`, `MISSION_TBL`, `MEMBER_TBL1`, `MEMBER_POINT_TBL`, `MEMBER_MISSION_TBL`, `MEMBER_LOG_TBL`, `KEYWORD_TBL`, `FAQ_TBL`, `DONATION_GROUP`, `CTPVSGG_TBL`, `CREATE_CAMPAIGN_TBL`, `CO2_TBL`, `CART_TBL`, `CARBON_TBL`, `CARBON_HEAT_TBL`, `CARBON_GAS_TBL`, `CARBON_ELE_TBL`, `CAMPAIGN_UPDATE_TBL`, `CAMPAIGN_PARTICIPANCE_TBL`, `CAMPAIGN_NOTICE_TBL`, `CAMPAIGN_MEMBER_TBL`, `CAMPAIGN_EXILE_TBL`, `BOARD_TBL`, `BOARD_LIKE_TBL`, `BOARD_FILE_TBL`, `BOARD_COMMENT_TBL`, `ATTENDANCE_TBL`, `ALARM_TBL`, `ADMIN_LOG_TBL`;
 
 -- DDL for Table ADMIN_LOG_TBL
-CREATE TABLE `admin_log_tbl` (
+CREATE TABLE `ADMIN_LOG_TBL` (
     `LOG_NO` INT, 
     `ADMIN_ID` VARCHAR(20), 
     `LOG_TARGET_ID` VARCHAR(20), 
@@ -17,7 +17,7 @@ CREATE TABLE `admin_log_tbl` (
 );
 
 -- DDL for Table ALARM_TBL
-CREATE TABLE `alarm_tbl` (
+CREATE TABLE `ALARM_TBL` (
     `ALARM_NO` INT, 
     `MEMBER_ID` VARCHAR(20), 
     `ALARM_KIND` INT, 
@@ -30,7 +30,7 @@ CREATE TABLE `alarm_tbl` (
 );
 
 -- DDL for Table ATTENDANCE_TBL
-CREATE TABLE `attendance_tbl` (
+CREATE TABLE `ATTENDANCE_TBL` (
     `ATTENDANCE_NO` INT, 
     `MEMBER_ID` VARCHAR(20), 
     `ATTEND_YMD` DATE, 
@@ -38,7 +38,7 @@ CREATE TABLE `attendance_tbl` (
 );
 
 -- DDL for Table BOARD_COMMENT_TBL
-CREATE TABLE `board_comment_tbl` (
+CREATE TABLE `BOARD_COMMENT_TBL` (
     `BOARD_COMMENT_NO` INT,
     `BOARD_COMMENT_WRITER` VARCHAR(20),
     `BOARD_NO` INT,
@@ -54,7 +54,7 @@ CREATE TABLE `board_comment_tbl` (
 );
 
 -- DDL for Table BOARD_FILE_TBL
-CREATE TABLE `board_file_tbl` (
+CREATE TABLE `BOARD_FILE_TBL` (
     `FILE_NO` INT, 
     `BOARD_NO` INT, 
     `MEMBER_ID` VARCHAR(20), 
@@ -63,13 +63,13 @@ CREATE TABLE `board_file_tbl` (
 );
 
 -- DDL for Table BOARD_LIKE_TBL
-CREATE TABLE `board_like_tbl` (
+CREATE TABLE `BOARD_LIKE_TBL` (
     `BOARD_NO` INT, 
     `MEMBER_ID` VARCHAR(20)
 );
 
 -- DDL for Table BOARD_TBL
-CREATE TABLE `board_tbl` (
+CREATE TABLE `BOARD_TBL` (
     `BOARD_NO` INT AUTO_INCREMENT PRIMARY KEY, 
     `WRITER_ID` VARCHAR(20), 
     `BOARD_TITLE` VARCHAR(1000), 
@@ -88,20 +88,20 @@ CREATE TABLE `board_tbl` (
 );
 
 -- DDL for Table CAMPAIGN_EXILE_TBL
-CREATE TABLE `campaign_exile_tbl` (
+CREATE TABLE `CAMPAIGN_EXILE_TBL` (
     `MEMBER_ID` VARCHAR(30), 
     `CAMPAIGN_NO` INT, 
     `CAMPAIGN_EXILE_REASON` VARCHAR(1000)
 );
 
 -- DDL for Table CAMPAIGN_MEMBER_TBL
-CREATE TABLE `campaign_member_tbl` (
+CREATE TABLE `CAMPAIGN_MEMBER_TBL` (
     `MEMBER_ID` VARCHAR(30), 
     `CAMPAIGN_NO` INT
 );
 
 -- DDL for Table CAMPAIGN_NOTICE_TBL
-CREATE TABLE `campaign_notice_tbl` (
+CREATE TABLE `CAMPAIGN_NOTICE_TBL` (
     `CAMPAIGN_NOTICE_NO` INT, 
     `CAMPAIGN_NOTICE_TITLE` VARCHAR(1000), 
     `CAMPAIGN_NOTICE_CONTENT` VARCHAR(2000), 
@@ -111,7 +111,7 @@ CREATE TABLE `campaign_notice_tbl` (
 );
 
 -- DDL for Table CAMPAIGN_PARTICIPANCE_TBL
-CREATE TABLE `campaign_participance_tbl` (
+CREATE TABLE `CAMPAIGN_PARTICIPANCE_TBL` (
     `CAMPAIGN_PARTICIPANCE_NO` INT, 
     `CAMPAIGN_THUMB` VARCHAR(300), 
     `CAMPAIGN_MEMO` VARCHAR(500), 
@@ -122,7 +122,7 @@ CREATE TABLE `campaign_participance_tbl` (
 );
 
 -- DDL for Table CAMPAIGN_UPDATE_TBL
-CREATE TABLE `campaign_update_tbl` (
+CREATE TABLE `CAMPAIGN_UPDATE_TBL` (
     `CAMPAIGN_UPDATE_NO` INT, 
     `CAMPAIGN_TITLE` VARCHAR(1000), 
     `CAMPAIGN_EXPLANATION` VARCHAR(2000), 
@@ -131,7 +131,7 @@ CREATE TABLE `campaign_update_tbl` (
 );
 
 -- DDL for Table CARBON_ELE_TBL
-CREATE TABLE `carbon_ele_tbl` (
+CREATE TABLE `CARBON_ELE_TBL` (
     `CTPVSGG_ID` CHAR(8), 
     `CARBON_ELE_JAN` DOUBLE, 
     `CARBON_ELE_FEB` DOUBLE, 
@@ -149,7 +149,7 @@ CREATE TABLE `carbon_ele_tbl` (
 );
 
 -- DDL for Table CARBON_GAS_TBL
-CREATE TABLE `carbon_gas_tbl` (
+CREATE TABLE `CARBON_GAS_TBL` (
     `CTPVSGG_ID` CHAR(8), 
     `CARBON_GAS_JAN` DOUBLE, 
     `CARBON_GAS_FEB` DOUBLE, 
@@ -167,7 +167,7 @@ CREATE TABLE `carbon_gas_tbl` (
 );
 
 -- DDL for Table CARBON_HEAT_TBL
-CREATE TABLE `carbon_heat_tbl` (
+CREATE TABLE `CARBON_HEAT_TBL` (
     `CTPVSGG_ID` CHAR(8), 
     `CARBON_HEAT_JAN` DOUBLE, 
     `CARBON_HEAT_FEB` DOUBLE, 
@@ -185,7 +185,7 @@ CREATE TABLE `carbon_heat_tbl` (
 );
 
 -- DDL for Table CARBON_TBL
-CREATE TABLE `carbon_tbl` (
+CREATE TABLE `CARBON_TBL` (
     `CTPVSGG_ID` CHAR(8), 
     `REGION_NO` INT, 
     `CARBON_ROAD_TCO2` DOUBLE, 
@@ -194,7 +194,7 @@ CREATE TABLE `carbon_tbl` (
 );
 
 -- DDL for Table CART_TBL
-CREATE TABLE `cart_tbl` (
+CREATE TABLE `CART_TBL` (
     `CART_NO` INT, 
     `MEMBER_ID` VARCHAR(20), 
     `MARKET_NO` INT, 
@@ -203,7 +203,7 @@ CREATE TABLE `cart_tbl` (
 );
 
 -- DDL for Table CO2_TBL
-CREATE TABLE `co2_tbl` (
+CREATE TABLE `CO2_TBL` (
     `C_NO` INT, 
     `BOARD_NO` INT, 
     `MEMBER_ID` VARCHAR(20), 
@@ -222,7 +222,7 @@ CREATE TABLE `co2_tbl` (
 );
 
 -- DDL for Table CREATE_CAMPAIGN_TBL
-CREATE TABLE `create_campaign_tbl` (
+CREATE TABLE `CREATE_CAMPAIGN_TBL` (
     `CAMPAIGN_NO` INT, 
     `CAMPAIGN_TITLE` VARCHAR(1000), 
     `CAMPAIGN_EXPLANATION` VARCHAR(2000), 
@@ -234,7 +234,7 @@ CREATE TABLE `create_campaign_tbl` (
 );
 
 -- DDL for Table CTPVSGG_TBL
-CREATE TABLE `ctpvsgg_tbl` (
+CREATE TABLE `CTPVSGG_TBL` (
     `CTPVSGG_ID` CHAR(8), 
     `CTPV_CD` INT, 
     `SGG_CD` INT, 
@@ -243,7 +243,7 @@ CREATE TABLE `ctpvsgg_tbl` (
 );
 
 -- DDL for Table DONATION_GROUP
-CREATE TABLE `donation_group` (
+CREATE TABLE `DONATION_GROUP` (
     `GROUP_ID` VARCHAR(50), 
     `GROUP_NAME` VARCHAR(100), 
     `GROUP_DESC` VARCHAR(500), 
@@ -254,7 +254,7 @@ CREATE TABLE `donation_group` (
 );
 
 -- DDL for Table FAQ_TBL
-CREATE TABLE `faq_tbl` (
+CREATE TABLE `FAQ_TBL` (
     `FAQ_NO` INT, 
     `FAQ_TITLE` VARCHAR(200), 
     `FAQ_CONTENT` VARCHAR(600), 
@@ -262,14 +262,14 @@ CREATE TABLE `faq_tbl` (
 );
 
 -- DDL for Table KEYWORD_TBL
-CREATE TABLE `keyword_tbl` (
+CREATE TABLE `KEYWORD_TBL` (
     `KEYWORD_NO` INT, 
     `KEYWORD` VARCHAR(100), 
     `KEYWORD_CATEGORY` VARCHAR(50)
 );
 
 -- DDL for Table MEMBER_LOG_TBL
-CREATE TABLE `member_log_tbl` (
+CREATE TABLE `MEMBER_LOG_TBL` (
     `MEMBER_LOG_NO` INT, 
     `MEMBER_ID` VARCHAR(20), 
     `LOG_IP` VARCHAR(30), 
@@ -283,7 +283,7 @@ CREATE TABLE `member_log_tbl` (
 );
 
 -- DDL for Table MEMBER_MISSION_TBL
-CREATE TABLE `member_mission_tbl` (
+CREATE TABLE `MEMBER_MISSION_TBL` (
     `USER_MISSION_NO` INT, 
     `MISSION_NO` INT, 
     `MEMBER_ID` VARCHAR(20), 
@@ -293,13 +293,13 @@ CREATE TABLE `member_mission_tbl` (
 );
 
 -- DDL for Table MEMBER_POINT_TBL
-CREATE TABLE `member_point_tbl` (
+CREATE TABLE `MEMBER_POINT_TBL` (
     `MEMBER_ID` VARCHAR(20), 
     `TOTAL_POINT` INT DEFAULT 0
 );
 
 -- DDL for Table MEMBER_TBL1 (가장 에러를 유발하던 핵심 테이블)
-CREATE TABLE `member_tbl1` (
+CREATE TABLE `MEMBER_TBL1` (
     `MEMBER_ID` VARCHAR(20) PRIMARY KEY, 
     `MEMBER_PW` CHAR(60), 
     `MEMBER_NAME` VARCHAR(30), 
@@ -318,7 +318,7 @@ CREATE TABLE `member_tbl1` (
 );
 
 -- DDL for Table MISSION_TBL
-CREATE TABLE `mission_tbl` (
+CREATE TABLE `MISSION_TBL` (
     `MISSION_NO` INT, 
     `MISSION_TITLE` VARCHAR(300), 
     `REWARD_POINT` INT, 
@@ -329,7 +329,7 @@ CREATE TABLE `mission_tbl` (
 );
 
 -- DDL for Table NOTICE_TBL
-CREATE TABLE `notice_tbl` (
+CREATE TABLE `NOTICE_TBL` (
     `NOTICE_NO` INT, 
     `NOTICE_TITLE` VARCHAR(200), 
     `NOTICE_CONTENT` VARCHAR(2000), 
@@ -342,7 +342,7 @@ CREATE TABLE `notice_tbl` (
 );
 
 -- DDL for Table POINT_DONATION
-CREATE TABLE `point_donation` (
+CREATE TABLE `POINT_DONATION` (
     `DONATION_NO` INT, 
     `MEMBER_ID` VARCHAR(20), 
     `GROUP_ID` VARCHAR(50), 
@@ -352,7 +352,7 @@ CREATE TABLE `point_donation` (
 );
 
 -- DDL for Table POINT_TBL
-CREATE TABLE `point_tbl` (
+CREATE TABLE `POINT_TBL` (
     `POINT_NO` INT, 
     `MEMBER_ID` VARCHAR(20), 
     `POINT_CHANGE` INT, 
@@ -362,7 +362,7 @@ CREATE TABLE `point_tbl` (
 );
 
 -- DDL for Table QNA_TBL
-CREATE TABLE `qna_tbl` (
+CREATE TABLE `QNA_TBL` (
     `QNA_NO` INT, 
     `MEMBER_ID` VARCHAR(20), 
     `QNA_TITLE` VARCHAR(200), 
@@ -376,7 +376,7 @@ CREATE TABLE `qna_tbl` (
 );
 
 -- DDL for Table REGION_CONTRIBUTION_TBL
-CREATE TABLE `region_contribution_tbl` (
+CREATE TABLE `REGION_CONTRIBUTION_TBL` (
     `CONTRIBUTION_NO` INT, 
     `MEMBER_ID` VARCHAR(20), 
     `REGION_NO` INT, 
@@ -385,13 +385,13 @@ CREATE TABLE `region_contribution_tbl` (
 );
 
 -- DDL for Table REGION_TBL
-CREATE TABLE `region_tbl` (
+CREATE TABLE `REGION_TBL` (
     `REGION_NO` INT, 
     `REGION_NAME` VARCHAR(30)
 );
 
 -- DDL for Table REGION_TREE_TBL
-CREATE TABLE `region_tree_tbl` (
+CREATE TABLE `REGION_TREE_TBL` (
     `REGION_NO` INT, 
     `TREE_LEVEL` INT DEFAULT 1, 
     `TREE_EXP` INT DEFAULT 0, 
@@ -399,7 +399,7 @@ CREATE TABLE `region_tree_tbl` (
 );
 
 -- DDL for Table REPORT_TBL
-CREATE TABLE `report_tbl` (
+CREATE TABLE `REPORT_TBL` (
     `REPORT_NO` INT, 
     `TARGET_NO` INT, 
     `TARGET_TYPE` VARCHAR(10), 
@@ -411,7 +411,7 @@ CREATE TABLE `report_tbl` (
 );
 
 -- DDL for Table STORE_BOARD_TBL
-CREATE TABLE `store_board_tbl` (
+CREATE TABLE `STORE_BOARD_TBL` (
     `MARKET_NO` INT AUTO_INCREMENT PRIMARY KEY, 
     `BOARD_NO` INT, 
     `MEMBER_ID` VARCHAR(20), 
@@ -429,7 +429,7 @@ CREATE TABLE `store_board_tbl` (
 );
 
 -- DDL for Table STORE_BOARD_TRADEINFO_TBL
-CREATE TABLE `store_board_tradeinfo_tbl` (
+CREATE TABLE `STORE_BOARD_TRADEINFO_TBL` (
     `TRADE_NO` INT AUTO_INCREMENT PRIMARY KEY, 
     `MARKET_NO` INT, 
     `SELLER_ID` VARCHAR(20), 
@@ -455,7 +455,7 @@ CREATE TABLE `store_board_tradeinfo_tbl` (
 );
 
 -- DDL for Table STORE_CART_TBL
-CREATE TABLE `store_cart_tbl` (
+CREATE TABLE `STORE_CART_TBL` (
     `CART_NO` INT AUTO_INCREMENT PRIMARY KEY, 
     `MEMBER_ID` VARCHAR(20), 
     `MARKET_NO` INT, 
@@ -464,7 +464,7 @@ CREATE TABLE `store_cart_tbl` (
 );
 
 -- DDL for Table STORE_REVIEW_TBL
-CREATE TABLE `store_review_tbl` (
+CREATE TABLE `STORE_REVIEW_TBL` (
     `REVIEW_NO` INT AUTO_INCREMENT PRIMARY KEY, 
     `TRADE_NO` INT, 
     `MARKET_NO` INT, 
@@ -483,7 +483,7 @@ CREATE TABLE `store_review_tbl` (
 );
 
 -- DDL for Table TIP_TBL
-CREATE TABLE `tip_tbl` (
+CREATE TABLE `TIP_TBL` (
     `BOARD_NO` INT, 
     `MEMBER_ID` VARCHAR(20)
 );
@@ -492,7 +492,7 @@ CREATE TABLE `tip_tbl` (
 -- 데이터 데이터 세트 주입 문항 (오라클 to_date 제거 및 표준
 
 
-INSERT INTO `admin_log_tbl` (LOG_NO,ADMIN_ID,LOG_TARGET_ID,LOG_RESULT,LOG_DATE,LOG_REASON,REPORT_NO,LOG_ACTION) VALUES 
+INSERT INTO ADMIN_LOG_TBL (LOG_NO,ADMIN_ID,LOG_TARGET_ID,LOG_RESULT,LOG_DATE,LOG_REASON,REPORT_NO,LOG_ACTION) VALUES 
 (164,'admin00','logintest','게시글: 삭제 처리 / 회원: 1','2026-04-21','게시글 제목과 내용에 욕설밖에 없음',164,'회원정지'),
 (202,'admin00','god','게시글: 미처리 / 회원: 영구정지','2026-04-22','발표방해',203,'회원정지'),
 (142,'admin00','user1119','게시글: 삭제 처리 / 회원: 미처리','2026-04-20','근거: 포인트 반복 스팸성 게시물',145,'게시글조치'),
@@ -508,7 +508,7 @@ INSERT INTO `admin_log_tbl` (LOG_NO,ADMIN_ID,LOG_TARGET_ID,LOG_RESULT,LOG_DATE,L
 (141,'admin00','user88','게시글: 비공개 처리 / 회원: 1','2026-04-20','가족 비하 및 패드립 조치',148,'회원정지'),
 (144,'admin00','user1119','회원 정지 해제','2026-04-20',NULL,NULL,'회원 정지 해제');
 
-INSERT INTO `alarm_tbl` (ALARM_NO,MEMBER_ID,ALARM_KIND,ALARM_CONTENT,ALARM_DATA,ALARM_CHECK,ALARM_TIME,ALARM_DEL,POINT_NO) VALUES 
+INSERT INTO ALARM_TBL (ALARM_NO,MEMBER_ID,ALARM_KIND,ALARM_CONTENT,ALARM_DATA,ALARM_CHECK,ALARM_TIME,ALARM_DEL,POINT_NO) VALUES 
 (21,'user19',5,'실내 냉,난방줄이기 캠페인 조기종료','종료 공지사항 확인 요망',1,'2026-04-15',0,NULL),
 (22,'asdf',5,'실내 냉,난방줄이기 캠페인 조기종료','종료 공지사항 확인 요망',1,'2026-04-15',1,NULL),
 (23,'campaignAdmin',5,'실내 냉,난방줄이기 캠페인 조기종료','종료 공지사항 확인 요망',0,'2026-04-15',1,NULL),
@@ -532,7 +532,7 @@ INSERT INTO `alarm_tbl` (ALARM_NO,MEMBER_ID,ALARM_KIND,ALARM_CONTENT,ALARM_DATA,
 (145,'gy123',1,'캠페인 적립 100포인트','게시물링크',0,'2026-04-22',1,NULL),
 (146,'gy123',1,'알림 테스트','게시물링크',0,'2026-04-22',1,NULL);
 
-INSERT INTO `attendance_tbl` (ATTENDANCE_NO,MEMBER_ID,ATTEND_YMD,REWARD_POINT) VALUES 
+INSERT INTO ATTENDANCE_TBL (ATTENDANCE_NO,MEMBER_ID,ATTEND_YMD,REWARD_POINT) VALUES 
 (1,'user1119','2026-04-08',1),(2,'admin0','2026-04-08',1),(3,'logintest','2026-04-08',1),
 (13,'lbc','2026-04-13',1),(14,'user19','2026-04-13',1),(19,'user19','2026-04-14',5),
 (23,'user2318','2026-04-15',5),(24,'user1004','2026-04-15',5),(26,'user2318','2026-04-16',5),
@@ -553,7 +553,7 @@ INSERT INTO `attendance_tbl` (ATTENDANCE_NO,MEMBER_ID,ATTEND_YMD,REWARD_POINT) V
 (6,'admin0','2026-04-09',1),(7,'test000','2026-04-09',1),(16,'user1119','2026-04-14',5),
 (67,'user1119','2026-04-22',5);
 
-INSERT INTO `board_comment_tbl` (BOARD_COMMENT_NO,BOARD_COMMENT_WRITER,BOARD_NO,BOARD_COMMENT_CONTENT,BOARD_COMMENT_DATE,UPDATED_AT,MEMBER_NICKNAME,PARENT_COMMENT_NO,COMMENT_GROUP,COMMENT_DEPTH,IS_SECRET,BOARD_COMMENT_STATUS) VALUES 
+INSERT INTO BOARD_COMMENT_TBL (BOARD_COMMENT_NO,BOARD_COMMENT_WRITER,BOARD_NO,BOARD_COMMENT_CONTENT,BOARD_COMMENT_DATE,UPDATED_AT,MEMBER_NICKNAME,PARENT_COMMENT_NO,COMMENT_GROUP,COMMENT_DEPTH,IS_SECRET,BOARD_COMMENT_STATUS) VALUES 
 (59,'lbc',441,'테스트','2026-04-13','2026-04-13','이병창',NULL,59,0,'N',0),
 (68,'lbc',29,'@admin00 ㅇㅇㅇ','2026-04-13','2026-04-13','이병창',NULL,68,1,'N',0),
 (69,'lbc',29,'ㅇㅇ','2026-04-13','2026-04-13','이병창',NULL,69,1,'N',0),

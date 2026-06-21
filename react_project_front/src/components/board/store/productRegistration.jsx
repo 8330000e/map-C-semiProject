@@ -113,7 +113,7 @@ const ProductRegistration = () => {
   useEffect(() => {
     const fetchRegions = async () => {
       try {
-        const response = await axios.get(`${BACKSERVER}/regions`);
+        const response = await axios.get(`${BACKSERVER}/regions/codes`);
         setRegions(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error("지역 목록 조회 실패", error);
