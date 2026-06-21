@@ -12,7 +12,7 @@ import useAuthStore from "../../store/useAuthStore";
 import CloseIcon from "@mui/icons-material/Close";
 import Swal from "sweetalert2";
 
- const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "/api";
   
 
 const TreeGrowMain = ({ selectedRegionNo }) => {

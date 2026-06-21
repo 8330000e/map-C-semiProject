@@ -10,7 +10,7 @@ import useAuthStore from "../../store/useAuthStore";
 import { normalizeImageUrl } from "../../utils/getImageUrl";
 import { useState, useEffect, useRef } from "react";
 
- const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "/api";
   
 
 // memberThumb의 경로를 실제 이미지 URL로 변환하는 함수임.

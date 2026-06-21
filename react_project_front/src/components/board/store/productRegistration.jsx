@@ -6,7 +6,7 @@ import styles from "./productRegistration.module.css";
 import { normalizeImageUrl } from "../../../utils/getImageUrl";
 import { compressImageFile } from "../../../utils/compressImage";
 
- const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "/api";
 
 const ProductRegistration = () => {
   const navigate = useNavigate();

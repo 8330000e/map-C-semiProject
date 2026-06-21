@@ -3,7 +3,7 @@ import axios from "axios";
 import useAuthStore from "../../store/useAuthStore";
 import styles from "./MyPoint.module.css";
 
- const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "/api";
   
 
 const MyPoint = () => {

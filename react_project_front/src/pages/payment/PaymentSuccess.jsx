@@ -10,7 +10,7 @@ import {
   getPendingPurchase,
 } from "../../components/mypage/orderHistoryStorage";
 
- const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "/api";
   
 
 const updateProductStatus = async (

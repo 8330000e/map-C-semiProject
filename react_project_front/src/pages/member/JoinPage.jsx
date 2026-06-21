@@ -234,7 +234,7 @@ const Join = () => {
       return;
     }
 
-     const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`; `${import.meta.env.VITE_BACKSERVER}`;
+    const BACKSERVER = import.meta.env.VITE_BACKSERVER || "/api";
     if (!BACKSERVER) {
       await errorAlert("연결 오류", "서버 연결 오류");
       return;

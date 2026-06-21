@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 // 스토어 상품 이미지 변환은 normalizeImageUrl에서 처리함.
 // 로컬 /board/editor 경로 대신 Firebase URL 변환을 우선함.
 
- const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "/api";
   
 
 // 중고거래 목록 페이지임.

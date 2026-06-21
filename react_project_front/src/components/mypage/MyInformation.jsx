@@ -6,7 +6,7 @@ import userImg from "../../assets/admin.png";
 import useAuthStore from "../../store/useAuthStore.js";
 import { normalizeImageUrl } from "../../utils/getImageUrl";
 import { compressImageFile } from "../../utils/compressImage";
- const BACKSERVER = `${import.meta.env.VITE_BACKSERVER}`;
+const BACKSERVER = import.meta.env.VITE_BACKSERVER || "/api";
   ;
 
 // 서버에 저장된 썸네일 경로를 실제 이미지 URL로 변환함.
