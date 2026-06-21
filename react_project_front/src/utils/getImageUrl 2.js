@@ -4,8 +4,7 @@
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "/api";
   
 const FIREBASE_BUCKET =
-  import.meta.env.VITE_FIREBASE_BUCKET ||
-  "semiproject-carbon.firebasestorage.app";
+  import.meta.env.VITE_FIREBASE_BUCKET;
 
 export const isAbsoluteUrl = (url) => {
   return typeof url === "string" && /^(https?:)?\/\//i.test(url.trim());
