@@ -144,8 +144,7 @@ const PurchaseHistory = () => {
 
   useEffect(() => {
     const backendUrl =
-      `${import.meta.env.VITE_BACKSERVER}` ||
-      ;
+      `${import.meta.env.VITE_BACKSERVER}`;
     const currentItems = purchaseHistory.slice(
       (currentPage - 1) * PAGE_SIZE,
       (currentPage - 1) * PAGE_SIZE + PAGE_SIZE,

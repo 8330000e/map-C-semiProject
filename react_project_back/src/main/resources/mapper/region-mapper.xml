@@ -12,20 +12,20 @@
             T.TREE_LEVEL AS treeLevel,
             T.TREE_EXP AS treeExp,
             T.TOTAL_POINT_USED AS totalPointUsed
-        FROM REGION_TBL R
-        JOIN REGION_TREE_TBL T
+        FROM region_tbl R
+        JOIN region_tree_tbl T
           ON R.REGION_NO = T.REGION_NO
         ORDER BY R.REGION_NO ASC
     </select>
 
     <update id="increaseTreeExp">
-        UPDATE REGION_TREE_TBL
+        UPDATE region_tree_tbl
         SET TREE_EXP = TREE_EXP + #{appliedPoint}
         WHERE REGION_NO = #{regionNo}
     </update>
 
     <insert id="insertContribution" parameterType="contribution" useGeneratedKeys="true" keyProperty="contributionNo">
-        INSERT INTO REGION_CONTRIBUTION_TBL (
+        INSERT INTO region_contribution_tbl (
             MEMBER_ID, 
             REGION_NO, 
             CONTRIBUTED_POINT, 
@@ -39,7 +39,7 @@
     </insert>
 
     <update id="resetWeeklyTree">
-        UPDATE REGION_TREE_TBL
+        UPDATE region_tree_tbl
         SET TREE_LEVEL = 1,
             TREE_EXP = 0,
             TOTAL_POINT_USED = 0
@@ -53,8 +53,8 @@
             R.REGION_NAME AS regionName,
             C.CONTRIBUTED_POINT AS contributedPoint,
             DATE_FORMAT(C.CONTRIBUTED_AT, '%Y-%m-%d %H:%i:%s') AS contributedAt
-        FROM REGION_CONTRIBUTION_TBL C
-        JOIN REGION_TBL R
+        FROM region_contribution_tbl C
+        JOIN region_tbl R
           ON C.REGION_NO = R.REGION_NO
         WHERE C.CONTRIBUTED_AT >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)
         ORDER BY C.CONTRIBUTED_AT DESC

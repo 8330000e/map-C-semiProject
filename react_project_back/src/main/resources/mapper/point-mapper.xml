@@ -25,7 +25,7 @@
                 POINT_REASON AS pointReason,
                 DATE_FORMAT(CREATED_DATE, '%Y-%m-%d') AS createdDate,
                 CREATED_DATE AS orderDate
-            FROM POINT_TBL
+            FROM point_tbl
             WHERE MEMBER_ID = #{memberId}
     
             UNION ALL
@@ -38,7 +38,7 @@
                 '나무 물주기' AS pointReason,
                 DATE_FORMAT(CONTRIBUTED_AT, '%Y-%m-%d') AS createdDate,
                 CONTRIBUTED_AT AS orderDate
-            FROM REGION_CONTRIBUTION_TBL
+            FROM region_contribution_tbl
             WHERE MEMBER_ID = #{memberId}
     
             UNION ALL
@@ -51,8 +51,8 @@
                 CONCAT(G.GROUP_NAME, '에 ', D.DONATION_POINT, 'P 기부') AS pointReason,
                 DATE_FORMAT(D.DONATION_DATE, '%Y-%m-%d') AS createdDate,
                 D.DONATION_DATE AS orderDate
-            FROM POINT_DONATION D
-            JOIN DONATION_GROUP G
+            FROM point_donation D
+            JOIN donation_group G
               ON D.GROUP_ID = G.GROUP_ID
             WHERE D.MEMBER_ID = #{memberId}
               AND D.DONATION_POINT > 0

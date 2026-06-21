@@ -20,7 +20,7 @@
             REWARD_POINT,
             MISSION_IMAGE_URL,
             MISSION_TYPE
-        FROM MISSION_TBL
+        FROM mission_tbl
         ORDER BY MISSION_NO ASC
     </select>
 
@@ -33,8 +33,8 @@
             M.REWARD_POINT,
             M.MISSION_IMAGE_URL,
             M.MISSION_TYPE
-        FROM MEMBER_MISSION_TBL MM
-        JOIN MISSION_TBL M
+        FROM member_mission_tbl MM
+        JOIN mission_tbl M
           ON MM.MISSION_NO = M.MISSION_NO
         WHERE MM.MEMBER_ID = #{memberId}
           AND M.MISSION_TYPE = 'RANDOM'
@@ -48,14 +48,14 @@
             REWARD_POINT,
             MISSION_IMAGE_URL,
             MISSION_TYPE
-        FROM MISSION_TBL
+        FROM mission_tbl
         WHERE MISSION_TYPE = 'RANDOM'
         ORDER BY RAND()
         LIMIT 1
     </select>
 
     <insert id="insertMemberMission" parameterType="memberMission" useGeneratedKeys="true" keyProperty="userMissionNo">
-        INSERT INTO MEMBER_MISSION_TBL (
+        INSERT INTO member_mission_tbl (
             MISSION_NO,
             MEMBER_ID,
             ASSIGNED_YMD,
@@ -70,7 +70,7 @@
             NULL
         WHERE NOT EXISTS (
             SELECT 1
-            FROM MEMBER_MISSION_TBL
+            FROM member_mission_tbl
             WHERE MEMBER_ID = #{memberId}
               AND ASSIGNED_YMD = CURDATE()
         )
@@ -78,7 +78,7 @@
 
     <select id="selectTodayRandomMissionCertImageUrl" resultType="string">
         SELECT CERT_IMAGE_URL
-        FROM MEMBER_MISSION_TBL
+        FROM member_mission_tbl
         WHERE MEMBER_ID = #{memberId}
           AND MISSION_NO = #{missionNo}
           AND COMPLETED_YMD = CURDATE()
@@ -86,13 +86,13 @@
     
     <select id="existsTodayAttendance" resultType="int">
         SELECT COUNT(*)
-        FROM ATTENDANCE_TBL
+        FROM attendance_tbl
         WHERE MEMBER_ID = #{memberId}
           AND ATTEND_YMD = CURDATE()
     </select>
 
     <insert id="insertAttendance" parameterType="string" useGeneratedKeys="true" keyProperty="attendanceNo">
-        INSERT INTO ATTENDANCE_TBL (
+        INSERT INTO attendance_tbl (
             MEMBER_ID,
             ATTEND_YMD,
             REWARD_POINT
@@ -104,14 +104,14 @@
     </insert>
 
     <update id="updateMemberPoint" parameterType="string">
-        UPDATE MEMBER_POINT_TBL
+        UPDATE member_point_tbl
         SET TOTAL_POINT = TOTAL_POINT + 5
         WHERE MEMBER_ID = #{memberId}
     </update>
     
     <select id="selectRecentAttendanceDates" resultType="string">
         SELECT DATE_FORMAT(ATTEND_YMD, '%Y-%m-%d')
-        FROM ATTENDANCE_TBL
+        FROM attendance_tbl
         WHERE MEMBER_ID = #{memberId}
           AND ATTEND_YMD = CURDATE()
         ORDER BY ATTEND_YMD DESC
@@ -119,25 +119,25 @@
     </select>
     
     <update id="addAttendanceBonusPoint">
-        UPDATE MEMBER_POINT_TBL
+        UPDATE member_point_tbl
         SET TOTAL_POINT = TOTAL_POINT + #{point}
         WHERE MEMBER_ID = #{memberId}
     </update>
             
     <select id="existsTodayBasicMission" resultType="int">
         SELECT COUNT(*)
-        FROM MEMBER_MISSION_TBL
+        FROM member_mission_tbl
         WHERE MEMBER_ID = #{memberId}
           AND MISSION_NO = (
               SELECT MISSION_NO
-              FROM MISSION_TBL
+              FROM mission_tbl
               WHERE MISSION_TYPE = 'BASIC'
           )
           AND COMPLETED_YMD = CURDATE()
     </select>
     
     <insert id="insertBasicMission" parameterType="string" useGeneratedKeys="true" keyProperty="userMissionNo">
-        INSERT INTO MEMBER_MISSION_TBL (
+        INSERT INTO member_mission_tbl (
             MISSION_NO,
             MEMBER_ID,
             COMPLETED_YMD,
@@ -145,7 +145,7 @@
         ) VALUES (
             (
                 SELECT MISSION_NO
-                FROM MISSION_TBL
+                FROM mission_tbl
                 WHERE MISSION_TYPE = 'BASIC'
             ),
             #{memberId},
@@ -155,26 +155,26 @@
     </insert>
 
     <update id="updateMemberPointForBasic" parameterType="string">
-        UPDATE MEMBER_POINT_TBL
+        UPDATE member_point_tbl
         SET TOTAL_POINT = TOTAL_POINT + 10
         WHERE MEMBER_ID = #{memberId}
     </update>
 
     <insert id="insertMemberPoint" parameterType="string">
-        INSERT INTO MEMBER_POINT_TBL (MEMBER_ID, TOTAL_POINT)
+        INSERT INTO member_point_tbl (MEMBER_ID, TOTAL_POINT)
         VALUES (#{memberId}, 0)
     </insert>
     
     <select id="existsTodayRandomMissionComplete" resultType="int">
         SELECT COUNT(*)
-        FROM MEMBER_MISSION_TBL
+        FROM member_mission_tbl
         WHERE MEMBER_ID = #{memberId}
           AND MISSION_NO = #{missionNo}
           AND COMPLETED_YMD = CURDATE()
     </select>
     
     <update id="updateRandomMissionCertification">
-        UPDATE MEMBER_MISSION_TBL
+        UPDATE member_mission_tbl
         SET CERT_IMAGE_URL = #{certImageUrl},
             COMPLETED_YMD = CURDATE()
         WHERE MEMBER_ID = #{memberId}
@@ -183,15 +183,15 @@
     </update>
     
     <update id="updateMemberPointForRandom" parameterType="string">
-        UPDATE MEMBER_POINT_TBL
+        UPDATE member_point_tbl
         SET TOTAL_POINT = TOTAL_POINT + 20
         WHERE MEMBER_ID = #{memberId}
     </update>
     
     <select id="existsTodayBonusMission" resultType="int">
         SELECT COUNT(*)
-        FROM MEMBER_MISSION_TBL MM
-        JOIN MISSION_TBL M
+        FROM member_mission_tbl MM
+        JOIN mission_tbl M
           ON MM.MISSION_NO = M.MISSION_NO
         WHERE MM.MEMBER_ID = #{memberId}
           AND M.MISSION_TYPE = 'BONUS'
@@ -200,8 +200,8 @@
     
     <select id="existsTodayCompletedRandomMission" resultType="int">
         SELECT COUNT(*)
-        FROM MEMBER_MISSION_TBL MM
-        JOIN MISSION_TBL M
+        FROM member_mission_tbl MM
+        JOIN mission_tbl M
           ON MM.MISSION_NO = M.MISSION_NO
         WHERE MM.MEMBER_ID = #{memberId}
           AND M.MISSION_TYPE = 'RANDOM'
@@ -215,12 +215,12 @@
             REWARD_POINT,
             MISSION_IMAGE_URL,
             MISSION_TYPE
-        FROM MISSION_TBL
+        FROM mission_tbl
         WHERE MISSION_NO = #{missionNo}
     </select>
     
     <insert id="insertBonusMission" useGeneratedKeys="true" keyProperty="userMissionNo">
-        INSERT INTO MEMBER_MISSION_TBL (
+        INSERT INTO member_mission_tbl (
             MISSION_NO,
             MEMBER_ID,
             COMPLETED_YMD,
@@ -234,7 +234,7 @@
     </insert>
     
     <update id="updateMemberPointForBonus">
-        UPDATE MEMBER_POINT_TBL
+        UPDATE member_point_tbl
         SET TOTAL_POINT = TOTAL_POINT + #{rewardPoint}
         WHERE MEMBER_ID = #{memberId}
     </update>

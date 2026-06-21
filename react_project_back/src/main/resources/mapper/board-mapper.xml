@@ -19,18 +19,18 @@
             b.BOARD_LNG AS boardLng,
             b.READ_COUNT AS readCount,
             b.ADDR AS addr,
-            IFNULL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0) AS likeCount,
+            IFNULL((SELECT COUNT(*) FROM board_like_tbl l WHERE l.BOARD_NO = b.BOARD_NO), 0) AS likeCount,
 
             b.MEMBER_NICKNAME AS writerNickname,
             DATE_FORMAT(b.BOARD_DATE, '%Y-%m-%d') AS createDate,
             DATE_FORMAT(b.UPDATED_AT, '%Y-%m-%d') AS updatedAt,
             b.BOARD_THUMB AS thumbnailUrl,
             0 AS commentCount
-        FROM BOARD_TBL b
-        LEFT JOIN MEMBER_TBL m ON b.WRITER_ID = m.MEMBER_ID
+        FROM board_tbl b
+        LEFT JOIN member_tbl1 m ON b.WRITER_ID = m.MEMBER_ID
         WHERE BOARD_STATUS = #{status}
         AND NOT EXISTS (
-            SELECT 1 FROM STORE_BOARD_TBL s WHERE s.BOARD_NO = b.BOARD_NO
+            SELECT 1 FROM store_board_tbl s WHERE s.BOARD_NO = b.BOARD_NO
         )
 
         <if test="sido != null and sido != ''">
@@ -53,7 +53,7 @@
 
         <choose>
             <when test="sortType == 'popular'">
-                ORDER BY (b.READ_COUNT + IFNULL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0)) DESC
+                ORDER BY (b.READ_COUNT + IFNULL((SELECT COUNT(*) FROM board_like_tbl l WHERE l.BOARD_NO = b.BOARD_NO), 0)) DESC
             </when>
             <otherwise>
                 ORDER BY b.BOARD_DATE DESC, b.BOARD_NO DESC
@@ -62,7 +62,7 @@
     </select>
 
     <insert id="insertBoard" parameterType="board" useGeneratedKeys="true" keyProperty="boardNo">
-        INSERT INTO BOARD_TBL (
+        INSERT INTO board_tbl (
             WRITER_ID,
             BOARD_TITLE,
             BOARD_CONTENT,
@@ -96,7 +96,7 @@
     <select id="addBoardNo" resultType="Board">
         SELECT AUTO_INCREMENT as boardNo
         FROM information_schema.TABLES
-        WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'BOARD_TBL'
+        WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'board_tbl'
     </select>
 
     <select id="selectMemberCo2" resultType="int">
@@ -125,7 +125,7 @@
     </update>
 
     <update id="updateBoard" parameterType="board">
-        UPDATE BOARD_TBL
+        UPDATE board_tbl
         SET
             BOARD_TITLE = #{boardTitle},
             BOARD_CONTENT = #{boardContent},
@@ -137,68 +137,68 @@
 
     <select id="selectBoardAuthor" parameterType="map" resultType="int">
         SELECT COUNT(*)
-        FROM BOARD_TBL
+        FROM board_tbl
         WHERE BOARD_NO = #{boardNo}
           AND WRITER_ID = #{writerId}
     </select>
 
     <delete id="deleteBoard" parameterType="int">
-        DELETE FROM BOARD_TBL
+        DELETE FROM board_tbl
         WHERE BOARD_NO = #{boardNo}
     </delete>
 
     <delete id="deleteBoardCommentsByBoardNo" parameterType="int">
-        DELETE FROM BOARD_COMMENT_TBL
+        DELETE FROM board_comment_tbl
         WHERE BOARD_NO = #{boardNo}
     </delete>
 
     <delete id="deleteBoardLikesByBoardNo" parameterType="int">
-        DELETE FROM BOARD_LIKE_TBL
+        DELETE FROM board_like_tbl
         WHERE BOARD_NO = #{boardNo}
     </delete>
 
     <delete id="deleteBoardTipsByBoardNo" parameterType="int">
-        DELETE FROM BOARD_TIP_TBL
+        DELETE FROM tip_tbl
         WHERE BOARD_NO = #{boardNo}
     </delete>
 
     <delete id="deleteBoardFilesByBoardNo" parameterType="int">
-        DELETE FROM BOARD_FILE_TBL
+        DELETE FROM board_file_tbl
         WHERE BOARD_NO = #{boardNo}
     </delete>
 
     <delete id="deleteBoardReportsByBoardNo" parameterType="int">
-        DELETE FROM REPORT_TBL
+        DELETE FROM report_tbl
         WHERE TARGET_TYPE = 'board'
           AND TARGET_NO = #{boardNo}
     </delete>
 
     <update id="incrementReadCount" parameterType="int">
-        UPDATE BOARD_TBL
+        UPDATE board_tbl
         SET READ_COUNT = IFNULL(READ_COUNT, 0) + 1
         WHERE BOARD_NO = #{boardNo}
     </update>
 
     <insert id="insertBoardLike" parameterType="map">
-        INSERT INTO BOARD_LIKE_TBL (BOARD_NO, MEMBER_ID)
+        INSERT INTO board_like_tbl (BOARD_NO, MEMBER_ID)
         VALUES (#{boardNo}, #{memberId})
     </insert>
 
     <delete id="deleteBoardLike" parameterType="map">
-        DELETE FROM BOARD_LIKE_TBL
+        DELETE FROM board_like_tbl
         WHERE BOARD_NO = #{boardNo}
           AND MEMBER_ID = #{memberId}
     </delete>
 
     <select id="selectBoardLikeByMember" parameterType="map" resultType="int">
         SELECT COUNT(*)
-        FROM BOARD_LIKE_TBL
+        FROM board_like_tbl
         WHERE BOARD_NO = #{boardNo}
           AND MEMBER_ID = #{memberId}
     </select>
 
     <insert id="insertBoardFile" parameterType="boardFile" useGeneratedKeys="true" keyProperty="fileNo">
-        INSERT INTO BOARD_FILE_TBL (
+        INSERT INTO board_file_tbl (
             BOARD_NO,
             MEMBER_ID,
             BOARD_FILE_NAME,
@@ -226,8 +226,8 @@
             C.COMMENT_DEPTH AS commentDepth,
             CASE WHEN C.IS_SECRET = 'Y' THEN 1 ELSE 0 END AS isSecret,
             C.BOARD_COMMENT_STATUS as boardCommentStatus
-        FROM BOARD_COMMENT_TBL C
-        LEFT JOIN MEMBER_TBL M ON C.BOARD_COMMENT_WRITER = M.MEMBER_ID
+        FROM board_comment_tbl C
+        LEFT JOIN member_tbl1 M ON C.BOARD_COMMENT_WRITER = M.MEMBER_ID
         WHERE C.BOARD_NO = #{boardNo}
         ORDER BY C.COMMENT_GROUP ASC, C.COMMENT_DEPTH ASC, C.BOARD_COMMENT_NO ASC
     </select>
@@ -243,12 +243,12 @@
             COMMENT_GROUP AS commentGroup,
             COMMENT_DEPTH AS commentDepth,
             CASE WHEN IS_SECRET = 'Y' THEN 1 ELSE 0 END AS isSecret
-        FROM BOARD_COMMENT_TBL
+        FROM board_comment_tbl
         WHERE BOARD_COMMENT_NO = #{commentNo}
     </select>
 
     <insert id="insertBoardComment" parameterType="boardComment" useGeneratedKeys="true" keyProperty="commentNo">
-        INSERT INTO BOARD_COMMENT_TBL (
+        INSERT INTO board_comment_tbl (
             BOARD_COMMENT_WRITER,
             BOARD_NO,
             BOARD_COMMENT_CONTENT,
@@ -267,14 +267,14 @@
             NOW(),
             #{memberNickname},
             #{parentCommentNo},
-            IFNULL((SELECT c.COMMENT_GROUP FROM BOARD_COMMENT_TBL c WHERE c.BOARD_COMMENT_NO = #{parentCommentNo}), 0),
-            IFNULL((SELECT c.COMMENT_DEPTH + 1 FROM BOARD_COMMENT_TBL c WHERE c.BOARD_COMMENT_NO = #{parentCommentNo}), 1),
+            IFNULL((SELECT c.COMMENT_GROUP FROM board_comment_tbl c WHERE c.BOARD_COMMENT_NO = #{parentCommentNo}), 0),
+            IFNULL((SELECT c.COMMENT_DEPTH + 1 FROM board_comment_tbl c WHERE c.BOARD_COMMENT_NO = #{parentCommentNo}), 1),
             CASE WHEN #{isSecret} = 1 THEN 'Y' ELSE 'N' END
         )
     </insert>
 
     <update id="updateBoardComment" parameterType="boardComment">
-        UPDATE BOARD_COMMENT_TBL
+        UPDATE board_comment_tbl
         SET BOARD_COMMENT_CONTENT = #{content},
             UPDATED_AT = NOW(),
             IS_SECRET = CASE WHEN #{isSecret} = 1 THEN 'Y' ELSE 'N' END
@@ -283,7 +283,7 @@
     </update>
 
     <delete id="deleteBoardComment" parameterType="map">
-        DELETE FROM BOARD_COMMENT_TBL
+        DELETE FROM board_comment_tbl
         WHERE BOARD_COMMENT_NO = #{commentNo}
           AND BOARD_COMMENT_WRITER = #{memberId}
     </delete>
@@ -399,31 +399,31 @@
     
     <select id="existsTodayBasicMission" resultType="int">
         SELECT COUNT(*)
-        FROM MEMBER_MISSION_TBL
+        FROM member_mission_tbl
         WHERE MEMBER_ID = #{memberId}
           AND MISSION_NO = (
               SELECT MISSION_NO
-              FROM MISSION_TBL
+              FROM mission_tbl
               WHERE MISSION_TYPE = 'BASIC'
           )
           AND DATE(CREATED_AT) = CURDATE()
     </select>
     
     <insert id="insertBasicMission" parameterType="string">
-        INSERT INTO MEMBER_MISSION_TBL (
+        INSERT INTO member_mission_tbl (
             MEMBER_ID,
             MISSION_NO,
             CREATED_AT
         )
         VALUES (
             #{memberId},
-            (SELECT MISSION_NO FROM MISSION_TBL WHERE MISSION_TYPE = 'BASIC'),
+            (SELECT MISSION_NO FROM mission_tbl WHERE MISSION_TYPE = 'BASIC'),
             NOW()
         )
     </insert>
     
     <update id="addBasicMissionPoint" parameterType="string">
-        UPDATE MEMBER_POINT_TBL
+        UPDATE member_point_tbl
         SET TOTAL_POINT = TOTAL_POINT + 5
         WHERE MEMBER_ID = #{memberId}
     </update>
@@ -494,13 +494,13 @@
             b.BOARD_LAT AS boardLat,
             b.BOARD_LNG AS boardLng,
             b.READ_COUNT AS readCount,
-            IFNULL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = b.BOARD_NO), 0) AS likeCount,
+            IFNULL((SELECT COUNT(*) FROM board_like_tbl l WHERE l.BOARD_NO = b.BOARD_NO), 0) AS likeCount,
             b.MEMBER_NICKNAME AS writerNickname,
             DATE_FORMAT(b.BOARD_DATE, '%Y-%m-%d') AS createDate,
             DATE_FORMAT(b.UPDATED_AT, '%Y-%m-%d') AS updatedAt,
             b.BOARD_THUMB AS thumbnailUrl,
             (select count(*) from board_comment_tbl c where c.board_no = b.board_no) as commentCount
-        FROM BOARD_TBL b
+        FROM board_tbl b
         WHERE b.board_no = #{boardNo}
           AND b.board_status = 0
     </select>

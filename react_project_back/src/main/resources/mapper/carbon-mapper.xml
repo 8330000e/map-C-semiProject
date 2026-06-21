@@ -5,18 +5,18 @@
   <select id="selectRegionEmission" resultType="java.lang.Double">
     SELECT
       IFNULL((SELECT CARBON_ROAD_TCO2 + CARBON_TREE_TCO2
-              FROM CARBON_TBL c
+              FROM carbon_tbl c
               WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
                 AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR)
-                                     FROM CARBON_TBL c2
+                                     FROM carbon_tbl c2
                                      WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)), 0) +
-      IFNULL((SELECT CARBON_ELE_TOT FROM CARBON_ELE_TBL e
+      IFNULL((SELECT CARBON_ELE_TOT FROM carbon_ele_tbl e
               WHERE e.CTPVSGG_ID = r.CTPVSGG_ID), 0) +
-      IFNULL((SELECT CARBON_GAS_TOT FROM CARBON_GAS_TBL g
+      IFNULL((SELECT CARBON_GAS_TOT FROM carbon_gas_tbl g
               WHERE g.CTPVSGG_ID = r.CTPVSGG_ID), 0) +
-      IFNULL((SELECT CARBON_HEAT_TOT FROM CARBON_HEAT_TBL h
+      IFNULL((SELECT CARBON_HEAT_TOT FROM carbon_heat_tbl h
               WHERE h.CTPVSGG_ID = r.CTPVSGG_ID), 0) AS total_emission
-    FROM CTPVSGG_TBL r
+    FROM ctpvsgg_tbl r
     WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
       AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
   </select>
@@ -27,18 +27,18 @@
       IFNULL(e.CARBON_ELE_JAN, 0) + IFNULL(g.CARBON_GAS_JAN, 0) + IFNULL(h.CARBON_HEAT_JAN, 0) + IFNULL(road_tree, 0) / 12 AS emission
     FROM (
       SELECT r.CTPVSGG_ID,
-             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
              (SELECT IFNULL(c.CARBON_ROAD_TCO2, 0) + IFNULL(c.CARBON_TREE_TCO2, 0)
-              FROM CARBON_TBL c
+              FROM carbon_tbl c
               WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
-                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
-      FROM CTPVSGG_TBL r
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM ctpvsgg_tbl r
       WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
         AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
     ) reg
-    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_ele_tbl e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_gas_tbl g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_heat_tbl h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
     
     UNION ALL
     
@@ -47,18 +47,18 @@
       IFNULL(e.CARBON_ELE_FEB, 0) + IFNULL(g.CARBON_GAS_FEB, 0) + IFNULL(h.CARBON_HEAT_FEB, 0) + IFNULL(road_tree, 0) / 12 AS emission
     FROM (
       SELECT r.CTPVSGG_ID,
-             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
              (SELECT IFNULL(c.CARBON_ROAD_TCO2, 0) + IFNULL(c.CARBON_TREE_TCO2, 0)
-              FROM CARBON_TBL c
+              FROM carbon_tbl c
               WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
-                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
-      FROM CTPVSGG_TBL r
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM ctpvsgg_tbl r
       WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
         AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
     ) reg
-    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_ele_tbl e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_gas_tbl g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_heat_tbl h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
     
     UNION ALL
     
@@ -67,18 +67,18 @@
       IFNULL(e.CARBON_ELE_MAR, 0) + IFNULL(g.CARBON_GAS_MAR, 0) + IFNULL(h.CARBON_HEAT_MAR, 0) + IFNULL(road_tree, 0) / 12 AS emission
     FROM (
       SELECT r.CTPVSGG_ID,
-             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
              (SELECT IFNULL(c.CARBON_ROAD_TCO2, 0) + IFNULL(c.CARBON_TREE_TCO2, 0)
-              FROM CARBON_TBL c
+              FROM carbon_tbl c
               WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
-                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
-      FROM CTPVSGG_TBL r
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM ctpvsgg_tbl r
       WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
         AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
     ) reg
-    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_ele_tbl e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_gas_tbl g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_heat_tbl h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
     
     UNION ALL
     
@@ -87,18 +87,18 @@
       IFNULL(e.CARBON_ELE_APR, 0) + IFNULL(g.CARBON_GAS_APR, 0) + IFNULL(h.CARBON_HEAT_APR, 0) + IFNULL(road_tree, 0) / 12 AS emission
     FROM (
       SELECT r.CTPVSGG_ID,
-             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
              (SELECT IFNULL(c.CARBON_ROAD_TCO2, 0) + IFNULL(c.CARBON_TREE_TCO2, 0)
-              FROM CARBON_TBL c
+              FROM carbon_tbl c
               WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
-                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
-      FROM CTPVSGG_TBL r
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM ctpvsgg_tbl r
       WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
         AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
     ) reg
-    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_ele_tbl e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_gas_tbl g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_heat_tbl h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
     
     UNION ALL
     
@@ -107,18 +107,18 @@
       IFNULL(e.CARBON_ELE_MAY, 0) + IFNULL(g.CARBON_GAS_MAY, 0) + IFNULL(h.CARBON_HEAT_MAY, 0) + IFNULL(road_tree, 0) / 12 AS emission
     FROM (
       SELECT r.CTPVSGG_ID,
-             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
              (SELECT IFNULL(c.CARBON_ROAD_TCO2, 0) + IFNULL(c.CARBON_TREE_TCO2, 0)
-              FROM CARBON_TBL c
+              FROM carbon_tbl c
               WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
-                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
-      FROM CTPVSGG_TBL r
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM ctpvsgg_tbl r
       WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
         AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
     ) reg
-    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_ele_tbl e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_gas_tbl g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_heat_tbl h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
     
     UNION ALL
     
@@ -127,18 +127,18 @@
       IFNULL(e.CARBON_ELE_JUN, 0) + IFNULL(g.CARBON_GAS_JUN, 0) + IFNULL(h.CARBON_HEAT_JUN, 0) + IFNULL(road_tree, 0) / 12 AS emission
     FROM (
       SELECT r.CTPVSGG_ID,
-             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
              (SELECT IFNULL(c.CARBON_ROAD_TCO2, 0) + IFNULL(c.CARBON_TREE_TCO2, 0)
-              FROM CARBON_TBL c
+              FROM carbon_tbl c
               WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
-                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
-      FROM CTPVSGG_TBL r
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM ctpvsgg_tbl r
       WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
         AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
     ) reg
-    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_ele_tbl e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_gas_tbl g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_heat_tbl h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
     
     UNION ALL
     
@@ -147,18 +147,18 @@
       IFNULL(e.CARBON_ELE_JUL, 0) + IFNULL(g.CARBON_GAS_JUL, 0) + IFNULL(h.CARBON_HEAT_JUL, 0) + IFNULL(road_tree, 0) / 12 AS emission
     FROM (
       SELECT r.CTPVSGG_ID,
-             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
              (SELECT IFNULL(c.CARBON_ROAD_TCO2, 0) + IFNULL(c.CARBON_TREE_TCO2, 0)
-              FROM CARBON_TBL c
+              FROM carbon_tbl c
               WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
-                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
-      FROM CTPVSGG_TBL r
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM ctpvsgg_tbl r
       WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
         AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
     ) reg
-    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_ele_tbl e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_gas_tbl g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_heat_tbl h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
     
     UNION ALL
     
@@ -167,18 +167,18 @@
       IFNULL(e.CARBON_ELE_AUG, 0) + IFNULL(g.CARBON_GAS_AUG, 0) + IFNULL(h.CARBON_HEAT_AUG, 0) + IFNULL(road_tree, 0) / 12 AS emission
     FROM (
       SELECT r.CTPVSGG_ID,
-             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
              (SELECT IFNULL(c.CARBON_ROAD_TCO2, 0) + IFNULL(c.CARBON_TREE_TCO2, 0)
-              FROM CARBON_TBL c
+              FROM carbon_tbl c
               WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
-                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
-      FROM CTPVSGG_TBL r
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM ctpvsgg_tbl r
       WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
         AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
     ) reg
-    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_ele_tbl e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_gas_tbl g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_heat_tbl h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
     
     UNION ALL
     
@@ -187,18 +187,18 @@
       IFNULL(e.CARBON_ELE_SEP, 0) + IFNULL(g.CARBON_GAS_SEP, 0) + IFNULL(h.CARBON_HEAT_SEP, 0) + IFNULL(road_tree, 0) / 12 AS emission
     FROM (
       SELECT r.CTPVSGG_ID,
-             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
              (SELECT IFNULL(c.CARBON_ROAD_TCO2, 0) + IFNULL(c.CARBON_TREE_TCO2, 0)
-              FROM CARBON_TBL c
+              FROM carbon_tbl c
               WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
-                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
-      FROM CTPVSGG_TBL r
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM ctpvsgg_tbl r
       WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
         AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
     ) reg
-    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_ele_tbl e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_gas_tbl g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_heat_tbl h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
     
     UNION ALL
     
@@ -207,18 +207,18 @@
       IFNULL(e.CARBON_ELE_OCT, 0) + IFNULL(g.CARBON_GAS_OCT, 0) + IFNULL(h.CARBON_HEAT_OCT, 0) + IFNULL(road_tree, 0) / 12 AS emission
     FROM (
       SELECT r.CTPVSGG_ID,
-             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
              (SELECT IFNULL(c.CARBON_ROAD_TCO2, 0) + IFNULL(c.CARBON_TREE_TCO2, 0)
-              FROM CARBON_TBL c
+              FROM carbon_tbl c
               WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
-                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
-      FROM CTPVSGG_TBL r
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM ctpvsgg_tbl r
       WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
         AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
     ) reg
-    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_ele_tbl e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_gas_tbl g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_heat_tbl h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
     
     UNION ALL
     
@@ -227,18 +227,18 @@
       IFNULL(e.CARBON_ELE_NOV, 0) + IFNULL(g.CARBON_GAS_NOV, 0) + IFNULL(h.CARBON_HEAT_NOV, 0) + IFNULL(road_tree, 0) / 12 AS emission
     FROM (
       SELECT r.CTPVSGG_ID,
-             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
              (SELECT IFNULL(c.CARBON_ROAD_TCO2, 0) + IFNULL(c.CARBON_TREE_TCO2, 0)
-              FROM CARBON_TBL c
+              FROM carbon_tbl c
               WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
-                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
-      FROM CTPVSGG_TBL r
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM ctpvsgg_tbl r
       WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
         AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
     ) reg
-    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_ele_tbl e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_gas_tbl g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_heat_tbl h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
     
     UNION ALL
     
@@ -247,35 +247,35 @@
       IFNULL(e.CARBON_ELE_DEC, 0) + IFNULL(g.CARBON_GAS_DEC, 0) + IFNULL(h.CARBON_HEAT_DEC, 0) + IFNULL(road_tree, 0) / 12 AS emission
     FROM (
       SELECT r.CTPVSGG_ID,
-             (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
+             (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID) AS latest_year,
              (SELECT IFNULL(c.CARBON_ROAD_TCO2, 0) + IFNULL(c.CARBON_TREE_TCO2, 0)
-              FROM CARBON_TBL c
+              FROM carbon_tbl c
               WHERE c.CTPVSGG_ID = r.CTPVSGG_ID
-                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM CARBON_TBL c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
-      FROM CTPVSGG_TBL r
+                AND c.CARBON_YEAR = (SELECT MAX(CARBON_YEAR) FROM carbon_tbl c2 WHERE c2.CTPVSGG_ID = r.CTPVSGG_ID)) AS road_tree
+      FROM ctpvsgg_tbl r
       WHERE LOWER(REPLACE(r.CTPV_NM, ' ', '')) = LOWER(REPLACE(#{ctpv}, ' ', ''))
         AND LOWER(REPLACE(r.SGG_NM, ' ', '')) = LOWER(REPLACE(#{sgg}, ' ', ''))
     ) reg
-    LEFT JOIN CARBON_ELE_TBL e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_GAS_TBL g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
-    LEFT JOIN CARBON_HEAT_TBL h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_ele_tbl e ON e.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_gas_tbl g ON g.CTPVSGG_ID = reg.CTPVSGG_ID
+    LEFT JOIN carbon_heat_tbl h ON h.CTPVSGG_ID = reg.CTPVSGG_ID
     ORDER BY period ASC
   </select>
 
   <select id="selectTotalEmission" resultType="java.lang.Double">
     SELECT
       IFNULL((SELECT SUM(c.CARBON_ROAD_TCO2 + c.CARBON_TREE_TCO2)
-              FROM CARBON_TBL c
+              FROM carbon_tbl c
               JOIN (
                 SELECT CTPVSGG_ID, MAX(CARBON_YEAR) AS latest_year
-                FROM CARBON_TBL
+                FROM carbon_tbl
                 GROUP BY CTPVSGG_ID
               ) latest
               ON c.CTPVSGG_ID = latest.CTPVSGG_ID
               AND c.CARBON_YEAR = latest.latest_year), 0) +
-      IFNULL((SELECT SUM(CARBON_ELE_TOT) FROM CARBON_ELE_TBL), 0) +
-      IFNULL((SELECT SUM(CARBON_GAS_TOT) FROM CARBON_GAS_TBL), 0) +
-      IFNULL((SELECT SUM(CARBON_HEAT_TOT) FROM CARBON_HEAT_TBL), 0) AS total_emission
+      IFNULL((SELECT SUM(CARBON_ELE_TOT) FROM carbon_ele_tbl), 0) +
+      IFNULL((SELECT SUM(CARBON_GAS_TOT) FROM carbon_gas_tbl), 0) +
+      IFNULL((SELECT SUM(CARBON_HEAT_TOT) FROM carbon_heat_tbl), 0) AS total_emission
   </select>
 
 </mapper>

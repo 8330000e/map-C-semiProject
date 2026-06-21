@@ -13,7 +13,7 @@
   </insert>
 
   <insert id="insertMemberPoint" parameterType="string">
-    INSERT INTO MEMBER_POINT_TBL (MEMBER_ID, TOTAL_POINT)
+    INSERT INTO member_point_tbl (MEMBER_ID, TOTAL_POINT)
     VALUES (#{memberId}, 0)
   </insert>
 
@@ -97,12 +97,12 @@
 
   <select id="selectMemberPoint" parameterType="string" resultType="Integer">
     SELECT TOTAL_POINT
-    FROM MEMBER_POINT_TBL
+    FROM member_point_tbl
     WHERE MEMBER_ID = #{memberId}
   </select>
 
   <update id="decreasePoint">
-    UPDATE MEMBER_POINT_TBL
+    UPDATE member_point_tbl
     SET TOTAL_POINT = TOTAL_POINT - #{point}
     WHERE MEMBER_ID = #{memberId}
   </update>
@@ -172,13 +172,13 @@
       POINT_TYPE AS pointType,
       POINT_REASON AS pointReason,
       DATE_FORMAT(CREATED_DATE, '%Y-%m-%d %H:%i') AS createdDate
-    FROM POINT_TBL
+    FROM point_tbl
     WHERE MEMBER_ID = #{memberId}
     ORDER BY POINT_NO DESC
   </select>
 
   <insert id="insertPointHistory" parameterType="map" useGeneratedKeys="true" keyProperty="pointNo">
-    INSERT INTO POINT_TBL (
+    INSERT INTO point_tbl (
       MEMBER_ID,
       POINT_CHANGE,
       POINT_TYPE,

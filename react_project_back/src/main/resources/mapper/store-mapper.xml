@@ -17,7 +17,7 @@
           parameterType="kr.co.iei.store.model.vo.StoreBoard"
           useGeneratedKeys="true"
           keyProperty="boardNo">
-    INSERT INTO BOARD_TBL
+    INSERT INTO board_tbl
     (
       WRITER_ID,
       BOARD_TITLE,
@@ -44,7 +44,7 @@
           useGeneratedKeys="true"
           keyProperty="marketNo"
           keyColumn="MARKET_NO">
-    INSERT INTO STORE_BOARD_TBL
+    INSERT INTO store_board_tbl
     (
       BOARD_NO,
       MEMBER_ID,
@@ -99,15 +99,15 @@
       S.PRODUCT_THUMB AS productThumb,
       S.PRODUCT_STATUS AS productStatus,
       S.READ_COUNT AS readCount,
-      IFNULL((SELECT COUNT(*) FROM BOARD_LIKE_TBL l WHERE l.BOARD_NO = S.BOARD_NO), 0) AS likeCount,
-      IFNULL((SELECT COUNT(*) FROM BOARD_COMMENT_TBL c WHERE c.BOARD_NO = S.BOARD_NO), 0) AS commentCount,
+      IFNULL((SELECT COUNT(*) FROM board_like_tbl l WHERE l.BOARD_NO = S.BOARD_NO), 0) AS likeCount,
+      IFNULL((SELECT COUNT(*) FROM board_comment_tbl c WHERE c.BOARD_NO = S.BOARD_NO), 0) AS commentCount,
       S.IS_DELETED AS isDeleted,
       S.CREATED_AT AS createdAt,
       S.TRADE_TYPE AS tradeType
-    FROM STORE_BOARD_TBL S
-    LEFT JOIN MEMBER_TBL1 M
+    FROM store_board_tbl S
+    LEFT JOIN member_tbl1 M
       ON S.MEMBER_ID = M.MEMBER_ID
-    LEFT JOIN CTPVSGG_TBL R
+    LEFT JOIN ctpvsgg_tbl R
       ON S.CTPVSGG_ID = R.CTPVSGG_ID
     WHERE S.IS_DELETED = 0
     ORDER BY S.MARKET_NO DESC
@@ -137,17 +137,17 @@
       S.IS_DELETED AS isDeleted,
       S.CREATED_AT AS createdAt,
       S.TRADE_TYPE AS tradeType
-    FROM STORE_BOARD_TBL S
-    LEFT JOIN MEMBER_TBL1 M
+    FROM store_board_tbl S
+    LEFT JOIN member_tbl1 M
       ON S.MEMBER_ID = M.MEMBER_ID
-    LEFT JOIN CTPVSGG_TBL R
+    LEFT JOIN ctpvsgg_tbl R
       ON S.CTPVSGG_ID = R.CTPVSGG_ID
     WHERE S.MARKET_NO = #{marketNo}
       AND S.IS_DELETED = 0
   </select>
 
   <update id="updateProductStatus">
-    UPDATE STORE_BOARD_TBL
+    UPDATE store_board_tbl
     SET PRODUCT_STATUS = #{status},
         UPDATED_AT     = NOW()
     WHERE MARKET_NO = #{marketNo}
@@ -155,21 +155,21 @@
 
   <select id="selectStoreBoardAuthor" parameterType="map" resultType="int">
     SELECT COUNT(*)
-    FROM STORE_BOARD_TBL
+    FROM store_board_tbl
     WHERE MARKET_NO = #{marketNo}
       AND MEMBER_ID = #{memberId}
       AND IS_DELETED = 0
   </select>
 
   <update id="deleteStoreBoard" parameterType="long">
-    UPDATE STORE_BOARD_TBL
+    UPDATE store_board_tbl
     SET IS_DELETED = 1,
         UPDATED_AT = NOW()
     WHERE MARKET_NO = #{marketNo}
   </update>
 
   <update id="updateBoardForStore" parameterType="kr.co.iei.store.model.vo.StoreBoard">
-    UPDATE BOARD_TBL
+    UPDATE board_tbl
     SET BOARD_TITLE   = #{marketTitle},
         BOARD_CONTENT = #{marketContent},
         BOARD_THUMB   = #{productThumb}
@@ -177,7 +177,7 @@
   </update>
 
   <update id="updateStoreBoard" parameterType="kr.co.iei.store.model.vo.StoreBoard">
-    UPDATE STORE_BOARD_TBL
+    UPDATE store_board_tbl
     SET MARKET_TITLE   = #{marketTitle},
         MARKET_CONTENT = #{marketContent},
         PRODUCT_PRICE  = #{productPrice},
@@ -198,8 +198,8 @@
       S.MARKET_TITLE AS marketTitle,
       S.PRODUCT_THUMB AS productThumb,
       S.PRODUCT_PRICE AS productPrice
-    FROM CART_TBL C
-    LEFT JOIN STORE_BOARD_TBL S ON S.MARKET_NO = C.MARKET_NO
+    FROM cart_tbl C
+    LEFT JOIN store_board_tbl S ON S.MARKET_NO = C.MARKET_NO
     WHERE C.MEMBER_ID = #{memberId}
       AND C.MARKET_NO = #{marketNo}
   </select>
@@ -214,14 +214,14 @@
       S.MARKET_TITLE,
       S.PRODUCT_THUMB,
       S.PRODUCT_PRICE
-    FROM CART_TBL C
-    LEFT JOIN STORE_BOARD_TBL S ON S.MARKET_NO = C.MARKET_NO
+    FROM cart_tbl C
+    LEFT JOIN store_board_tbl S ON S.MARKET_NO = C.MARKET_NO
     WHERE C.MEMBER_ID = #{memberId}
     ORDER BY C.ADDED_AT DESC
   </select>
 
   <insert id="insertCartItem" parameterType="kr.co.iei.store.model.vo.StoreCart" useGeneratedKeys="true" keyProperty="cartNo">
-    INSERT INTO CART_TBL
+    INSERT INTO cart_tbl
     (
       MEMBER_ID,
       MARKET_NO,
@@ -238,19 +238,19 @@
   </insert>
 
   <update id="updateCartQuantity">
-    UPDATE CART_TBL
+    UPDATE cart_tbl
     SET QUANTITY = #{quantity}
     WHERE CART_NO = #{cartNo}
   </update>
 
   <delete id="deleteCartItem" parameterType="map">
-    DELETE FROM CART_TBL
+    DELETE FROM cart_tbl
     WHERE CART_NO = #{cartNo}
       AND MEMBER_ID = #{memberId}
   </delete>
 
   <update id="incrementReadCount" parameterType="long">
-    UPDATE STORE_BOARD_TBL
+    UPDATE store_board_tbl
     SET READ_COUNT = READ_COUNT + 1
     WHERE MARKET_NO = #{marketNo}
   </update>
@@ -270,10 +270,10 @@
       C.BOARD_COMMENT_DATE    AS CREATED_AT,
       C.UPDATED_AT            AS UPDATED_AT,
       0                       AS IS_DELETED
-    FROM BOARD_COMMENT_TBL C
-    JOIN STORE_BOARD_TBL S
+    FROM board_comment_tbl C
+    JOIN store_board_tbl S
       ON C.BOARD_NO = S.BOARD_NO
-    LEFT JOIN MEMBER_TBL M
+    LEFT JOIN member_tbl1 M
       ON C.BOARD_COMMENT_WRITER = M.MEMBER_ID
     WHERE S.MARKET_NO = #{marketNo}
     ORDER BY C.COMMENT_GROUP ASC, C.COMMENT_DEPTH ASC, C.BOARD_COMMENT_NO ASC
@@ -281,8 +281,8 @@
 
   <select id="countReviews" resultType="int">
     SELECT COUNT(*)
-    FROM BOARD_COMMENT_TBL C
-    JOIN STORE_BOARD_TBL S
+    FROM board_comment_tbl C
+    JOIN store_board_tbl S
       ON C.BOARD_NO = S.BOARD_NO
     WHERE S.MARKET_NO = #{marketNo}
   </select>
@@ -291,7 +291,7 @@
           parameterType="kr.co.iei.store.model.vo.StoreReview"
           useGeneratedKeys="true"
           keyProperty="reviewNo">
-    INSERT INTO BOARD_COMMENT_TBL
+    INSERT INTO board_comment_tbl
     (
       BOARD_COMMENT_WRITER,
       BOARD_NO,
@@ -307,23 +307,23 @@
     VALUES
     (
       #{memberId},
-      (SELECT BOARD_NO FROM STORE_BOARD_TBL WHERE MARKET_NO = #{marketNo}),
+      (SELECT BOARD_NO FROM store_board_tbl WHERE MARKET_NO = #{marketNo}),
       #{reviewContent},
       NOW(),
       NOW(),
       #{memberNickname},
       #{parentCommentNo},
-      IFNULL((SELECT COMMENT_GROUP FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), LAST_INSERT_ID() + 1),
+      IFNULL((SELECT COMMENT_GROUP FROM board_comment_tbl WHERE BOARD_COMMENT_NO = #{parentCommentNo}), LAST_INSERT_ID() + 1),
       CASE
         WHEN #{parentCommentNo} IS NULL THEN 0
-        ELSE IFNULL((SELECT COMMENT_DEPTH + 1 FROM BOARD_COMMENT_TBL WHERE BOARD_COMMENT_NO = #{parentCommentNo}), 1)
+        ELSE IFNULL((SELECT COMMENT_DEPTH + 1 FROM board_comment_tbl WHERE BOARD_COMMENT_NO = #{parentCommentNo}), 1)
       END,
       CASE WHEN #{isPrivate} = 1 THEN 'Y' ELSE 'N' END
     )
   </insert>
 
   <update id="updateReview" parameterType="kr.co.iei.store.model.vo.StoreReview">
-    UPDATE BOARD_COMMENT_TBL
+    UPDATE board_comment_tbl
     SET BOARD_COMMENT_CONTENT = #{reviewContent},
       IS_SECRET = CASE WHEN #{isPrivate} = 1 THEN 'Y' ELSE 'N' END,
       UPDATED_AT = NOW()
@@ -332,7 +332,7 @@
   </update>
 
   <delete id="deleteReview">
-    DELETE FROM BOARD_COMMENT_TBL
+    DELETE FROM board_comment_tbl
     WHERE BOARD_COMMENT_NO = #{reviewNo}
       AND BOARD_COMMENT_WRITER = #{memberId}
   </delete>
@@ -352,10 +352,10 @@
       C.BOARD_COMMENT_DATE    AS CREATED_AT,
       C.UPDATED_AT            AS UPDATED_AT,
       0                       AS IS_DELETED
-    FROM BOARD_COMMENT_TBL C
-    JOIN STORE_BOARD_TBL S
+    FROM board_comment_tbl C
+    JOIN store_board_tbl S
       ON C.BOARD_NO = S.BOARD_NO
-    LEFT JOIN MEMBER_TBL M
+    LEFT JOIN member_tbl1 M
       ON C.BOARD_COMMENT_WRITER = M.MEMBER_ID
     WHERE C.IS_SECRET = 'N'
     ORDER BY C.BOARD_COMMENT_NO DESC
@@ -376,7 +376,7 @@
       IFNULL(CREATED_AT, REVIEW_DATE) AS CREATED_AT,
       IS_DELETED,
       IS_PRIVATE
-    FROM STORE_REVIEW_TBL
+    FROM store_review_tbl
     WHERE TRADE_NO = #{tradeNo}
       AND IS_DELETED = 0
     ORDER BY REVIEW_NO DESC
@@ -396,7 +396,7 @@
       IFNULL(CREATED_AT, REVIEW_DATE) AS CREATED_AT,
       IS_DELETED,
       IS_PRIVATE
-    FROM STORE_REVIEW_TBL
+    FROM store_review_tbl
     WHERE MARKET_NO = #{marketNo}
       AND IS_DELETED = 0
     ORDER BY REVIEW_NO DESC
@@ -416,7 +416,7 @@
       IFNULL(CREATED_AT, REVIEW_DATE) AS CREATED_AT,
       IS_DELETED,
       IS_PRIVATE
-    FROM STORE_REVIEW_TBL
+    FROM store_review_tbl
     WHERE SELLER_ID = #{sellerId}
       AND IS_DELETED = 0
     ORDER BY REVIEW_NO DESC
@@ -436,7 +436,7 @@
       IFNULL(CREATED_AT, REVIEW_DATE) AS CREATED_AT,
       IS_DELETED,
       IS_PRIVATE
-    FROM STORE_REVIEW_TBL
+    FROM store_review_tbl
     WHERE TRADE_NO = #{tradeNo}
       AND BUYER_ID = #{buyerId}
       AND IS_DELETED = 0
@@ -458,7 +458,7 @@
       IFNULL(CREATED_AT, REVIEW_DATE) AS CREATED_AT,
       IS_DELETED,
       IS_PRIVATE
-    FROM STORE_REVIEW_TBL
+    FROM store_review_tbl
     WHERE MARKET_NO = #{marketNo}
       AND BUYER_ID = #{buyerId}
       AND IS_DELETED = 0
@@ -471,7 +471,7 @@
           useGeneratedKeys="true"
           keyProperty="reviewNo"
           keyColumn="REVIEW_NO">
-    INSERT INTO STORE_REVIEW_TBL
+    INSERT INTO store_review_tbl
     (
       TRADE_NO,
       MARKET_NO,
@@ -508,7 +508,7 @@
   </insert>
 
   <update id="updateRating" parameterType="kr.co.iei.store.model.vo.StoreRating">
-    UPDATE STORE_REVIEW_TBL
+    UPDATE store_review_tbl
     SET RATING = #{rating},
         REVIEW_CONT = #{reviewContent},
         REVIEW_THUMB = #{reviewThumb},
@@ -519,7 +519,7 @@
   </update>
 
   <update id="deleteRating">
-    UPDATE STORE_REVIEW_TBL
+    UPDATE store_review_tbl
     SET IS_DELETED = 1
     WHERE REVIEW_NO = #{reviewNo}
       AND BUYER_ID = #{buyerId}
@@ -551,9 +551,9 @@
       T.INVOICE_NUMBER AS invoiceNumber,
       T.COURIER_CODE AS courierCode,
       T.SHIPPING_STATUS AS shippingStatus
-    FROM STORE_BOARD_TRADEINFO_TBL T
-    LEFT JOIN MEMBER_TBL SELLER ON T.SELLER_ID = SELLER.MEMBER_ID
-    LEFT JOIN MEMBER_TBL BUYER ON T.BUYER_ID = BUYER.MEMBER_ID
+    FROM store_board_tradeinfo_tbl T
+    LEFT JOIN member_tbl1 SELLER ON T.SELLER_ID = SELLER.MEMBER_ID
+    LEFT JOIN member_tbl1 BUYER ON T.BUYER_ID = BUYER.MEMBER_ID
     WHERE T.MARKET_NO = #{marketNo}
     ORDER BY T.CREATED_AT DESC, T.TRADE_NO DESC
     LIMIT 1
@@ -585,9 +585,9 @@
       T.INVOICE_NUMBER AS invoiceNumber,
       T.COURIER_CODE AS courierCode,
       T.SHIPPING_STATUS AS shippingStatus
-    FROM STORE_BOARD_TRADEINFO_TBL T
-    LEFT JOIN MEMBER_TBL SELLER ON T.SELLER_ID = SELLER.MEMBER_ID
-    LEFT JOIN MEMBER_TBL BUYER ON T.BUYER_ID = BUYER.MEMBER_ID
+    FROM store_board_tradeinfo_tbl T
+    LEFT JOIN member_tbl1 SELLER ON T.SELLER_ID = SELLER.MEMBER_ID
+    LEFT JOIN member_tbl1 BUYER ON T.BUYER_ID = BUYER.MEMBER_ID
     WHERE T.MARKET_NO = #{marketNo}
       AND T.BUYER_ID = #{buyerId}
     ORDER BY T.CREATED_AT DESC, T.TRADE_NO DESC
@@ -620,9 +620,9 @@
       T.INVOICE_NUMBER AS invoiceNumber,
       T.COURIER_CODE AS courierCode,
       T.SHIPPING_STATUS AS shippingStatus
-    FROM STORE_BOARD_TRADEINFO_TBL T
-    LEFT JOIN MEMBER_TBL SELLER ON T.SELLER_ID = SELLER.MEMBER_ID
-    LEFT JOIN MEMBER_TBL BUYER ON T.BUYER_ID = BUYER.MEMBER_ID
+    FROM store_board_tradeinfo_tbl T
+    LEFT JOIN member_tbl1 SELLER ON T.SELLER_ID = SELLER.MEMBER_ID
+    LEFT JOIN member_tbl1 BUYER ON T.BUYER_ID = BUYER.MEMBER_ID
     WHERE T.TRADE_NO = #{tradeNo}
   </select>
 
@@ -652,9 +652,9 @@
       T.INVOICE_NUMBER AS invoiceNumber,
       T.COURIER_CODE AS courierCode,
       T.SHIPPING_STATUS AS shippingStatus
-    FROM STORE_BOARD_TRADEINFO_TBL T
-    LEFT JOIN MEMBER_TBL SELLER ON T.SELLER_ID = SELLER.MEMBER_ID
-    LEFT JOIN MEMBER_TBL BUYER ON T.BUYER_ID = BUYER.MEMBER_ID
+    FROM store_board_tradeinfo_tbl T
+    LEFT JOIN member_tbl1 SELLER ON T.SELLER_ID = SELLER.MEMBER_ID
+    LEFT JOIN member_tbl1 BUYER ON T.BUYER_ID = BUYER.MEMBER_ID
     WHERE T.BUYER_ID = #{buyerId}
   </select>
 
@@ -684,14 +684,14 @@
       T.INVOICE_NUMBER AS invoiceNumber,
       T.COURIER_CODE AS courierCode,
       T.SHIPPING_STATUS AS shippingStatus
-    FROM STORE_BOARD_TRADEINFO_TBL T
-    LEFT JOIN MEMBER_TBL SELLER ON T.SELLER_ID = SELLER.MEMBER_ID
-    LEFT JOIN MEMBER_TBL BUYER ON T.BUYER_ID = BUYER.MEMBER_ID
+    FROM store_board_tradeinfo_tbl T
+    LEFT JOIN member_tbl1 SELLER ON T.SELLER_ID = SELLER.MEMBER_ID
+    LEFT JOIN member_tbl1 BUYER ON T.BUYER_ID = BUYER.MEMBER_ID
     WHERE T.SELLER_ID = #{sellerId}
   </select>
 
   <insert id="insertTradeInfo" parameterType="kr.co.iei.store.model.vo.StoreTradeInfo">
-    INSERT INTO STORE_BOARD_TRADEINFO_TBL
+    INSERT INTO store_board_tradeinfo_tbl
     (
       MARKET_NO,
       SELLER_ID,
@@ -740,7 +740,7 @@
   </insert>
 
   <update id="updateTradeInfo" parameterType="kr.co.iei.store.model.vo.StoreTradeInfo">
-    UPDATE STORE_BOARD_TRADEINFO_TBL
+    UPDATE store_board_tradeinfo_tbl
     SET TRADE_STATUS = #{tradeStatus},
         INVOICE_NUMBER = #{invoiceNumber},
         COURIER_CODE = #{courierCode},

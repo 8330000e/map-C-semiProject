@@ -9,7 +9,7 @@
       SGG_CD    AS sggCd,
       CTPV_NM   AS ctpvNm,
       SGG_NM    AS sggNm
-    FROM CTPVSGG_TBL
+    FROM ctpvsgg_tbl
     ORDER BY CTPV_CD ASC, SGG_CD ASC
   </select>
 
