@@ -91,7 +91,7 @@ const Main = () => {
 
   useEffect(() => {
     axios
-      .get(`${BACKSERVER}/store/boards`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/store/boards`)
       .then((res) => {
         const items = Array.isArray(res.data)
           ? res.data
@@ -124,14 +124,14 @@ const Main = () => {
 
   useEffect(() => {
     axios
-      .get(`${BACKSERVER}/store/reviews/latest?limit=30`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/store/reviews/latest?limit=30`)
       .then((res) =>
         setRealtimeComments(Array.isArray(res.data) ? res.data : []),
       )
       .catch((err) => console.error("실시간 댓글 조회 실패", err));
 
     axios
-      .get(`${BACKSERVER}/boards/tips/list`)
+      .get(`${import.meta.env.VITE_BACKSERVER}/boards/tips/list`)
       .then((res) => setTipBoards(Array.isArray(res.data) ? res.data : []))
       .catch((err) => console.error("팁 리스트 조회 실패", err));
   }, []);
@@ -257,7 +257,7 @@ const Main = () => {
     const fetchRandomMissionBubble = async () => {
       try {
         // 1. 오늘의 랜덤 미션 조회
-        const missionRes = await axios.get(`${BACKSERVER}/missions/random`, {
+        const missionRes = await axios.get(`${import.meta.env.VITE_BACKSERVER}/missions/random`, {
           params: { memberId },
         });
 
@@ -268,7 +268,7 @@ const Main = () => {
 
         // 2. 오늘 랜덤 미션 완료 여부 조회
         const completedRes = await axios.get(
-          `${BACKSERVER}/missions/random/today/completed`,
+          `${import.meta.env.VITE_BACKSERVER}/missions/random/today/completed`,
           {
             params: {
               memberId,
