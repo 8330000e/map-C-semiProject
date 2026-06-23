@@ -117,8 +117,8 @@ public class BoardController {
 
 	@GetMapping("/boards")
 	public ResponseEntity<?> getBoards(
-			@RequestParam("boardId") String boardId,
-			@RequestParam("region") String region) {
+			@RequestParam("ctpv") String ctpv,
+			@RequestParam("sgg") String sgg) { 
 		double cc2 = boardService.selectCo2Tot(ctpv, sgg);
 		System.out.println(cc2);
 		return ResponseEntity.ok(cc2);
