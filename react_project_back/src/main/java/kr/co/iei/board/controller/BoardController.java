@@ -115,10 +115,10 @@ public class BoardController {
 		return ResponseEntity.ok(result);
 	}
 
-	@GetMapping("/ctpvsggtot/{ctpv}/{sgg}")
-	public ResponseEntity<?> selectCo2Tot(
-			@PathVariable String ctpv,
-			@PathVariable String sgg) {
+	@GetMapping("/boards")
+	public ResponseEntity<?> getBoards(
+			@RequestParam("boardId") String boardId,
+			@RequestParam("region") String region) {
 		double cc2 = boardService.selectCo2Tot(ctpv, sgg);
 		System.out.println(cc2);
 		return ResponseEntity.ok(cc2);

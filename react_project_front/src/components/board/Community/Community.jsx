@@ -195,7 +195,7 @@ const Community = ({
     const { ctpv, sgg } = ctpvsgg;
     if (ctpv && sgg) {
       axios.get(
-          `${BACKSERVER}/boards/ctpvsggtot/${ctpv}/${sgg}`
+          `${BACKSERVER}/boards?boardId=ctpvsggtot&region=${ctpv},${sgg}`
         )
         .then((res) => {
           console.log("데이터 로드 성공:", res.data);
