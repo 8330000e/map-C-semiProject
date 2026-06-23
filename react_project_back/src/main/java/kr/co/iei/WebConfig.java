@@ -58,7 +58,6 @@ public class WebConfig implements WebMvcConfigurer {
                     "/donations/**",
                     "/members/**",
                     "/missions/**",
-                    "/points/**",
                     "/regions/codes/**",
                     "/regions/**",
                     "/store/**",
