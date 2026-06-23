@@ -45,21 +45,25 @@ public class WebConfig implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(memberStatusInterceptor)
 				.addPathPatterns("/api/**")
-				.excludePathPatterns(
-					"/api/members/**",
-					"/api/admins/**",
-					"/api/boards/**",
-					"/api/campaigns/**",
-					"/api/carbon/**",
-					"/api/alarms/**",
-					"/api/donations/**",
-					"/api/missions/**",
-					"/api/points/**",
-					"/api/regions/**",
-					"/api/store/**",
-					"/api/supports/**",
-					"/api/files/**"
-				)
+				.excludePathPatterns("/members/login",
+                    "/members/login",
+                    "/members/email-verification",
+                    "/members/signup",
+                    "/members/check-id",
+                    "/admins/**",
+                    "/boards/**",
+                    "/campaigns/**",
+                    "/carbon/**",
+                    "/alarms/**",
+                    "/donations/**",
+                    "/members/**",
+                    "/missions/**",
+                    "/points/**",
+                    "/regions/codes/**",
+                    "/regions/**",
+                    "/store/**",
+                    "/supports/**",
+                    "/files/**");
 		
 		registry.addInterceptor(adminInterceptor)
 				.addPathPatterns("/admins/**");
