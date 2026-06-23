@@ -194,8 +194,9 @@ const Community = ({
   useEffect(() => {
     const { ctpv, sgg } = ctpvsgg;
     if (ctpv && sgg) {
-      axios
-        .get(`${BACKSERVER}/boards/ctpvsggtot/${ctpv},${sgg}`)
+      axios.get(
+          `${BACKSERVER}/boards/ctpvsggtot/${ctpv}/${sgg}`
+        )
         .then((res) => {
           console.log("데이터 로드 성공:", res.data);
           // 3. 서버에서 받은 값을 상태에 저장 (이때 화면이 다시 그려짐)

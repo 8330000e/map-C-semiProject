@@ -29,7 +29,7 @@ public class WebConfig implements WebMvcConfigurer {
 		// 따라서 명시적 origin 목록이나 allowedOriginPatterns를 사용해야 합니다.
 		registry.addMapping("**")
 			.allowedOrigins("https://d2g15isq25ks7i.cloudfront.net/")
-			.allowedOriginPatterns("http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:9999")
+			.allowedOriginPatterns("https://d2g15isq25ks7i.cloudfront.net","http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:9999")
 			.allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
 			.allowedHeaders("*")
 			.allowCredentials(true);
@@ -41,11 +41,25 @@ public class WebConfig implements WebMvcConfigurer {
             configurer.addPathPrefix("/api", c -> true);
         }
 	
-	 @Override
+	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(memberStatusInterceptor)
-				.addPathPatterns("/**")
-				.excludePathPatterns("/members/login", "/admins/**", "/files/**"); // ← 추가
+				.addPathPatterns("/api/**")
+				.excludePathPatterns(
+					"/api/members/**",
+					"/api/admins/**",
+					"/api/boards/**",
+					"/api/campaigns/**",
+					"/api/carbon/**",
+					"/api/alarms/**",
+					"/api/donations/**",
+					"/api/missions/**",
+					"/api/points/**",
+					"/api/regions/**",
+					"/api/store/**",
+					"/api/supports/**",
+					"/api/files/**"
+				)
 		
 		registry.addInterceptor(adminInterceptor)
 				.addPathPatterns("/admins/**");

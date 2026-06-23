@@ -21,9 +21,12 @@ public class MemberStatusInterceptor implements HandlerInterceptor {
 	private MemberDao memberDao;
 	
 	@Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws 
-Exception {                                                                      
-		System.out.println("인터셉터 진입: " + request.getRequestURI());                                                  
+    public boolean preHandle(HttpServletRequest request,
+                            HttpServletResponse response,
+                            Object handler) throws Exception {
+
+        System.out.println("인터셉터 진입 : " + request.getRequestURI());
+                                        
 	      
 		// 헤더로 들어오는 토큰 꺼내기 
         String token = request.getHeader("Authorization");                                                            
@@ -55,7 +58,8 @@ Exception {
                    System.out.println("status: " + status);
                     // 1 또는 3이면 차단 (정지상태)                                                
                     if (status == 1 || status == 3) {                                                               
-                        // HTTP 상태코드 403 설정                                                      
+                        // HTTP 상태코드 403 설정
+                        System.out.println("403 발생 URI : " + request.getRequestURI());
                         response.setStatus(403);                                                                      
                         // 응답 타입을 JSON, 한글 깨짐 방지용 UTF-8 설정
                         response.setContentType("application/json;charset=UTF-8");                                    
