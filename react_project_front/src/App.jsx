@@ -67,7 +67,7 @@ import CampaignNoticeDetailPage from "./pages/campaign/CampaignNoticeDetailPage"
 function App() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith("/admin"); // 현재 url이 /admin 으로 시작하면 true 반환
-  const { memberGrade } = useAuthStore();
+  const { memberGrade, memberId } = useAuthStore();
   {
     /*1. 로그인로직 
     2. 로그인 후 null이 아닌 memeber state를 useAthsore에 저장*/
@@ -138,11 +138,15 @@ function App() {
 
   return (
     <div className="carbonconnect wrap">
-      <Route path="/join" element={<JoinPage />}></Route>
-      {!isAdmin && <Header />}{" "}
+      {(!isAdmin || !memberId) && <Header />}{" "}
       {/* isAdmin이 true면 헤더 컴포넌트 실행 안함 (푸터도 동일)*/}
       <main className={isAdmin ? "" : "main"}>
         <Routes>
+          {!memberId && (
+            <Routes>
+              <Route path="/members/join" element={<JoinPage />} />
+            </Routes>
+          )}
           <Route path="/" element={<Main />} />
           <Route path="/mypage/*" element={<Mypage />} />
           <Route path="/store" element={<Store />} />
@@ -202,7 +206,7 @@ function App() {
           <Route path="/point-give/*" element={<PointForGoodPage />}></Route>
         </Routes>
       </main>
-      {!isAdmin && <Footer />}
+      {(!isAdmin || !memberId) && <Footer />}
     </div>
   );
 }
