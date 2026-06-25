@@ -264,169 +264,171 @@ const Join = () => {
   };
 
   return (
-    <div className={`${styles.total_join_container} login_page`}>
-      <div className={styles.btn_group}>
-        {/*홈으로 가기 버튼 */}
-        <div
-          className={styles.home_btn}
-          onClick={() => {
-            navigate("/");
-          }}
-        >
-          홈으로 가기
+    <div className={styles.join_page_container}>
+      <div className={`${styles.total_join_container} login_page`}>
+        <div className={styles.btn_group}>
+          {/*홈으로 가기 버튼 */}
+          <div
+            className={styles.home_btn}
+            onClick={() => {
+              navigate("/");
+            }}
+          >
+            홈으로 가기
+          </div>
+
+          {/*로그인으로 가기 버튼 */}
+          <div
+            className={styles.login_btn}
+            onClick={() => {
+              navigate("/members/login");
+            }}
+          >
+            로그인으로 가기
+          </div>
         </div>
 
-        {/*로그인으로 가기 버튼 */}
-        <div
-          className={styles.login_btn}
-          onClick={() => {
-            navigate("/members/login");
-          }}
-        >
-          로그인으로 가기
-        </div>
-      </div>
+        <div className={styles.join_wrap}>
+          <h3 className={styles.page_title}>회원가입</h3>
+          <form onSubmit={JoinMember}>
+            <div className={styles.input_wrap}>
+              <label htmlFor="memberId">아이디</label>
+              <input
+                type="text"
+                name="memberId"
+                id="memberId"
+                value={member.memberId}
+                onChange={inputMember}
+                className={styles.input_field}
+                onBlur={ipDupCheck}
+                placeholder="영문, 숫자 조합 8자 이내"
+              ></input>
+              {idMessage && (
+                <p className={`${styles.check_msg} ${styles.invalid}`}>
+                  {idMessage}
+                </p>
+              )}
+              {!idMessage && checkId === 1 && (
+                <p className={`${styles.check_msg} ${styles.invalid}`}>
+                  이미 사용 중인 아이디입니다.
+                </p>
+              )}
+              {checkId === 2 && !idMessage && (
+                <p className={styles.check_msg}>사용 가능한 아이디입니다.</p>
+              )}
+            </div>
 
-      <div className={styles.join_wrap}>
-        <h3 className={styles.page_title}>회원가입</h3>
-        <form onSubmit={JoinMember}>
-          <div className={styles.input_wrap}>
-            <label htmlFor="memberId">아이디</label>
-            <input
-              type="text"
-              name="memberId"
-              id="memberId"
-              value={member.memberId}
-              onChange={inputMember}
-              className={styles.input_field}
-              onBlur={ipDupCheck}
-              placeholder="영문, 숫자 조합 8자 이내"
-            ></input>
-            {idMessage && (
-              <p className={`${styles.check_msg} ${styles.invalid}`}>
-                {idMessage}
-              </p>
-            )}
-            {!idMessage && checkId === 1 && (
-              <p className={`${styles.check_msg} ${styles.invalid}`}>
-                이미 사용 중인 아이디입니다.
-              </p>
-            )}
-            {checkId === 2 && !idMessage && (
-              <p className={styles.check_msg}>사용 가능한 아이디입니다.</p>
-            )}
-          </div>
+            {/* 비밀번호 */}
+            <div className={styles.input_wrap}>
+              <label htmlFor="memberPw">비밀번호</label>
+              <input
+                type="password"
+                name="memberPw"
+                id="memberPw"
+                value={member.memberPw}
+                onChange={inputMember}
+                className={styles.input_field}
+                placeholder="영문3, 숫자4, 특수문자하나 이상"
+              />
+              {pwMessage && (
+                <p
+                  className={
+                    pwMessage.includes("안전")
+                      ? styles.check_msg
+                      : `${styles.check_msg} ${styles.invalid}`
+                  }
+                >
+                  {pwMessage}
+                </p>
+              )}
+            </div>
 
-          {/* 비밀번호 */}
-          <div className={styles.input_wrap}>
-            <label htmlFor="memberPw">비밀번호</label>
-            <input
-              type="password"
-              name="memberPw"
-              id="memberPw"
-              value={member.memberPw}
-              onChange={inputMember}
-              className={styles.input_field}
-              placeholder="영문3, 숫자4, 특수문자하나 이상"
-            />
-            {pwMessage && (
-              <p
-                className={
-                  pwMessage.includes("안전")
-                    ? styles.check_msg
-                    : `${styles.check_msg} ${styles.invalid}`
+            {/* 비밀번호 확인 */}
+            <div className={styles.input_wrap}>
+              <label htmlFor="memberPwRe">비밀번호 확인</label>
+              <input
+                type="password"
+                name="memberPwRe"
+                id="memberPwRe"
+                value={memberPwRe}
+                onChange={(e) =>
+                  setMemberPwRe(
+                    // 비밀번호에서는 한글을 제거
+                    e.target.value.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, ""),
+                  )
                 }
-              >
-                {pwMessage}
-              </p>
-            )}
-          </div>
+                className={styles.input_field}
+              />
+              {checkPw > 0 && (
+                <p
+                  className={
+                    checkPw === 1
+                      ? styles.check_msg
+                      : `${styles.check_msg} ${styles.invalid}`
+                  }
+                >
+                  {checkPw === 1
+                    ? "비밀번호가 일치합니다."
+                    : "비밀번호가 일치하지 않습니다."}
+                </p>
+              )}
+            </div>
 
-          {/* 비밀번호 확인 */}
-          <div className={styles.input_wrap}>
-            <label htmlFor="memberPwRe">비밀번호 확인</label>
-            <input
-              type="password"
-              name="memberPwRe"
-              id="memberPwRe"
-              value={memberPwRe}
-              onChange={(e) =>
-                setMemberPwRe(
-                  // 비밀번호에서는 한글을 제거
-                  e.target.value.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, ""),
-                )
-              }
-              className={styles.input_field}
-            />
-            {checkPw > 0 && (
-              <p
-                className={
-                  checkPw === 1
-                    ? styles.check_msg
-                    : `${styles.check_msg} ${styles.invalid}`
-                }
-              >
-                {checkPw === 1
-                  ? "비밀번호가 일치합니다."
-                  : "비밀번호가 일치하지 않습니다."}
-              </p>
-            )}
-          </div>
+            <div className={styles.input_wrap}>
+              <label>이름</label>
+              <input
+                type="text"
+                name="memberName"
+                id="memberName"
+                value={member.memberName}
+                onChange={inputMember}
+                className={styles.input_field}
+              ></input>
+            </div>
 
-          <div className={styles.input_wrap}>
-            <label>이름</label>
-            <input
-              type="text"
-              name="memberName"
-              id="memberName"
-              value={member.memberName}
-              onChange={inputMember}
-              className={styles.input_field}
-            ></input>
-          </div>
+            <div className={styles.input_wrap}>
+              <label>닉네임</label>
+              <input
+                type="text"
+                name="memberNickname"
+                id="memberNickname"
+                value={member.memberNickname}
+                onChange={inputMember}
+                className={styles.input_field}
+              ></input>
+            </div>
 
-          <div className={styles.input_wrap}>
-            <label>닉네임</label>
-            <input
-              type="text"
-              name="memberNickname"
-              id="memberNickname"
-              value={member.memberNickname}
-              onChange={inputMember}
-              className={styles.input_field}
-            ></input>
-          </div>
-
-          {/*이메일 인증 */}
-          {/*이메일 인증 컴포넌트에서 이메일 인증이 완료되면 
+            {/*이메일 인증 */}
+            {/*이메일 인증 컴포넌트에서 이메일 인증이 완료되면 
         setEmailVerified(true)로 상태 변경*/}
 
-          <EmailAuth
-            //배열 집어넣지 않도록 주의!!
-            memberEmail={member.memberEmail}
-            setMemberEmail={(email) =>
-              setMember({ ...member, memberEmail: email })
-            }
-            onVerified={setEmailVerified}
-          ></EmailAuth>
+            <EmailAuth
+              //배열 집어넣지 않도록 주의!!
+              memberEmail={member.memberEmail}
+              setMemberEmail={(email) =>
+                setMember({ ...member, memberEmail: email })
+              }
+              onVerified={setEmailVerified}
+            ></EmailAuth>
 
-          <div className={styles.member_button_wrap}>
-            <button
-              type="button"
-              className={styles.join_btn}
-              onClick={JoinMember}
-              disabled={isLoading} // 로딩 중이면 클릭 차단!
-            >
-              {isLoading ? "처리 중..." : "회원가입"}
-            </button>
-          </div>
-        </form>
-      </div>
-      {/* join_wrap 끝 */}
-      {/*
+            <div className={styles.member_button_wrap}>
+              <button
+                type="button"
+                className={styles.join_btn}
+                onClick={JoinMember}
+                disabled={isLoading} // 로딩 중이면 클릭 차단!
+              >
+                {isLoading ? "처리 중..." : "회원가입"}
+              </button>
+            </div>
+          </form>
+        </div>
+        {/* join_wrap 끝 */}
+        {/*
             
       <img src={joinBg} className={styles.join_img} alt="배경 이미지" />
             */}
+      </div>
     </div>
   );
 };

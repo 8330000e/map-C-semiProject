@@ -138,6 +138,9 @@ function App() {
 
   return (
     <div className="carbonconnect wrap">
+      <Routes>
+        <Route path="/join" element={<JoinPage />}></Route>
+      </Routes>
       {!isAdmin && <Header />}{" "}
       {/* isAdmin이 true면 헤더 컴포넌트 실행 안함 (푸터도 동일)*/}
       <main className={isAdmin ? "" : "main"}>
@@ -152,7 +155,6 @@ function App() {
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/fail" element={<PaymentFail />} />
           <Route path="/Store" element={<Navigate to="/store" replace />} />
-          <Route path="/join" element={<JoinPage />}></Route>
           <Route path="/members/login" element={<Login />}></Route>
           <Route path="/members/find-id" element={<FindId />}></Route>
           <Route path="/members/find-pw" element={<FindPw />}></Route>

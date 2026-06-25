@@ -1,10 +1,18 @@
 /*회원가입 디자인 창*/
 /* JoinPage.module.css */
+.join_page_container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .total_join_container {
   width: 100vw;
   height: 100vh;
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   z-index: 1;
