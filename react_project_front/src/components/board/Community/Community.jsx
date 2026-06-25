@@ -11,13 +11,13 @@ import Swal from "sweetalert2";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { REGION_DATA } from "./regionData";
 import calculator from "../../../assets/img/calculator.svg";
+import defaultMarker from "../../assets/img/marker.png";
 import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
 import NavigateBeforeOutlinedIcon from "@mui/icons-material/NavigateBeforeOutlined";
 import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "/api";
-  
 
 const getBoardNo = (board) =>
   board?.boardNo ?? board?.boardId ?? board?.id ?? null;
@@ -194,9 +194,8 @@ const Community = ({
   useEffect(() => {
     const { ctpv, sgg } = ctpvsgg;
     if (ctpv && sgg) {
-      axios.get(
-          `${BACKSERVER}/boards?ctpv=${ctpv}&sgg=${sgg}`
-        )
+      axios
+        .get(`${BACKSERVER}/boards?ctpv=${ctpv}&sgg=${sgg}`)
         .then((res) => {
           console.log("데이터 로드 성공:", res.data);
           // 3. 서버에서 받은 값을 상태에 저장 (이때 화면이 다시 그려짐)
@@ -383,8 +382,7 @@ const Community = ({
       position: new window.naver.maps.LatLng(`${lnglat.lat}`, `${lnglat.lng}`),
       map: map,
       icon: {
-        content:
-          '<img loading="lazy" decoding="async" src="src/assets/img/marker.png" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">',
+        content: `<img loading="lazy" decoding="async" src=${defaultMarker} style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">`,
         size: new naver.maps.Size(22, 35),
         anchor: new naver.maps.Point(11, 35),
       },
