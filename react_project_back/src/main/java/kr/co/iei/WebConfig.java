@@ -8,12 +8,10 @@ import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-// WebConfig는 CORS 정책만 처리함.
-// 로컬 정적 이미지 경로(/board/editor, /member/thumb)는 더 이상 백엔드에서 서빙하지 않음.
-// 지금은 Firebase 업로드된 이미지 URL만 사용하도록 처리했음.
+// WebConfig는 CORS 정책, API prefix, 인터셉터만 처리함.
+// 이미지는 더 이상 백엔드(로컬 디스크)에서 서빙하지 않고, S3 + CloudFront에서 직접 서빙함.
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 	@Autowired
@@ -61,16 +59,9 @@ public class WebConfig implements WebMvcConfigurer {
                     "/regions/codes/**",
                     "/regions/**",
                     "/store/**",
-                    "/supports/**",
-                    "/files/**");
+                    "/supports/**");
 		
 		registry.addInterceptor(adminInterceptor)
 				.addPathPatterns("/admins/**");
 	}
-
-	@Override
-public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    registry.addResourceHandler("/files/**")
-            .addResourceLocations("file:C:/Temp/semiproject/");  // ← 끝에 / 있는지 확인
-}
 }
