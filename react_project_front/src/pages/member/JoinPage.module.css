@@ -2,8 +2,7 @@
 /* JoinPage.module.css */
 
 .total_join_container {
-  width: 150vw;
-  height: 150vh;
+  width: 100%;
   position: absolute;
   top: 0;
   left: 0;
