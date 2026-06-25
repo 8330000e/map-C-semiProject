@@ -1,6 +1,5 @@
 package kr.co.iei.member.controller;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,8 +47,8 @@ public class Membercontroller {
 	private EmailSender emailSender;
 
 	// 회원가입 로직
-//	@Autowired
-//	private FileUtils fileUtil;
+	@Autowired
+	private FileUtils fileUtils;
 
 	@Value("${file.root}")
 	private String root;
@@ -311,7 +310,7 @@ public class Membercontroller {
 			throw new RuntimeException("이럴 경우는 없을거임");
 		}
 
-		String memberThumb = FileUtils.upload("member", file);
+		String memberThumb = fileUtils.upload("member", file);
 		
 		Member mem = new Member();
 		mem.setMemberId(memberId);
