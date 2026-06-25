@@ -1,6 +1,5 @@
 package kr.co.iei.board.model.service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +31,9 @@ import kr.co.iei.utils.FileUtils;
 public class BoardService {
 	@Autowired
 	private BoardDao boardDao;
+
+	@Autowired
+	private FileUtils fileUtils;
 	
 	@Autowired
 	private MissionService missionService;
@@ -256,7 +258,7 @@ public class BoardService {
 		for (MultipartFile file : files) {
 			if (file == null || file.isEmpty()) continue;
 
-			String filePath = FileUtils.upload("board/files", file);  // ← 수정
+			String filePath = fileUtils.upload("board/files", file);
 
 			BoardFile boardFile = new BoardFile();
 			boardFile.setBoardNo(boardNo);
@@ -356,4 +358,3 @@ public class BoardService {
 	
 
 }
-

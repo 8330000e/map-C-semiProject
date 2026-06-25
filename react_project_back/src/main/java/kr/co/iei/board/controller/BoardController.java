@@ -43,6 +43,9 @@ import kr.co.iei.utils.FileUtils;
 public class BoardController {
 	@Autowired
 	private BoardService boardService;
+
+	@Autowired
+	private FileUtils fileUtils;
 	
 	// application.properties의 file.root 값을 읽어서 파일 업로드/조회 경로를 정함.
 	// Windows와 macOS 모두에서 잘 동작하도록 File 객체로 경로를 만듦.
@@ -132,7 +135,7 @@ public class BoardController {
 			throw new RuntimeException("업로드할 파일이 없습니다.");
 		}
 
-		String fileName = FileUtils.upload("board/editor", upfile);
+		String fileName = fileUtils.upload("board/editor", upfile);
 
 		return fileName;
 	}
@@ -420,5 +423,4 @@ public class BoardController {
 	
 	
 	
-	 
 }
