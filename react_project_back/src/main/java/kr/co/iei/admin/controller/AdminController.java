@@ -1,7 +1,6 @@
 package kr.co.iei.admin.controller;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +12,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -57,11 +55,10 @@ public class AdminController {
 	@Autowired
 	private AdminService adminService;
 
-	private final BCryptPasswordEncoder bcrypt;
+	@Autowired
+	private FileUtils fileUtils;
 
-	// 파일 업로드 루트 경로 - application.properties에서 가져옴
-	@Value("${file.root}")
-	private String root;
+	private final BCryptPasswordEncoder bcrypt;
 
 	AdminController(BCryptPasswordEncoder bcrypt) {
 		this.bcrypt = bcrypt;
@@ -82,13 +79,7 @@ public class AdminController {
 	@PostMapping(value="notice")
 	public ResponseEntity<?> insertNotice(@ModelAttribute Notice notice, @RequestParam(value = "upfile", required = false) MultipartFile upfile) {
 		if (upfile != null && !upfile.isEmpty()) {
-			// 이미지 저장할 경로
-			File saveDir = new File(new File(root), "notice");
-			// 폴더 없으면 만들어
-			if (!saveDir.exists()) {
-				saveDir.mkdir();
-			}
-			String fileName = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
+			String fileName = fileUtils.upload("notice", upfile);
 			notice.setNoticeImagePath(fileName);
 		}
 		int result = adminService.insertNotice(notice);
@@ -106,11 +97,7 @@ public class AdminController {
 	@PatchMapping(value="notice")
 	public ResponseEntity<?> editNotice(@ModelAttribute Notice notice, @RequestParam(value = "upfile", required = false) MultipartFile upfile) {
 		if (upfile != null && !upfile.isEmpty()) {
-			File saveDir = new File(new File(root), "notice");
-			if (!saveDir.exists()) {
-				saveDir.mkdir();
-			}
-			String fileName = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
+			String fileName = fileUtils.upload("notice", upfile);
 			notice.setNoticeImagePath(fileName);
 		}
 		int result = adminService.editNotice(notice);
@@ -167,11 +154,7 @@ public class AdminController {
 	@PatchMapping(value="qna")
 	public ResponseEntity<?> qnaAnswer(@ModelAttribute Qna qna, @RequestParam(value="upfile", required = false) MultipartFile upfile) {
 		if (upfile != null && !upfile.isEmpty()) {
-			File saveDir = new File(new File(root), "qna");
-			if (!saveDir.exists()) {
-				saveDir.mkdir();
-			}
-			String fileName = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, upfile);
+			String fileName = fileUtils.upload("qna", upfile);
 			qna.setQnaAnswerImage(fileName);
 		}
 		int result = adminService.qnaAnswer(qna);
