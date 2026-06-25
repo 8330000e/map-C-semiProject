@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Community from "../../components/board/Community/Community";
 import styles from "./MapCommunityPage.module.css";
 import defaultImg from "../../assets/img/defaultImg.png";
+import defaultThumbMarker from "../../assets/img/defaultthumbmarker.png";
 import borderPin from "../../assets/img/borderPin.svg";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import CelebrationOutlinedIcon from "@mui/icons-material/CelebrationOutlined";
@@ -361,7 +362,7 @@ const Map = ({
         <img
         loading="lazy"
         decoding="async"
-        src='src/assets/img/defaultthumbmarker.png'
+        src=${defaultThumbMarker}
         style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
         />
       </div>`,
@@ -550,7 +551,7 @@ const Map = ({
             <img
               loading="lazy"
               decoding="async"
-              src='src/assets/img/defaultthumbmarker.png'
+              src=${defaultThumbMarker}
               style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
             />
           </div>
@@ -596,7 +597,7 @@ const Map = ({
             <img
               loading="lazy"
               decoding="async"
-              src='src/assets/img/defaultthumbmarker.png'
+              src=${defaultThumbMarker}
               style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
             />
           </div>`,
