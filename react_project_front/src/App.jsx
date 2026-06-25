@@ -138,9 +138,7 @@ function App() {
 
   return (
     <div className="carbonconnect wrap">
-      <Routes>
-        <Route path="/join" element={<JoinPage />}></Route>
-      </Routes>
+      <Route path="/join" element={<JoinPage />}></Route>
       {!isAdmin && <Header />}{" "}
       {/* isAdmin이 true면 헤더 컴포넌트 실행 안함 (푸터도 동일)*/}
       <main className={isAdmin ? "" : "main"}>
