@@ -100,7 +100,7 @@ public class CampaignController {
 //			saveFolder.mkdirs();
 //		}
 		CampaignParticipance campPart = new CampaignParticipance();
-		String fileUrl = FileUtils.upload("/campaign/memo/",memoThumb);
+		String fileUrl = fileUtil.upload("campaign/memo",memoThumb);
 		campPart.setCampaignThumb(fileUrl);
 		System.out.println(fileUrl);
 		campPart.setMemberId(memberId);
@@ -132,7 +132,7 @@ public class CampaignController {
 		if(file != null || !file.isEmpty()) {
 //			File saveFolder = new File(new File(root),"campaign/memo");
 			CampaignParticipance campPart = new CampaignParticipance();
-			String fileUrl = FileUtils.upload("/campaign/memo/",file);
+			String fileUrl = fileUtil.upload("campaign/memo",file);
 			campPart.setCampaignThumb(fileUrl);
 			campPart.setCampaignMemo(campaignMemo);
 			campPart.setCampaignParticipanceNo(campaignParticipanceNo);
