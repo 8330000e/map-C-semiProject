@@ -227,22 +227,12 @@ const MissionList = () => {
   const getImageUrl = (value, type = "mission") => {
     if (!value) return "";
 
-    // 이미 완전한 주소면 그대로 사용
+    // 백엔드(FileUtils)가 S3 업로드 시 CloudFront 전체 URL을 반환하므로 그대로 사용함.
     if (value.startsWith("http://") || value.startsWith("https://")) {
       return value;
     }
 
-    // 이미 /uploads/... 처럼 경로가 들어있으면 서버 주소만 붙임
-    if (value.startsWith("/")) {
-      return `${import.meta.env.VITE_BACKSERVER}${value}`;
-    }
-
-    // 파일명만 저장된 경우
-    if (type === "cert") {
-      return `${import.meta.env.VITE_BACKSERVER}/uploads/mission/random/${value}`;
-    }
-
-    return `${import.meta.env.VITE_BACKSERVER}/uploads/mission/${value}`;
+    return "";
   };
 
   const renderMissionCard = (

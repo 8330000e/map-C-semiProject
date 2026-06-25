@@ -1,37 +1,55 @@
 package kr.co.iei.utils;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.Blob;
-import com.google.firebase.cloud.StorageClient;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Component
 public class FileUtils {
-    
-    private static final String BASE_PATH = "C:/Temp/semiproject/";
 
-    public static String upload(String savepath, MultipartFile file) {
-        // savepath 예시: "board", "member", "board/editor" 등
-        String folderPath = BASE_PATH + savepath;
-        if (!folderPath.endsWith("/")) {
-            folderPath += "/";
+    // application-secret.properties 에서 주입받음 (커밋되지 않는 파일)
+    @Value("${aws.s3.access-key}")
+    private String accessKey;
+
+    @Value("${aws.s3.secret-key}")
+    private String secretKey;
+
+    @Value("${aws.s3.region}")
+    private String region;
+
+    @Value("${aws.s3.bucket}")
+    private String bucket;
+
+    // CloudFront 배포 도메인 (이미지 전용으로 새로 만든 배포)
+    @Value("${aws.cloudfront.domain}")
+    private String cloudfrontDomain;
+
+    /**
+     * 이미지를 S3에 업로드하고, CloudFront를 통해 접근 가능한 전체 URL을 반환함.
+     *
+     * @param savepath DB 저장용 폴더 구분 (예: "board/editor", "member" 등)
+     * @param file     업로드할 파일
+     * @return         CloudFront 기반 전체 이미지 URL (예: https://dxxxx.cloudfront.net/board/editor/uuid.png)
+     */
+    public String upload(String savepath, MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return null;
         }
 
-        // 폴더 없으면 생성
-        File dir = new File(folderPath);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
+        // 폴더 구분자 정리 (앞뒤 슬래시 통일)
+        String folder = savepath.endsWith("/") ? savepath : savepath + "/";
 
-        // UUID 기반 파일명 생성
+        // UUID 기반 파일명 생성 (중복 방지, 한글 파일명 인코딩 문제 회피)
         String originalName = file.getOriginalFilename();
         String extension = "";
         if (originalName != null) {
@@ -42,109 +60,33 @@ public class FileUtils {
         }
         String filename = UUID.randomUUID().toString() + extension;
 
-        // 파일 저장
-        File dest = new File(folderPath + filename);
+        // S3에 저장될 객체 키 (버킷 내부 경로)
+        String objectKey = folder + filename;
+
+        S3Client s3 = S3Client.builder()
+                .region(Region.of(region))
+                .credentialsProvider(StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create(accessKey, secretKey)))
+                .build();
+
         try {
-            file.transferTo(dest);
+            PutObjectRequest request = PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(objectKey)
+                    .contentType(file.getContentType())
+                    // CloudFront/브라우저 캐싱: 파일명이 UUID라 같은 이름이 재사용될 일이 없으므로 길게 캐싱
+                    .cacheControl("public, max-age=31536000, immutable")
+                    .build();
+
+            s3.putObject(request, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        } finally {
+            s3.close();
         }
 
-        // DB에 저장할 상대 경로 반환 (savepath/파일명)
-        return savepath + "/" + filename;
+        // DB에는 CloudFront 전체 URL을 그대로 저장함 (프론트에서 추가 가공 없이 바로 img src로 사용 가능)
+        return "https://" + cloudfrontDomain + "/" + objectKey;
     }
-
-    // public static String upload(String savepath, MultipartFile file) {
-    //     // savepath는 기존 로컬 저장 경로로 전달됩니다.
-    //     // Firebase Storage에서는 해당 경로를 내부 객체 경로로 변환합니다.
-    //     String storageFolder = toStorageFolder(savepath);
-
-    //     // 원본 파일명에서 확장자만 추출합니다.
-    //     String originalName = file.getOriginalFilename();
-    //     String extension = "";
-    //     if (originalName != null) {
-    //         int dotIndex = originalName.lastIndexOf('.');
-    //         if (dotIndex >= 0) {
-    //             extension = originalName.substring(dotIndex);
-    //         }
-    //     }
-
-    //     // UUID 기반 파일명 생성: 충돌 방지 및 파일명 인코딩 문제 회피
-    //     String filename = UUID.randomUUID().toString() + extension;
-    //     String objectName = storageFolder.isEmpty() ? filename : storageFolder + filename;
-
-    //     // Firebase Storage에만 업로드합니다.
-    //     try {
-    //         Bucket bucket = StorageClient.getInstance().bucket();
-    //         Blob blob = bucket.create(objectName, file.getBytes(), file.getContentType());
-    //         if (blob != null) {
-    //             blob = blob.toBuilder()
-    //                     .setCacheControl("public, max-age=31536000, immutable")
-    //                     .build()
-    //                     .update();
-    //         }
-
-    //         String encodedObjectName = URLEncoder.encode(objectName, StandardCharsets.UTF_8.toString());
-    //         return String.format("https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media", bucket.getName(), encodedObjectName);
-    //     } catch (IllegalStateException | IOException e) {
-    //         e.printStackTrace();
-    //     }
-
-    //     return objectName;
-    // }
-
-    // /**
-    //  * 로컬 파일 시스템 경로(savepath)를 Firebase Storage 내부 경로로 변환함.
-    //  *
-    //  * 예를 들어 로컬 경로가
-    //  *   /.../upload/semiproject/board/editor/
-    //  * 일 때, Firebase Storage에서는
-    //  *   board/editor/
-    //  * 와 같이 버킷 내부 경로만 사용해야 함.
-    //  *
-    //  * 변환 규칙:
-    //  * 1) Windows 경로 구분자 '\\'를 '/'로 통일함.
-    //  * 2) 끝에 '/'가 있으면 제거하여 일관된 처리로 만듦.
-    //  * 3) '/upload/semiproject/'가 포함되어 있으면 그 뒤 경로를 저장소 경로로 반환함.
-    //  * 4) '/upload/'가 포함되어 있으면 그 뒤 경로를 저장소 경로로 반환함.
-    //  * 5) 위 두 조건에 해당하지 않으면 마지막 '/' 이후 문자열을 폴더 이름으로 사용함.
-    //  *
-    //  * 반환값은 항상 폴더 경로 형태로 끝에 '/'를 붙임.
-    //  */
-    // private static String toStorageFolder(String savepath) {
-    //     if (savepath == null || savepath.trim().isEmpty()) {
-    //         return "";
-    //     }
-
-    //     // Windows 경로 구분자를 Unix 스타일로 통일
-    //     String normalized = savepath.replace("\\", "/");
-    //     if (normalized.endsWith("/")) {
-    //         normalized = normalized.substring(0, normalized.length() - 1);
-    //     }
-
-    //     // 기본 로컬 저장 루트인 upload/semiproject 아래 경로를 추출
-    //     String marker = "/upload/semiproject/";
-    //     int index = normalized.indexOf(marker);
-    //     if (index >= 0) {
-    //         String folder = normalized.substring(index + marker.length());
-    //         return folder.endsWith("/") ? folder : folder + "/";
-    //     }
-
-    //     // upload 루트 아래 경로를 추출
-    //     marker = "/upload/";
-    //     index = normalized.indexOf(marker);
-    //     if (index >= 0) {
-    //         String folder = normalized.substring(index + marker.length());
-    //         return folder.endsWith("/") ? folder : folder + "/";
-    //     }
-
-    //     // 위 경우에 해당하지 않으면 마지막 폴더 이름 뒤에 '/'를 붙여서 반환
-    //     index = normalized.lastIndexOf('/');
-    //     if (index >= 0 && index < normalized.length() - 1) {
-    //         return normalized.substring(index + 1) + "/";
-    //     }
-
-    //     return "";
-    // }
 }

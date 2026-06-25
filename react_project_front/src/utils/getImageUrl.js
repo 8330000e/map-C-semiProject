@@ -12,53 +12,13 @@ export const normalizeImageUrl = (thumb, defaultPrefix = "board/editor") => {
   if (["null", "undefined", "none", "NONE", "NULL"].includes(trimmed))
     return null;
 
-  trimmed = trimmed.replace(/\\\\/g, "/").replace(/\\/g, "/");
-
-  // Firebase URL이면 내부 경로만 추출해서 로컬 URL로 변환
-  // 예: ...o/board%2Ffiles%2Fuuid.jpg?alt=media → board/files/uuid.jpg
-  if (trimmed.includes("firebasestorage.googleapis.com")) {
-    const match = trimmed.match(/\/o\/(.+?)\?/);
-    if (match) {
-      const decoded = decodeURIComponent(match[1]);
-      return `${BACKSERVER}/files/${decoded}`;
-    }
-  }
-
-  // 이미 완전한 URL이면 그대로
+  // S3 업로드 결과는 백엔드가 CloudFront 전체 URL로 내려주므로 그대로 사용함.
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://"))
     return trimmed;
   if (trimmed.startsWith("//")) return `https:${trimmed}`;
 
-  // 드라이브명 제거 (C:/ 등)
-  const driveMatch = trimmed.match(/^[A-Za-z]:/);
-  if (driveMatch) trimmed = trimmed.substring(driveMatch[0].length);
-  if (trimmed.startsWith("/")) trimmed = trimmed.substring(1);
-
-  // 알려진 경로 마커 찾기
-  const pathMarkers = [
-    "board/editor/",
-    "board/files/",
-    "campaign/memo/",
-    "member/thumb/",
-    "member/",
-    "notice/",
-    "qna/",
-  ];
-
-  for (const marker of pathMarkers) {
-    const idx = trimmed.indexOf(marker);
-    if (idx !== -1) {
-      trimmed = trimmed.substring(idx);
-      break;
-    }
-  }
-
-  // 파일명만 있는 경우 (uuid.jpg) → defaultPrefix 붙여서 반환
-  if (!trimmed.includes("/")) {
-    return `${BACKSERVER}/files/${defaultPrefix}/${trimmed}`;
-  }
-
-  return `${BACKSERVER}/files/${trimmed}`;
+  // 절대 URL이 아닌 값이 들어오면 잘못된 데이터이므로 처리하지 않음.
+  return null;
 };
 
 export const getSafeImageUrl = (thumb, defaultPrefix = "board/editor") => {
