@@ -1,10 +1,8 @@
 package kr.co.iei.support.contoller;
 
-import java.io.File;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +28,8 @@ public class SupportContoller {
 	@Autowired
 	private SupportService supportService;
 	
-	@Value("${file.root}")
-	private String root;
+	@Autowired
+	private FileUtils fileUtils;
 	
 	
 	@GetMapping(value="faq")
@@ -61,7 +59,7 @@ public class SupportContoller {
 	@PostMapping(value="qna")
 public ResponseEntity<?> insertQna(@ModelAttribute Qna qna, @RequestParam(value="upfile", required = false) MultipartFile upfile) {
     if (upfile != null && !upfile.isEmpty()) {
-        String fileName = FileUtils.upload("qna", upfile);
+        String fileName = fileUtils.upload("qna", upfile);
         qna.setQnaQuestionImage(fileName);
     }
     int result = supportService.insertQna(qna);

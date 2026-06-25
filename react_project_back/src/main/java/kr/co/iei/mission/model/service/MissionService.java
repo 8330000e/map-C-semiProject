@@ -1,13 +1,11 @@
 package kr.co.iei.mission.model.service;
 
-import java.io.File;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,8 +21,8 @@ public class MissionService {
 	@Autowired
 	MissionDao missionDao;
 	
-	@Value("${file.root}")
-	private String root;
+	@Autowired
+	private FileUtils fileUtils;
 	
 	@Autowired
 	private MemberService memberService;
@@ -188,12 +186,7 @@ public class MissionService {
 	        );
 	    }
 
-	    File saveDir = new File(new File(root), "mission/random");
-	    if (!saveDir.exists()) {
-	        saveDir.mkdirs();
-	    }
-
-	    String savedFileName = FileUtils.upload(saveDir.getAbsolutePath() + File.separator, certImage);
+	    String savedFileName = fileUtils.upload("mission/random", certImage);
         String certImageUrl = savedFileName;
 	    int result1 = missionDao.updateRandomMissionCertification(memberId, missionNo, certImageUrl);
 
