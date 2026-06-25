@@ -438,7 +438,7 @@ const Map = ({
                   <img
                     loading="lazy"
                     decoding="async"
-                    src=${borderPin}
+                    href="https://carbonconnect-s3.s3.ap-northeast-2.amazonaws.com/img/mynaui_pin-solid.png"
                     style="
                       position: absolute;
                       width: 32px;
