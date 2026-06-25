@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { REGION_DATA } from "./regionData";
 import calculator from "../../../assets/img/calculator.svg";
-import defaultMarkerImg from "../../assets/img/marker.png";
+import defaultMarkerImg from "../../../assets/img/marker.png";
 import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
 import NavigateBeforeOutlinedIcon from "@mui/icons-material/NavigateBeforeOutlined";
 import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
