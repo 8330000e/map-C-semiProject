@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { REGION_DATA } from "./regionData";
 import calculator from "../../../assets/img/calculator.svg";
-import defaultMarker from "../../assets/img/marker.png";
+import defaultMarkerImg from "../../assets/img/marker.png";
 import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
 import NavigateBeforeOutlinedIcon from "@mui/icons-material/NavigateBeforeOutlined";
 import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
@@ -382,7 +382,7 @@ const Community = ({
       position: new window.naver.maps.LatLng(`${lnglat.lat}`, `${lnglat.lng}`),
       map: map,
       icon: {
-        content: `<img loading="lazy" decoding="async" src=${defaultMarker} style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">`,
+        content: `<img loading="lazy" decoding="async" src=${defaultMarkerImg} style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">`,
         size: new naver.maps.Size(22, 35),
         anchor: new naver.maps.Point(11, 35),
       },
