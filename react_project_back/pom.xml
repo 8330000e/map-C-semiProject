@@ -69,6 +69,12 @@
     		<artifactId>firebase-admin</artifactId>
     		<version>9.1.1</version>
 		</dependency>
+		<!-- AWS SDK v2: S3에 이미지 업로드/삭제를 위한 SDK -->
+		<dependency>
+    		<groupId>software.amazon.awssdk</groupId>
+    		<artifactId>s3</artifactId>
+    		<version>2.29.30</version>
+		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
