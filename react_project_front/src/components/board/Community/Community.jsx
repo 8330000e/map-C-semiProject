@@ -382,7 +382,7 @@ const Community = ({
       position: new window.naver.maps.LatLng(`${lnglat.lat}`, `${lnglat.lng}`),
       map: map,
       icon: {
-        content: `<img loading="lazy" decoding="async" src="${defaultMarkerImg}" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">`,
+        content: `<img loading="lazy" decoding="async" src='${defaultMarkerImg}' style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;">`,
         size: new naver.maps.Size(22, 35),
         anchor: new naver.maps.Point(11, 35),
       },
