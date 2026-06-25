@@ -29,7 +29,6 @@ import { REGION_DATA } from "../../components/board/Community/regionData";
 // 백엔드 API 서버 주소를 환경 변수에서 읽어오고, 없으면 로컬 주소를 기본값으로 사용함.
 // 프론트엔드와 백엔드가 분리되어 있어도 환경별로 주소를 쉽게 바꾸기 위함임.
 const BACKSERVER = import.meta.env.VITE_BACKSERVER || "/api";
-  
 
 // 이미지 URL 정규화 도구를 가져와서 마커 이미지나 사용자 썸네일을 올바른 경로로 변환함.
 const getImageUrl = normalizeImageUrl;
@@ -330,7 +329,7 @@ const Map = ({
       map: map,
       icon: {
         content:
-          '<div style="position: relative; width: 100%; z-index:99999;"><img loading="lazy" decoding="async" src="src/assets/img/marker.png" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=99999; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;"></div>',
+          '<div style="position: relative; width: 100%; z-index:99999;"><img loading="lazy" decoding="async" href="https://carbonconnect-s3.s3.ap-northeast-2.amazonaws.com/img/%EB%A7%88%EC%BB%A4.png" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=99999; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;"></div>',
         size: new naver.maps.Size(22, 35),
         anchor: new naver.maps.Point(11, 35),
       },
@@ -362,7 +361,7 @@ const Map = ({
         <img
         loading="lazy"
         decoding="async"
-        src=${defaultThumbMarker}
+        href="https://carbonconnect-s3.s3.ap-northeast-2.amazonaws.com/img/defaultthumbmarker.png"
         style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
         />
       </div>`,
@@ -551,7 +550,7 @@ const Map = ({
             <img
               loading="lazy"
               decoding="async"
-              src=${defaultThumbMarker}
+              href="https://carbonconnect-s3.s3.ap-northeast-2.amazonaws.com/img/defaultthumbmarker.png"
               style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
             />
           </div>
@@ -597,7 +596,7 @@ const Map = ({
             <img
               loading="lazy"
               decoding="async"
-              src=${defaultThumbMarker}
+              href="https://carbonconnect-s3.s3.ap-northeast-2.amazonaws.com/img/defaultthumbmarker.png"
               style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
             />
           </div>`,
