@@ -3,7 +3,7 @@ import Community from "../../components/board/Community/Community";
 import styles from "./MapCommunityPage.module.css";
 import defaultMarkerImg from "../../assets/img/marker.png";
 import defaultImg from "../../assets/img/defaultImg.png";
-import marker from "../../assets/img/marker.png";
+import markerImg from "../../assets/img/marker.png";
 import defaultThumbMarker from "../../assets/img/defaultthumbmarker.png";
 import borderPin from "../../assets/img/borderPin.svg";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
@@ -330,7 +330,7 @@ const Map = ({
       ),
       map: map,
       icon: {
-        content: `<div style="position: relative; width: 100%; z-index:99999;"><img loading="lazy" decoding="async" src="../../assets/img/marker.png" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=99999; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;"></div>`,
+        content: `<div style="position: relative; width: 100%; z-index:99999;"><img loading="lazy" decoding="async" src=${markerImg} style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=99999; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;"></div>`,
         size: new naver.maps.Size(22, 35),
         anchor: new naver.maps.Point(11, 35),
       },
