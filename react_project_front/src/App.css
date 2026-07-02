@@ -46,6 +46,12 @@ header {
   justify-content: space-between;
 }
 
+.carbonconnect_fullscreen {
+  width: 100%;
+  margin: 0;
+  border: none;
+}
+
 .roundBorder {
   border: 1.8px solid #464d3e;
   border-radius: 10px;

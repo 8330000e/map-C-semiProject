@@ -147,7 +147,11 @@ function App() {
   const isFullScreen = isAdmin || fullScreenPaths.includes(location.pathname);
 
   return (
-    <div className="carbonconnect wrap">
+    <div
+      className={
+        isFullScreen ? "carbonconnect_fullscreen" : "carbonconnect wrap"
+      }
+    >
       {!isFullScreen && <Header />}
       <main className={isFullScreen ? "" : "main"}>
         <Routes>
