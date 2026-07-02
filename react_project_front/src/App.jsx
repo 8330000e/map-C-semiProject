@@ -135,7 +135,6 @@ function App() {
     // 컴포넌트 언마운트 시 인터셉터 제거 (중복 방지)
     return () => axios.interceptors.response.eject(interceptor);
   }, []);
-  const isAdmin = location.pathname.startsWith("/admin");
 
   // 헤더/푸터 없이 배경+콘텐츠만 화면 전체로 꽉 채울 페이지들
   const fullScreenPaths = [
