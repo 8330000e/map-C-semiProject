@@ -135,12 +135,22 @@ function App() {
     // 컴포넌트 언마운트 시 인터셉터 제거 (중복 방지)
     return () => axios.interceptors.response.eject(interceptor);
   }, []);
+  const isAdmin = location.pathname.startsWith("/admin");
+
+  // 헤더/푸터 없이 배경+콘텐츠만 화면 전체로 꽉 채울 페이지들
+  const fullScreenPaths = [
+    "/join",
+    "/members/login",
+    "/members/find-id",
+    "/members/find-pw",
+    "/members/reset-pw",
+  ];
+  const isFullScreen = isAdmin || fullScreenPaths.includes(location.pathname);
 
   return (
     <div className="carbonconnect wrap">
-      {!isAdmin && <Header />}{" "}
-      {/* isAdmin이 true면 헤더 컴포넌트 실행 안함 (푸터도 동일)*/}
-      <main className={isAdmin ? "" : "main"}>
+      {!isFullScreen && <Header />}
+      <main className={isFullScreen ? "" : "main"}>
         <Routes>
           <Route path="/" element={<Main />} />
           <Route path="/mypage/*" element={<Mypage />} />
@@ -202,7 +212,7 @@ function App() {
           <Route path="/point-give/*" element={<PointForGoodPage />}></Route>
         </Routes>
       </main>
-      {!isAdmin && <Footer />}
+      {!isFullScreen && <Footer />}
     </div>
   );
 }
