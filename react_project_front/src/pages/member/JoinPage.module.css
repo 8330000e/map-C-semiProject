@@ -1,31 +1,26 @@
 /*회원가입 디자인 창*/
 /* JoinPage.module.css */
 
-/* 배경 전용 레이어: 뷰포트에 완전히 고정, 절대 안 움직이고 항상 화면 전체를 덮음 */
-.bg_layer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
-  pointer-events: none; /* 클릭/스크롤 이벤트가 아래로 그대로 통과되게 */
-  background-image: url("/images/signup_final_bg.png "); /* 배경 이미지 경로 */
-  background-size: cover; /* 화면에 꽉 차게 */
-  background-position: center; /* 중앙 기준 정렬 */
-  background-repeat: no-repeat;
+/* 이 페이지(.login_page)가 떠 있을 때만 App.css의 전역 body margin: 60px 80px 을 0으로 무력화.
+   그래야 배경이 body 여백에 갇히지 않고 화면 끝까지 채워짐 */
+body:has(:global(.login_page)) {
+  margin: 0;
 }
 
 .total_join_container {
   width: 100%;
   min-height: 100vh; /* 최소 화면 높이는 항상 채움 */
   min-height: 100dvh; /* 모바일 주소창 등 고려한 실제 뷰포트 높이 */
-  position: relative; /* 페이지 흐름에 자연스럽게 참여 -> 스크롤도 브라우저 기본 스크롤로 동작 */
+  position: relative; /* 문서 흐름에 참여 -> 콘텐츠가 길어지면 이 박스도 같이 늘어나고, 브라우저 기본 스크롤로 동작 */
   z-index: 1;
   flex-direction: column;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-image: url("/images/signup_final_bg.png "); /* 배경 이미지 경로 */
+  background-size: cover; /* 화면에 꽉 차게 */
+  background-position: center; /* 중앙 기준 정렬 */
+  background-repeat: no-repeat;
   padding: 40px 0; /* 콘텐츠가 화면보다 길어질 때 상하 여백 확보 */
   box-sizing: border-box;
 }
