@@ -1,229 +1,436 @@
+import styles from "./JoinPage.module.css";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-//import loginBg from "/images/login-background.png";
-
-//import joinbg1 from "/images/join2jpg.jpg";
-import useAuthStore from "../../store/useAuthStore";
 import Swal from "sweetalert2";
-import styles from "./LoginPage.module.css";
-import { Link } from "react-router-dom";
+import EmailAuth from "../../components/emailauth/EmailAuth";
+import { useEffect } from "react";
 import { errorAlert, successAlert } from "../../utils/alert";
+//import joinBg from "/images/signup-background-rabbit.png";
+//import joinbg1 from "/images/join2jpg.jpg";
 
-const Login = () => {
-  // 페이지 이동 함수 가져오기
+const Join = () => {
+  // 페이지 이동 함수 가져오기 (React Router)
   const navigate = useNavigate();
 
-  // 상태 선언: 입력 중인 로그인 값 저장 (id, pw)
+  const [emailVerified, setEmailVerified] = useState(false); // 이메일 인증 여부 상태
+
   const [member, setMember] = useState({
-    memberId: "", // 아이디 필드
-    memberPw: "", // 비밀번호 필드
+    memberId: "",
+    memberPw: "",
+    memberName: "",
+    memberNickname: "",
+    memberEmail: "",
   });
 
-  const [isLoading, setIsLoading] = useState(false); //로딩상태가 아직 로그인이 안된 경우일떄
-  //페이지가 처음 마운트될 때 바로 보여주고 싶다면 isReady를 true로 설정,
-  //  로그인 버튼을 눌렀을 때 isReady를 false로 설정하여 로딩 상태를 보여줄 수 있다
-  const [isReady, setIsReady] = useState(true); //페이지 랜더링 준비 상태
+  //비밀번호 확인칸에 입력한 값이 일치하는지 다시 확인하는 useState
+  //위에 미리 설정한 memberPw와 비교하기 위해 만드는 거임
+  //사용자가 ‘비밀번호 다시 입력’ 칸에 쓴 값 저장하는 변수
+  const [memberPwRe, setMemberPwRe] = useState("");
+  //아이디를 중복 검사 하는 것
+  //이 아이디 써도 되는지 결과 저장하는 변수
+  const [checkId, setCheckId] = useState(0);
+  //비밀번호 일치여부 상태를 확인 하는 것
+  const [checkPw, setCheckPw] = useState(0);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target; // 이벤트가 발생한 input의 name과 value 추출
-    setMember({
-      ...member, // 기존 상태 유지
-      [name]: value, // 예: name이 memberId이면 memberId 값만 변경
-    });
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
+
+  // --- [추가] 유효성 검사 메시지 상태 ---
+  const [idMessage, setIdMessage] = useState(""); // 아이디 유효성 검사 메시지 상태
+  const [pwMessage, setPwMessage] = useState(""); // 비밀번호 유효성 검사 메시지 상태
+
+  // 작업 1: 유효성 검사 함수 (정규식)
+  //아이디 숫자 영문자 특수문자만 되게 하기
+  const validateId = (id) => {
+    const idRegex = /^[a-zA-Z0-9]{1,8}$/; //영문 숫자만 1-8자
+    if (id.length > 8) return "아이디는 영문과 숫자만 가능합니다.";
+    // 여기서 idRegex를 '사용'함으로 써 경고 해결!
+    if (!idRegex.test(id)) {
+      return "아이디는 영문과 숫자만 가능합니다.";
+    }
+
+    return "";
   };
 
-  const BACKSERVER = import.meta.env.VITE_BACKSERVER || "/api";
+  const validatePw = (pw) => {
+    // 영문 3개 이상, 숫자 4개 이상, 특수문자 1개 이상 포함 로직
+    const englishCount = (pw.match(/[a-zA-Z]/g) || []).length;
+    const numberCount = (pw.match(/[0-9]/g) || []).length;
+    const specialCount = (pw.match(/[!@#$%^&*()_+~`-]/g) || []).length;
 
-  const handleLogin = async () => {
-    console.log("로그인 버튼 클릭됨"); // 버튼 클릭 테스트용 출력
+    if (pw.length === 0) return "";
+    if (englishCount < 3 || numberCount < 4 || specialCount < 1) {
+      return "비밀번호는 영문 3개 이상, 숫자 4개 이상, 특수문자 1개 이상 포함 로직입니다.";
+    }
+    return "";
+  };
 
-    // 1) 값 유효성 검사 (아이디/비밀번호 필수)
-    if (!member.memberId || !member.memberPw) {
-      await errorAlert("로그인 실패", "아이디/비밀번호를 입력해주세요");
+  //아이디 중복 체크 (기존 로직 유지하되 유효성 검사 통과 시에만 실행 추천)
+  const ipDupCheck = async () => {
+    if (
+      !member.memberId ||
+      idMessage.includes("초과") ||
+      idMessage.includes("만 가능")
+    ) {
+      setCheckId(0); // 아이디 입력 없으면 초기화
       return;
     }
 
-    // 2) 디버그 출력 (보내는 데이터, 서버 주소)
-    console.log("보내는 데이터:", member);
-    console.log("서버 주소:", BACKSERVER);
-
-    //로딩 시작
-    //isLoading → 로그인 시 로딩 표시, 버튼 비활성화.
-    setIsLoading(true);
-    //페이지/컴포넌트가 렌더링 준비가 끝났는지 체크하는 용도..
-    setIsReady(true); //페이지 랜더링 준비 완료
-    //여기에서 로딩 함수를 설정하고 axios에다가 타이머 설정
-    let timer = setTimeout(async () => {
-      //3초안에 로그인 안되면 로딩 끝내기
-      setIsLoading(false);
-      await errorAlert("로그인 실패", "로그인 시간초과");
-    }, 5000); //5초로 설정
-
-    //앞으로 axios는 기본값으로 "Authorization"이라는 서버에서 보내준 인증하는 값 헤더를
-    //자동으로 붙인다. 즉, 토큰을 이제 전역에 적용시키겠다는 의미
-    //로그인 후 받은 JWT 토큰을 헤더에 넣어야 로그인한 상태를 서버가 인식함.
     try {
-      // 3) Axios 요청 (await 사용)
-      const res = await axios.post(`${BACKSERVER}/members/login`, member);
-      //성공했을 때
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKSERVER}/members/exists?memberId=${member.memberId}`,
+      );
 
-      clearTimeout(timer); //로그인 성공하면 타이머 초기화
-      console.log(res.data);
-
-      await successAlert("로그인 성공", "메인 페이지로 이동합니다");
-
-      //토큰 설정
-      if (res.data.token) {
-        axios.defaults.headers.common["Authorization"] =
-          `Bearer ${res.data.token}`;
-      }
-
-      //상태저장
-      useAuthStore.getState().login(res.data);
-
-      // 로그인 응답에 프로필 이미지가 없으면 바로 추가로 조회해서 저장
-      if (!res.data.memberThumb && res.data.memberId) {
-        try {
-          const profileRes = await axios.get(
-            `${BACKSERVER}/members/${res.data.memberId}`,
-          );
-          if (profileRes.data?.memberThumb) {
-            useAuthStore.getState().setThumb(profileRes.data.memberThumb);
-          }
-        } catch (profileErr) {
-          console.error("프로필 정보 추가 로드 실패", profileErr);
-        }
-      }
-
-      //성공했을 떄 초기값으로 되돌아가기
-      setMember({
-        memberId: "",
-        memberPw: "",
-      });
-
-      navigate("/");
-    } catch (err) {
-      //에러처리
-      clearTimeout(timer); //실패시 타이머 초기화
-      setIsLoading(false); //로딩 끝내기
-      console.error("로그인에러:", err);
-
-      const status = err.response?.status; //403.
-      if (status === 403) {
-        const serverMessage =
-          typeof err.response?.data === "string"
-            ? err.response.data
-            : "정지된 계정입니다. 고객센터로 문의해주세요.";
-        await errorAlert("로그인 불가", serverMessage);
-      } else if (status === 401) {
-        await errorAlert(
-          "로그인 실패",
-          "아이디 또는 비밀번호가 올바르지 않습니다.",
-        );
+      // res.data가 true면 중복된 아이디가 있음 -> 1 (사용불가)
+      // res.data가 false면 아이디가 없음 -> 2 (사용가능)
+      if (res.data === true) {
+        setCheckId(1); // 중복됨
       } else {
-        await errorAlert(
-          "오류 발생",
-          "서버와 연결할 수 없습니다. 잠시 후 다시 시도해주세요.",
-        );
+        setCheckId(2); // 사용가능
       }
-      //성공하든 실패하든 로딩상태 해제
-    } finally {
-      setIsLoading(false); //로딩 끝내기
+
+      console.log("중복 체크 결과:", res.data, "상태값:", res.data ? 1 : 2);
+    } catch (err) {
+      console.error("아이디 중복 체크 에러:", err);
+      setCheckId(0);
     }
   };
 
-  //준비되지 않으면 랜더링 안 함
-  if (!isReady) return null;
+  // 비밀번호 일치 체크
+  useEffect(() => {
+    if (!memberPwRe) {
+      setCheckPw(0);
+      return;
+    }
+    setCheckPw(member.memberPw === memberPwRe ? 1 : 2);
+  }, [memberPwRe, member.memberPw]);
+
+  const inputMember = (e) => {
+    const { name, value } = e.target;
+
+    // 1. 아이디 처리 (영문+숫자, 최대 8자, 한글/특수문자 불가)
+    if (name === "memberId") {
+      const cleanedValue = value.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, ""); // 한글 즉시 제거
+
+      // 여기서 validateId 함수를 '사용'함으로 써 경고 해결!
+      const errorMessage = validateId(cleanedValue);
+      setIdMessage(errorMessage);
+
+      if (cleanedValue.length === 0) {
+        setIdMessage("");
+        setMember({ ...member, [name]: "" }); //값을 적고나면 비우는 로직
+        return;
+      }
+
+      // 특수문자 입력 방지 (영문, 숫자만 허용)
+      const idRegex = /^[a-zA-Z0-9]*$/;
+      if (!idRegex.test(cleanedValue)) {
+        setIdMessage("아이디는 영문과 숫자만 가능합니다.");
+        return; // 특수문자가 들어오면 업데이트 안함
+      }
+
+      // 글자수 제한
+      if (cleanedValue.length > 8) {
+        setIdMessage("범위를 초과하였습니다. (최대 8자)");
+        return;
+      }
+
+      setIdMessage(""); // 모든 조건 통과 시 메시지 초기화
+      setMember({ ...member, [name]: cleanedValue });
+      return;
+    }
+
+    // 2. 비밀번호 처리 (영문3↑, 숫자4↑, 특수문자1↑, 8자↑, 한글불가)
+    if (name === "memberPw") {
+      const cleanedValue = value.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, ""); // 한글 즉시 제거
+      const errorMessage = validatePw(cleanedValue);
+      setPwMessage(errorMessage);
+      // 복합 조건 검사 로직
+      const englishCount = (cleanedValue.match(/[a-zA-Z]/g) || []).length;
+      const numberCount = (cleanedValue.match(/[0-9]/g) || []).length;
+      const specialCount = (cleanedValue.match(/[!@#$%^&*()_+~`-]/g) || [])
+        .length;
+
+      // 비밀번호 설정 영어, 숫자, 특수문자 제한
+      if (
+        cleanedValue.length > 0 &&
+        (englishCount < 3 ||
+          numberCount < 4 ||
+          specialCount < 1 ||
+          cleanedValue.length < 8)
+      ) {
+        setPwMessage(
+          "영문(3개↑), 숫자(4개↑), 특수문자(1개↑) 조합 8자 이상 필요",
+        );
+      } else if (cleanedValue.length >= 8) {
+        setPwMessage("안전한 비밀번호입니다.");
+      } else {
+        setPwMessage("");
+      }
+
+      setMember({ ...member, [name]: cleanedValue });
+      return;
+    }
+    //이메일 입력시 이메일 인증 상태 초기화
+    if (name === "memberEmail") {
+      //false가 초기화라는 증거
+      setEmailVerified(false);
+    }
+
+    setMember({
+      ...member,
+      [name]: value,
+    });
+    console.log(name, value); // 개발용 디버그 로그
+  };
+
+  //회원가입
+  const JoinMember = async (e) => {
+    console.log("회원가입 버튼 클릭됨");
+    e.preventDefault();
+
+    // 중복 클릭 방지 체크
+    if (isLoading) return;
+
+    // 아이디 중복 체크, 비밀번호 일치 여부, 이메일 인증 여부, 필수 입력값 체크 등 모든 검증 통과 여부 확인
+    if (!member.memberId) {
+      await errorAlert("입력 누락", "아이디를 입력해주세요.");
+      return;
+    }
+
+    if (checkId === 1) {
+      await errorAlert("중복 아이디", "이미 사용 중인 아이디입니다.");
+      return;
+    }
+
+    if (checkId === 0) {
+      await errorAlert("중복 확인", "아이디 중복 검사를 진행해주세요.");
+      return;
+    }
+
+    //아이디 유효성 검사
+    if (idMessage && idMessage !== "") {
+      await errorAlert("아이디 확인", idMessage);
+      return;
+    }
+    //비밀번호 조합이 맞는지 검사
+    if (pwMessage !== "안전한 비밀번호입니다.")
+      return errorAlert("비밀번호 확인", pwMessage);
+
+    // 비밀번호 일치 여부 체크
+    if (checkPw !== 1) {
+      await errorAlert("비밀번호 일치", "비밀번호 일치 체크");
+      return;
+    }
+
+    //이메일 인증을 하지 않으면 여기서 차단.
+    if (!emailVerified) {
+      await errorAlert("이메일 인증", "이메일 인증");
+      return;
+    }
+
+    if (!member.memberId || !member.memberPw || !member.memberEmail) {
+      await errorAlert("입력 오류", "아이디, 비밀번호, 이메일를 입력해주세요.");
+      return;
+    }
+
+    const BACKSERVER = import.meta.env.VITE_BACKSERVER || "/api";
+    if (!BACKSERVER) {
+      await errorAlert("연결 오류", "서버 연결 오류");
+      return;
+    }
+
+    setIsLoading(true); // 로딩 시작!
+    // 회원가입 요청을 서버로 전달하는 부분
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKSERVER}/members`,
+        member,
+      );
+      console.log("아이디 중복 체크 결과:", res.data);
+
+      await successAlert("회원가입 성공", "로그인 페이지로 이동합니다");
+      navigate("/members/login");
+    } catch (err) {
+      console.error("회원가입 에러:", err);
+      const errMsg =
+        err.response?.data?.message || "회원가입 중 오류가 발생했습니다.";
+      await errorAlert("회원가입 중 오류", errMsg);
+    } finally {
+      // 성공해서 navigate로 떠나면 다행이지만,
+      // 실패했을 경우엔 버튼을 다시 살려줘야 하므로 false 처리
+      setIsLoading(false);
+    }
+  };
 
   return (
-    //로그인 전체 컨테이너 -> login_page
-    <div className={`${styles.login_total_container} login_page`}>
-      {/*홈으로 가기 버튼 */}
-      <div
-        className={styles.home_btn}
-        onClick={() => {
-          navigate("/");
-        }}
-      >
-        홈으로 가기
-      </div>
-      {/* 전체 배경 컨테이너 추가 */}
-      <div className={styles.login_wrap}>
-        <h3 className={styles.page_title}>
-          <img
-            src="/favicon.svg"
-            alt="Logo"
-            className={styles.logo_img_element}
-          />
-          탄소커넥트
-        </h3>
+    <div className={`${styles.total_join_container} login_page`}>
+      {/* 배경 전용 레이어: 뷰포트에 고정되어 스크롤/여백과 상관없이 항상 화면 전체를 덮음 */}
+      <div className={styles.bg_layer}></div>
 
-        {isLoading && <p className={styles.loading_text}>로그인 중...</p>}
-
-        <div className={styles.input_group}>
-          {" "}
-          {/*입력영역 그룹화 */}
-          <input
-            type="text"
-            name="memberId"
-            id="memberId"
-            value={member.memberId}
-            onChange={handleChange}
-            className={styles.input_field}
-            /*placeholder: 칸에 글씨를 보여주게 하는 역할, 입력하면 사라짐 */
-            placeholder="아이디"
-          ></input>
-          <input
-            //text를 써도 되지만 글씨가 다 보이게됨. 보안을 위해 password를 사용
-            type="password"
-            name="memberPw"
-            id="memberPw"
-            value={member.memberPw}
-            onChange={handleChange}
-            className={styles.input_field}
-            /*placeholder: 칸에 글씨를 보여주게 하는 역할, 입력하면 사라짐 */
-            placeholder="비밀번호"
-            //onKeyDown=> 엔터를 치면 그걸 키값으로 받아들여 handleLogin() 함수 실행
-            //즉 로그인이 되게 하는 기능.
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleLogin();
-            }}
-          ></input>
-          <button
-            onClick={handleLogin}
-            disabled={isLoading}
-            className={styles.login_btn}
-          >
-            로그인
-          </button>
+      <div className={styles.btn_group}>
+        {/*홈으로 가기 버튼 */}
+        <div
+          className={styles.home_btn}
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          홈으로 가기
         </div>
 
-        {/* 여기에 아이디/비밀번호 찾기 링크 추가 */}
-        <div className={styles.search_wrap}>
-          <Link to="/members/find-id">아이디 찾기</Link>
-          {" || "}
-          <Link to="/members/find-pw">비밀번호 찾기</Link>
-          {" || "}
-
-          <Link to="/join">회원가입</Link>
+        {/*로그인으로 가기 버튼 */}
+        <div
+          className={styles.login_btn}
+          onClick={() => {
+            navigate("/members/login");
+          }}
+        >
+          로그인으로 가기
         </div>
-
-        {/* 이미지는 맨 아래에 배치 (CSS에서 absolute로 띄움) */}
-        {/*
-        
-        <img
-          src={loginBg}
-          className={styles.login_img}
-          alt="배경 이미지"
-          loading="lazy"
-          decoding="async"
-        />
-        
-        
-        */}
       </div>
+
+      <div className={styles.join_wrap}>
+        <h3 className={styles.page_title}>회원가입</h3>
+        <form onSubmit={JoinMember}>
+          <div className={styles.input_wrap}>
+            <label htmlFor="memberId">아이디</label>
+            <input
+              type="text"
+              name="memberId"
+              id="memberId"
+              value={member.memberId}
+              onChange={inputMember}
+              className={styles.input_field}
+              onBlur={ipDupCheck}
+              placeholder="영문, 숫자 조합 8자 이내"
+            ></input>
+            {idMessage && (
+              <p className={`${styles.check_msg} ${styles.invalid}`}>
+                {idMessage}
+              </p>
+            )}
+            {!idMessage && checkId === 1 && (
+              <p className={`${styles.check_msg} ${styles.invalid}`}>
+                이미 사용 중인 아이디입니다.
+              </p>
+            )}
+            {checkId === 2 && !idMessage && (
+              <p className={styles.check_msg}>사용 가능한 아이디입니다.</p>
+            )}
+          </div>
+
+          {/* 비밀번호 */}
+          <div className={styles.input_wrap}>
+            <label htmlFor="memberPw">비밀번호</label>
+            <input
+              type="password"
+              name="memberPw"
+              id="memberPw"
+              value={member.memberPw}
+              onChange={inputMember}
+              className={styles.input_field}
+              placeholder="영문3, 숫자4, 특수문자하나 이상"
+            />
+            {pwMessage && (
+              <p
+                className={
+                  pwMessage.includes("안전")
+                    ? styles.check_msg
+                    : `${styles.check_msg} ${styles.invalid}`
+                }
+              >
+                {pwMessage}
+              </p>
+            )}
+          </div>
+
+          {/* 비밀번호 확인 */}
+          <div className={styles.input_wrap}>
+            <label htmlFor="memberPwRe">비밀번호 확인</label>
+            <input
+              type="password"
+              name="memberPwRe"
+              id="memberPwRe"
+              value={memberPwRe}
+              onChange={(e) =>
+                setMemberPwRe(
+                  // 비밀번호에서는 한글을 제거
+                  e.target.value.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, ""),
+                )
+              }
+              className={styles.input_field}
+            />
+            {checkPw > 0 && (
+              <p
+                className={
+                  checkPw === 1
+                    ? styles.check_msg
+                    : `${styles.check_msg} ${styles.invalid}`
+                }
+              >
+                {checkPw === 1
+                  ? "비밀번호가 일치합니다."
+                  : "비밀번호가 일치하지 않습니다."}
+              </p>
+            )}
+          </div>
+
+          <div className={styles.input_wrap}>
+            <label>이름</label>
+            <input
+              type="text"
+              name="memberName"
+              id="memberName"
+              value={member.memberName}
+              onChange={inputMember}
+              className={styles.input_field}
+            ></input>
+          </div>
+
+          <div className={styles.input_wrap}>
+            <label>닉네임</label>
+            <input
+              type="text"
+              name="memberNickname"
+              id="memberNickname"
+              value={member.memberNickname}
+              onChange={inputMember}
+              className={styles.input_field}
+            ></input>
+          </div>
+
+          {/*이메일 인증 */}
+          {/*이메일 인증 컴포넌트에서 이메일 인증이 완료되면 
+        setEmailVerified(true)로 상태 변경*/}
+
+          <EmailAuth
+            //배열 집어넣지 않도록 주의!!
+            memberEmail={member.memberEmail}
+            setMemberEmail={(email) =>
+              setMember({ ...member, memberEmail: email })
+            }
+            onVerified={setEmailVerified}
+          ></EmailAuth>
+
+          <div className={styles.member_button_wrap}>
+            <button
+              type="button"
+              className={styles.join_btn}
+              onClick={JoinMember}
+              disabled={isLoading} // 로딩 중이면 클릭 차단!
+            >
+              {isLoading ? "처리 중..." : "회원가입"}
+            </button>
+          </div>
+        </form>
+      </div>
+      {/* join_wrap 끝 */}
+      {/*
+            
+      <img src={joinBg} className={styles.join_img} alt="배경 이미지" />
+            */}
     </div>
   );
 };
-export default Login;
+export default Join;

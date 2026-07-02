@@ -1,25 +1,32 @@
 /*회원가입 디자인 창*/
 /* JoinPage.module.css */
 
-.total_join_container {
-  width: 100%;
-  position: fixed; /* relative → fixed: 뷰포트 기준 고정이라 body의 margin: 60px 80px 영향을 받지 않음 */
+/* 배경 전용 레이어: 뷰포트에 완전히 고정, 절대 안 움직이고 항상 화면 전체를 덮음 */
+.bg_layer {
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  overflow-y: auto; /* 내용이 화면보다 길어지면 이 안에서 스크롤 */
+  z-index: 0;
+  pointer-events: none; /* 클릭/스크롤 이벤트가 아래로 그대로 통과되게 */
+  background-image: url("/images/signup_final_bg.png "); /* 배경 이미지 경로 */
+  background-size: cover; /* 화면에 꽉 차게 */
+  background-position: center; /* 중앙 기준 정렬 */
+  background-repeat: no-repeat;
+}
+
+.total_join_container {
+  width: 100%;
+  min-height: 100vh; /* 최소 화면 높이는 항상 채움 */
+  min-height: 100dvh; /* 모바일 주소창 등 고려한 실제 뷰포트 높이 */
+  position: relative; /* 페이지 흐름에 자연스럽게 참여 -> 스크롤도 브라우저 기본 스크롤로 동작 */
   z-index: 1;
   flex-direction: column;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url("/images/signup_final_bg.png "); /* 배경 이미지 경로 */
-  background-size: cover; /* 화면에 꽉 차게 */
-  background-position: center; /* 중앙 기준 정렬 */
-  background-repeat: no-repeat;
-  background-attachment: fixed; /* 스크롤해도 배경이 밀리지 않고 뷰포트에 고정됨 */
-  padding: 20px 0; /* 콘텐츠가 화면보다 길어질 때 상하 여백 확보 */
+  padding: 40px 0; /* 콘텐츠가 화면보다 길어질 때 상하 여백 확보 */
   box-sizing: border-box;
 }
 
