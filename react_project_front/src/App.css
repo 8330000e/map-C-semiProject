@@ -25,6 +25,7 @@ a:active {
 body {
   background-color: #fbfff5;
   margin: 60px 80px;
+  overflow-x: hidden;
 }
 
 .carbonconnect {
