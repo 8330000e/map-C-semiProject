@@ -329,7 +329,7 @@ const Map = ({
       ),
       map: map,
       icon: {
-        content: `<div style="position: relative; width: 100%; z-index:99999;"><img loading="lazy" decoding="async" src='${defaultMarkerImg}' style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=99999; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;"></div>`,
+        content: `<div style="position: relative; width: 100%; z-index:99999;"><img loading="lazy" decoding="async" url='https://carbonconnect-s3.s3.ap-northeast-2.amazonaws.com/img/marker.png' style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=99999; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;"></div>`,
         size: new naver.maps.Size(22, 35),
         anchor: new naver.maps.Point(11, 35),
       },
