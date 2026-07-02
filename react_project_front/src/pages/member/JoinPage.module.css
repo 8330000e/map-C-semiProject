@@ -3,9 +3,12 @@
 
 .total_join_container {
   width: 100%;
-  min-height: 100vh; /* 최소 화면 높이만큼은 항상 채움 */
-  min-height: 100dvh; /* 모바일 주소창 등 고려한 실제 뷰포트 높이 (지원 브라우저 우선 적용) */
-  position: relative; /* absolute → relative: 문서 흐름에 참여시켜서 콘텐츠 높이만큼 항상 늘어나게 함 */
+  position: fixed; /* relative → fixed: 뷰포트 기준 고정이라 body의 margin: 60px 80px 영향을 받지 않음 */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto; /* 내용이 화면보다 길어지면 이 안에서 스크롤 */
   z-index: 1;
   flex-direction: column;
   display: flex;
@@ -15,7 +18,8 @@
   background-size: cover; /* 화면에 꽉 차게 */
   background-position: center; /* 중앙 기준 정렬 */
   background-repeat: no-repeat;
-  padding: 20px 0; /* 콘텐츠가 100vh보다 길어질 때 상하 여백 확보 */
+  background-attachment: fixed; /* 스크롤해도 배경이 밀리지 않고 뷰포트에 고정됨 */
+  padding: 20px 0; /* 콘텐츠가 화면보다 길어질 때 상하 여백 확보 */
   box-sizing: border-box;
 }
 
