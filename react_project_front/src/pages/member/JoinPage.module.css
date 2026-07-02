@@ -1,9 +1,10 @@
 /*회원가입 디자인 창*/
 /* JoinPage.module.css */
 
-/* 이 페이지(.login_page)가 떠 있을 때만 App.css의 전역 body margin: 60px 80px 을 0으로 무력화.
-   그래야 배경이 body 여백에 갇히지 않고 화면 끝까지 채워짐 */
-body:has(:global(.login_page)) {
+/* JoinPage가 떠 있는 동안 body에 붙는 클래스 (아래 useEffect에서 추가/제거).
+   App.css의 전역 body { margin: 60px 80px } 를 이 페이지에서만 무력화시켜서
+   배경이 body 여백에 갇히지 않고 화면 끝까지 채워지게 함 */
+body.no_body_margin {
   margin: 0;
 }
 
