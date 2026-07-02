@@ -89,7 +89,7 @@ body.no_body_margin {
 .join_wrap {
   width: 600px;
   margin: 0 auto;
-
+  margin-bottom: 50px;
   padding: 40px 40px 40px;
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
@@ -97,8 +97,6 @@ body.no_body_margin {
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   position: relative;
-  margin-top: 110px;
-  margin-bottom: 80px;
 
   /*------------토끼 이미지 설정
   
