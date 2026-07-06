@@ -258,6 +258,7 @@ header {
   margin: 6px auto;
   padding: 12px 15px 14px;
   border-radius: 18px;
+  cursor: pointer;
   /*
   background-image: url("/images/login-background.png");  배경 이미지 경로
   background-size: cover;  화면에 꽉 차게
