@@ -16,8 +16,7 @@ export default defineConfig({
     include: ["@mui/icons-material"],
   },
   build: {
-    // 도커 환경이면 기본 'dist', 로컬 환경이면 스프링 부트 static 폴더로 지정
-    outDir: isDocker ? "dist" : "../src/main/resources/static",
+    outDir: isDocker ? "dist" : "../react_project_back/src/main/resources/static",
     emptyOutDir: true,
   },
 });
