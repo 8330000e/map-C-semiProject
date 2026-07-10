@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -113,22 +115,21 @@ public class Membercontroller {
 		// 로그인 시 정지 여부 체크를 하기위한 로직 status는 영구정지 여부만 판단하고 기간 정지는 lock_until
 		Map<String, Object> map = memberService.getLockInfo(member.getMemberId());
 		if (map != null) {
-		    Integer memberStatus = ((Number) map.get("memberStatus")).intValue();
-		    String lockReason = (String) map.get("lockReason");
+			Integer memberStatus = ((Number) map.get("memberStatus")).intValue();
+			String lockReason = (String) map.get("lockReason");
 			// 1. 영구정지 체크
-		    if (memberStatus == 1) {
-		    	// react에서 Swal text가 아닌 html로 받게함 <br>로 줄바꿈 처리 
-		        return ResponseEntity.status(403).body(lockReason +  "<br>" + "자세한 내용은 이메일을 확인해주세요.");
-		    }
-		    
+			if (memberStatus == 1) {
+				// react에서 Swal text가 아닌 html로 받게함 <br>로 줄바꿈 처리 
+				return ResponseEntity.status(403).body(lockReason + "<br>" + "자세한 내용은 이메일을 확인해주세요.");
+			}
 
-		    Date lockUntil = (Date) map.get("lockUntil");
-		    // 2. 일시정지 체크 (lock_until)
-		    if (lockUntil != null && lockUntil.after(new Date())) {
-		        SimpleDateFormat sdf = new SimpleDateFormat("MM월 dd일 HH시 mm분");
-		        String lockTime = sdf.format(lockUntil);
-		        return ResponseEntity.status(403).body(lockReason + "<br>" + lockTime + " 이후 정지가 해제됩니다.");
-		    }
+			LocalDateTime lockUntil = (LocalDateTime) map.get("lockUntil");
+			// 2. 일시정지 체크 (lock_until)
+			if (lockUntil != null && lockUntil.isAfter(LocalDateTime.now())) {
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM월 dd일 HH시 mm분");
+				String lockTime = lockUntil.format(formatter);
+				return ResponseEntity.status(403).body(lockReason + "<br>" + lockTime + " 이후 정지가 해제됩니다.");
+			}
 		}
 		    
 		
