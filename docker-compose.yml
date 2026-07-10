@@ -42,7 +42,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./src/main/resources/static:/usr/share/nginx/html:ro
+      - ./react_project_back/src/main/resources/static:/usr/share/nginx/html:ro
       - ./react_project_front/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
       - semi-net
