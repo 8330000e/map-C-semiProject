@@ -8,49 +8,42 @@ import useAuthStore from "../../store/useAuthStore";
 import Swal from "sweetalert2";
 import styles from "./LoginPage.module.css";
 import { Link } from "react-router-dom";
+
 import { errorAlert, successAlert } from "../../utils/alert";
 
 const Login = () => {
   // 페이지 이동 함수 가져오기
-  const navigate = useNavigate();
-
+ const navigate = useNavigate();
   // 상태 선언: 입력 중인 로그인 값 저장 (id, pw)
   const [member, setMember] = useState({
-    memberId: "", // 아이디 필드
-    memberPw: "", // 비밀번호 필드
-  });
+      memberId: "", // 아이디 필드
+      memberPw: "", // 비밀번호 필드
+   });
 
   const [isLoading, setIsLoading] = useState(false); //로딩상태가 아직 로그인이 안된 경우일떄
   //페이지가 처음 마운트될 때 바로 보여주고 싶다면 isReady를 true로 설정,
   //  로그인 버튼을 눌렀을 때 isReady를 false로 설정하여 로딩 상태를 보여줄 수 있다
-  const [isReady, setIsReady] = useState(true); //페이지 랜더링 준비 상태
-
-  const handleChange = (e) => {
+  const [isReady, setIsReady] = useState(true); //페이지 랜더링 준비 상태    
+ const handleChange = (e) => {
     const { name, value } = e.target; // 이벤트가 발생한 input의 name과 value 추출
     setMember({
       ...member, // 기존 상태 유지
       [name]: value, // 예: name이 memberId이면 memberId 값만 변경
     });
-  };
+};
 
-  const BACKSERVER =
-    import.meta.env.VITE_BACKSERVER ||
-    "http://ec2-13-125-148-128.ap-northeast-2.compute.amazonaws.com:9999";
-
+  const BACKSERVER = import.meta.env.VITE_BACKSERVER || "/api";
   const handleLogin = async () => {
     console.log("로그인 버튼 클릭됨"); // 버튼 클릭 테스트용 출력
-
-    // 1) 값 유효성 검사 (아이디/비밀번호 필수)
+ // 1) 값 유효성 검사 (아이디/비밀번호 필수)
     if (!member.memberId || !member.memberPw) {
       await errorAlert("로그인 실패", "아이디/비밀번호를 입력해주세요");
-      return;
+   return;
     }
-
-    // 2) 디버그 출력 (보내는 데이터, 서버 주소)
+  // 2) 디버그 출력 (보내는 데이터, 서버 주소)
     console.log("보내는 데이터:", member);
     console.log("서버 주소:", BACKSERVER);
-
-    //로딩 시작
+ //로딩 시작
     //isLoading → 로그인 시 로딩 표시, 버튼 비활성화.
     setIsLoading(true);
     //페이지/컴포넌트가 렌더링 준비가 끝났는지 체크하는 용도..
@@ -61,25 +54,21 @@ const Login = () => {
       setIsLoading(false);
       await errorAlert("로그인 실패", "로그인 시간초과");
     }, 5000); //5초로 설정
-
-    //앞으로 axios는 기본값으로 "Authorization"이라는 서버에서 보내준 인증하는 값 헤더를
+ //앞으로 axios는 기본값으로 "Authorization"이라는 서버에서 보내준 인증하는 값 헤더를
     //자동으로 붙인다. 즉, 토큰을 이제 전역에 적용시키겠다는 의미
     //로그인 후 받은 JWT 토큰을 헤더에 넣어야 로그인한 상태를 서버가 인식함.
     try {
       // 3) Axios 요청 (await 사용)
       const res = await axios.post(`${BACKSERVER}/members/login`, member);
       //성공했을 때
-
-      clearTimeout(timer); //로그인 성공하면 타이머 초기화
+ clearTimeout(timer); //로그인 성공하면 타이머 초기화
       console.log(res.data);
-
-      await successAlert("로그인 성공", "메인 페이지로 이동합니다");
-
-      //토큰 설정
+ await successAlert("로그인 성공", "메인 페이지로 이동합니다");
+ //토큰 설정
       if (res.data.token) {
         axios.defaults.headers.common["Authorization"] =
           `Bearer ${res.data.token}`;
-      }
+}
 
       //상태저장
       useAuthStore.getState().login(res.data);
@@ -96,7 +85,7 @@ const Login = () => {
         } catch (profileErr) {
           console.error("프로필 정보 추가 로드 실패", profileErr);
         }
-      }
+ }
 
       //성공했을 떄 초기값으로 되돌아가기
       setMember({
@@ -122,23 +111,22 @@ const Login = () => {
         await errorAlert(
           "로그인 실패",
           "아이디 또는 비밀번호가 올바르지 않습니다.",
-        );
-      } else {
+           );
+         } else {
         await errorAlert(
           "오류 발생",
           "서버와 연결할 수 없습니다. 잠시 후 다시 시도해주세요.",
         );
-      }
+ }
       //성공하든 실패하든 로딩상태 해제
     } finally {
       setIsLoading(false); //로딩 끝내기
-    }
-  };
+          }
+ };
 
   //준비되지 않으면 랜더링 안 함
   if (!isReady) return null;
-
-  return (
+ return (
     //로그인 전체 컨테이너 -> login_page
     <div className={`${styles.login_total_container} login_page`}>
       {/*홈으로 가기 버튼 */}
@@ -200,18 +188,15 @@ const Login = () => {
             로그인
           </button>
         </div>
-
-        {/* 여기에 아이디/비밀번호 찾기 링크 추가 */}
+          {/* 여기에 아이디/비밀번호 찾기 링크 추가 */}
         <div className={styles.search_wrap}>
           <Link to="/members/find-id">아이디 찾기</Link>
           {" || "}
           <Link to="/members/find-pw">비밀번호 찾기</Link>
           {" || "}
-
-          <Link to="/join">회원가입</Link>
-        </div>
-
-        {/* 이미지는 맨 아래에 배치 (CSS에서 absolute로 띄움) */}
+  <Link to="/join">회원가입</Link>
+   </div>
+  {/* 이미지는 맨 아래에 배치 (CSS에서 absolute로 띄움) */}
         {/*
         
         <img
@@ -224,8 +209,11 @@ const Login = () => {
         
         
         */}
-      </div>
-    </div>
+         </div>
+  </div>
   );
 };
 export default Login;
+
+
+
