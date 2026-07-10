@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Community from "../../components/board/Community/Community";
 import styles from "./MapCommunityPage.module.css";
-import defaultMarkerImg from "../../assets/img/marker.png";
 import defaultImg from "../../assets/img/defaultImg.png";
 import markerImg from "../../assets/img/marker.png";
 import defaultThumbMarker from "../../assets/img/defaultthumbmarker.png";
@@ -330,7 +329,7 @@ const Map = ({
       ),
       map: map,
       icon: {
-        content: `<div style="position: relative; width: 100%; z-index:99999;"><img loading="lazy" decoding="async" src=${markerImg} style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=99999; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;"></div>`,
+        content: `<div style="position: relative; width: 100%; z-index:99999;"><img loading="lazy" decoding="async" src="${markerImg}" style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 30px; min-height: none; z-index=99999; -webkit-user-select: none; position: absolute; left: 0px; top: 0px;"></div>`,
         size: new naver.maps.Size(22, 35),
         anchor: new naver.maps.Point(11, 35),
       },
@@ -362,7 +361,7 @@ const Map = ({
         <img
         loading="lazy"
         decoding="async"
-        src=${defaultThumbMarker}
+        src='${defaultThumbMarker}'
         style="width: 30px; margin: 0px; padding: 0px; border: 0px solid transparent; display: block; min-width: 50px; min-height: none; -webkit-user-select: none; z-index:${1 + i}; position: absolute; left: 0px; top: 0px;"
         />
       </div>`,
