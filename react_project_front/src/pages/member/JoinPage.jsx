@@ -265,6 +265,9 @@ const Join = () => {
 
   return (
     <div className={`${styles.total_join_container} login_page`}>
+      {/* 배경 전용 레이어: 뷰포트에 고정되어 스크롤/여백과 상관없이 항상 화면 전체를 덮음 */}
+      <div className={styles.bg_layer}></div>
+
       <div className={styles.btn_group}>
         {/*홈으로 가기 버튼 */}
         <div
