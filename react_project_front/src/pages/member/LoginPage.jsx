@@ -192,10 +192,6 @@ const Login = () => {
               if (e.key === "Enter") handleLogin();
             }}
           ></input>
-          <div className={styles.test}>
-              <p>테스트계정 ID: test1234 / PW: qwer1234</p>
-              <p>관리자계정 ID: admin00 / PW: qwer1234@</p>
-          </div>
           <button
             onClick={handleLogin}
             disabled={isLoading}
@@ -214,6 +210,11 @@ const Login = () => {
 
           <Link to="/join">회원가입</Link>
         </div>
+
+        <div className={styles.test}>
+              <p>테스트계정 ID: test1234 / PW: qwer1234</p>
+              <p>관리자계정 ID: admin00 / PW: qwer1234@</p>
+          </div>
 
         {/* 이미지는 맨 아래에 배치 (CSS에서 absolute로 띄움) */}
         {/*
