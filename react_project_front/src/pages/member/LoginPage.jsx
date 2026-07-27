@@ -197,6 +197,10 @@ const Login = () => {
             disabled={isLoading}
             className={styles.login_btn}
           >
+            <div>
+              <p>테스트계정 ID: test1234 / PW: qwer1234</p>
+              <p>관리자계정 ID: admin00 / PW: qwer1234@</p>
+            </div>
             로그인
           </button>
         </div>
