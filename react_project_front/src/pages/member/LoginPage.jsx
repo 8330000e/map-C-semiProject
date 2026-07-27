@@ -199,6 +199,10 @@ const Login = () => {
           >
             로그인
           </button>
+          <div className={styles.test}>
+              <p>테스트계정 ID: test1234 / PW: qwer1234</p>
+              <p>관리자계정 ID: admin00 / PW: qwer1234@</p>
+          </div>
         </div>
 
         {/* 여기에 아이디/비밀번호 찾기 링크 추가 */}
@@ -210,11 +214,6 @@ const Login = () => {
 
           <Link to="/join">회원가입</Link>
         </div>
-
-        <div className={styles.test}>
-              <p>테스트계정 ID: test1234 / PW: qwer1234</p>
-              <p>관리자계정 ID: admin00 / PW: qwer1234@</p>
-          </div>
 
         {/* 이미지는 맨 아래에 배치 (CSS에서 absolute로 띄움) */}
         {/*
