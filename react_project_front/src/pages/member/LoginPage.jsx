@@ -199,15 +199,15 @@ const Login = () => {
           >
             로그인
           </button>
+          
+          <div className={styles.test}>
+              테스트계정 ID: test1234 / PW: qwer1234<br/>
+              관리자계정 ID: admin00 / PW: qwer1234@
+          </div>
         </div>
 
         {/* 여기에 아이디/비밀번호 찾기 링크 추가 */}
         <div className={styles.search_wrap}>
-          
-          <div className={styles.test}>
-              <p>테스트계정 ID: test1234 / PW: qwer1234</p>
-              <p>관리자계정 ID: admin00 / PW: qwer1234@</p>
-          </div>
           <Link to="/members/find-id">아이디 찾기</Link>
           {" || "}
           <Link to="/members/find-pw">비밀번호 찾기</Link>
