@@ -48,7 +48,7 @@
   border-radius: 50px 50px 5px 50px;
   position: absolute;
   top: 84%;
-  left: 70%;
+  left: 75%;
   transform: translate(-50%, -50%);
   z-index: 1;
   color: #fff;
@@ -63,7 +63,7 @@
   padding-top: 6px;
 }
 .map_item > p:last-child {
-  padding: 6px 10px 4px;
+  padding: 2px 12px 4px;
   line-height: 1.2;
   font-size: 12px;
 }
