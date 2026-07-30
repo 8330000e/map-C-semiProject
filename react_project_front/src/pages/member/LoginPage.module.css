@@ -237,9 +237,8 @@
 
 .test {
   margin-top: 20px;
-  background-color: #fff;
   border-radius: 15px;
-  padding: 18px;
+  padding: 18px 20px;
 }
 .test > p {
   font-size: 14px;
