@@ -246,3 +246,7 @@
   font-weight: 400;
   text-align: left;
 }
+.test > p:first-child {
+  font-size: 16px;
+  font-weight: 500;
+}

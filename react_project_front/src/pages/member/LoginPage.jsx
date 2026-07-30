@@ -211,7 +211,7 @@ const Login = () => {
           <Link to="/join">회원가입</Link>
         </div>
         <div className={styles.test}>
-            <p>*사이트 이용용 계정정보*</p>
+            <p>*사이트 테스트용 계정정보*</p>
             <p>테스트계정 ID: test1234 PW: qwer1234</p>
             <p>관리자계정 ID: admin00 PW: qwer1234@</p>
         </div>
