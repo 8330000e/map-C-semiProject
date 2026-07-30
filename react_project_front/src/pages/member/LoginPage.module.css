@@ -46,6 +46,7 @@
   width: 450px;
   min-height: 50vh;
   margin: 80px auto;
+  padding-bottom: unset;
   /* 하단에 이미지가 들어갈 공간(약 120px~150px)을 padding-bottom으로 확보합니다 */
   padding: 40px 30px 120px;
   /*아예 배경색을 없애지 않으면서 배경을 채우게 하는 로직  */
@@ -234,8 +235,15 @@
   transition: 0.6s;
 }
 
+.test {
+  margin-top: 10px;
+  border: 1px solid #333;
+  border-radius: 20px;
+  padding: 18px;
+}
 .test > p {
   font-size: 14px;
   color: #333;
-  font-weight: 500;
+  font-weight: 400;
+  text-align: left;
 }
