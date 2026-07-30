@@ -197,7 +197,7 @@ const Login = () => {
             disabled={isLoading}
             className={styles.login_btn}
           >
-            로그인
+            로그인하기
           </button>
         </div>
 
