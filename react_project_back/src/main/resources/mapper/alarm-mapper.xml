@@ -2,6 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.co.iei.alarm.model.dao.AlarmDao">
 
+    <insert id="insertMemberAlarm">
+        insert into alarm_tbl(member_id,alarm_kind,alarm_content) values (#{memberId},1,'가입을 축하합니다! +100포인트')
+    </insert>
+
     <update id="alarmAllCheck">
         update alarm_tbl 
         set alarm_check = 1 

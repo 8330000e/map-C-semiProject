@@ -94,9 +94,6 @@ public class BoardService {
 		String ctpvsggId = boardDao.selectstpvsgg(calco2.getCtpv(),calco2.getSgg());
 		calco2.setCtpvsggId(ctpvsggId);
         int result = boardDao.insertCalco2Data(calco2);
-		System.out.println("조회된 ctpvsggId = " + ctpvsggId);
-		System.out.println("selectCo2Tot 호출 : " + ctpvsggId);
-		System.out.println("selectCo2Tot 호출값 = " + ctpvsggId);
 		double cc2 = boardDao.selectCo2Tot(ctpvsggId);
 		double co2 = cc2 - calco2.getCTotal();
 		double memberCo2 = boardDao.selectMemberCo2(calco2);
@@ -104,9 +101,6 @@ public class BoardService {
 		String textco2 = String.format("%.8f", saveco2);
 		double membercalco2 = Double.parseDouble(textco2);
 		int resultMember = boardDao.updateCo2(membercalco2, calco2.getMemberId());
-		System.out.println("ctpv = " + calco2.getCtpv());
-		System.out.println("sgg = " + calco2.getSgg());
-		System.out.println("조회된 ctpvsggId = " + ctpvsggId);
 		if (resultMember<=0 && result<=0) {
 			result = -1;
 		}

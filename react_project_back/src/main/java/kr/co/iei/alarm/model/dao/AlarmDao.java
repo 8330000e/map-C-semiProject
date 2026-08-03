@@ -20,5 +20,7 @@ public interface AlarmDao {
     int alarmDel(String memberId, Integer alarmNo);
 
     int alarmalldel(String memberId);
+
+    int insertMemberAlarm(String memberId);
     
 }

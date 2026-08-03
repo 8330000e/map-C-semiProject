@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.iei.member.model.dao.MemberDao;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
+import kr.co.iei.alarm.model.Dao.AlarmDao;
 import kr.co.iei.point.vo.PointHistory;
 import kr.co.iei.utils.EmailSender;
 import kr.co.iei.utils.JwtUtils;
@@ -24,6 +25,7 @@ public class MemberService {
 
 	@Autowired
 	private MemberDao memberDao;
+	private AlarmDao alarmDao;
 
 	// 암호화 객체 선언
 	@Autowired
@@ -47,6 +49,7 @@ public class MemberService {
 
 		if (result > 0) {
 			int pointResult = memberDao.insertMemberPoint(member.getMemberId());
+			int alarmResult = alarmDao.insertMember(member.getMemberId());
 
 			if (pointResult == 0) {
 				throw new RuntimeException("회원 포인트 정보 생성 실패");
