@@ -422,7 +422,7 @@ const Map = ({
                   width: 300px;
                   left: 50%;
                   bottom: 50%;
-                  transform: translate(-52%, -260%);
+                  transform: translate(50%, -260%);
                   height: max-content;
                   border-radius: 25px;
                   border: var(--border2);
@@ -456,7 +456,7 @@ const Map = ({
                   position: absolute;
                   left: 50%;
                   bottom: 50%;
-                  transform: translate(-52%, -10%);
+                  transform: translate(50%, -10%);
                   margin-top: 60px;
                   width: 300px;
                   height: max-content;
