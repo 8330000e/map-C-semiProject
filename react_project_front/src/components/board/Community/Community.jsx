@@ -184,7 +184,7 @@ const Community = ({
       });
       return {
         ...prev,
-        cTotal: newTotal,
+        cTotal: Number(newTotal.toFixed(8),
       };
     });
   };
@@ -502,8 +502,7 @@ const Community = ({
           ...calco2,
           boardNo,
           memberId,
-          ctpv: ctpvsgg.ctpv,
-          sgg: ctpvsgg.sgg,
+          ctpvsgg_id: (ctpvsgg.ctpv, ctpvsgg.sgg),
         };
 
         await axios
@@ -1088,7 +1087,7 @@ const Community = ({
                               <div className={styles.result_count}></div>
                               <div>
                                 <div>CO₂</div>
-                                <div>{calco2.cTotal.toFixed(8)}</div>
+                                <div>{calco2.cTotal}</div>
                                 <div>KG</div>
                               </div>
                               <div className={styles.result_ment}>
@@ -1097,10 +1096,10 @@ const Community = ({
                                 <p>
                                   {ctpvsgg.ctpv + " " + ctpvsgg.sgg} 일일
                                   탄소배출량의 약{" "}
-                                  {(
+                                  {
                                     ((calco2.cTotal * 100) / co2Data) *
                                     100
-                                  ).toFixed(5)}
+                                  }
                                   %을 절감하셨어요!
                                 </p>
                               </div>

@@ -70,7 +70,7 @@ public interface BoardDao {
 
 	double selectCo2Tot(String ctpvsggId);
 
-	int selectMemberCo2(Calco2 calco2);
+	double selectMemberCo2(Calco2 calco2);
 
 	int insertCalco2Data(Calco2 calco2);
 
