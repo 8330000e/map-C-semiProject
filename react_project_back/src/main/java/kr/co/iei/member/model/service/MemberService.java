@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.iei.member.model.dao.MemberDao;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
-import kr.co.iei.alarm.model.Dao.AlarmDao;
+import kr.co.iei.alarm.model.dao.AlarmDao;
 import kr.co.iei.point.vo.PointHistory;
 import kr.co.iei.utils.EmailSender;
 import kr.co.iei.utils.JwtUtils;
