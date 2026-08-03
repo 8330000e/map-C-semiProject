@@ -502,7 +502,8 @@ const Community = ({
           ...calco2,
           boardNo,
           memberId,
-          ctpvsgg_id: (ctpvsgg.ctpv, ctpvsgg.sgg),
+          ctpv: ctpvsgg.ctpv,
+          sgg: ctpvsgg.sgg,
         };
 
         await axios

@@ -104,7 +104,7 @@
     </select>
 
     <select id="selectCo2Tot" resultType="double">
-        select sum(a.carbon_road_tco2+b.carbon_ele_tot+c.carbon_gas_tot+d.carbon_heat_tot)/4/30.5 from carbon_tbl a
+        select IFNULL((sum(a.carbon_road_tco2+b.carbon_ele_tot+c.carbon_gas_tot+d.carbon_heat_tot)/4/30.5), 0) from carbon_tbl a
         left join carbon_ele_tbl b on (a.ctpvsgg_id = b.ctpvsgg_id) 
         left join carbon_gas_tbl c on (b.ctpvsgg_id = c.ctpvsgg_id) 
         left join carbon_heat_tbl d on (c.ctpvsgg_id = d.ctpvsgg_id)
