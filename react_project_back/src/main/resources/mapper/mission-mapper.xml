@@ -162,7 +162,7 @@
 
     <insert id="insertMemberPoint" parameterType="string">
         INSERT INTO member_point_tbl (MEMBER_ID, TOTAL_POINT)
-        VALUES (#{memberId}, 0)
+        VALUES (#{memberId}, 100)
     </insert>
     
     <select id="existsTodayRandomMissionComplete" resultType="int">

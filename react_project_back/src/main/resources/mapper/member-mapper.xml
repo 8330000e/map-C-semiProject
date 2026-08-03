@@ -13,8 +13,8 @@
   </insert>
 
   <insert id="insertMemberPoint" parameterType="string">
-    INSERT INTO member_point_tbl (MEMBER_ID, POINT_REASON, TOTAL_POINT)
-    VALUES (#{memberId}, 회원가입축하, 100)
+    INSERT INTO member_point_tbl (MEMBER_ID, TOTAL_POINT)
+    VALUES (#{memberId}, 100)
   </insert>
 
   <select id="selectOneMember" resultType="member">
