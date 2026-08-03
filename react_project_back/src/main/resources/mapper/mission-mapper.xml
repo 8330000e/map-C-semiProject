@@ -164,6 +164,11 @@
         INSERT INTO member_point_tbl (MEMBER_ID, TOTAL_POINT)
         VALUES (#{memberId}, 100)
     </insert>
+
+    <insert id"insertMemberPointList">
+        INSERT INTO point_tbl (member_id,POINT_CHANGE,POINT_TYPE,POINT_REASON) 
+        VALUES (#{memberId},100,'GIFT','회원가입 축하 포인트')
+    </insert>
     
     <select id="existsTodayRandomMissionComplete" resultType="int">
         SELECT COUNT(*)

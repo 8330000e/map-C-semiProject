@@ -16,6 +16,7 @@ import kr.co.iei.member.model.dao.MemberDao;
 import kr.co.iei.member.model.vo.LoginMember;
 import kr.co.iei.member.model.vo.Member;
 import kr.co.iei.alarm.model.dao.AlarmDao;
+import kr.co.iei.mission.model.dao.MissionDao;
 import kr.co.iei.point.vo.PointHistory;
 import kr.co.iei.utils.EmailSender;
 import kr.co.iei.utils.JwtUtils;
@@ -25,9 +26,12 @@ public class MemberService {
 
 	@Autowired
 	private MemberDao memberDao;
-	
+
 	@Autowired
 	private AlarmDao alarmDao;
+
+	@Autowired
+	private MissionDao missionDao;
 
 	// 암호화 객체 선언
 	@Autowired
@@ -52,6 +56,7 @@ public class MemberService {
 		if (result > 0) {
 			int pointResult = memberDao.insertMemberPoint(member.getMemberId());
 			int alarmResult = alarmDao.insertMemberAlarm(member.getMemberId());
+			int pointResult = missionDao.insertMemberPointList(member.getMemberId());
 
 			if (pointResult == 0) {
 				throw new RuntimeException("회원 포인트 정보 생성 실패");

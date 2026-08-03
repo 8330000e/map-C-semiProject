@@ -36,6 +36,8 @@ public interface MissionDao {
 	// MEMBER_POINT_TBL에 해당 회원 행이 없을 때 기본 0포인트 행 생성 처리임.
 	int insertMemberPoint(String memberId);
 
+	int insertMemberPointList(String memberId);
+
 	int existsTodayRandomMissionComplete(
 	        @Param("memberId") String memberId,
 	        @Param("missionNo") int missionNo
