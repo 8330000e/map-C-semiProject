@@ -99,7 +99,7 @@
         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'board_tbl'
     </select>
 
-    <select id="selectMemberCo2" resultType="int">
+    <select id="selectMemberCo2" resultType="double">
         select member_co2 from member_tbl1 where member_id = #{memberId}
     </select>
 
