@@ -49,7 +49,7 @@ public class MemberService {
 
 		if (result > 0) {
 			int pointResult = memberDao.insertMemberPoint(member.getMemberId());
-			int alarmResult = alarmDao.insertMember(member.getMemberId());
+			int alarmResult = alarmDao.insertMemberAlarm(member.getMemberId());
 
 			if (pointResult == 0) {
 				throw new RuntimeException("회원 포인트 정보 생성 실패");
