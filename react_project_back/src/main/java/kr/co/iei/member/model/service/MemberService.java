@@ -25,6 +25,8 @@ public class MemberService {
 
 	@Autowired
 	private MemberDao memberDao;
+	
+	@Autowired
 	private AlarmDao alarmDao;
 
 	// 암호화 객체 선언
