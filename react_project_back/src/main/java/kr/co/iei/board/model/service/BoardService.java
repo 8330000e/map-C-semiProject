@@ -94,7 +94,6 @@ public class BoardService {
 		String ctpvsggId = boardDao.selectstpvsgg(calco2.getCtpv(),calco2.getSgg());
 		calco2.setCtpvsggId(ctpvsggId);
         int result = boardDao.insertCalco2Data(calco2);
-		String ctpvsggId = boardDao.selectstpvsgg(calco2.getCtpv(), calco2.getSgg());
 		System.out.println("조회된 ctpvsggId = " + ctpvsggId);
 		System.out.println("selectCo2Tot 호출 : " + ctpvsggId);
 		System.out.println("selectCo2Tot 호출값 = " + ctpvsggId);
