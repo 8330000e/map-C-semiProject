@@ -184,7 +184,7 @@ const Community = ({
       });
       return {
         ...prev,
-        cTotal: Number(newTotal.toFixed(8),
+        cTotal: Number(newTotal.toFixed(8)),
       };
     });
   };
